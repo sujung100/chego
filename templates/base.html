@@ -18,15 +18,18 @@
   <!-- navbar 영역 -->
   {% include "navbar.html" %}
 
-
-  <div class="container">
+<!-- 
+  <div class="container"> -->
     <!-- 각 페이지의 컨텐츠 영역 -->
+  <section class="md-wrapper">
     {% block container %}
     {% endblock %}
-  </div>
+  
+  <!-- </div> -->
 
   <!-- footer 영역 -->
-  {% include "footer.html" %}
+    {% include "footer.html" %}
+  </section>
 </body>
 </html>
 <!-- 

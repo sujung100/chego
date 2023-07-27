@@ -1,4 +1,4 @@
-/* reserve */
+/* list-up */
 
 
 /******************* 공통사항 ********************/
@@ -54,4 +54,4 @@ section.md-wrapper {width: 80%; margin: 0 auto;}
 .md-wrapper .main-wrap .contents .store-list .store .st-right h5 {padding-bottom: 0.5rem;}
 
 /******************* footer ********************/
-footer {position: relative; width: 80%; margin: 0 auto; z-index: 100;  background-color: #fff; text-align: center; background-color: lightsteelblue;}
+footer {position: relative; width: 100%; margin: 0 auto; z-index: 100;  background-color: #fff; text-align: center; background-color: lightsteelblue;}

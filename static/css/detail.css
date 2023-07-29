@@ -25,13 +25,8 @@ ol, ul{
 
 .test1{
   /* margin:0 auto; */
-  margin-left:40rem;
   width:10rem;
   height:3rem;
-}
-
-.user_test{
-  margin-left:30rem;
 }
 
 #wrap{

@@ -132,3 +132,4 @@ function leftPad(value) {
       document.getElementById('user_time').value = selectedTime;
     });
   });
+

@@ -60,6 +60,6 @@ def reserve(request):
 # def info(request):
 #     return render(request, "main3.html")
 
-# def write(request):
-#     return render(request, "main4.html")
+def test(request):
+    return render(request, "calendar_app/main4.html")
 

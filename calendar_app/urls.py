@@ -7,4 +7,5 @@ urlpatterns = [
   path('reserve/', views.reserve, name='reserve'),
   # path('info/', views.info, name='info'),
   path('write/', views.write, name='write'),
+  path('test/', views.test, name='test'),
 ]

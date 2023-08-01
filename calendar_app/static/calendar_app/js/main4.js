@@ -96,10 +96,10 @@ function leftPad(value) {
 
 
 // function updateButtons() {
-//     var selectedDate = $("#user_selected_date").val(); // 사용자가 선택한 날짜 가져오기
+//     var selectedDate = $("#user_selected_date").val(); // 사용자가 선택한 날짜를 얻어옵니다.
 
-//     $(".time-item").each(function() { 
-//     var timeDate = $(this).data("date"); // 버튼의 data-date 값, Time 테이블의 select_date
+//     $(".time-item").each(function() { // 각 작성되었던 버튼들을 순차적으로 접근하여 처리
+//     var timeDate = $(this).data("date"); // 버튼의 data-date 값 즉, Time 테이블의 select_date
 
 //     if (timeDate === selectedDate) { // 사용자가 선택한 날짜와 Time 테이블의 select_date 값이 같다면
 //         $(this).show(); // 버튼 보여주기
@@ -204,6 +204,6 @@ function checkSelectedDate() {
     if (selectedDate.length === 0) {
         alert("날짜를 선택해주세요.");
     } else {
-        // 날짜 선택하면 처리
+        // 사용자가 선택한 날짜에 대한 처리를 여기에서 수행하세요.
     }
 }

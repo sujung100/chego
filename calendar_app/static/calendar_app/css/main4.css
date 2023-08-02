@@ -149,8 +149,19 @@ section.md-wrapper .reservation {width: 80%; margin: 5rem auto; /* background-co
 .rs-list .store-table .st-name {width: 30%; border-right: 1px solid #818181; text-align: center; margin: auto 0;}
 .rs-list .store-table .st-name h5 {cursor: pointer;}
 .rs-list .store-table .st-time {width: 70%; text-align: center; display: flex; /* justify-content: center; */ flex-wrap: wrap;/*  margin: 0 auto; */ padding: 0 1rem;}
-.rs-list .store-table .st-time .time-item {/* margin: 0 1rem; */ cursor: pointer; border: 0; outline: 0; background-color: #333; color: #fff; border: 1px solid #818181; border-radius: 2rem; margin: 0.2rem 1rem; padding: 0.5rem;}
-.rs-list .store-table .st-time .time-item:hover {background-color: #009476; color: #fff; border: 1px solid #009476;}
+/* time-item 스타일 */
+/* .rs-list .store-table .st-time .time-item {cursor: pointer; border: 0; outline: 0; background-color: #333; color: #fff; border: 1px solid #818181; border-radius: 2rem; margin: 0.2rem 1rem; padding: 0.5rem;}
+.rs-list .store-table .st-time .time-item:hover {background-color: #009476; color: #fff; border: 1px solid #009476;} */
+.rs-list .store-table .st-time #time-style {cursor: pointer; border: 0; outline: 0; background-color: #333; color: #fff; border: 1px solid #818181; border-radius: 2rem; margin: 0.2rem 1rem; padding: 0.5rem;}
+.rs-list .store-table .st-time #time-style:hover {background-color: #009476; color: #fff; border: 1px solid #009476;}
+
+/* 비활성 버튼 스타일 */
+.disabled-time {
+  background-color: black;
+  color: #ddd;
+  opacity: 0.2;
+}
+
 
 
 .reserve-wrap .rs-body .rs-date {width: calc(100% - (12% + 40%)); background-color: #242424; margin: 0 0 0 auto; /* border-radius: 0 0 1.5rem 0; */ padding-bottom: 2rem;}

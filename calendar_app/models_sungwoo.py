@@ -29,7 +29,7 @@ class Store(models.Model):
         return f"{self.store_name}{self.owner}{self.cdate}"
     
     def get_absolute_url(self):
-        return reverse("community:view_detail", args=(self.id,))
+        return reverse("reservation:detail", args=(self.id,))
     
 class Manager(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

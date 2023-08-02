@@ -29,11 +29,26 @@ function buildCalendar() {
     for (let nowDay = firstDate; nowDay <= lastDate; nowDay.setDate(nowDay.getDate() + 1)) {   // day는 날짜를 저장하는 변수, 이번달 마지막날까지 증가시키며 반복  
 
         let nowColumn = nowRow.insertCell();        // 새 열을 추가하고
+        // ////////////////////////////////////////////
 
+        let dateContainer = document.createElement("div");
+        dateContainer.className = "date-container";
+        nowColumn.appendChild(dateContainer);
+        // ////////////////////////////////////////////
 
         let newDIV = document.createElement("p");
         newDIV.innerHTML = leftPad(nowDay.getDate());        // 추가한 열에 날짜 입력
         nowColumn.appendChild(newDIV);
+
+        // //////////////////////////////////////////////////////////////////////////////
+        let circleElement = document.createElement("div");
+        circleElement.className = "circle";
+        dateContainer.appendChild(circleElement);
+    
+        let scheduleElement = document.createElement("div");
+        scheduleElement.className = "schedule";
+        dateContainer.appendChild(scheduleElement);
+        // //////////////////////////////////////////////////////////////////////////////
 
         if (nowDay.getDay() == 6) {                 // 토요일인 경우
             nowRow = tbody_Calendar.insertRow();    // 새로운 행 추가

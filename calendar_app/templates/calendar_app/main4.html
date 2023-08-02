@@ -82,11 +82,12 @@
               {% for obj in store_list %}
               <div class="store-table">
                 <div class="st-name">
+                  <div class="st-id">{{ obj.id }}</div>
                   {{ obj.store_name }}
                 </div>
                 <div class="st-time">
                   {% for time in store_times_dict|get_item:obj.pk %}
-                  <button class="time-item" type="button" data-time="{{ time.reservation_time }}">{{ time.reservation_time }}</button>
+                  <button class="time-item-{{ obj.id }}" type="button" data-time="{{ time.reservation_time }}">{{ time.reservation_time}}</button>
                   {% endfor %}
                 </div>
               </div>
@@ -133,25 +134,35 @@
             <div class="info">
               <h1>예약자 정보</h1>
               <div class="user-input">
-                <div>
-                  <label for="u_name">이름</label><br>
-                  <input type="text" name="u_name" id="u_name" required>
-                  <span></span>
-                </div>
-                <br><br>
-                <div>
-                  <label for="u_phone">핸드폰 번호</label><br>
-                  <input type="text" name="u_phone" id="u_phone" required>
-                  <span></span>
-                </div>
-                <br><br>
-                <div>
-                  <label for="u_num">인원수</label><br>
-                  <input type="text" name="u_num" id="u_num" required>
-                  <span></span>
-                </div>
-                <button type="submit">예약하기
-                </div>
+                <form action="" method="post">{% csrf_token %}
+                  <span id="selected_store"></span><br>
+                  <input type="hidden" name="selected_store2" id="selected_store2"></input><br>
+                  <input type="date" name="detail_user_date" id="detail_user_date">
+                  <input type="time" name="detail_user_time" id="detail_user_time">
+                  <div>
+                    <label for="selectedDate">날짜 : </label><br>
+                    <span id="selectedDate"></span>
+                    <span></span>
+                  </div>
+                  <div>
+                    <label for="detail_user_name">이름</label><br>
+                    <input type="text" name="detail_user_name" id="detail_user_name">
+                    <span></span>
+                  </div>
+                  <br><br>
+                  <div>
+                    <label for="detail_user_phone">핸드폰 번호</label><br>
+                    <input type="text" name="detail_user_phone" id="detail_user_phone">
+                    <span></span>
+                  </div>
+                  <br><br>
+                  <!-- <div>
+                      <label for="u_num">인원수</label><br>
+                      <input type="number" name="u_num" id="u_num">
+                      <span></span>
+                    </div> -->
+                  <button type="submit">예약하기</button>
+                </form>
             </div>
           </div>
         </div>
@@ -160,7 +171,7 @@
   </section>
 
 <!-- js파일 연결 -->
-<script src="{% static 'calendar_app/js/main4.js' %}"></script>
-
+<!-- <script src="{% static 'calendar_app/js/main5.js' %}"></script> -->
+{% include "calendar_app/js/main4_sujung_js.html" %} 
 {% endblock %}
 

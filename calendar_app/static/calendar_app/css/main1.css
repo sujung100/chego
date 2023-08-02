@@ -1,8 +1,8 @@
 /* start */
 
 /******************** top-wrapper ********************/
-
 /* 
+
 .colorpart{
   height: 100vh;
   min-height: 500px;
@@ -47,10 +47,10 @@
 
 
 .top-section{
-  background: linear-gradient(135deg, #f4583a 0%,#cd1e38 100%);
+  background: linear-gradient(135deg, #C9D5D3 0%,#009476 100%);
 }
 .bottom-section{
-  background: #d4fef2;
+  background: #fff;
 }
 .colorpart h1{
   font-size: 200px;
@@ -67,12 +67,12 @@
 }
 
 .content-theme-dark h1{
-  color: #E33E39;
+  color: #009476;
   text-shadow: 0 20px 40px rgba(0,0,0,.5);
 }
 .content-theme-dark p,
 .content-theme-dark a{
-  color: #FEA98D;
+  color: #C9D5D3;
 }
 .content-theme-light h1{
   color:#062930;
@@ -220,17 +220,20 @@ td {
 
 .Calendar {
   text-align: center;
+  width: 20vw;
 }
 
 .Calendar>thead>tr:first-child>td {
   /* font-family: 'Questrial', sans-serif; */
   font-size: 1.1em;
   font-weight: bold;
+  /* position: relative; */
 }
 
 .Calendar>thead>tr:last-child>td {
   /* font-family: 'Questrial', sans-serif; */
   /* font-weight: 600;      */
+  position: relative;
 }
 
 .Calendar>tbody>tr>td>p {
@@ -277,7 +280,7 @@ td {
   cursor: pointer;
 }
 
-.dot {
+/* .dot {
   position: absolute;
   bottom: 2px;
   left: 50%;
@@ -286,7 +289,38 @@ td {
   width: 4px;
   height: 4px;
   border-radius: 50%;
+} */
+
+
+.date-container {
+  position: relative;
 }
+
+.circle {
+  width: 5px;
+  height: 5px;
+  background-color: blue;
+  border-radius: 50%;
+  /* margin: 0 auto; */
+  position: absolute;
+  /* top: 50%;
+  left: 30%; */
+  top: 40px;
+  left: 20px;
+}
+
+.schedule {
+  width: 5px;
+  height: 5px;
+  background-color: red;
+  border-radius: 50%;
+  /* margin: 0 auto; */
+  position: absolute;
+  top: 40px;
+  left: 30px;
+}
+
+
 
 /******************** 반응형 ********************/
 

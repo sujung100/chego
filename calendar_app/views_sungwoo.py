@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView, TemplateView
-from calendar_app import models
+from django.views.generic import TemplateView
+from reservation import models
 
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
@@ -9,66 +9,59 @@ import json
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
-# 이름변경
-class First_list(ListView):
-    model = models.Store
-    template_name = "calendar_app/main1.html"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        store_list = context['object_list']
+# class Idx_list(ListView):
+#     model = models.Store
+#     template_name = "reservation/main4.html"
 
-        # print(store_list)
-        # Fetch Store_times for each store
-        store_times_dict = {}
-        store_time_date = []
-        for store in store_list:
-            store_times = models.Store_times.objects.filter(store_id=store.pk)
-            store_times_dict[store.pk] = store_times
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         store_list = context['object_list']
 
-        # for date in store_times:
+#         store_times_dict = {}
+#         store_time_date = []
+#         for store in store_list:
+#             store_times = models.Store_times.objects.filter(store_id=store.pk)
+#             store_times_dict[store.pk] = store_times
 
 
+#         context['store_times_dict'] = store_times_dict
+#         return context
 
-        context['store_times_dict'] = store_times_dict
-        return context
-    
 
-def write(request):
-    if request.method == 'POST':
-        sto = models.Store()
-        # print(atc.title)
-        sto.store_name = request.POST["store_name"]
-        sto.address = request.POST["address"]
-        # sto.owner = request.user
-        sto.save()
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     store_list = models.Store.objects.all()
+    #     context['store_list'] = store_list
 
-        
-        selectTime = request.POST.getlist("select_time[]")
-        for time in selectTime:
-            # print(time)
-            sts = models.Store_times()
-            sts.store_id = sto
-            sts.reservation_time = time
-            sts.save()
-    
-    return render(request, 'calendar_app/write.html')
+    #     store_times_dict = {}
+    #     for store in store_list:
+    #         store_times = models.Store_times.objects.filter(store_id=store.pk)
+    #         store_times_dict[store.pk] = store_times
+    #     context['store_times_dict'] = store_times_dict
 
-# from django.shortcuts import render
+    #     pk = self.kwargs.get('pk')
+    #     store = get_object_or_404(models.Store, pk=pk) if pk else store_list.first()
+    #     context['store'] = store
+    #     sto_time = models.Store_times.objects.filter(store_id=store.pk)
 
-# # Create your views here.
+    #     store_dates = []
+    #     for dates in sto_time:
+    #         dates_info  = models.Reservation_user.objects.filter(
+    #         Q(store_id=store) &
+    #         Q(user_time=dates.reservation_time) 
+    #         )
 
-# def list_up(request):
-#     return render(request, "main1.html")
-
-def reserve(request):
-    return render(request, "calendar_app/main2.html")
-
-# def info(request):
-#     return render(request, "main3.html")
-
+    #         user_dates = [info.reservation_date for info in dates_info]
+    #         store_dates.append({
+    #         'user_date': user_dates,
+    #         'disable_time': json.dumps([info.user_time for info in dates_info ])
+    #         })
+    #     context['sto_time'] = sto_time
+    #     context['store_dates_json'] = json.dumps(store_dates, cls=DjangoJSONEncoder)
+    #     return context
 class Idx_list(TemplateView):
-    template_name = "calendar_app/main4_sungwoo.html"
+    template_name = "reservation/main4.html"
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -153,7 +146,12 @@ class Idx_list(TemplateView):
             rst_user.save()
 
             # POST 처리 완료 시 리디렉션
-            return HttpResponseRedirect(reverse('Idx_list'))
+            return HttpResponseRedirect(reverse('main4'))
 
         return self.get(request, *args, **kwargs)
 
+
+
+
+def Idx(request):
+    return render(request,"reservation/index.html")

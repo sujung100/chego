@@ -85,6 +85,8 @@
 
 
 /******************** navi-wrap ********************/
+
+
 section.navi-wrapper {width: 100%; position: relative; z-index: 99;}
 section.navi-wrapper .fixed-nav {width: 600px; margin: 0 auto; background-color: #343434;/*  opacity: 70%;  */border-radius: 0.6rem; position: fixed; top: 85%; left: 30vw;}
 section.navi-wrapper .fixed-nav .inner {}
@@ -111,7 +113,8 @@ section.navi-wrapper .fixed-nav .inner {}
 .fixed-nav__hamburger div:nth-child(3) {top: 8px}
 
 /******************** main-wrap ********************/
-
+.green {background-color: #009476 !important;}
+.selected {background-color: #242424; color: #fff}
 
 section.md-wrapper .reservation {width: 80%; margin: 5rem auto; /* background-color: #333; height: 500px; */ border-radius: 1.5rem; position: relative;}
 .reservation .reserve-wrap {background-color: #555; border-radius: 1.5rem; /* height: 400px; */}
@@ -123,68 +126,186 @@ section.md-wrapper .reservation {width: 80%; margin: 5rem auto; /* background-co
 .rs-head .rec::after {content: ""; position: absolute; top: 0; right: -25px; width: 0px; height: 0px; border-left: 25px solid #009476; border-top: 25px solid transparent; border-bottom: 25px solid transparent;}
 .reserve-wrap .rs-head .rs-color {background-color: #C9D5D3; width: 100%; border-radius: 0 1.5rem 0 0;}
 
-/* .reserve-wrap .rs-body {display: flex;}
-.reserve-wrap .rs-body .rs-tabs {border: 1px solid salmon;}
-.reserve-wrap .rs-body .rs-tabs ul {border: 1px solid black; display: flex; flex-direction: column; height: 500px;}
-.reserve-wrap .rs-body .rs-tabs ul li {border: 1px solid salmon; margin: auto 2rem;}
-.reserve-wrap .rs-body .rs-tabs ul li.active {background-color: #298dff;} */
-
-
-.reserve-wrap .rs-body {display: flex;}
-.reserve-wrap .rs-body .rs-tabs {width: 12%;}
-.rs-tabs .tabs {/* border: 1px solid black; */}
-.rs-tabs .tabs ul {/* border: 1px solid violet; */ border-bottom: 1px solid #333; display: flex; flex-direction: column; height: 10vh;}
-.rs-tabs .tabs ul:last-child {border-bottom: none;}
-.rs-tabs .tabs ul.active {background-color: #333;}
-.rs-tabs .tabs ul li {margin: auto 2rem; color: #fff; font-weight: bold; font-size: 0.9rem; text-align: center;}
 
 /* 
-.reserve-wrap .rs-body .rs-list {width: 40%; background-color: #333;}
+
+화면비율결정 :
+rs-tabs, rs-list, rs-date, rs-info
+
+ */
+
+.reserve-wrap .rs-body {display: flex;}
+/* .reserve-wrap .rs-body .rs-tabs {width: 12%;} */
+.reserve-wrap .rs-body .rs-tabs {width: 10%;}
+.rs-tabs .tabs {/* border: 1px solid black; */}
+.rs-tabs .tabs ul {/* border: 1px solid violet; */ border-bottom: 1px solid #333; display: flex; flex-direction: column; height: 13vh;}
+.rs-tabs .tabs ul:last-child {border-bottom: none;}
+.rs-tabs .tabs ul.active {background-color: #333;}
+.rs-tabs .tabs ul li {margin: auto 1rem; text-align: center;}
+.rs-tabs .tabs ul li a {color: #fff; font-weight: bold; font-size: 0.9rem;}
+
+
+/* .reserve-wrap .rs-body .rs-list {width: 40%; background-color: #333;} */
+.reserve-wrap .rs-body .rs-list {width: 30%; background-color: #333;}
 .rs-list h1 {color: #fff; margin: 1.2rem; text-align: center;}
-.rs-list .store-table {width: calc(100% - 2.4rem); border: 1px solid #818181; padding: 1.5rem 0; margin: 1.2rem; color: #fff; border-radius: 1rem; display: flex;}
+.rs-list .store-table {width: calc(100% - 2.4rem); border: 1px solid #818181; padding: 1.5rem 0; margin: 1.2rem; color: #fff; border-radius: 1rem; display: flex; }
 .rs-list .store-table .st-name {width: 30%; border-right: 1px solid #818181; text-align: center; margin: auto 0;}
 .rs-list .store-table .st-name h5 {cursor: pointer;}
-.rs-list .store-table .st-time {width: 70%; text-align: center; display: flex; justify-content: center; flex-wrap: wrap; margin: 0 auto;}
-.rs-list .store-table .st-time h5 {margin: 0 1rem; cursor: pointer;}
-
-.reserve-wrap .rs-body .rs-date {width: calc(100% - (12% + 40%)); background-color: #242424; margin: 0 0 0 auto; border-radius: 0 0 1.5rem 0; padding-bottom: 2rem;}
-.rs-date h1 {color: #fff; margin: 1.2rem; text-align: center;} */
+.rs-list .store-table .st-time {width: 70%; text-align: center; display: flex; /* justify-content: center; */ flex-wrap: wrap;/*  margin: 0 auto; */ padding: 0 0.5rem;}
 
 
+.rs-list .store-table .st-time #time-style {cursor: pointer; border: 0; outline: 0; background-color: #333; color: #fff; border: 1px solid #818181; border-radius: 2rem; margin: 0.2rem 1rem; padding: 0.5rem;}
+.rs-list .store-table .st-time #time-style:hover {background-color: #009476; color: #fff; border: 1px solid #009476;}
 
-/* toggle */
+/* 비활성 버튼 스타일 */
+.disabled-time {background-color: #333 !important; color: #ddd; opacity: 0.2;}
+.disabled-time:hover {background-color: #333 !important; border: 1px solid #818181 !important; cursor: default !important;}
 
-.reserve-wrap .rs-body .rs-list {width: 40%; background-color: #333;}
-.rs-list h1 {color: #fff; margin: 1.2rem; text-align: center;}
-.rs-list .store-table {width: calc(100% - 2.4rem); /* border: 1px solid #818181;  */padding: 1.5rem 0; margin: 1.2rem; color: #fff; border-radius: 1rem; display: flex; flex-grow: 1;}
-/* .rs-list .store-table .st-name {width: 30%; border-right: 1px solid #818181; text-align: center; margin: auto 0;}
-.rs-list .store-table .st-name h5 {cursor: pointer;} */
-.rs-list .store-table .st-time {width: 70%; text-align: center; display: flex;/*  justify-content: center; */ flex-wrap: wrap; margin: 0 auto;}
-.rs-list .store-table .st-time h5 {margin: 0.5rem; padding: 0.5rem; cursor: pointer; border: 1px solid #818181; border-radius: 2rem;}
-.rs-list .store-table .st-time h5:hover {background-color: #009476; color: #fff; border: none;}
 
-.reserve-wrap .rs-body .rs-date {width: calc(100% - (12% + 40%)); background-color: #242424; margin: 0 0 0 auto; border-radius: 0 0 1.5rem 0; padding-bottom: 2rem;}
-.rs-date h1 {color: #fff; margin: 1.2rem; text-align: center;}
+.reserve-wrap .rs-body .rs-date {width: 35%; background-color: #242424; margin: 0 0 0 auto; /* border-radius: 0 0 1.5rem 0; */ padding-bottom: 2rem;}
+.rs-date .name {color: #fff; margin: 1.2rem 1.2rem 2.4rem 1.2rem; text-align: center; font-weight: bold; font-size: 1.2rem;}
+.rs-date .next {width: 100%; text-align: center;}
+.rs-date .send-bt {cursor: pointer; /* border: 0; */ outline: 0; background-color: #333; color: #fff; border: 1px solid #818181; border-radius: 2rem; margin: 4rem 25% 0 25%; padding: 0.5rem; width: 20%; font-weight: bold;}
+.rs-date .send-bt:hover {background-color: #009476; color: #fff; border: 1px solid #009476;}
 
-/* active info */
-/* .reserve-wrap .rs-body .rs-tabs .active {width: 12%;} */
-.reserve-wrap .rs-body .rs-list .active {width: 24%;}
-.reserve-wrap .rs-body .rs-date .active {width: 40%; border-radius: 0;}
 
-.reserve-wrap .rs-body .rs-info .active {width: calc(100% - (12% + 24% + 40%)); background-color: #333; color: #fff;}
+.reserve-wrap .rs-body .rs-info {width: calc(100% - (10% + 30% + 35%)); background-color: #333; color: #fff; border-radius: 0 0 1.5rem 0;}
 .rs-info .info {}
-.rs-info .info h1 {}
-.rs-info .info form {}
-.rs-info .info input {background-color: #242424;}
+.rs-info .info h1 {margin: 1.2rem; text-align: center;}
+.rs-info .info .user-input {margin: 3rem auto; text-align: center;}
+.rs-info .info input {background: none; border: none; border-bottom: solid #fff 1px; color: #fff; padding-bottom: 10px; padding-left: 10px;}
+.info input::placeholder {color: #aaaaaa; }
+.info input:focus {outline: none; }
+.user-input button {padding: 1rem 2rem; background-color: #F5D042; border: none; margin: 5rem auto; display: block; border-radius: 1rem; cursor: pointer;}
+
+
 /********************  ********************/
 /********************  ********************/
 /********************  ********************/
-/********************  ********************/
+
+/******************** 스크롤바 ********************/
+.scroll{
+  display: inline-block;
+  height: 68vh;  
+  /* padding: 20px; */
+  overflow-y: auto;
+  box-sizing: border-box;
+  color: white;
+  background-color: #333;
+}
+
+/* 스크롤바 설정*/
+.box2::-webkit-scrollbar{
+  width: 6px;
+}
+
+/* 스크롤바 막대 설정*/
+.box2::-webkit-scrollbar-thumb{
+  background: linear-gradient(#009476, #F5D042);
+  border-radius: 25px;
+}
+
+/* 스크롤바 뒷 배경 설정*/
+.box2::-webkit-scrollbar-track{
+  background-color: #575757;
+}
 
 
 
 
 
+
+/******************** 달력 css ********************/
+
+div#mainCalendar {
+  background-color : #555;
+  height: auto;
+  /* width: 400px; */
+  width: 26vw;
+  /* margin: 0px; */
+  padding: 20px;
+  margin: 0 auto;
+  border-radius: 1.2rem;
+  box-shadow:0px 20px 15px -10px #353535;
+  color: #fff;
+}
+
+td {
+  /* width: 50px;
+  height: 50px; */
+  width: 3vw;
+  height: 3vw;
+}
+
+.Calendar {
+  text-align: center;
+}
+
+.Calendar>thead>tr:first-child>td {
+  /* font-family: 'Questrial', sans-serif; */
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.Calendar>thead>tr:last-child>td {
+  /* font-family: 'Questrial', sans-serif; */
+  /* font-weight: 600;      */
+}
+
+.Calendar>tbody>tr>td>p {
+  /* font-family: 'Montserrat', sans-serif; */
+  /* height: 45px;
+  width: 45px;
+  border-radius: 45px;
+  line-height: 45px; */
+  height: 3vw;
+  width: 3vw;
+  border-radius: 3vw;
+  line-height: 3vw;
+  transition-duration: .2s;
+  margin: 2.5px;
+  display: block;
+  text-align: center;
+}        
+
+.pastDay {
+  color: #343434;
+}
+
+.today {
+  background-color: #F5D042;            
+  color: black;
+  /* font-weight: 600; */
+  cursor: pointer;
+}
+
+.futureDay {
+  background-color: #555;
+  cursor: pointer;
+}
+.futureDay:hover{
+  background:#eee;
+  color: #222;
+}
+
+.futureDay.choiceDay,
+.today.choiceDay {
+  background: #009476;
+  color: #fff;
+  /* font-weight: 600; */
+  cursor: pointer;
+}
+
+.dot {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #000;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+}
 
 /******************** 반응형 ********************/
 
@@ -196,97 +317,27 @@ section.md-wrapper .reservation {width: 80%; margin: 5rem auto; /* background-co
   .reserve-wrap .rs-body .rs-list {width: 40%;}
   .reserve-wrap .rs-body .rs-date {width: calc(100% - (15% + 40%))}
   /* .rs-tabs .tabs ul li {margin: auto 1rem; font-size: 0.9rem;} */
-
+  div#mainCalendar {width: 30vw;/*  margin: 0; */}
 }
 
 @media screen and (max-width: 991px) {
   section.navi-wrapper .fixed-nav {left: 20%;}
   section.md-wrapper .reservation {width: 90%; margin: 5rem auto;}
-
+  div#mainCalendar {width: 31vw;/*  margin: 0 2.5rem; */}
+  .Calendar>tbody>tr>td>p {height: 5vw; line-height: 5vw;}
 }
 
 @media screen and (max-width: 767px) {
-
-
+  div#mainCalendar {width: 33vw;/*  margin: 0 2.5rem; */}
+  .Calendar>tbody>tr>td>p {height: 6vw; line-height: 6vw;}
+  .rs-list .store-table {padding: 0.5rem 0; margin: 1.2rem;}
+  .rs-list .store-table .st-time h5 {margin: 0 0.2rem;}
 }
 
 @media screen and (max-width: 575px) {
-
+  .rs-list .store-table {margin: 0.8rem 1.2rem;}
+  .Calendar>thead>tr:first-child>td {font-size: 0.8rem;}
+  .Calendar>thead>tr:last-child>td {font-size: 0.8rem;}
 
 }
 
-
-
-/******************** 달력 css ********************/
-
-div#mainCalendar {
-    background-color : #555;
-    height: auto;
-    width: 400px;
-    margin: 0px;
-    padding: 20px;
-    margin: 0 auto;
-    border-radius: 1.2rem;
-    box-shadow:0px 40px 30px -20px rgba(0,0,0,0.3);
-    color: #fff;
-}
-
-td {
-    width: 50px;
-    height: 50px;
-}
-
-.Calendar {
-    text-align: center;
-}
-
-.Calendar>thead>tr:first-child>td {
-    font-family: 'Questrial', sans-serif;
-    font-size: 1.1em;
-    font-weight: bold;
-}
-
-.Calendar>thead>tr:last-child>td {
-    font-family: 'Questrial', sans-serif;
-    font-weight: 600;     
-}
-
-.Calendar>tbody>tr>td>p {
-    font-family: 'Montserrat', sans-serif;
-    height: 45px;
-    width: 45px;
-    border-radius: 45px;
-    transition-duration: .2s;
-    line-height: 45px;
-    margin: 2.5px;
-    display: block;
-    text-align: center;
-}        
-
-.pastDay {
-    color: #343434;
-}
-
-.today {
-    background-color: #F5D042;            
-    color: black;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.futureDay {
-    background-color: #555;
-    cursor: pointer;
-}
-.futureDay:hover{
-    background:#eee;
-    color: #222;
-}
-
-.futureDay.choiceDay,
-.today.choiceDay {
-    background: #0A174E;
-    color: #fff;
-    font-weight: 600;
-    cursor: pointer;
-}

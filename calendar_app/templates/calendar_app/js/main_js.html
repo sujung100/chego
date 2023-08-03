@@ -1,4 +1,5 @@
-
+{% autoescape off %}
+<script>
     // 달력 시작
 
     window.onload = function () { buildCalendar(); }    // 웹 페이지가 로드되면 buildCalendar 실행
@@ -241,16 +242,16 @@
                 const buttonTime = timeButtons[i].getAttribute("data-time");
                 if (disableTimes.includes(buttonTime)) {
                     timeButtons[i].disabled = true;
-                    // 비활성버튼 클래스 추가 -> css스타일 주기
+                     // 비활성버튼 css스타일 주기
                     timeButtons[i].classList.add('disabled-time');
+                    console.log("가나다");
                 } else {
                     timeButtons[i].disabled = false;
                     timeButtons[i].classList.remove('disabled-time');
                 }
-              }
-              
-              console.log("disableTimes:", disableTimes);
-              console.log("dkdk");
+            }
+
+            console.log("disableTimes:", disableTimes);
         }
 
         // updateDisabledTimes(3, selectedDate);
@@ -289,3 +290,5 @@
             // 사용자가 선택한 날짜에 대한 처리를 여기에서 수행하세요.
         }
     }
+</script>
+{% endautoescape %}

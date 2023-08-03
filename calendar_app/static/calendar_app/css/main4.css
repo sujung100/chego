@@ -126,15 +126,17 @@ section.md-wrapper .reservation {width: 80%; margin: 5rem auto; /* background-co
 .rs-head .rec::after {content: ""; position: absolute; top: 0; right: -25px; width: 0px; height: 0px; border-left: 25px solid #009476; border-top: 25px solid transparent; border-bottom: 25px solid transparent;}
 .reserve-wrap .rs-head .rs-color {background-color: #C9D5D3; width: 100%; border-radius: 0 1.5rem 0 0;}
 
-/* .reserve-wrap .rs-body {display: flex;}
-.reserve-wrap .rs-body .rs-tabs {border: 1px solid salmon;}
-.reserve-wrap .rs-body .rs-tabs ul {border: 1px solid black; display: flex; flex-direction: column; height: 500px;}
-.reserve-wrap .rs-body .rs-tabs ul li {border: 1px solid salmon; margin: auto 2rem;}
-.reserve-wrap .rs-body .rs-tabs ul li.active {background-color: #298dff;} */
 
+/* 
+
+화면비율결정 :
+rs-tabs, rs-list, rs-date, rs-info
+
+ */
 
 .reserve-wrap .rs-body {display: flex;}
-.reserve-wrap .rs-body .rs-tabs {width: 12%;}
+/* .reserve-wrap .rs-body .rs-tabs {width: 12%;} */
+.reserve-wrap .rs-body .rs-tabs {width: 10%;}
 .rs-tabs .tabs {/* border: 1px solid black; */}
 .rs-tabs .tabs ul {/* border: 1px solid violet; */ border-bottom: 1px solid #333; display: flex; flex-direction: column; height: 13vh;}
 .rs-tabs .tabs ul:last-child {border-bottom: none;}
@@ -143,37 +145,31 @@ section.md-wrapper .reservation {width: 80%; margin: 5rem auto; /* background-co
 .rs-tabs .tabs ul li a {color: #fff; font-weight: bold; font-size: 0.9rem;}
 
 
-.reserve-wrap .rs-body .rs-list {width: 40%; background-color: #333;}
+/* .reserve-wrap .rs-body .rs-list {width: 40%; background-color: #333;} */
+.reserve-wrap .rs-body .rs-list {width: 30%; background-color: #333;}
 .rs-list h1 {color: #fff; margin: 1.2rem; text-align: center;}
 .rs-list .store-table {width: calc(100% - 2.4rem); border: 1px solid #818181; padding: 1.5rem 0; margin: 1.2rem; color: #fff; border-radius: 1rem; display: flex; }
 .rs-list .store-table .st-name {width: 30%; border-right: 1px solid #818181; text-align: center; margin: auto 0;}
 .rs-list .store-table .st-name h5 {cursor: pointer;}
-.rs-list .store-table .st-time {width: 70%; text-align: center; display: flex; /* justify-content: center; */ flex-wrap: wrap;/*  margin: 0 auto; */ padding: 0 1rem;}
-/* time-item 스타일 */
-/* .rs-list .store-table .st-time .time-item {cursor: pointer; border: 0; outline: 0; background-color: #333; color: #fff; border: 1px solid #818181; border-radius: 2rem; margin: 0.2rem 1rem; padding: 0.5rem;}
-.rs-list .store-table .st-time .time-item:hover {background-color: #009476; color: #fff; border: 1px solid #009476;} */
+.rs-list .store-table .st-time {width: 70%; text-align: center; display: flex; /* justify-content: center; */ flex-wrap: wrap;/*  margin: 0 auto; */ padding: 0 0.5rem;}
+
+
 .rs-list .store-table .st-time #time-style {cursor: pointer; border: 0; outline: 0; background-color: #333; color: #fff; border: 1px solid #818181; border-radius: 2rem; margin: 0.2rem 1rem; padding: 0.5rem;}
 .rs-list .store-table .st-time #time-style:hover {background-color: #009476; color: #fff; border: 1px solid #009476;}
 
 /* 비활성 버튼 스타일 */
-.disabled-time {
-  background-color: black;
-  color: #ddd;
-  opacity: 0.2;
-}
+.disabled-time {background-color: #333 !important; color: #ddd; opacity: 0.2;}
+.disabled-time:hover {background-color: #333 !important; border: 1px solid #818181 !important; cursor: default !important;}
 
 
-
-.reserve-wrap .rs-body .rs-date {width: calc(100% - (12% + 40%)); background-color: #242424; margin: 0 0 0 auto; /* border-radius: 0 0 1.5rem 0; */ padding-bottom: 2rem;}
+.reserve-wrap .rs-body .rs-date {width: 35%; background-color: #242424; margin: 0 0 0 auto; /* border-radius: 0 0 1.5rem 0; */ padding-bottom: 2rem;}
 .rs-date .name {color: #fff; margin: 1.2rem 1.2rem 2.4rem 1.2rem; text-align: center; font-weight: bold; font-size: 1.2rem;}
 .rs-date .next {width: 100%; text-align: center;}
 .rs-date .send-bt {cursor: pointer; /* border: 0; */ outline: 0; background-color: #333; color: #fff; border: 1px solid #818181; border-radius: 2rem; margin: 4rem 25% 0 25%; padding: 0.5rem; width: 20%; font-weight: bold;}
 .rs-date .send-bt:hover {background-color: #009476; color: #fff; border: 1px solid #009476;}
 
 
-
-
-.reserve-wrap .rs-body .rs-info {width: calc(100% - (12% + 20% + 38%)); background-color: #333; color: #fff; border-radius: 0 0 1.5rem 0;}
+.reserve-wrap .rs-body .rs-info {width: calc(100% - (10% + 30% + 35%)); background-color: #333; color: #fff; border-radius: 0 0 1.5rem 0;}
 .rs-info .info {}
 .rs-info .info h1 {margin: 1.2rem; text-align: center;}
 .rs-info .info .user-input {margin: 3rem auto; text-align: center;}

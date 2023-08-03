@@ -1,10 +1,8 @@
 {% autoescape off %}
 <script>
     // 달력 시작
-    let availableCompanyDates;
-    let totalDisableTimes;
 
-    window.onload = function () { buildCalendar(comDates, disTimes); }    // 웹 페이지가 로드되면 buildCalendar 실행
+    window.onload = function () { buildCalendar(); }    // 웹 페이지가 로드되면 buildCalendar 실행
 
     let nowMonth = new Date();  // 현재 달을 페이지를 로드한 날의 달로 초기화
     let today = new Date();     // 페이지를 로드한 날짜를 저장
@@ -14,7 +12,7 @@
     document.getElementById("detail_user_date").value = nowdate;
 
     // 달력 생성 : 해당 달에 맞춰 테이블을 만들고, 날짜를 채워 넣는다.
-    function buildCalendar(comDates, disTimes) {
+    function buildCalendar() {
 
         let firstDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth(), 1);     // 이번달 1일
         let lastDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, 0);  // 이번달 마지막날
@@ -60,10 +58,8 @@
             dateContainer.appendChild(scheduleElement);
 
             // 점과 같이 표시될 예약가능숫자
-            let okTime = comDates - disTimes;
             let reserveElement = document.createElement( 'div' );
-            let rvText = document.createTextNode(okTime);
-            // console.log(rvText);
+            let rvText = document.createTextNode( '예약가능' );
             reserveElement.appendChild( rvText );
             reserveElement.className = "reservetxt";
             dateContainer.appendChild( reserveElement );
@@ -116,12 +112,12 @@
     // 이전달 버튼 클릭
     function prevCalendar() {
         nowMonth = new Date(nowMonth.getFullYear(), nowMonth.getMonth() - 1, nowMonth.getDate());   // 현재 달을 1 감소
-        buildCalendar(comDates, disTimes);    // 달력 다시 생성
+        buildCalendar();    // 달력 다시 생성
     }
     // 다음달 버튼 클릭
     function nextCalendar() {
         nowMonth = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, nowMonth.getDate());   // 현재 달을 1 증가
-        buildCalendar(comDates, disTimes);    // 달력 다시 생성
+        buildCalendar();    // 달력 다시 생성
     }
 
     // input값이 한자리 숫자인 경우 앞에 '0' 붙혀주는 함수
@@ -192,10 +188,6 @@
 
                 storeTable.classList.add('selected');
                 updateNextButton();
-                // 여기
-                const [comDates, disTimes] = updateDisabledTimes(storeIdNumber, sDate);
-                console.log("Available Company Dates:", comDates);
-                console.log("Total Disabled Times:", disTimes);
             });
         });
 
@@ -234,7 +226,7 @@
         let sDate = selectedDateElement.textContent;
         let selectedIdElement = document.getElementById("selected_store");
         let sId = selectedIdElement.value;
-        // console.log('sDate:', sDate);
+        console.log('sDate:', sDate);
         // console.log('sId:', selectedIdElement);
         // console.log('sId:', sId);
 
@@ -287,13 +279,9 @@
 
             console.log("disableTimes:", disableTimes);
             console.log("disableTimes의 갯수:", disableTimes.length);
-            // console.log(companyDates);
+            console.log(companyDates);
             console.log("companyDates 갯수임:", companyDates.length/2);
-            comDates = companyDates.length / 2;
-            disTimes = disableTimes.length;
             // console.log("companyDates 갯수:", companyDates.length);
-            // 여기
-            return [companyDates.length / 2, disableTimes.length];
         }
 
         // updateDisabledTimes(3, selectedDate);
@@ -315,7 +303,6 @@
         for (let i = 0; i < allStoreIds.length; i++) {
             const storeId = allStoreIds[i];
             updateDisabledTimes(storeId, sDate);
-            console.log(updateDisabledTimes(storeId, sDate)[1]);
         }
     });
 

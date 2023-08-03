@@ -62,8 +62,7 @@
             // 점과 같이 표시될 예약가능숫자
             let okTime = comDates - disTimes;
             let reserveElement = document.createElement( 'div' );
-            let rvText = document.createTextNode(okTime);
-            // console.log(rvText);
+            let rvText = document.createTextNode(okTime + ' 예약가능');
             reserveElement.appendChild( rvText );
             reserveElement.className = "reservetxt";
             dateContainer.appendChild( reserveElement );
@@ -234,7 +233,7 @@
         let sDate = selectedDateElement.textContent;
         let selectedIdElement = document.getElementById("selected_store");
         let sId = selectedIdElement.value;
-        // console.log('sDate:', sDate);
+        console.log('sDate:', sDate);
         // console.log('sId:', selectedIdElement);
         // console.log('sId:', sId);
 
@@ -287,7 +286,7 @@
 
             console.log("disableTimes:", disableTimes);
             console.log("disableTimes의 갯수:", disableTimes.length);
-            // console.log(companyDates);
+            console.log(companyDates);
             console.log("companyDates 갯수임:", companyDates.length/2);
             comDates = companyDates.length / 2;
             disTimes = disableTimes.length;
@@ -315,7 +314,6 @@
         for (let i = 0; i < allStoreIds.length; i++) {
             const storeId = allStoreIds[i];
             updateDisabledTimes(storeId, sDate);
-            console.log(updateDisabledTimes(storeId, sDate)[1]);
         }
     });
 

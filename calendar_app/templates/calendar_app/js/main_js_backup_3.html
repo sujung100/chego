@@ -131,8 +131,6 @@
 
     //  달력 끝
 
-
-    // 시간표 조회 화면에서 선택한 날짜를 예약자 정보의 날짜값으로 불러옴(로컬스토리지, 쿠키 사용)
     function setUserDateValue() {
         const storedDate = localStorage.getItem("selected_date");
         if (storedDate) {
@@ -167,14 +165,12 @@
         let timeItems = document.querySelectorAll('[class^="time-item-"]');
         let nextButton = document.getElementById('next-button');
 
-        // 업체목록의 업체를 클릭하면, 
         document.querySelectorAll('.store-table').forEach(function (storeTable) {
             storeTable.addEventListener('click', function () {
                 const storeName = storeTable.querySelector('.st-name');
                 const storeId = storeTable.querySelector('.st-id');
                 document.getElementById('selected-store').innerText = storeName.innerText;
                 document.getElementById('selected_store').innerText = storeId.innerText;
-                // 선택한 업체의 id를 정수로 변환
                 const storeIdNumber = parseInt(storeId.innerText, 10);
                 console.log(storeIdNumber);
                 document.getElementById('selected_store2').value = storeIdNumber;
@@ -193,9 +189,9 @@
                 storeTable.classList.add('selected');
                 updateNextButton();
                 // 여기
-                // const [comDates, disTimes] = updateDisabledTimes(storeIdNumber, sDate);
-                // console.log("클릭시 conDates:", comDates);
-                // console.log("클릭시 disTimes:", disTimes);
+                const [comDates, disTimes] = updateDisabledTimes(storeIdNumber, sDate);
+                console.log("Available Company Dates:", comDates);
+                console.log("Total Disabled Times:", disTimes);
             });
         });
 
@@ -203,7 +199,6 @@
             let hasGreen = Array.from(timeItems).some(
                 (item) => item.classList.contains('green')
             );
-            
 
             if (hasGreen) {
                 nextButton.style.display = 'block';
@@ -212,7 +207,6 @@
             }
         }
 
-        // 시간 선택하면 기존에 선택됐던것은 선택해제 후, 선택한 시간을 예약자 정보에 할당
         timeItems.forEach(function (item) {
             item.addEventListener('click', function () {
                 const selectedTime = this.getAttribute('data-time');

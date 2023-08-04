@@ -303,34 +303,23 @@ td {
 .circle {
   width: 5px;
   height: 5px;
-  background-color: blue;
+  background-color: #61AC61;
   border-radius: 50%;
   /* margin: 0 auto; */
   position: absolute;
   /* top: 50%;
   left: 30%; */
-  top: 35px;
+  top: 40px;
   left: 20px;
-}
-
-.schedule {
-  width: 5px;
-  height: 5px;
-  background-color: red;
-  border-radius: 50%;
-  /* margin: 0 auto; */
-  position: absolute;
-  top: 35px;
-  left: 30px;
 }
 
 .reservetxt {
   width: 50px;
   position: absolute;
-  top: 45px;
-  left: 10px;
+  top: 35px;
+  left: 8px;
   font-size: 2px;
-  color: blue;
+  color: #61AC61;
 }
 
 /******************** 반응형 ********************/

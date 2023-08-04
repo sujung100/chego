@@ -7,8 +7,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="{% static 'css/index.css' %}?after">
-  <link rel="stylesheet" href="{% static 'css/calendar.css' %}">
+  <link rel="stylesheet" href="{% static 'reservation/css/index.css' %}">
+  <link rel="stylesheet" href="{% static 'reservation/css/calendar.css' %}">
   
   <title>홈</title>
 </head>
@@ -46,16 +46,16 @@
         <div class="store_name">
           {{ obj.store_name }}
         </div>
-        <a href="/cal/{{ obj.id }}">
-          <div class="store_time">
-            <!-- <a class="select_time" href="/cal/{{obj.id}}"> -->
-              {% for time in store_times_dict|get_item:obj.pk %}
-                <button class="time-item" type="button" data-time="{{ time.reservation_time }}">{{ time.reservation_time }}</>
-                <!-- <p class="state">예약 가능</p> -->
-              {% endfor %}
-            <!-- </a> -->
-          </div>
-        </a>
+        <div class="store_time">
+          
+          {% for time in store_times_dict|get_item:obj.pk %}
+          <button class="time-item" type="button" data-time="{{ time.reservation_time }}">{{ time.reservation_time }}</button>
+            
+          {% endfor %}
+          <a href="/cal/{{ obj.id }}">
+            <button type="button" class="reserve_click">예약하기</button>
+          </a>
+        </div>
       </div>
       {% endfor %}
     </div>
@@ -89,6 +89,7 @@
       </div>
       <br><br><br>
       <div class="test_date">
+        
         <span id="selectedDate"></span>
       </div>
     </div>

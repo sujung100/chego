@@ -29,7 +29,7 @@ class Store(models.Model):
         return f"{self.store_name}{self.owner}{self.cdate}"
     
     def get_absolute_url(self):
-        return reverse("community:view_detail", args=(self.id,))
+        return reverse("reservation:detail", args=(self.id,))
     
 class Manager(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -50,6 +50,7 @@ def save_user_profile(sender, instance, **kwargs):
 class Reservation_user(models.Model):
     id = models.AutoField(primary_key=True)
     user_name = models.CharField(max_length=20, null=True)
+    user_phone = models.CharField(max_length=20, null=True)
     store_id = models.ForeignKey(Store, on_delete=models.CASCADE, db_column="store_id")
     reservation_date = models.CharField(max_length=20, null=True)
     user_time = models.CharField(max_length=20, null=True)

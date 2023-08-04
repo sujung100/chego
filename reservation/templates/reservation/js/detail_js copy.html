@@ -1,15 +1,13 @@
 <script>
     // 달력 시작
 
-    window.onload = function () {
-        buildCalendar();
-        applyStoredValues();
-        attachTimeItemsClickEvent();
-    };
+    window.onload = function () { buildCalendar(); }    // 웹 페이지가 로드되면 buildCalendar 실행
 
     let nowMonth = new Date();  // 현재 달을 페이지를 로드한 날의 달로 초기화
     let today = new Date();     // 페이지를 로드한 날짜를 저장
     today.setHours(0, 0, 0, 0);    // 비교 편의를 위해 today의 시간을 초기화
+
+    
 
 
 
@@ -85,7 +83,8 @@
         setCookie("selected_date2", detail_date, 1);
         localStorage.setItem("selected_date2", detail_date);
 
-
+        // restoreSelectedDate2();
+        
     }
 
     // 이전달 버튼 클릭
@@ -109,33 +108,6 @@
     }
 
     // 달력 끝
-
-    function updateAvailableTimes(selectedDate) {
-        // 백엔드에서 이용 가능한 시간 목록을 가져오기
-        fetch(`/get_available_times?selected_date=${selectedDate}`)
-            .then(response => response.json())
-            .then(data => {
-                // 시간 선택 옵션을 업데이트하기
-                let timeContainer = document.getElementById("timePicker"); // 시간 옵션을 추가할 DOM 요소를 참조
-                timeContainer.innerHTML = ""; // 기존 시간 옵션 제거
-
-                data.forEach(time => { // 가져온 이용 가능한 시간을 순회
-                    let button = document.createElement("button");
-                    button.type = "button";
-                    button.classList.add("time-item");
-                    button.setAttribute("data-time", time.fields.reservation_time); // 데이터는 fields 객체 안에 있음
-                    button.textContent = time.fields.reservation_time; // 데이터는 fields 객체 안에 있음
-
-                    button.addEventListener("click", function () {
-                        const selectedTime = this.getAttribute("data-time");
-                        localStorage.setItem("selected_time2", selectedTime);
-                        applyStoredValues();
-                    });
-
-                    timeContainer.appendChild(button); // 시간 선택 버튼 추가
-                });
-            });
-    }
 
     function setUserDateValue() {
         const storedDate = localStorage.getItem("selected_date");
@@ -178,40 +150,50 @@
     }
 
 
-    document.querySelector("#reservationDateInput").addEventListener("change", (event) => {
-        const selectedDate = event.target.value;
-        updateAvailableTimes(selectedDate);
-    });
+    document.addEventListener("DOMContentLoaded", function () {
 
-    function attachTimeItemsClickEvent() {
+        let detailUserDateInput = document.getElementById("detail_user_date");
+        let detailUserTimeInput = document.getElementById("detail_user_time");
+
+        // 페이지가 로드될 때 로컬 스토리지에서 값을 가져오기
+        let storedDate = localStorage.getItem("selected_date");
+        let storedTime = localStorage.getItem("selected_time");
+
+        // 저장된 값이 있는 경우 사용자의 날짜 및 시간 입력 필드에 값을 설정
+        if (storedDate && storedTime) {
+            detailUserDateInput.value = storedDate;
+            detailUserTimeInput.value = storedTime;
+            document.getElementById("selectedDate").innerHTML = storedDate;
+
+            // 처음 설정 후 "selected_date2" 및 "selected_time2"로 전환
+            storedDate = localStorage.getItem("selected_date2");
+            storedTime = localStorage.getItem("selected_time2");
+        } else {
+            detailUserDateInput.value = localStorage.getItem("selected_date2");
+            detailUserTimeInput.value = localStorage.getItem("selected_time2");
+        }
+
         const timeItems = document.querySelectorAll('.time-item');
 
         timeItems.forEach(item => {
             item.addEventListener('click', function () {
+                // Get the time value from the 'data-time' attribute
                 const selectedTime = this.getAttribute('data-time');
-                document.getElementById('detail_user_time').value = selectedTime;
 
+                // Set the value of the 'input type="time"' element with the selected time value
+                document.getElementById('detail_user_time').value = selectedTime;
+                setCookie("selected_time2", selectedTime, 1);
                 localStorage.setItem("selected_time2", selectedTime);
-                applyStoredValues();
+
+                detailUserDateInput.value = localStorage.getItem("selected_date2");
+                detailUserTimeInput.value = localStorage.getItem("selected_time2");
+
+                // Update the 'selectedDate' element with the chosen date
+                document.getElementById("selectedDate").innerHTML = localStorage.getItem("selected_date2");
             });
         });
-    }
 
-    function applyStoredValues() {
-        let detailUserDateInput = document.getElementById("detail_user_date");
-        let detailUserTimeInput = document.getElementById("detail_user_time");
-
-        let storedDate = localStorage.getItem("selected_date2");
-        let storedTime = localStorage.getItem("selected_time2");
-
-        if (storedDate) {
-            detailUserDateInput.value = storedDate;
-            document.getElementById("selectedDate").innerHTML = storedDate;
-        }
-        if (storedTime) {
-            detailUserTimeInput.value = storedTime;
-        }
-    }
+    });
 </script>
 
 <!-- let selectedDateElement = document.getElementById("selectedDate");

@@ -1,0 +1,148 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+  font-size:62.5%;
+	font: inherit;
+	vertical-align: baseline;
+}
+
+ol, ul{
+  list-style: none;
+}
+
+#wrap {
+  width: 100%;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 4fr 2fr;
+  grid-template-rows: auto;
+  /* position: relative; */
+}
+
+.box1 {
+  /* background-color: #000; */
+  display:flex;
+  justify-content: end;
+}
+
+.box1 .content1{
+  display:flex;
+  border:5px solid #000;
+  width:90%;
+  height:80%;
+  align-self: center;
+}
+
+.box1 .content1 .section1{
+  display:flex;
+  justify-content: end;
+  align-items: center;
+  border:5px solid lightcoral;
+  width:90%;
+  height:80%;
+  align-self: center;
+  position: relative;
+}
+
+.box1 .content1 .section1 a{
+  width:30%;
+  height:30%;
+}
+
+.rsv_test{
+  width:100%;
+  height:100%;
+}
+
+#store{
+  width:40%;
+  height:40%;
+  /* background-color:blueviolet; */
+  border:3px solid blueviolet;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-100%, -50%);
+  z-index: 1;
+
+  transition: all 0.5s ease-in-out;
+}
+
+.box1 .content1 .section1 .store_test{
+  width:40%;
+  height:40%;
+  /* background-color:lightskyblue; */
+  border:3px solid lightskyblue;
+  /* margin-left: -35%;
+  margin-top: -10%; */
+  position: absolute;
+  top: 45%;
+  left: 45%;
+  transform: translate(-75%, -55%);
+
+  transition: all 0.5s ease-in-out;
+
+}
+
+#store, .store_test {
+  /* animation: fadeInOut 0.5s linear; */
+  /* animation: growShrink 0.5s linear; */
+}
+
+.box2 {
+  /* background-color: brown; */
+  display:flex;
+  /* justify-content: end; */
+}
+
+.box2 .content2{
+  border:5px solid brown;
+  width:80%;
+  height:80%;
+  align-self: center;
+}
+
+/* .container {
+  position: absolute;
+  width:60%;
+  height:60%;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color:#fff;
+  background-color:blue;
+} */
+
+@keyframes fadeInOut {
+  0%   { opacity: 1; }
+  34%  { opacity: 0; }
+  66%  { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes growShrink {
+  0%   { transform: scale(1); }
+  34%  { transform: scale(1.2); }
+  66%  { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+@media screen and (max-width:6000px){
+  body{
+    width:100%;
+  }
+}

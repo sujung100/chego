@@ -10,6 +10,8 @@ today.setHours(0, 0, 0, 0);    // 비교 편의를 위해 today의 시간을 초
 const nowdate = new Date().toISOString().substring(0, 10);
 document.getElementById("user_date").value = nowdate;
 
+
+
 // 달력 생성 : 해당 달에 맞춰 테이블을 만들고, 날짜를 채워 넣는다.
 function buildCalendar() {
 
@@ -80,7 +82,7 @@ function choiceDate(newDIV) {
 
   
 
-  restoreSelectedDate();
+  
   location.reload();
   
 }
@@ -134,7 +136,7 @@ function setUserDateValue() {
   }
   
   document.addEventListener('DOMContentLoaded', function () {
-    restoreSelectedDate();
+    // restoreSelectedDate();
     restoreSelectedDate2();
     setUserDateValue();
     const timeItems = document.querySelectorAll('.time-item');
@@ -147,14 +149,15 @@ function setUserDateValue() {
 
         // Set the value of the 'input type="time"' element with the selected time value
         document.getElementById('user_time').value = selectedTime;
+        setCookie("selected_time", selectedTime, 1);
+        localStorage.setItem("selected_time", selectedTime);
       });
     });
 
     let selectedDateElement = document.getElementById("selectedDate");
     let sDate = selectedDateElement.textContent;
-    console.log('sDate:', sDate);
-    const companyDates = JSON.parse('{{ company_dates_json | escapejs | safe }}');
-    // document.getElementById("selectedDate").textContent
+    // console.log('sDate:', sDate);
+    // const companyDates = JSON.parse('{{ company_dates_json | escapejs | safe }}');
 
   
     function updateDisabledTimes(selectedDate) {
@@ -179,7 +182,7 @@ function setUserDateValue() {
       }
     }
 
-    updateDisabledTimes(sDate);
+    // updateDisabledTimes(sDate);
 
 
   });

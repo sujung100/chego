@@ -22,7 +22,10 @@ urlpatterns = [
     # path("",views.Idx.as_view(),name="index"),
 
     # path("", views.Idx, name="index"),
-    path("", views.Idx_list.as_view(), name="index"),
+    # path("", views.Idx_list.as_view(), name="index"),
+    path("", views.Idx_list.as_view(), name="main4"),
+    # path("", views.Idx_list.as_view(), name="list_up"),
     path('admin/', admin.site.urls),
-    path('cal/', include('reservation.urls')),
+    path('reservation/', include('reservation.urls')),
+    path('manager/', include('manager.urls')),
 ]

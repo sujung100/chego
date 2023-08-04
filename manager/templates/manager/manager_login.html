@@ -1,0 +1,69 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'manager/css/manager_login.css' %}?after">
+  <title>예약TEST</title>
+
+</head>
+
+<body>
+  <div id="wrap">
+    <div class="box1">
+      <div class="content1">
+
+      </div>
+
+    </div>
+
+
+
+    <div class="box2">
+      <div class="content2">
+        뭔데
+        <form method="POST">
+          {% csrf_token %}
+
+          <div class="form-group">
+            <label for="manager_id">Username:</label>
+            <input type="text" class="form-control" id="manager_id"
+              name="manager_id" value="{{ form.username.value|default:'' }}" required />
+            {{ form.username.errors }}
+          </div>
+
+          <div class="form-group">
+            <label for="manager_pwd">Password:</label>
+            <input type="password" class="form-control" id="manager_pwd"
+              name="manager_pwd" value="{{ form.password.value|default:'' }}" required />
+            {{ form.password.errors }}
+          </div>
+
+          <!-- <div class="form-group">
+            <label for="manager_phone">Phone number:</label>
+            <input type="tel" class="form-control" id="manager_phone"
+              name="manager_phone" value="{{ form.phone_number.value|default:'' }}" />
+            {{ form.phone_number.errors }}
+          </div>
+
+          <div class="form-group">
+            <label for="manager_email">Email:</label>
+            <input type="email" class="form-control" id="manager_email"
+              name="manager_email" value="{{ form.email.value|default:'' }}" />
+            {{ form.email.errors }}
+          </div> -->
+
+          <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+
+
+</body>
+
+</html>

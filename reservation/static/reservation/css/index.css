@@ -63,6 +63,8 @@ ol, ul{
 }
 
 .test_date{
+  width:10%;
+  height:10%;
   margin:0 auto;
 }
 
@@ -84,9 +86,11 @@ ol, ul{
   
 }
 
-.content1 .store a{
-  width:100%;
-  height:100%;
+.content1 .store_time a{
+  width:20%;
+  height:20%;
+  display: flex;
+  justify-self:end;
 }
 
 .content1 .store_time{

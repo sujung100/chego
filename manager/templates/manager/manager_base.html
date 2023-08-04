@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'manager/css/manager_base.css' %}?after">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="wrap">
+    <div class="box1">
+      <div class="content1">
+        {% block container1 %}
+        {% endblock %}
+      </div>
+    </div>
+
+    <div class="box2">
+      <div class="content2">
+        {% block container2 %}
+        {% endblock %}
+      </div>
+    </div>
+
+  </div>
+</body>
+
+</html>
+

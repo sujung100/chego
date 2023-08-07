@@ -4,7 +4,9 @@
     let availableCompanyDates;
     let totalDisableTimes;
 
-    window.onload = function () { buildCalendar(comDates, disTimes); }    // 웹 페이지가 로드되면 buildCalendar 실행
+    window.onload = function () { 
+        buildCalendar();
+    }    // 웹 페이지가 로드되면 buildCalendar 실행
 
     let nowMonth = new Date();  // 현재 달을 페이지를 로드한 날의 달로 초기화
     let today = new Date();     // 페이지를 로드한 날짜를 저장
@@ -14,7 +16,7 @@
     document.getElementById("detail_user_date").value = nowdate;
 
     // 달력 생성 : 해당 달에 맞춰 테이블을 만들고, 날짜를 채워 넣는다.
-    function buildCalendar(comDates, disTimes) {
+    function buildCalendar() {
 
         let firstDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth(), 1);     // 이번달 1일
         let lastDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, 0);  // 이번달 마지막날
@@ -32,37 +34,47 @@
         for (let j = 0; j < firstDate.getDay(); j++) {  // 이번달 1일의 요일만큼
             let nowColumn = nowRow.insertCell();        // 열 추가
         }
+        // 추가
+        const currentDate = localStorage.getItem("selected_date");
+        const selectedStyle = "background:#009476"; // 선택된 날짜의 스타일
 
-        for (let nowDay = firstDate; nowDay <= lastDate; nowDay.setDate(nowDay.getDate() + 1)) {   // day는 날짜를 저장하는 변수, 이번달 마지막날까지 증가시키며 반복  
+        for (let nowDay = new Date(firstDate); nowDay <= lastDate; nowDay.setDate(nowDay.getDate() + 1)) {  // day는 날짜를 저장하는 변수, 이번달 마지막날까지 증가시키며 반복  
 
             let nowColumn = nowRow.insertCell();        // 새 열을 추가하고
 
             // ////////////////////////////////////////////
             // 달력에 점을 찍기위해서 위치를 잡을 컨테이너 생성
-            let dateContainer = document.createElement("div");
-            dateContainer.className = "date-container";
-            nowColumn.appendChild(dateContainer);
+            // let dateContainer = document.createElement("div");
+            // dateContainer.className = "date-container";
+            // nowColumn.appendChild(dateContainer);
             // ////////////////////////////////////////////
 
 
             let newDIV = document.createElement("p");
             newDIV.innerHTML = leftPad(nowDay.getDate());        // 추가한 열에 날짜 입력
+            // 추가
+            // 선택된 날짜에 스타일 적용
+            let formattedDate = `${nowDay.getFullYear()}-${leftPad(nowDay.getMonth() + 1)}-${leftPad(nowDay.getDate())}`;
+            if (formattedDate === currentDate) {
+                newDIV.style = selectedStyle;
+            }
+
             nowColumn.appendChild(newDIV);
 
             // //////////////////////////////////////////////////////////////////////////////
-            // 열 생성후, 클래스 부여
-            let circleElement = document.createElement("div");
-            circleElement.className = "circle";
-            dateContainer.appendChild(circleElement);
+            // // 열 생성후, 클래스 부여
+            // let circleElement = document.createElement("div");
+            // circleElement.className = "circle";
+            // dateContainer.appendChild(circleElement);
 
-            // 점과 같이 표시될 예약가능숫자
-            let okTime = comDates - disTimes;
-            let reserveElement = document.createElement( 'div' );
-            let rvText = document.createTextNode(okTime);
-            // console.log(rvText);
-            reserveElement.appendChild( rvText );
-            reserveElement.className = "reservetxt";
-            dateContainer.appendChild( reserveElement );
+            // // 점과 같이 표시될 예약가능숫자
+            // let okTime = comDates - disTimes;
+            // let reserveElement = document.createElement( 'div' );
+            // let rvText = document.createTextNode(okTime);
+            // // console.log(rvText);
+            // reserveElement.appendChild( rvText );
+            // reserveElement.className = "reservetxt";
+            // dateContainer.appendChild( reserveElement );
             // //////////////////////////////////////////////////////////////////////////////
 
             if (nowDay.getDay() == 6) {                 // 토요일인 경우
@@ -96,6 +108,7 @@
         let day = newDIV.textContent;
 
         let formattedDate = `${year}-${month}-${day}`;
+        newDIV.setAttribute('data-date', formattedDate); // data-date 속성 추가
         selectedDate.textContent = formattedDate;
 
         console.log(formattedDate);
@@ -104,20 +117,33 @@
 
         setCookie("selected_date", formattedDate, 1);
         localStorage.setItem("selected_date", formattedDate);
+        localStorage.setItem("selected_style", "background:#009476");
 
 
         location.reload();
     }
 
+    function applyStyle() {
+        const currentDate = localStorage.getItem("selected_date");
+        const selectedStyle = localStorage.getItem("selected_style");
+        if (currentDate && selectedStyle) {
+            const selectedDiv = document.querySelector(`div[data-date='${currentDate}']`);
+            if (selectedDiv) {
+                selectedDiv.style = selectedStyle;
+            }
+        }
+    }
+
+
     // 이전달 버튼 클릭
     function prevCalendar() {
         nowMonth = new Date(nowMonth.getFullYear(), nowMonth.getMonth() - 1, nowMonth.getDate());   // 현재 달을 1 감소
-        buildCalendar(comDates, disTimes);    // 달력 다시 생성
+        buildCalendar();    // 달력 다시 생성
     }
     // 다음달 버튼 클릭
     function nextCalendar() {
         nowMonth = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, nowMonth.getDate());   // 현재 달을 1 증가
-        buildCalendar(comDates, disTimes);    // 달력 다시 생성
+        buildCalendar();    // 달력 다시 생성
     }
 
     // input값이 한자리 숫자인 경우 앞에 '0' 붙혀주는 함수
@@ -291,11 +317,11 @@
             console.log("disableTimes의 갯수:", disableTimes.length);
             // console.log(companyDates);
             console.log("companyDates 갯수임:", companyDates.length/2);
-            comDates = companyDates.length / 2;
-            disTimes = disableTimes.length;
+            // comDates = companyDates.length / 2;
+            // disTimes = disableTimes.length;
             // console.log("companyDates 갯수:", companyDates.length);
             // 여기
-            return [companyDates.length / 2, disableTimes.length];
+            // return [companyDates.length / 2, disableTimes.length];
         }
 
         // updateDisabledTimes(3, selectedDate);
@@ -317,12 +343,9 @@
         for (let i = 0; i < allStoreIds.length; i++) {
             const storeId = allStoreIds[i];
             updateDisabledTimes(storeId, sDate);
-            console.log(updateDisabledTimes(storeId, sDate)[1]);
+            // console.log(updateDisabledTimes(storeId, sDate)[1]);
         }
     });
-
-
-
 
 
 
@@ -335,5 +358,229 @@
             // 날짜 선택하면 처리
         }
     }
+
+
+
+    //  다음버튼 클릭시, 달력 -> 예약탭 전환
+    const dateDisplay = document.getElementById('date-display');
+    const infoDisplay = document.getElementById('info-display');
+    const backClick = document.getElementById('back-btn');
+
+    function toggleTabs() {
+        if (infoDisplay.style.display === 'none') {
+            dateDisplay.style.transition = 'opacity 500ms ease';
+            dateDisplay.style.opacity = '0';
+
+            setTimeout(() => {
+                dateDisplay.style.display = 'none';
+
+                infoDisplay.style.transition = 'opacity 500ms ease';
+                infoDisplay.style.opacity = '0';
+                infoDisplay.style.width = '60%';
+                infoDisplay.style.display = 'block';
+
+                setTimeout(() => {
+                    infoDisplay.style.opacity = '1';
+                }, 100);
+            }, 200);
+        }
+    }
+
+    // 뒤로버튼 클릭시, 예약탭 -> 달력 전환
+    backClick.addEventListener('click', function () {
+        setTimeout(() => {
+                infoDisplay.style.display = 'none';
+
+                dateDisplay.style.transition = 'opacity 500ms ease';
+                dateDisplay.style.opacity = '0';
+                dateDisplay.style.display = 'block';
+
+                setTimeout(() => {
+                    dateDisplay.style.opacity = '1';
+                }, 100);
+            }, 200);
+    });
+    
+    
+    // 모달
+    const checkInputs = document.querySelectorAll(".check-input");
+    const modal = document.querySelector("#modal");
+    const book = document.querySelector(".booking");
+    const closeModal = document.getElementsByClassName("close")[0];
+
+    // 모달 띄우기전, input에 값 들어갔나 확인
+    function areAllInputsFilled(inputs) {
+        return Array.from(inputs).every((input) => input.value.trim() !== "");
+        }
+
+    // 버튼 클릭시 모달 띄우기
+    book.onclick = function () {
+        if (areAllInputsFilled(checkInputs)) {
+            modal.style.display = "block";
+        } else {
+            // 모든 input 값이 채워지지 않은 경우 처리
+            alert("모든 입력란을 작성해주세요.");
+        }
+    };
+
+    // X버튼으로 모달 닫기
+    closeModal.onclick = function () {
+        modal.style.display = "none";
+    };
+
+
+    // top-wrapper 텍스트효과
+    function applyAnimation(text, className) {
+        const strText = text.textContent;
+        const splitText = strText.split("");
+
+        text.textContent = "";
+
+        for (let i = 0; i < splitText.length; i++) {
+            text.innerHTML += "<span class='" + className + "'>" + splitText[i] + "</span>";
+        }
+
+        let char = 0;
+        let timer = setInterval(onTick, 50);
+
+        function onTick() {
+            const span = text.querySelectorAll("span")[char];
+            span.classList.add("fade");
+            char++;
+            if (char == splitText.length) {
+                complete();
+                return;
+            }
+        }
+
+        function complete() {
+            clearInterval(timer);
+            timer = null;
+        }
+    }
+
+    const h1Elements = document.querySelectorAll(".content-center h1");
+
+    h1Elements.forEach((h1, index) => {
+        applyAnimation(h1, "text-animation-" + index);
+    });
+
+
+
+
+    // 슬라이드 효과
+    function moveToNextSlide() {
+        var currentSlideNav = document.querySelector(".slide-nav.active");
+        var nextSlideNav;
+        if (currentSlideNav.nextElementSibling) {
+        nextSlideNav = currentSlideNav.nextElementSibling;
+        } else {
+        // 첫 번째 슬라이드로 돌아가기
+        nextSlideNav = document.querySelector(".slide-nav:first-child");
+        }
+        nextSlideNav.click();
+    }
+    
+    // 3초 인터벌
+    var autoSlideInterval = setInterval(moveToNextSlide, 3000);
+    
+    // slide nav 클릭시
+    document.querySelectorAll(".slide-nav").forEach(function(navItem) {
+        navItem.addEventListener("click", function(e) {
+        e.preventDefault();
+    
+        // 기존 인터벌 취소후, 자동 인터벌
+        clearInterval(autoSlideInterval);
+        autoSlideInterval = setInterval(moveToNextSlide, 3000);
+    
+        var current = document.querySelector(".flex-active").dataset.slide;
+        var next = this.dataset.slide;
+    
+        document.querySelectorAll(".slide-nav").forEach(function(slideNav) {
+            slideNav.classList.remove("active");
+        });
+        this.classList.add("active");
+    
+        if (current === next) {
+            return false;
+        } else {
+            var sliderWrapper = document.querySelector(".slider_wrapper");
+            sliderWrapper.querySelector(".flex_con[data-slide='" + next + "']").classList.add("flex-preStart");
+            document.querySelector(".flex-active").classList.add("animate-end");
+    
+            setTimeout(function() {
+            var preStartElement = document.querySelector(".flex-preStart");
+            preStartElement.classList.remove("animate-start", "flex-preStart");
+            preStartElement.classList.add("flex-active");
+    
+            var animateEndElement = document.querySelector(".animate-end");
+            animateEndElement.classList.add("animate-start");
+            animateEndElement.classList.remove("animate-end", "flex-active");
+            }, 800);
+        }
+        });
+    });
+    
+
+
+    // scroll-text 텍스트효과
+    window.addEventListener('scroll', function () {
+    // 스크롤 위치
+    let st = window.pageYOffset || document.documentElement.scrollTop;
+
+    // flow-text1 효과
+    let motionTaget = document.querySelector('.flow-text');
+    let leftText = motionTaget.querySelector('.left-text');
+    let rightText = motionTaget.querySelector('.right-text');
+
+    leftText.style.left = st - (motionTaget.offsetTop - (st / 4)) + 'px';
+    rightText.style.right = st - (motionTaget.offsetTop - (st / 10)) + 'px';
+
+    // flow-text2 효과
+    let motionTaget2 = document.querySelector('.flow-text2');
+    let rightText2 = motionTaget2.querySelector('.right-text');
+    rightText2.style.right = st - motionTaget2.offsetTop + 100 + 'px';
+
+    let sectionInfo = []; // section top 값
+    let sectionObj = document.querySelector('section.intro');
+
+    // section의 top 위치를 배열에 push
+    sectionInfo.push(sectionObj.offsetTop);
+    // 현재 스크롤 위치
+    let scrPosition = window.pageYOffset + 500;
+
+    // 스크롤시 해당 section보다 현재 스크롤이 크거나 같다면
+    if (scrPosition >= sectionInfo[0]) {
+        sectionObj.classList.add('active');
+    } else {
+        sectionObj.classList.remove('active');
+    }
+
+});
+
+
+    // guide 효과
+    function onScroll() {
+        let scTop = window.pageYOffset;
+        let winHei = window.innerHeight;
+
+        let sum = scTop + winHei;
+
+        let aniElements = document.querySelectorAll('.ani');
+        aniElements.forEach(function (element) {
+            let top = element.getBoundingClientRect().top + window.pageYOffset;
+            // console.log(top);
+
+            if (sum > top) {
+                if (element.dataset.delay) {
+                    element.style.animationDelay = element.dataset.delay;
+                }
+                element.style.animationPlayState = 'running';
+            }
+        });
+    }
+    window.addEventListener('scroll', onScroll);
+
+
 </script>
 {% endautoescape %}

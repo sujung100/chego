@@ -582,5 +582,49 @@
     window.addEventListener('scroll', onScroll);
 
 
+
+    // 네비 클릭 이동
+    document.addEventListener("DOMContentLoaded", function () {
+        var breadcrumb = document.querySelector(".fixed-nav__breadcrumb").querySelector("strong");
+        breadcrumb.addEventListener("click", function () {
+            var offset = document.querySelector(".top-wrapper").offsetTop;
+            window.scrollTo({ top: offset, behavior: "smooth" });
+        });
+        var topsection = document.querySelector(".fixed-nav__title-section");
+        topsection.addEventListener("click", function () {
+            var offset = document.querySelector(".top-wrapper").offsetTop;
+            window.scrollTo({ top: offset, behavior: "smooth" });
+        });
+
+        var navLinks = document.querySelectorAll(".fixed-nav__item");
+        navLinks.forEach(function (link, index) {
+            link.addEventListener("click", function (event) {
+            event.preventDefault();
+            var targetSelector;
+
+            switch (index) {
+                case 0:
+                targetSelector = ".md-wrapper";
+                break;
+                case 1:
+                targetSelector = ".guide-wrap";
+                break;
+                case 2:
+                targetSelector = ".reservation";
+                break;
+                case 3:
+                targetSelector = ".footer-wrap";
+                break;
+            }
+
+            if (targetSelector) {
+                var offset = document.querySelector(targetSelector).offsetTop;
+                window.scrollTo({ top: offset, behavior: "smooth" });
+            }
+            });
+        });
+    });
+
+
 </script>
 {% endautoescape %}

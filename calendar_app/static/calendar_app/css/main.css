@@ -116,21 +116,21 @@
 
 
 section.navi-wrapper {width: 100%; position: relative; z-index: 99;}
-section.navi-wrapper .fixed-nav {width: 600px; margin: 0 auto; background-color: #343434;/*  opacity: 70%;  */border-radius: 0.6rem; position: fixed; top: 85%; left: 30vw;}
+section.navi-wrapper .fixed-nav {width: 600px; margin: 0 auto; background-color: #343434;/*  opacity: 70%;  */border-radius: 0.6rem; position: fixed; top: 85%; left: 50%; transform: translateX( -50% );}
 section.navi-wrapper .fixed-nav .inner {}
 .fixed-nav__inner .fixed-nav__wrapper {}
 .fixed-nav__inner .fixed-nav__wrapper .fixed-nav__open {}
 .fixed-nav__inner .fixed-nav__wrapper .fixed-nav__close {display: flex;}
-.fixed-nav__close .fixed-nav__layout_1 {background-color: #222;/*  opacity: 70%; */ border-radius: 0.6rem; color: white; margin: 0.5rem 0 0.5rem 0.5rem; padding: 0 1rem; position: static; flex: 1; padding: 0.8rem 1rem;}
+.fixed-nav__close .fixed-nav__layout_1 {background-color: #222;/*  opacity: 70%; */ border-radius: 0.6rem; color: white; margin: 0.5rem 0 0.5rem 0.5rem; position: static; flex: 1; padding: 0.8rem 1rem;}
 .fixed-nav__close .fixed-nav__layout_1 .fixed-nav__content1 {display: flex; width: 100%;}
 .fixed-nav__close .fixed-nav__layout_1 a {color: white;}
-.fixed-nav__close .fixed-nav__layout_2 { width: 100%;/*  display: flex;  */margin: 0.5rem;  width: 100%;}
-.fixed-nav__close .fixed-nav__layout_2 .fixed-nav__content2 {background-color: #3E3E3E;/*  border: 1px solid #fff; */ border-radius: 0.6rem; display: flex;/*  margin: 0.5rem; */}
+.fixed-nav__close .fixed-nav__layout_2 { width: 100%;/*  display: flex;  */margin: 0.5rem;}
+.fixed-nav__close .fixed-nav__layout_2 .fixed-nav__content2 {background-color: #3E3E3E;border-radius: 0.6rem; display: flex;/*  margin: 0.5rem; */}
 
 .fixed-nav__content2 .fixed-nav__title-section {margin: 1rem; color: #fff;}
 .fixed-nav__content2 .fixed-nav__nav {display: flex; /* justify-content: space-between; */ margin: 0.2rem; width: 100%; justify-content: space-evenly;}
 .fixed-nav__content2 .fixed-nav__nav li {padding: 0.8rem 1rem 0.8rem 1rem; border: 1px solid #626262; border-radius: 0.6rem;}
-.fixed-nav__content2 .fixed-nav__nav li a {color: #fff;}
+.fixed-nav__content2 .fixed-nav__nav li .fixed-nav__item {color: #fff;}
 
 
 
@@ -640,13 +640,13 @@ rs-tabs, rs-list, rs-date, rs-info
 /******************** guide ********************/
 
 .wrapper-small {padding: 4rem;}
-.slogan-wrap {background-color: #eee;}
-.slogan-wrap .title {font-size: 2.25rem; line-height: 1.1; color: #009476; font-weight: bold; margin-bottom: 1rem;}
-.slogan-wrap .title:nth-child(2) {font-size: 1.8rem; opacity: 0.8; color: #555;}
-.slogan-wrap .contents {margin-top: 6rem; color: #aaa; display: flex;}
-.slogan-wrap .content {width: 50%; padding: 3rem; margin-right: 1.5rem; border-radius: 3rem; background-color: #fff; color: #555}
-.slogan-wrap .content span {display: block; color: #009476; font-weight: bold; font-size: 1.5rem; margin-bottom: 0.8rem;}
-.slogan-wrap .content img {max-width: 45px;}
+.guide-wrap {background-color: #EFF3F7;}
+.guide-wrap .title {font-size: 2.25rem; line-height: 1.1; color: #009476; font-weight: bold; margin-bottom: 1rem;}
+.guide-wrap .title:nth-child(2) {font-size: 1.8rem; opacity: 0.8; color: #555;}
+.guide-wrap .contents {margin-top: 6rem; color: #aaa; display: flex;}
+.guide-wrap .content {width: 50%; padding: 3rem; margin-right: 1.5rem; border-radius: 3rem; background-color: #fff; color: #555}
+.guide-wrap .content span {display: block; color: #009476; font-weight: bold; font-size: 1.5rem; margin-bottom: 0.8rem;}
+.guide-wrap .content img {max-width: 45px;}
 .ani {animation-fill-mode: forwards; animation-duration: 1s;animation-play-state: paused;}
 .fadeInB {animation-name: fadeInB; opacity: 0; transform: translateY(200px); }
 @keyframes fadeInB {
@@ -823,7 +823,6 @@ td {
 /******************** 반응형 ********************/
 
 @media screen and (max-width: 1199px) {
-  section.navi-wrapper .fixed-nav {left: 25%;}
   section.md-wrapper .reservation {width: 90%; margin: 5rem auto;}
 
   .reserve-wrap .rs-body .rs-tabs {width: 15%;}
@@ -834,10 +833,11 @@ td {
 }
 
 @media screen and (max-width: 991px) {
-  section.navi-wrapper .fixed-nav {left: 20%;}
   section.md-wrapper .reservation {width: 90%; margin: 5rem auto;}
   div#mainCalendar {width: 31vw;/*  margin: 0 2.5rem; */}
   .Calendar>tbody>tr>td>p {height: 5vw; line-height: 5vw;}
+  .guide-wrap .contents {flex-wrap: wrap; justify-content: center;}
+  .guide-wrap .content {max-width: 20rem; margin: 1rem; }
 }
 
 @media screen and (max-width: 767px) {
@@ -855,12 +855,19 @@ td {
 	.copy-wrap {text-align: center;}
 	.copy-wrap .copyright {float: none; width: 100%; padding: 0.25rem;}
 	.copy-wrap .navis-footer {float: none; width: 100%; padding: 0.25rem;}
+
+  .colorpart h1{font-size: 130px; font-weight: 700;}
 }
 
 @media screen and (max-width: 575px) {
+  section.navi-wrapper .fixed-nav {width: auto;}
+  .fixed-nav__close .fixed-nav__layout_1 {margin: 0.5rem;}
+  .fixed-nav__close .fixed-nav__layout_2 {display: none;}
+  /* .fixed-nav__close .fixed-nav__layout_2 {visibility: hidden;} */
   .rs-list .store-table {margin: 0.8rem 1.2rem;}
   .Calendar>thead>tr:first-child>td {font-size: 0.8rem;}
   .Calendar>thead>tr:last-child>td {font-size: 0.8rem;}
 
+  .colorpart h1{font-size: 100px; font-weight: 600;}
 }
 

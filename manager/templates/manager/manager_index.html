@@ -1,0 +1,110 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'manager/css/manager_index.css' %}">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="wrap">
+    <div class="box1">
+      <div class="content1">
+        <div class="section1">
+          <a href="/manager/write">
+            <button class="rsv_test" type="button">예약테스트</button>
+          </a>
+          <div id="store">
+            <ul>
+              
+              {% for s in manager %}
+                <li>{{ s.store_name}}</li>  
+              {% endfor %}
+            </ul>
+          </div>
+          <div class="store_test"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="box2">
+      <div class="content2">
+        {% if request.user.is_authenticated %}
+          <div class="con2_nav">
+            <button class="nav_button1" type="button">
+              <img src="../../static/manager/img/right-arrow (1).png" alt="접기">
+            </button>
+
+            <a href="/manager/logout">
+              <button class="nav_button2" type="button">
+                <img src="../../static/manager/img/turn-off (1).png" alt="로그아웃">
+              </button>
+            </a>
+          </div>
+          <div class="con2_manager1">
+            <img class="profile_img" src="../../static/manager/img/user.png" alt="이미지">
+            <span>{{ request.user.username }}</span>
+          </div>
+          <a href="/manager/logout">
+            <button class="logout_test" type="button">로그아웃</button>
+        </a>
+        {% else %}
+          <img class="profile_img" src="../../static/manager/img/user.png" alt="이미지">
+          <a href="/manager/login">
+            <button class="login_test" type="button">로그인</button>
+          </a>
+          <a href="/manager/signup">
+            <button class="signup_test" type="button">회원가입</button>
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+</body>
+
+</html>
+
+<script>
+  const store = document.getElementById("store");
+  const storeTest = document.querySelector(".store_test");
+
+  function swapPosition() {
+    // 현재 위치 저장
+    const storeStyle = getComputedStyle(store);
+    const storeTestStyle = getComputedStyle(storeTest);
+
+    const storePosition = {
+      top: storeStyle.top,
+      left: storeStyle.left,
+      transform: storeStyle.transform,
+      zIndex: storeStyle.zIndex
+    };
+
+    const storeTestPosition = {
+      top: storeTestStyle.top,
+      left: storeTestStyle.left,
+      transform: storeTestStyle.transform,
+      zIndex: storeTestStyle.zIndex
+    };
+
+    // 서로의 위치 및 z-index 값을 교환
+    store.style.top = storeTestPosition.top;
+    store.style.left = storeTestPosition.left;
+    store.style.transform = storeTestPosition.transform;
+    store.style.zIndex = storeTestPosition.zIndex;
+
+    storeTest.style.top = storePosition.top;
+    storeTest.style.left = storePosition.left;
+    storeTest.style.transform = storePosition.transform;
+    storeTest.style.zIndex = storePosition.zIndex;
+  }
+
+  // 클릭 이벤트 등록
+  store.addEventListener("click", swapPosition);
+  storeTest.addEventListener("click", swapPosition);
+</script>

@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-class CustomUserCreationForm(UserCreationForm):
+class UserCreationForm(UserCreationForm):
     email = forms.EmailField(label='Email', max_length=255, required=False)
     phone_number = forms.CharField(label='Phone number', max_length=15, required=True)
 

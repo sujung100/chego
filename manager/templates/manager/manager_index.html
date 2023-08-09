@@ -17,7 +17,14 @@
           <a href="/manager/write">
             <button class="rsv_test" type="button">예약테스트</button>
           </a>
-          <div id="store"></div>
+          <div id="store">
+            <ul>
+              
+              {% for s in manager %}
+                <li>{{ s.store_name}}</li>  
+              {% endfor %}
+            </ul>
+          </div>
           <div class="store_test"></div>
         </div>
 
@@ -26,12 +33,34 @@
 
     <div class="box2">
       <div class="content2">
-        <a href="/manager/login">
-          <button class="login_test" type="button">로그인</button>
+        {% if request.user.is_authenticated %}
+          <div class="con2_nav">
+            <button class="nav_button1" type="button">
+              <img src="../../static/manager/img/right-arrow (1).png" alt="접기">
+            </button>
+
+            <a href="/manager/logout">
+              <button class="nav_button2" type="button">
+                <img src="../../static/manager/img/turn-off (1).png" alt="로그아웃">
+              </button>
+            </a>
+          </div>
+          <div class="con2_manager1">
+            <img class="profile_img" src="../../static/manager/img/user.png" alt="이미지">
+            <span>{{ request.user.username }}</span>
+          </div>
+          <a href="/manager/logout">
+            <button class="logout_test" type="button">로그아웃</button>
         </a>
-        <a href="/manager/signup">
-          <button class="signup_test" type="button">회원가입</button>
-        </a>
+        {% else %}
+          <img class="profile_img" src="../../static/manager/img/user.png" alt="이미지">
+          <a href="/manager/login">
+            <button class="login_test" type="button">로그인</button>
+          </a>
+          <a href="/manager/signup">
+            <button class="signup_test" type="button">회원가입</button>
+          </a>
+        {% endif %}
       </div>
     </div>
 

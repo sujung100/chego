@@ -29,32 +29,39 @@
           <div class="form-group">
             <label for="manager_id">Username:</label>
             <input type="text" class="form-control" id="manager_id"
-              name="manager_id" value="{{ form.username.value|default:'' }}" required />
+              name="username" value="{{ form.username.value|default:'' }}" required />
             {{ form.username.errors }}
           </div>
 
           <div class="form-group">
             <label for="manager_pwd">Password:</label>
-            <input type="password" class="form-control" id="manager_pwd"
-              name="manager_pwd" value="{{ form.password.value|default:'' }}" required />
-            {{ form.password.errors }}
+            <input type="password" class="form-control" id="manager_pwd1"
+              name="password1" value="{{ form.password1.value|default:'' }}" required />
+            {{ form.password1.errors }}
+          </div>
+          
+          <div class="form-group">
+            <label for="manager_pwd">Password:</label>
+            <input type="password" class="form-control" id="manager_pwd2"
+              name="password2" value="{{ form.password2.value|default:'' }}" required />
+            {{ form.password2.errors }}
           </div>
 
           <div class="form-group">
             <label for="manager_phone">Phone number:</label>
             <input type="tel" class="form-control" id="manager_phone"
-              name="manager_phone" value="{{ form.phone_number.value|default:'' }}" />
+              name="phone_number" value="{{ form.phone_number.value|default:'' }}" />
             {{ form.phone_number.errors }}
           </div>
 
-          <div class="form-group">
+          <!-- <div class="form-group">
             <label for="manager_email">Email:</label>
             <input type="email" class="form-control" id="manager_email"
-              name="manager_email" value="{{ form.email.value|default:'' }}" />
+              name="email" value="{{ form.email.value|default:'' }}" />
             {{ form.email.errors }}
-          </div>
+          </div> -->
 
-          <button type="submit" class="btn btn-primary">Login</button>
+          <button type="submit" class="btn btn-primary">회원가입</button>
         </form>
       </div>
     </div>

@@ -133,4 +133,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # 로그인 후 이동할 url설정
-LOGIN_REDIRECT_URL = '/cal/date'
+LOGIN_REDIRECT_URL = '/manager'
+LOGOUT_REDIRECT_URL = '/manager'

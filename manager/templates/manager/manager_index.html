@@ -6,60 +6,82 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{% static 'manager/css/manager_index.css' %}">
-  <title>Document</title>
+  <title>Manager</title>
 </head>
 
 <body>
   <div id="wrap">
     <div class="box1">
       <div class="content1">
+        {% if request.user.is_authenticated %}
         <div class="section1">
           <a href="/manager/write">
             <button class="rsv_test" type="button">예약테스트</button>
           </a>
           <div id="store">
-            <ul>
-              
+            <div class="store_item1"></div>
+            <div class="store_item2">
               {% for s in manager %}
-                <li>{{ s.store_name}}</li>  
+              {{ s.store_name}}
               {% endfor %}
-            </ul>
+
+            </div>
+            <div class="store_item3"></div>
+
           </div>
           <div class="store_test"></div>
         </div>
+        {% else %}
+        <div class="container">
+          <svg viewBox="0 0 960 300">
+            <symbol id="s-text">
+              <text text-anchor="middle" x="50%" y="80%">CHEGO</text>
+            </symbol>
 
+            <g class="g-ants">
+              <use xlink:href="#s-text" class="text-copy"></use>
+              <use xlink:href="#s-text" class="text-copy"></use>
+              <use xlink:href="#s-text" class="text-copy"></use>
+              <use xlink:href="#s-text" class="text-copy"></use>
+              <use xlink:href="#s-text" class="text-copy"></use>
+            </g>
+          </svg>
+        </div>
+        {% endif %}
       </div>
     </div>
 
     <div class="box2">
       <div class="content2">
         {% if request.user.is_authenticated %}
-          <div class="con2_nav">
-            <button class="nav_button1" type="button">
-              <img src="../../static/manager/img/right-arrow (1).png" alt="접기">
-            </button>
+        <div class="con2_nav">
+          <button class="nav_button1" type="button">
+            <img src="../../static/manager/img/right-arrow (1).png" alt="접기">
+          </button>
 
-            <a href="/manager/logout">
-              <button class="nav_button2" type="button">
-                <img src="../../static/manager/img/turn-off (1).png" alt="로그아웃">
-              </button>
-            </a>
-          </div>
-          <div class="con2_manager1">
-            <img class="profile_img" src="../../static/manager/img/user.png" alt="이미지">
-            <span>{{ request.user.username }}</span>
-          </div>
           <a href="/manager/logout">
-            <button class="logout_test" type="button">로그아웃</button>
-        </a>
-        {% else %}
+            <button class="nav_button2" type="button">
+              <img src="../../static/manager/img/turn-off (1).png" alt="로그아웃">
+            </button>
+          </a>
+        </div>
+        <div class="con2_manager1">
           <img class="profile_img" src="../../static/manager/img/user.png" alt="이미지">
-          <a href="/manager/login">
-            <button class="login_test" type="button">로그인</button>
-          </a>
-          <a href="/manager/signup">
-            <button class="signup_test" type="button">회원가입</button>
-          </a>
+          <span>{{ request.user.username }}</span>
+        </div>
+        <a href="/manager/logout">
+          <button class="logout_test" type="button">로그아웃</button>
+        </a>
+
+
+        {% else %}
+        <!-- <img class="profile_img" src="../../static/manager/img/user.png" alt="이미지"> -->
+        <a href="/manager/login">
+          <button class="login_test" type="button">로그인</button>
+        </a>
+        <a href="/manager/signup">
+          <button class="signup_test" type="button">회원가입</button>
+        </a>
         {% endif %}
       </div>
     </div>

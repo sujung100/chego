@@ -15,13 +15,16 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 def store_list(request):
     return render(request, "manager/manager_index.html")
 
-class ManagerStoreList(LoginRequiredMixin, ListView):
+class ManagerStoreList(ListView):
     model = rsv.Store
     template_name = "manager/manager_index.html"
 
     def get_queryset(self):
         current_user = self.request.user
-        manager = rsv.Store.objects.filter(owner=current_user)
+        if current_user.is_authenticated:
+            manager = rsv.Store.objects.filter(owner=current_user)
+        else:
+            manager = rsv.Store.objects.none()
         return manager
 
     def get_context_data(self, **kwargs):

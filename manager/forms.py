@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from calendar_app.models import Store, Manager
 
 class UserCreationForm(UserCreationForm):
     email = forms.EmailField(label='Email', max_length=255, required=False)
@@ -17,3 +18,18 @@ class UserCreationForm(UserCreationForm):
     #     if commit:
     #         user.save()
     #     return user
+
+class ManagerUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Manager
+        fields = ['user', 'manager_name', 'manager_phone']
+        
+
+class StoreUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Store
+        fields = ['id', 'owner']
+# class ManagerUpdateForm(forms.ModelForm):
+#     class Meta:
+#         model = Store
+#         fields = ['id', 'store_name', 'address', 'owner']

@@ -1,19 +1,32 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,  get_object_or_404
 from calendar_app import models as rsv
 
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, TemplateView, ListView
+from django.views.generic import CreateView, TemplateView, ListView, UpdateView
 from django.contrib.auth import login
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, PermissionDenied
 from django.contrib.auth.mixins import LoginRequiredMixin
+from .forms import ManagerUpdateForm, StoreUpdateForm
+
+from django.contrib import messages
+
+
+# 임시
+from django.views.generic.edit import FormView
+from calendar_app.models import Manager, Store,  Reservation_user
+from .forms import ManagerUpdateForm, StoreUpdateForm
+from django.urls import reverse_lazy, reverse
+from django.shortcuts import get_object_or_404
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponseRedirect
 
 
 # Create your views here.
-def store_list(request):
-    return render(request, "manager/manager_index.html")
+# def store_list(request):
+#     return render(request, "manager/manager_index.html")
 
 class ManagerStoreList(ListView):
     model = rsv.Store
@@ -32,6 +45,33 @@ class ManagerStoreList(ListView):
         context['manager'] = self.get_queryset()
         return context
     
+# test중 - 삭제예정
+# class ManagerStoreList(ListView):
+#     model = rsv.Store
+
+#     def dispatch(self, request, *args, **kwargs):
+#         template_choice = kwargs.get('template_choice', '')
+#         if template_choice == '':
+#             self.template_name = 'manager/manager_index.html'
+#         elif template_choice == 'operate':
+#             self.template_name = 'manager/manager_operate.html'
+#         return super().dispatch(request, *args, **kwargs)
+
+#     def get_queryset(self):
+#         current_user = self.request.user
+#         if current_user.is_authenticated:
+#             manager = rsv.Store.objects.filter(owner=current_user)
+#         else:
+#             manager = rsv.Store.objects.none()
+#         return manager
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['manager'] = self.get_queryset()
+#         return context
+    
+
+
 class UserSignUpView(CreateView):
     form_class = UserCreationForm
     template_name = "manager/manager_sign_up.html"
@@ -95,3 +135,89 @@ def write(request):
     
     return render(request, 'manager/manager_write.html')
 
+# 참고
+# @login_required(login_url='common:login')
+# def operate(request):
+#     question = get_object_or_404(Question, pk=question_id)
+#     if request.user != question.author:
+#         messages.error(request, '수정권한이 없습니다')
+#         return redirect('pybo:detail', question_id=question.id)
+#     if request.method == "POST":
+#         form = QuestionForm(request.POST, instance=question)
+#         if form.is_valid():
+#             question = form.save(commit=False)
+#             question.modify_date = timezone.now()  # 수정일시 저장
+#             question.save()
+#             return redirect('pybo:detail', question_id=question.id)
+#     else:
+#         form = QuestionForm(instance=question)
+#     context = {'form': form}
+#     return render(request, 'manager/manager_operate.html', context)
+
+# @login_required(login_url='common:login')
+# def operate(request):
+#     return render(request, 'manager/manager_operate.html')
+
+
+# 접근/수정 권한 설정
+# class ManagerUpdateList(LoginRequiredMixin, UpdateView):
+#     model = rsv.Manager
+#     form_class = ManagerUpdateForm
+#     template_name = 'manager/manager_operate.html'
+
+#     def form_valid(self, form):
+#         response = super(ManagerUpdateList, self).form_valid(form)
+#         return response
+
+#     def dispatch(self, request, *args, **kwargs):
+#         if request.user.is_authenticated and request.user == self.get_object().user:
+#             return super(ManagerUpdateList, self).dispatch(request, *args, **kwargs)
+#         else:
+#             raise PermissionDenied
+
+
+
+
+
+class ManagerStoreUpdateView(LoginRequiredMixin, FormView):
+    template_name = 'manager/manager_operate.html'
+    form_class = ManagerUpdateForm
+    store_form_class = StoreUpdateForm
+
+    # 권한설정
+    def dispatch(self, request, *args, **kwargs):
+        self.manager = get_object_or_404(Manager, pk=kwargs['pk'])
+        self.store = get_object_or_404(Store, pk=kwargs['store_id'])
+        
+        # 조건3개
+        if request.user.is_authenticated and request.user == self.manager.user and self.manager.user == self.store.owner:
+            return super(ManagerStoreUpdateView, self).dispatch(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+
+    def get_context_data(self, **kwargs):
+        context = super(ManagerStoreUpdateView, self).get_context_data(**kwargs)
+        context['form'] = ManagerUpdateForm(instance=self.manager)
+        context['form_store'] = StoreUpdateForm(instance=self.store)
+
+        # 예약목록 가져오기
+        reservations = Reservation_user.objects.filter(store_id=self.store)
+        context['reservations'] = reservations
+        return context
+
+    def form_valid(self, form):
+        manager_form = form
+        store_form = self.store_form_class(self.request.POST, instance=self.store)
+
+        if manager_form.is_valid() and store_form.is_valid():
+            manager_form.save()
+            store_form.save()
+            return HttpResponseRedirect(reverse('success_page'))
+        else:
+            return self.form_invalid(form)
+
+    def form_invalid(self, form):
+        context = super(ManagerStoreUpdateView, self).get_context_data()
+        context['form'] = form
+        context['form_store'] = self.store_form_class(self.request.POST, instance=self.store)
+        return self.render_to_response(context)

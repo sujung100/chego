@@ -27,11 +27,20 @@
                   <input type="text" id="search-area" placeholder="Search"></input>
                 </div>
                 <div class="store_item2">
+                  <div class="head-user">
+                    <p>이름</p>
+                    <p>전화번호</p>
+                    <p>예약 날짜</p>
+                    <p>예약 시간</p>
+                  </div>
+                  <hr>
                   {% for rsv in reservations %}
-                    <p>이름: {{ rsv.user_name }}</p>
-                    <p>전화번호: {{ rsv.user_phone }}</p>
-                    <p>예약 날짜: {{ rsv.reservation_date }}</p>
-                    <p>예약 시간: {{ rsv.user_time }}</p>
+                  <div class="user-info">
+                      <p>이름: {{ rsv.user_name }}</p>
+                      <p>전화번호: {{ rsv.user_phone }}</p>
+                      <p>예약 날짜: {{ rsv.reservation_date }}</p>
+                      <p>예약 시간: {{ rsv.user_time }}</p>
+                    </div>
                     <hr>
                   {% endfor %}
                 </div>

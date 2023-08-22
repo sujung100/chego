@@ -21,4 +21,5 @@ urlpatterns = [
 
   # path('operate/<int:pk>/', views.ManagerUpdateList.as_view(), name='mng_update'),
   path('operate/<int:pk>_<int:store_id>/', views. ManagerStoreUpdateView.as_view(), name='mng_update'),
+  path('update/<int:pk>_<int:store_id>/', views. Update.as_view(), name='update'),
 ]

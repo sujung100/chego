@@ -29,6 +29,12 @@ class StoreUpdateForm(forms.ModelForm):
     class Meta:
         model = Store
         fields = ['id', 'owner']
+
+class UpdateForm(forms.ModelForm):
+    class Meta:
+        model = Store
+        fields = ['id', 'store_name', 'address', 'owner']
+
 # class ManagerUpdateForm(forms.ModelForm):
 #     class Meta:
 #         model = Store

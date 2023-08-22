@@ -1,27 +1,36 @@
 from django.shortcuts import render, redirect,  get_object_or_404
 from calendar_app import models as rsv
+from calendar_app.models import Manager, Store,  Reservation_user
 
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.views import LoginView
-from django.urls import reverse_lazy
-from django.views.generic import CreateView, TemplateView, ListView, UpdateView
-from django.contrib.auth import login
+from django.urls import reverse_lazy, reverse
+from django.views.generic import CreateView, TemplateView, ListView, UpdateView, FormView
 from django.core.exceptions import ValidationError, PermissionDenied
-from django.contrib.auth.mixins import LoginRequiredMixin
-from .forms import ManagerUpdateForm, StoreUpdateForm
+from django.core.serializers.json import DjangoJSONEncoder
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
+from django.db.models import Q
 
+from django.contrib.auth import login
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
+
+import json
+from .forms import ManagerUpdateForm, StoreUpdateForm, UpdateForm
+
+
 
 
 # 임시
-from django.views.generic.edit import FormView
-from calendar_app.models import Manager, Store,  Reservation_user
-from .forms import ManagerUpdateForm, StoreUpdateForm
-from django.urls import reverse_lazy, reverse
-from django.shortcuts import get_object_or_404
-from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseRedirect
+# from django.views.generic.edit import FormView
+# from calendar_app.models import Manager, Store,  Reservation_user
+# from .forms import ManagerUpdateForm, StoreUpdateForm
+# from django.urls import reverse_lazy, reverse
+# from django.shortcuts import get_object_or_404
+# from django.core.exceptions import PermissionDenied
+# from django.http import HttpResponseRedirect
 
 
 # Create your views here.
@@ -221,3 +230,94 @@ class ManagerStoreUpdateView(LoginRequiredMixin, FormView):
         context['form'] = form
         context['form_store'] = self.store_form_class(self.request.POST, instance=self.store)
         return self.render_to_response(context)
+
+
+
+# def Update(request):
+#     return render (request, 'manager/manager_update_form.html')
+
+class Update(LoginRequiredMixin, UpdateView):
+    model = Store
+    form_class = UpdateForm
+    template_name = 'manager/manager_update_form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        store_list = rsv.Store.objects.all()
+        context['store_list'] = store_list
+
+        store_times_dict = {}
+        for store in store_list:
+            store_times = rsv.Store_times.objects.filter(store_id=store.pk)
+            store_times_dict[store.pk] = store_times
+        context['store_times_dict'] = store_times_dict
+
+        pk = self.kwargs.get('pk')
+        if pk:
+            store = get_object_or_404(rsv.Store, pk=pk)
+        else:
+            store = None
+
+        if store:
+            store_list = [store]
+        else:
+            store_list = store_list
+        
+        store_data = []
+        
+        for store in store_list:
+            sto_time = rsv.Store_times.objects.filter(store_id=store.pk)
+            print(store)
+            store_dates = []
+            for dates in sto_time:
+                dates_info  = rsv.Reservation_user.objects.filter(
+                Q(store_id=store) &
+                Q(user_time=dates.reservation_time) 
+                )
+                
+
+                hour_disabled_dates = {}
+
+                for res in dates_info:
+                    user_date = res.reservation_date
+                    user_time = res.user_time
+
+                    # 일부 예약이 이미 비활성 시간에 추가된 경우 해당 시간을 추가하고, 그렇지 않은 경우 새로운 항목을 만듭니다.
+                    if user_date in hour_disabled_dates:
+                        hour_disabled_dates[user_date].append(user_time)
+                    else:
+                        hour_disabled_dates[user_date] = [user_time]
+
+                store_dates.append({
+                    'hour_disabled_dates': hour_disabled_dates, # current_hour_reservations를 제거
+                })
+
+                
+                user_dates = [info.reservation_date for info in dates_info]
+                store_dates.append({
+                'user_date': user_dates,
+                'disable_time': json.dumps([info.user_time for info in dates_info ])
+                })
+                # print(store_dates)
+            store_data.append({
+                'store_id': store.pk,
+                'sto_time': list(sto_time.values()),
+                'store_dates_json': json.dumps(store_dates, cls=DjangoJSONEncoder),
+            })
+
+        # context['store_data'] = store_data
+        context['store_data_json'] = json.dumps(store_data, cls=DjangoJSONEncoder)
+        # print(store_data)
+        return context
+    
+
+    # # 권한설정
+    # def dispatch(self, request, *args, **kwargs):
+    #     self.manager = get_object_or_404(Manager, pk=kwargs['pk'])
+    #     self.store = get_object_or_404(Store, pk=kwargs['store_id'])
+        
+    #     # 조건3개
+    #     if request.user.is_authenticated and request.user == self.manager.user and self.manager.user == self.store.owner:
+    #         return super(Update, self).dispatch(request, *args, **kwargs)
+    #     else:
+    #         raise PermissionDenied

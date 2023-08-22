@@ -98,7 +98,36 @@ ol, ul{
 .content1 .store_item2 {
   /* border: 1px solid red; */
   width: 100%;
-  height: 100%;
+  /* height: 100%;*/
+  padding-top: 4rem;
+}
+
+.content1 .store_item2 .head-user {
+  display: flex;
+  margin: 0.5rem 0;
+  justify-content: space-around;
+}
+
+.content1 .store_item2 .head-user p {
+  padding-right: 2rem;
+  margin-left: 2rem;
+}
+
+.content1 .store_item2 .user-info {
+  /* border: 1px solid red; */
+  display: flex;
+  margin: 0.5rem 0;
+  justify-content: space-around;
+}
+
+.content1 .store_item2 .user-info p {
+  border-right: 2px solid #aaa;
+  padding-right: 1rem;
+  margin-left: 1rem;
+}
+
+.content1 .store_item2 .user-info p:last-child {
+  border:none;
 }
 
 .content1 #search-area {

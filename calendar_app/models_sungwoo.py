@@ -29,7 +29,7 @@ class Store(models.Model):
         return f"{self.store_name}{self.owner}{self.cdate}"
     
     def get_absolute_url(self):
-        return reverse("community:view_detail", args=(self.id,))
+        return reverse("reservation:detail", args=(self.id,))
     
 class Manager(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -42,9 +42,9 @@ def create_user_profile(sender, instance, created, **kwargs):
     if created:
         Manager.objects.create(user=instance)
 
-# @receiver(post_save, sender=User)
-# def save_user_profile(sender, instance, **kwargs):
-#     instance.manager.save()
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.manager.save()
 
 
 class Reservation_user(models.Model):

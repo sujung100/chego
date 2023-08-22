@@ -1,0 +1,64 @@
+{% extends 'manager/manager_base.html' %}
+{% load static %}
+
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'manager/css/manager_index.css' %}?after">
+{% endblock style %}
+
+{% block title %} Document {% endblock %}
+
+
+{% block container1 %}
+<div class="section1">
+  되는 거 맞냐
+  <a href="/manager/write">
+    <button class="rsv_test" type="button">예약테스트</button>
+  </a>
+  <div id="store"></div>
+  <div class="store_test"></div>
+</div>
+{% endblock %}
+
+
+
+
+<script>
+  const store = document.getElementById("store");
+  const storeTest = document.querySelector(".store_test");
+
+  function swapPosition() {
+    // 현재 위치 저장
+    const storeStyle = getComputedStyle(store);
+    const storeTestStyle = getComputedStyle(storeTest);
+
+    const storePosition = {
+      top: storeStyle.top,
+      left: storeStyle.left,
+      transform: storeStyle.transform,
+      zIndex: storeStyle.zIndex
+    };
+
+    const storeTestPosition = {
+      top: storeTestStyle.top,
+      left: storeTestStyle.left,
+      transform: storeTestStyle.transform,
+      zIndex: storeTestStyle.zIndex
+    };
+
+    // 서로의 위치 및 z-index 값을 교환
+    store.style.top = storeTestPosition.top;
+    store.style.left = storeTestPosition.left;
+    store.style.transform = storeTestPosition.transform;
+    store.style.zIndex = storeTestPosition.zIndex;
+
+    storeTest.style.top = storePosition.top;
+    storeTest.style.left = storePosition.left;
+    storeTest.style.transform = storePosition.transform;
+    storeTest.style.zIndex = storePosition.zIndex;
+  }
+
+  // 클릭 이벤트 등록
+  store.addEventListener("click", swapPosition);
+  storeTest.addEventListener("click", swapPosition);
+</script>

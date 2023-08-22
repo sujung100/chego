@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<!-- css -->
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/main3.css' %}?after">
+{% endblock style %}
+
+<!-- title -->
+{% block title %}List up{% endblock %}
+
+{% block container %}
+  <!-- <section class="top-wrapper">
+    <section class="colorpart top-section">
+      <div class="content-container content-theme-dark">
+        <div class="content-inner">
+          <div class="content-center">
+            <h1>Finest</h1>
+            <p>Dual Color Text Effect by Finest Pixels</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <section class="colorpart bottom-section">
+      <div class="content-container content-theme-light">
+        <div class="content-inner">
+          <div class="content-center">
+            <h1>Finest</h1>
+            <p>Dual Color Text Effect by Finest Pixels</a></p>
+            
+          </div>
+        </div>
+      </div>
+    </section>
+  </section> -->
+
+
+  <!-- nav -->
+
+
+
+  <section class="md-wrapper">
+    <section class="reservation">
+      <div class="reserve-wrap">
+        <div class="rs-head" id="pg1">
+          <div class="rs-point">
+            <h1 class="rs-title">예약하기</h1>
+            <div class="rec"></div>
+          </div>
+          <div class="rs-color">
+            <p> </p>
+          </div>
+        </div>
+        <div class="rs-body">
+          <div class="rs-tabs">
+            <div class="tabs">
+              <ul class="active">
+                <li><a href="main1.html#pg1">업체리스트</a></li>
+              </ul>
+              <ul>
+                <li><a href="main2.html#pg2">상세페이지</a></li>
+              </ul>
+              <ul>
+                <li><a href="">업체정보</a></li>
+              </ul>
+              <ul>
+                <li><a href="">tab</a></li>
+              </ul>
+              <ul>
+                <li><a href="">tab</a></li>
+              </ul>
+              <ul>
+                <li><a href="">tab</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="rs-list">
+            <h1>조회</h1>
+            <div class="scroll box2">
+              <div class="store-table" onClick="location.href='main2.html#pg2'">
+                <div class="st-name">
+                  <h5>업체1</h5>
+                </div>
+                <div class="st-time">
+                  <h5>12:00</h5>
+                  <h5>13:00</h5>
+                  <h5>14:00</h5>
+                  <h5>15:00</h5>
+                  <h5>16:00</h5>
+                  <h5>17:00</h5>
+                  <h5>18:00</h5>
+                  <h5>19:00</h5>
+                </div>
+              </div>
+              <div class="store-table" onClick="location.href='main2.html#pg2'">
+                <div class="st-name">
+                  <h5>업체2</h5>
+                </div>
+                <div class="st-time">
+                  <h5>12:00</h5>
+                  <h5>13:00</h5>
+                  <h5>14:00</h5>
+                  <h5>15:00</h5>
+                  <h5>16:00</h5>
+                  <h5>17:00</h5>
+                  <h5>18:00</h5>
+                  <h5>19:00</h5>
+                </div>
+              </div>
+              <div class="store-table" onClick="location.href='main2.html#pg2'">
+                <div class="st-name">
+                  <h5>업체3</h5>
+                </div>
+                <div class="st-time">
+                  <h5>12:00</h5>
+                  <h5>13:00</h5>
+                  <h5>14:00</h5>
+                  <h5>15:00</h5>
+                  <h5>16:00</h5>
+                  <h5>17:00</h5>
+                  <h5>18:00</h5>
+                  <h5>19:00</h5>
+                </div>
+              </div>
+              <div class="store-table" onClick="location.href='main2.html#pg2'">
+                <div class="st-name">
+                  <h5>업체3</h5>
+                </div>
+                <div class="st-time">
+                  <h5>12:00</h5>
+                  <h5>13:00</h5>
+                  <h5>14:00</h5>
+                  <h5>15:00</h5>
+                  <h5>16:00</h5>
+                  <h5>17:00</h5>
+                  <h5>18:00</h5>
+                  <h5>19:00</h5>
+                </div>
+              </div>
+              <div class="store-table" onClick="location.href='main2.html#pg2'">
+                <div class="st-name">
+                  <h5>업체3</h5>
+                </div>
+                <div class="st-time">
+                  <h5>12:00</h5>
+                  <h5>13:00</h5>
+                  <h5>14:00</h5>
+                  <h5>15:00</h5>
+                  <h5>16:00</h5>
+                  <h5>17:00</h5>
+                  <h5>18:00</h5>
+                  <h5>19:00</h5>
+                </div>
+              </div>
+              <div class="store-table" onClick="location.href='main2.html#pg2'">
+                <div class="st-name">
+                  <h5>업체3</h5>
+                </div>
+                <div class="st-time">
+                  <h5>12:00</h5>
+                  <h5>13:00</h5>
+                  <h5>14:00</h5>
+                  <h5>15:00</h5>
+                  <h5>16:00</h5>
+                  <h5>17:00</h5>
+                  <h5>18:00</h5>
+                  <h5>19:00</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="rs-date">
+            <h1>일정</h1>
+            <div id="mainCalendar">
+              <table class="Calendar">
+                  <thead>
+                      <tr>
+                          <td onClick="prevCalendar();" style="cursor:pointer;">&#60;</td>
+                          <td colspan="5">
+                              <span id="calYear"></span>년
+                              <span id="calMonth"></span>월
+                          </td>
+                          <td onClick="nextCalendar();" style="cursor:pointer;">&#62;</td>
+                      </tr>
+                      <tr>
+                          <td>일</td>
+                          <td>월</td>
+                          <td>화</td>
+                          <td>수</td>
+                          <td>목</td>
+                          <td>금</td>
+                          <td>토</td>
+                      </tr>
+                  </thead>
+        
+                  <tbody>
+                  </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="rs-info disable">
+
+          </div>
+        </div>
+      </div>
+    </section>
+  </section>
+
+<!-- js파일 연결 -->
+<script src="{% static 'js/main3.js' %}"></script>
+
+{% endblock %}

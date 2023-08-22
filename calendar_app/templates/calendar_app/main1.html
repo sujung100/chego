@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% load filters %}
+{% load static %}
+
+<!-- css -->
+{% block style %}
+<link rel="stylesheet" href="{% static 'calendar_app/css/main1.css' %}?after">
+{% endblock style %}
+
+<!-- title -->
+{% block title %}List up{% endblock %}
+
+{% block container %}
+  <!-- <section class="top-wrapper">
+    <section class="colorpart top-section">
+      <div class="content-container content-theme-dark">
+        <div class="content-inner">
+          <div class="content-center">
+            <h1>Chego</h1>
+            <p>통합 예약 시스템</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <section class="colorpart bottom-section">
+      <div class="content-container content-theme-light">
+        <div class="content-inner">
+          <div class="content-center">
+            <h1>Chego</h1>
+            <p>통합 예약 시스템</a></p>
+            
+          </div>
+        </div>
+      </div>
+    </section>
+  </section> -->
+
+
+  <!-- nav -->
+
+
+
+  <section class="md-wrapper">
+    <section class="reservation">
+      <div class="reserve-wrap">
+        <div class="rs-head" id="pg1">
+          <div class="rs-point">
+            <h1 class="rs-title">예약하기</h1>
+            <div class="rec"></div>
+          </div>
+          <div class="rs-color">
+            <p> </p>
+          </div>
+        </div>
+        <div class="rs-body">
+          <div class="rs-tabs">
+            <div class="tabs">
+              <ul class="active">
+                <li><a href="main1.html#pg1">업체리스트</a></li>
+              </ul>
+              <ul>
+                <li><a href="main2.html#pg2">상세페이지</a></li>
+              </ul>
+              <ul>
+                <li><a href="">업체정보</a></li>
+              </ul>
+              <ul>
+                <li><a href="">tab</a></li>
+              </ul>
+              <ul>
+                <li><a href="">tab</a></li>
+              </ul>
+              <ul>
+                <li><a href="">tab</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="rs-list">
+            <h1>시간표 조회</h1>
+            <div class="scroll box2">
+              {% for obj in store_list %}
+              <div class="store-table">
+                <div class="st-name">
+                  {{ obj.store_name }}
+                </div>
+                <div class="st-time">
+                  {% for time in store_times_dict|get_item:obj.pk %}
+                  <button class="time-item" type="button" data-time="{{ time.reservation_time }}">{{ time.reservation_time }}</button>
+                  {% endfor %}
+                </div>
+              </div>
+              {% endfor %}
+              <p>STEP1. 업체를 선택하세요.</p>
+              <p>STEP2. 시간을 선택하세요.</p>
+              <p>STEP3. 달력의 날짜를 선택하세요.</p>
+              <p>STEP4. 다음 버튼을 눌러주세요.</p>
+            </div>
+          </div>
+          <div class="rs-date">
+            <div class="name" id="selected-store">업체를 선택하세요.</div>
+            <div id="mainCalendar">
+              <table class="Calendar">
+                <thead>
+                  <tr>
+                    <td onClick="prevCalendar();" style="cursor:pointer;">&#60;</td>
+                    <td colspan="5">
+                      <span id="calYear"></span>년
+                      <span id="calMonth"></span>월
+                    </td>
+                    <td onClick="nextCalendar();" style="cursor:pointer;">&#62;</td>
+                  </tr>
+                  <tr>
+                    <td>일</td>
+                    <td>월</td>
+                    <td>화</td>
+                    <td>수</td>
+                    <td>목</td>
+                    <td>금</td>
+                    <td>토</td>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+            <div class="next" id="next-button" style="display: none;">
+              <button type="button" class="send-bt" onclick="checkSelectedDate()">다음</button>
+            </div>
+            <div>가 - 예약가능</div>
+            <div>완 - 예약불가</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </section>
+
+<!-- js파일 연결 -->
+<script src="{% static 'calendar_app/js/main1.js' %}"></script>
+
+{% endblock %}
+

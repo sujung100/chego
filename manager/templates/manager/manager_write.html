@@ -1,0 +1,144 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'manager/css/manager_write.css' %}?after">
+  <title>예약TEST</title>
+  
+</head>
+
+<body>
+  <div id="wrap">
+      <div class="box1">
+        <div class="content1">
+          <div class="section1">
+            <div class="home">
+              <a href="/manager">
+                <button type="button">홈</button>
+              </a>
+            </div>
+            <div class="input-boxs">
+              <form action="" method="post">{% csrf_token %}
+                <h1>예약TEST</h1>
+                <table>
+      
+                  <br>
+                  <label for="store_name">업체명</label>
+                  <input type="text" name="store_name" id="store_name">
+                  <br>
+                  <label for="address">주소</label>
+                  <input type="text" name="address" id="address">
+                  <br>
+                  <label for="select_time1">예약시간</label>
+                  <input type="time" name="select_time[]" id="select_time1">
+                  <button type="button" id="plus">추가</button>
+                  <div id="plus_box"></div>
+                  <!-- {{form} {% csrf_token %  -->
+                </table>
+                <button type="submit" class="confirm">확인</button>
+              </form>
+              <div class="side">
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="box2">
+        <div class="content2">
+        </div>
+      </div>
+
+  </div>
+  
+
+</body>
+
+</html>
+<script>
+  let myPlus = document.getElementById("plus");
+  let selectTime = document.getElementById("select_time");
+  let box = document.getElementById("plus_box");
+  let num = 2
+
+  // function roundToNearestHalfHour(timeStr) {
+  //   const timeArr = timeStr.split(':');
+  //   const minutes = parseInt(timeArr[1]);
+
+  //   if (minutes < 30) {
+  //     timeArr[1] = '00';
+  //   } else {
+  //     timeArr[1] = '30';
+  //   }
+
+  //   return timeArr.join(':');
+  // }
+
+  function validateTime(timeInput) {
+    let minValue = timeInput.getAttribute('min');
+    let value = timeInput.value;
+
+    // value = roundToNearestHalfHour(value);
+    // timeInput.value = value;
+    if (minValue && value < minValue) {
+      // Show an alert if the input value is less than the min value
+      alert("시간은 이전 시간 이후로 설정해 주세요.");
+      // Set the input value to the minimum value
+      timeInput.value = minValue;
+    }
+  }
+
+  myPlus.addEventListener("click", function () {
+    let newPlus = document.createElement("button");
+    let newMinus = document.createElement("button");
+    let newLine1 = document.createElement("br");
+
+    let newInput = document.createElement("input");
+    let prevInput = document.getElementById("select_time" + (num - 1));
+
+    // console.log(prevInput.value)
+    newInput.type = "time";
+    newInput.min = prevInput.value;
+    // newInput.step = "1800";
+    newInput.name = "select_time[]";
+    newInput.id = "select_time" + num;
+
+    newInput.onchange = function () {
+      validateTime(newInput)
+    };
+
+    newPlus.type = "button";
+    newPlus.textContent = "추가";
+    newPlus.id = "plus" + num;
+
+    newPlus.addEventListener("click", myPlus.click.bind(myPlus));
+
+    newMinus.type = "button";
+    newMinus.textContent = "삭제";
+    newMinus.id = "minus" + num;
+
+    newMinus.addEventListener("click", function () {
+      const idNum = this.id.replace("minus", "");
+
+      const plusToRemove = document.getElementById("plus" + idNum);
+      const minusToRemove = document.getElementById("minus" + idNum);
+      const newInputRemove = document.getElementById("select_time" + idNum);
+
+      newInputRemove.remove();
+      // plusToRemove.remove();
+      minusToRemove.remove();
+      newLine1.remove();
+    });
+
+    box.appendChild(newInput);
+    // box.appendChild(newPlus);
+    box.appendChild(newMinus);
+    box.appendChild(newLine1);
+
+    num += 1
+  });
+
+</script>

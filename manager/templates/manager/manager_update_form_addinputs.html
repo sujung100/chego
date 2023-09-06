@@ -30,10 +30,10 @@
                         <form action="" method="post">{% csrf_token %}
                           {% for time in store_times_dict|get_item:store_list.0.pk %}
                             <button class="time-item-{{ obj.id }}" type="button" data-time="{{ time.reservation_time }}" id="time-style">{{  time.reservation_time  }}</button>
-                            {% endfor %}
-                            <span id="btnwrap">
-                              <button type="button" id="addbtn">&#43;</button>
+                            <span id="btnwrap{{ forloop.counter }}">
+                              <button type="button" id="addbtn{{ forloop.counter }}">&#43;</button>
                             </span>
+                          {% endfor %}
                           <br>
                           <button type="submit">추가하기</button>
                         </form>
@@ -43,16 +43,18 @@
                 </div>
               </div>
               <br>
-              <!-- <div class="addtime">
+              <div class="addtime">
                   <table>
                     <br>
                     <label for="select_time1">예약시간</label>
                     <input type="time" name="select_time[]" id="select_time1" min="11:00" max="12:00">
+                    <!-- <button type="button" id="plus">&#43;</button> -->
                     <button type="button" id="plus">추가</button>
                     <div id="plus_box"></div>
+                    <!-- {{form} {% csrf_token %  -->
                   </table>
                   <button type="submit" class="confirm">확인</button>
-              </div> -->
+              </div>
             </div>
             {% else %}
             <div class="container">

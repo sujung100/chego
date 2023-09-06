@@ -6,7 +6,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{% static 'manager/css/manager_write.css' %}?after">
-  <title>예약TEST</title>
+  <title>타임테이블 추가</title>
   
 </head>
 
@@ -22,7 +22,7 @@
             </div>
             <div class="input-boxs">
               <form action="" method="post">{% csrf_token %}
-                <h1>예약TEST</h1>
+                <h1>타임테이블 추가</h1>
                 <table>
       
                   <br>
@@ -34,7 +34,7 @@
                   <br>
                   <label for="select_time1">예약시간</label>
                   <input type="time" name="select_time[]" id="select_time1">
-                  <button type="button" id="plus">추가</button>
+                  <button type="button" id="plus">&#43;</button>
                   <div id="plus_box"></div>
                   <!-- {{form} {% csrf_token %  -->
                 </table>

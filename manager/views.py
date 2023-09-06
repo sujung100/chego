@@ -236,88 +236,108 @@ class ManagerStoreUpdateView(LoginRequiredMixin, FormView):
 # def Update(request):
 #     return render (request, 'manager/manager_update_form.html')
 
+
+# 주석..//새로만들자
+# class Update(LoginRequiredMixin, UpdateView):
+#     model = rsv.Store
+#     form_class = UpdateForm
+#     template_name = 'manager/manager_update_form.html'
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         store_list = rsv.Store.objects.all()
+
+#         # URL에서 store_id값 가져오기
+#         requested_store_id = self.kwargs.get('store_id')
+
+#         # store.pk값이 있는 상점만 필터링
+#         filtered_store_list = [store for store in store_list if store.pk == requested_store_id]
+#         context['store_list'] = filtered_store_list
+
+#         store_times_dict = {}
+#         for store in filtered_store_list: # 필터링된 목록사용
+#             store_times = rsv.Store_times.objects.filter(store_id=store.pk)
+#             store_times_dict[store.pk] = store_times
+#         context['store_times_dict'] = store_times_dict
+
+        
+#         store_data = []
+        
+#         for store in filtered_store_list: # 필터링된 목록사용
+#             sto_time = rsv.Store_times.objects.filter(store_id=store.pk)
+#             store_dates = []
+#             for dates in sto_time:
+#                 dates_info  = rsv.Reservation_user.objects.filter(
+#                 Q(store_id=store) &
+#                 Q(user_time=dates.reservation_time) 
+#                 )
+
+#                 hour_disabled_dates = {}
+
+#                 for res in dates_info:
+#                     user_date = res.reservation_date
+#                     user_time = res.user_time
+
+#                     # 일부 예약이 이미 비활성 시간에 추가된 경우 해당 시간을 추가하고, 그렇지 않은 경우 새로운 항목을 만듭니다.
+#                     if user_date in hour_disabled_dates:
+#                         hour_disabled_dates[user_date].append(user_time)
+#                     else:
+#                         hour_disabled_dates[user_date] = [user_time]
+
+#                 user_dates = [info.reservation_date for info in dates_info]
+#                 store_dates.append({                                  # 수정된 위치의 append() 호출
+#                     'hour_disabled_dates': hour_disabled_dates,
+#                     'user_date': user_dates,
+#                     'disable_time': json.dumps([info.user_time for info in dates_info])
+#                 })
+#                 # print(store_dates)
+#             store_data.append({
+#                 'store_id': store.pk,
+#                 'sto_time': list(sto_time.values()),
+#                 'store_dates_json': json.dumps(store_dates, cls=DjangoJSONEncoder),
+#             })
+
+#         # context['store_data'] = store_data
+#         context['store_data_json'] = json.dumps(store_data, cls=DjangoJSONEncoder)
+#         # print(store_data)
+#         return context
+    
+
+
 class Update(LoginRequiredMixin, UpdateView):
-    model = Store
+    model = rsv.Store
     form_class = UpdateForm
     template_name = 'manager/manager_update_form.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         store_list = rsv.Store.objects.all()
-        context['store_list'] = store_list
+
+        # URL에서 store_id값 가져오기
+        requested_store_id = self.kwargs.get('store_id')
+
+        # store.pk값이 있는 상점만 필터링
+        filtered_store_list = [store for store in store_list if store.pk == requested_store_id]
+        context['store_list'] = filtered_store_list
 
         store_times_dict = {}
-        for store in store_list:
+        for store in filtered_store_list: # 필터링된 목록사용
             store_times = rsv.Store_times.objects.filter(store_id=store.pk)
             store_times_dict[store.pk] = store_times
         context['store_times_dict'] = store_times_dict
 
-        pk = self.kwargs.get('pk')
-        if pk:
-            store = get_object_or_404(rsv.Store, pk=pk)
-        else:
-            store = None
-
-        if store:
-            store_list = [store]
-        else:
-            store_list = store_list
-        
+        push_val = self.request.COOKIES.get('push_val', None)
+        print("쿠키 데이터 : ", push_val)
+        push_val2 = self.request.COOKIES.get('push_val2', None)
+        print("쿠키 데이터2 : ", push_val2)
+        input_val = self.request.COOKIES.get('input_val', None)
+        print("쿠키 데이터3 : ", input_val)
         store_data = []
         
-        for store in store_list:
+        for store in filtered_store_list: # 필터링된 목록사용
             sto_time = rsv.Store_times.objects.filter(store_id=store.pk)
-            print(store)
-            store_dates = []
-            for dates in sto_time:
-                dates_info  = rsv.Reservation_user.objects.filter(
-                Q(store_id=store) &
-                Q(user_time=dates.reservation_time) 
-                )
-                
-
-                hour_disabled_dates = {}
-
-                for res in dates_info:
-                    user_date = res.reservation_date
-                    user_time = res.user_time
-
-                    # 일부 예약이 이미 비활성 시간에 추가된 경우 해당 시간을 추가하고, 그렇지 않은 경우 새로운 항목을 만듭니다.
-                    if user_date in hour_disabled_dates:
-                        hour_disabled_dates[user_date].append(user_time)
-                    else:
-                        hour_disabled_dates[user_date] = [user_time]
-
-                store_dates.append({
-                    'hour_disabled_dates': hour_disabled_dates, # current_hour_reservations를 제거
-                })
-
-                
-                user_dates = [info.reservation_date for info in dates_info]
-                store_dates.append({
-                'user_date': user_dates,
-                'disable_time': json.dumps([info.user_time for info in dates_info ])
-                })
-                # print(store_dates)
             store_data.append({
                 'store_id': store.pk,
                 'sto_time': list(sto_time.values()),
-                'store_dates_json': json.dumps(store_dates, cls=DjangoJSONEncoder),
             })
-
-        # context['store_data'] = store_data
-        context['store_data_json'] = json.dumps(store_data, cls=DjangoJSONEncoder)
-        # print(store_data)
         return context
-    
-
-    # # 권한설정
-    # def dispatch(self, request, *args, **kwargs):
-    #     self.manager = get_object_or_404(Manager, pk=kwargs['pk'])
-    #     self.store = get_object_or_404(Store, pk=kwargs['store_id'])
-        
-    #     # 조건3개
-    #     if request.user.is_authenticated and request.user == self.manager.user and self.manager.user == self.store.owner:
-    #         return super(Update, self).dispatch(request, *args, **kwargs)
-    #     else:
-    #         raise PermissionDenied

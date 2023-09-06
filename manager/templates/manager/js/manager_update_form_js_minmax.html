@@ -1,0 +1,98 @@
+<script>
+	window.onload = function() {
+		var buttons = document.querySelectorAll('[id^="time-style-"]');
+		
+		for (var i=0; i<buttons.length - 1; i++) {
+			var currentInputId = 'input-' + (i+1);
+			var currentInput = document.getElementById(currentInputId);
+			
+			if(currentInput) {
+				currentInput.min = buttons[i].dataset.time;
+				currentInput.max = buttons[i+1].dataset.time;
+			}
+		}
+	};
+
+	let myPlus = document.getElementById("plus");
+	let selectTime = document.getElementById("select_time");
+	let box = document.getElementById("plus_box");
+	let num = 2
+
+	// function roundToNearestHalfHour(timeStr) {
+	//   const timeArr = timeStr.split(':');
+	//   const minutes = parseInt(timeArr[1]);
+
+	//   if (minutes < 30) {
+	//     timeArr[1] = '00';
+	//   } else {
+	//     timeArr[1] = '30';
+	//   }
+
+	//   return timeArr.join(':');
+	// }
+
+	function validateTime(timeInput) {
+		let minValue = timeInput.getAttribute('min');
+		let value = timeInput.value;
+
+		// value = roundToNearestHalfHour(value);
+		// timeInput.value = value;
+		if (minValue && value < minValue) {
+		// Show an alert if the input value is less than the min value
+		alert("시간은 이전 시간 이후로 설정해 주세요.");
+		// Set the input value to the minimum value
+		timeInput.value = minValue;
+		}
+	}
+
+	myPlus.addEventListener("click", function () {
+		let newPlus = document.createElement("button");
+		let newMinus = document.createElement("button");
+		let newLine1 = document.createElement("br");
+
+		let newInput = document.createElement("input");
+		let prevInput = document.getElementById("select_time" + (num - 1));
+
+		// console.log(prevInput.value)
+		newInput.type = "time";
+		newInput.min = prevInput.value;
+		// newInput.step = "1800";
+		newInput.name = "select_time[]";
+		newInput.id = "select_time" + num;
+
+		newInput.onchange = function () {
+		validateTime(newInput)
+		};
+
+		newPlus.type = "button";
+		newPlus.textContent = "추가";
+		newPlus.id = "plus" + num;
+
+		newPlus.addEventListener("click", myPlus.click.bind(myPlus));
+
+		newMinus.type = "button";
+		newMinus.textContent = "삭제";
+		newMinus.id = "minus" + num;
+
+		newMinus.addEventListener("click", function () {
+		const idNum = this.id.replace("minus", "");
+
+		const plusToRemove = document.getElementById("plus" + idNum);
+		const minusToRemove = document.getElementById("minus" + idNum);
+		const newInputRemove = document.getElementById("select_time" + idNum);
+
+		newInputRemove.remove();
+		// plusToRemove.remove();
+		minusToRemove.remove();
+		newLine1.remove();
+		});
+
+		box.appendChild(newInput);
+		// box.appendChild(newPlus);
+		box.appendChild(newMinus);
+		box.appendChild(newLine1);
+
+		num += 1
+	});
+
+</script>

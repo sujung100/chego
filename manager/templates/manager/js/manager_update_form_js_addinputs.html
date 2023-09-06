@@ -1,0 +1,151 @@
+<script>
+	// +버튼 누르면 시작
+	let items = Array.prototype.slice.call(document.querySelectorAll("[id^='time-style']"), 0).map(function(obj) {return obj.textContent});
+	console.log(items);
+
+	let addBts = document.querySelectorAll("[id^='addbtn']");
+	for (let i = 0; i < addBts.length; i++) {
+		addBts[i].addEventListener("click", function() {
+			let parent = this.parentNode;
+			
+			let addInput = document.createElement("input");
+			addInput.setAttribute("type", "time");
+			addInput.setAttribute("id", "addinput" + i); // 고유한 id 부여
+
+			let checkbt = document.createElement("button");
+			checkbt.setAttribute("id", "checkbt" + i); // 고유한 id 부여
+			checkbt.textContent="확인";
+			
+			parent.insertBefore(addInput, this.nextSibling);
+			parent.insertBefore(checkbt, addInput.nextSibling);
+		
+		this.style.display="none";
+		
+		console.log(timeItem=document.querySelectorAll("#time-style"));
+		
+		checkbt.addEventListener('click', function(event) {
+			event.preventDefault(); // 추가: 폼 제출 방지
+			getInputValue(i, parent, checkbt, addInput); // 필요한 매개변수들을 전달
+		});
+		});
+	}
+
+	function getInputValue(index, parentElement, checkButtonElement, inputElement)  {
+		let val=document.getElementById('addinput'+index).value;
+		let finishBt=document.createElement('button');
+		
+		let inserted=false;
+
+		for(let j=0;j<items.length-1;j++){
+			if(val>items[j] && val<items[j+1]){
+				items.splice(j+1,0,val);
+				inserted=true;
+				break;
+			}
+		}
+
+		if(inserted){
+			finishBt.textContent=val;
+			checkButtonElement.style.display='none';
+			inputElement.style.display='none';
+			parentElement.insertBefore(finishBt, checkButtonElement.nextSibling);
+
+			finishBt.addEventListener('click', function(event){
+				event.preventDefault(); 
+				inputElement.value=val; 
+				inputElement.style.display='';
+				checkButtonElement.style.display='';
+				this.remove(); 
+		});
+		console.log(items);
+	}
+	}
+
+
+
+
+	
+
+	let myPlus = document.getElementById("plus");
+	let selectTime = document.getElementById("select_time");
+	let box = document.getElementById("plus_box");
+	let num = 2
+
+	// function roundToNearestHalfHour(timeStr) {
+	//   const timeArr = timeStr.split(':');
+	//   const minutes = parseInt(timeArr[1]);
+
+	//   if (minutes < 30) {
+	//     timeArr[1] = '00';
+	//   } else {
+	//     timeArr[1] = '30';
+	//   }
+
+	//   return timeArr.join(':');
+	// }
+
+	function validateTime(timeInput) {
+		let minValue = timeInput.getAttribute('min');
+		let value = timeInput.value;
+
+		// value = roundToNearestHalfHour(value);
+		// timeInput.value = value;
+		if (minValue && value < minValue) {
+		// Show an alert if the input value is less than the min value
+		alert("시간은 이전 시간 이후로 설정해 주세요.");
+		// Set the input value to the minimum value
+		timeInput.value = minValue;
+		}
+	}
+
+	myPlus.addEventListener("click", function () {
+		let newPlus = document.createElement("button");
+		let newMinus = document.createElement("button");
+		let newLine1 = document.createElement("br");
+
+		let newInput = document.createElement("input");
+		let prevInput = document.getElementById("select_time" + (num - 1));
+
+		// console.log(prevInput.value)
+		newInput.type = "time";
+		newInput.min = prevInput.value;
+		// newInput.step = "1800";
+		newInput.name = "select_time[]";
+		newInput.id = "select_time" + num;
+
+		newInput.onchange = function () {
+		validateTime(newInput)
+		};
+
+		newPlus.type = "button";
+		newPlus.textContent = "추가";
+		newPlus.id = "plus" + num;
+
+		newPlus.addEventListener("click", myPlus.click.bind(myPlus));
+
+		newMinus.type = "button";
+		newMinus.textContent = "삭제";
+		newMinus.id = "minus" + num;
+
+		newMinus.addEventListener("click", function () {
+		const idNum = this.id.replace("minus", "");
+
+		const plusToRemove = document.getElementById("plus" + idNum);
+		const minusToRemove = document.getElementById("minus" + idNum);
+		const newInputRemove = document.getElementById("select_time" + idNum);
+
+		newInputRemove.remove();
+		// plusToRemove.remove();
+		minusToRemove.remove();
+		newLine1.remove();
+		});
+
+		box.appendChild(newInput);
+		// box.appendChild(newPlus);
+		box.appendChild(newMinus);
+		box.appendChild(newLine1);
+
+		num += 1
+	});
+
+</script>

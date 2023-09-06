@@ -22,37 +22,43 @@
                 <div class="showtime">
                   {% for obj in store_list %}
                     <div class="store-table">
-                      <div class="st-name">
-                        <div class="st-id">{{ obj.id }}</div>
-                        {{ obj.store_name }}
-                      </div>
-                      <div class="st-time">
-                        <form action="" method="post">{% csrf_token %}
-                          {% for time in store_times_dict|get_item:store_list.0.pk %}
-                            <button class="time-item-{{ obj.id }}" type="button" data-time="{{ time.reservation_time }}" id="time-style">{{  time.reservation_time  }}</button>
+                        <div class="st-name">
+                            <div class="st-id">{{ obj.id }}</div>
+                            {{ obj.store_name }}
+                        </div>
+                        <div class="st-time">
+                            {% for time in store_times_dict|get_item:store_list.0.pk %}
+                                <!-- 버튼에 고유한 ID 부여 -->
+                                <button class="time-item-{{ obj.id }}" type="button" data-time="{{ time.reservation_time }}" id="time-style-{{ forloop.counter }}">{{ time.reservation_time}}</button>
+                                <!-- 입력 필드에 고유한 ID 부여 -->
+                                <input id='input-{{forloop.counter}}' type='time'>
                             {% endfor %}
-                            <span id="btnwrap">
-                              <button type="button" id="addbtn">&#43;</button>
-                            </span>
-                          <br>
-                          <button type="submit">추가하기</button>
-                        </form>
-                      </div>
+                        </div>
                     </div>
                   {% endfor %}
+                  <script>    
+                    var minTime;
+                    function setMinTime(timeValue) {
+                      minTime = timeValue;
+                    }
+                  </script>
                 </div>
               </div>
               <br>
-              <!-- <div class="addtime">
+              <div class="addtime">
+                <form action="" method="post">{% csrf_token %}
                   <table>
                     <br>
                     <label for="select_time1">예약시간</label>
                     <input type="time" name="select_time[]" id="select_time1" min="11:00" max="12:00">
+                    <!-- <button type="button" id="plus">&#43;</button> -->
                     <button type="button" id="plus">추가</button>
                     <div id="plus_box"></div>
+                    <!-- {{form} {% csrf_token %  -->
                   </table>
                   <button type="submit" class="confirm">확인</button>
-              </div> -->
+                </form>
+              </div>
             </div>
             {% else %}
             <div class="container">

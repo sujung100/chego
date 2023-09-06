@@ -1,0 +1,187 @@
+<script>
+	// +버튼 누르면 시작
+	let items = Array.prototype.slice.call(document.querySelectorAll("[id^='time-style']"), 0).map(function (obj) { return obj.textContent });
+	console.log(items);
+
+	function setCookie(cname, cvalue, exdays) {
+		var d = new Date();
+		d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+		var expires = "expires=" + d.toUTCString();
+		document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+	}
+
+	function getCookie(cname) {
+		let name = cname + "=";
+		let decodedCookie = decodeURIComponent(document.cookie);
+		let ca = decodedCookie.split(';');
+		for(let i = 0; i <ca.length; i++) {
+			let c = ca[i];
+			while (c.charAt(0) == ' ') {
+				c = c.substring(1);
+			}
+			if (c.indexOf(name) == 0) {
+				return c.substring(name.length, c.length);
+			}
+		}
+		return "";
+	}
+
+	setCookie("push_val", items, 1);
+
+	let addBtsArray= Array.from(document.querySelectorAll('#addbtn'));
+	addBtsArray.forEach(addBts => {
+		addBts.addEventListener("click", function () {
+
+			let parentElement=this.parentNode;
+
+			let addInput=document.createElement("input");
+			addInput.setAttribute("type","time");
+			addInput.setAttribute("class","addinput");
+
+			let checkbt=document.createElement("button");
+			checkbt.setAttribute("class","checkbt"); // 고유한 id 부여
+			checkbt.textContent="확인";
+
+			parentElement.insertBefore(addInput,this.nextSibling);
+			parentElement.insertBefore(checkbt,addInput.nextSibling);
+
+			this.style.display="none";
+
+			console.log(timeItem=document.querySelectorAll("[id^='time-style']"));
+
+			checkbt.addEventListener('click', function(event){
+				event.preventDefault(); // 추가: 폼 제출 방지
+				getInputValue(parentElement,checkbt,addInput); // 필요한 매개변수들을 전달
+			});
+	});
+	});
+
+	function getInputValue(parentElement, checkButtonElement,inputElement){
+		let val=inputElement.value;
+		setCookie("input_val", val ,1); // 쿠키 설정
+
+		let finishBt=document.createElement('button');
+		finishBt.textContent=getCookie("input_val"); // 쿠키에서 값을 가져와서 버튼 텍스트 설정
+		finishBt.id='time-style'; 
+
+		checkButtonElement.style.display='none';
+		inputElement.style.display='none';
+
+		items.push(val);
+		items.sort(function(a,b){ 
+		return new Date('1970/01/01 '+ a ) - new Date('1970/01/01 '+ b);
+	});
+
+		let timeItems=Array.from(parentElement.querySelectorAll("[id^='time-style']"));
+		timeItems.push(finishBt);
+
+		timeItems.sort((a,b)=>{
+		return new Date(`1970/01/01 ${a.textContent}`)-new Date(`1970/01/01 ${b.textContent}`);
+		});
+
+		for(let i=0; i<timeItems.length; i++){
+		parentElement.appendChild(timeItems[i]);
+		}
+
+		finishBt.addEventListener('click', function(event){
+			inputElement.value=val;
+			inputElement.style.display='';
+			checkButtonElement.style.display='';
+			this.remove();
+		});
+		setCookie("push_val2", items, 1);
+		console.log(items);
+	}
+
+
+
+
+
+
+
+
+
+
+	// let myPlus = document.getElementById("plus");
+	// let selectTime = document.getElementById("select_time");
+	// let box = document.getElementById("plus_box");
+	// let num = 2
+
+	// // function roundToNearestHalfHour(timeStr) {
+	// //   const timeArr = timeStr.split(':');
+	// //   const minutes = parseInt(timeArr[1]);
+
+	// //   if (minutes < 30) {
+	// //     timeArr[1] = '00';
+	// //   } else {
+	// //     timeArr[1] = '30';
+	// //   }
+
+	// //   return timeArr.join(':');
+	// // }
+
+	// function validateTime(timeInput) {
+	// 	let minValue = timeInput.getAttribute('min');
+	// 	let value = timeInput.value;
+
+	// 	// value = roundToNearestHalfHour(value);
+	// 	// timeInput.value = value;
+	// 	if (minValue && value < minValue) {
+	// 	// Show an alert if the input value is less than the min value
+	// 	alert("시간은 이전 시간 이후로 설정해 주세요.");
+	// 	// Set the input value to the minimum value
+	// 	timeInput.value = minValue;
+	// 	}
+	// }
+
+	// myPlus.addEventListener("click", function () {
+	// 	let newPlus = document.createElement("button");
+	// 	let newMinus = document.createElement("button");
+	// 	let newLine1 = document.createElement("br");
+
+	// 	let newInput = document.createElement("input");
+	// 	let prevInput = document.getElementById("select_time" + (num - 1));
+
+	// 	// console.log(prevInput.value)
+	// 	newInput.type = "time";
+	// 	newInput.min = prevInput.value;
+	// 	// newInput.step = "1800";
+	// 	newInput.name = "select_time[]";
+	// 	newInput.id = "select_time" + num;
+
+	// 	newInput.onchange = function () {
+	// 	validateTime(newInput)
+	// 	};
+
+	// 	newPlus.type = "button";
+	// 	newPlus.textContent = "추가";
+	// 	newPlus.id = "plus" + num;
+
+	// 	newPlus.addEventListener("click", myPlus.click.bind(myPlus));
+
+	// 	newMinus.type = "button";
+	// 	newMinus.textContent = "삭제";
+	// 	newMinus.id = "minus" + num;
+
+	// 	newMinus.addEventListener("click", function () {
+	// 	const idNum = this.id.replace("minus", "");
+
+	// 	const plusToRemove = document.getElementById("plus" + idNum);
+	// 	const minusToRemove = document.getElementById("minus" + idNum);
+	// 	const newInputRemove = document.getElementById("select_time" + idNum);
+
+	// 	newInputRemove.remove();
+	// 	// plusToRemove.remove();
+	// 	minusToRemove.remove();
+	// 	newLine1.remove();
+	// 	});
+
+	// 	box.appendChild(newInput);
+	// 	// box.appendChild(newPlus);
+	// 	box.appendChild(newMinus);
+	// 	box.appendChild(newLine1);
+
+	// 	num += 1
+	// });
+
+</script>

@@ -180,7 +180,13 @@ ol, ul{
     width:30%;
     height:80%;
   }
+
+
   
+/* 비활성 버튼 스타일 */
+.disabled-time {background-color: #333 !important; color: #ddd; opacity: 0.2;}
+.disabled-time:hover {background-color: #333 !important; border: 1px solid #818181 !important; cursor: default !important;}
+
   
 @keyframes stroke-offset{
 	100% {stroke-dashoffset: -35%;}

@@ -28,40 +28,85 @@
 
 	setCookie("push_val", items, 1);
 
-	let addBtsArray= Array.from(document.querySelectorAll('#addbtn'));
-	addBtsArray.forEach(addBts => {
-		addBts.addEventListener("click", function () {
+	function handleAddBtnClick(event) {
+		let parentElement = event.target.parentNode;
 
-			let parentElement=this.parentNode;
+		let addInput = document.createElement("input");
+		addInput.setAttribute("type", "time");
+		addInput.setAttribute("class", "addinput");
 
-			let addInput=document.createElement("input");
-			addInput.setAttribute("type","time");
-			addInput.setAttribute("class","addinput");
+		let checkbt = document.createElement("button");
+		checkbt.setAttribute("class", "checkbt"); 
+		checkbt.textContent = "확인";
 
-			let checkbt=document.createElement("button");
-			checkbt.setAttribute("class","checkbt"); // 고유한 id 부여
-			checkbt.textContent="확인";
+		parentElement.insertBefore(addInput, event.target.nextSibling);
+		parentElement.insertBefore(checkbt, addInput.nextSibling);
 
-			parentElement.insertBefore(addInput,this.nextSibling);
-			parentElement.insertBefore(checkbt,addInput.nextSibling);
+		event.target.style.display = "none";
+		
+		checkbt.addEventListener('click', function(event){
+			event.preventDefault(); 
+			let val=addInput.value;
 
-			this.style.display="none";
+			// inputValues 배열 안에 이미 동일한 값이 있는지 확인
+			if (inputValues.includes(val)) {
+				alert("중복된 시간입니다. 다른 시간을 입력해주세요.");
+				
+				return; // 중복 값이 있으면 함수 종료
+			}
 
-			console.log(timeItem=document.querySelectorAll("[id^='time-style']"));
+			getInputValue(parentElement,checkbt,addInput); 
 
-			checkbt.addEventListener('click', function(event){
-				event.preventDefault(); // 추가: 폼 제출 방지
-				getInputValue(parentElement,checkbt,addInput); // 필요한 매개변수들을 전달
-			});
+			let newAddBtn = document.createElement("button");
+			newAddBtn.setAttribute("class", "addbtn");
+			newAddBtn.setAttribute("type", "button");
+			newAddBtn.textContent = "+";
+
+			// 클릭된 버튼의 부모 요소에 새로운 'addbtn' 추가
+			parentElement.appendChild(newAddBtn);
+
+			// 클릭된 버튼의 다음 형제 요소인 'newAddBtn'으로 포커스 이동
+			newAddBtn.focus();
+
+			// 클릭된 버튼 제거
+			checkbt.remove();
+		});
+	}
+
+	document.addEventListener('click', function (event) {
+		if (event.target.matches('.addbtn')) {
+			handleAddBtnClick(event);
+		}
 	});
-	});
 
+	// 쿠키테스트... 임시
+	console.log(getCookie("input_vals"));
+	let inputValues = []; // 입력 값을 저장할 배열
+
+	
 	function getInputValue(parentElement, checkButtonElement,inputElement){
 		let val=inputElement.value;
-		setCookie("input_val", val ,1); // 쿠키 설정
+
+		// inputValues 배열 안에 이미 동일한 값이 있는지 확인
+		if (inputValues.includes(val)) {
+			alert("중복된 시간입니다. 다른 시간을 입력해주세요.");
+
+			// 중복 값이 있으면 입력 필드와 확인 버튼을 다시 표시
+			inputElement.style.display = '';
+			checkButtonElement.style.display = '';
+			return;
+		}
+		
+		inputValues.push(val); // 입력 값 추가
+		let cookieVal = JSON.stringify(inputValues);
+    	console.log("Setting cookie with value:", cookieVal);
+    
+    setCookie("input_vals", cookieVal, 1); // 쿠키 설정
+
+		// setCookie("input_vals", JSON.stringify(inputValues), 1); // 쿠키 설정
 
 		let finishBt=document.createElement('button');
-		finishBt.textContent=getCookie("input_val"); // 쿠키에서 값을 가져와서 버튼 텍스트 설정
+		finishBt.textContent=val; // 직접 val 사용
 		finishBt.id='time-style'; 
 
 		checkButtonElement.style.display='none';
@@ -69,18 +114,24 @@
 
 		items.push(val);
 		items.sort(function(a,b){ 
-		return new Date('1970/01/01 '+ a ) - new Date('1970/01/01 '+ b);
+			return new Date('1970/01/01 '+ a ) - new Date('1970/01/01 '+ b);
 	});
 
-		let timeItems=Array.from(parentElement.querySelectorAll("[id^='time-style']"));
-		timeItems.push(finishBt);
+	console.log(getCookie("input_vals"));
 
-		timeItems.sort((a,b)=>{
-		return new Date(`1970/01/01 ${a.textContent}`)-new Date(`1970/01/01 ${b.textContent}`);
+		parentElement.appendChild(finishBt);
+
+		let timeItems=Array.from(parentElement.querySelectorAll("[id^='time-style']"));
+		
+		// 화면상의 모든 버튼을 다시 불러와서 시간 순서대로 정렬
+		timeItems.sort((a, b) => {
+			return new Date(`1970/01/01 ${a.textContent}`) - new Date(`1970/01/01 ${b.textContent}`);
 		});
 
+		parentElement.innerHTML = ''; // 부모 요소의 모든 자식 요소를 제거
+
 		for(let i=0; i<timeItems.length; i++){
-		parentElement.appendChild(timeItems[i]);
+		parentElement.appendChild(timeItems[i]); // 정렬된 버튼들을 다시 추가
 		}
 
 		finishBt.addEventListener('click', function(event){
@@ -88,16 +139,96 @@
 			inputElement.style.display='';
 			checkButtonElement.style.display='';
 			this.remove();
+			let index = items.indexOf(this.textContent);
+			if (index > -1) {
+				items.splice(index, 1);
+			}
+			console.log(items);
 		});
 		setCookie("push_val2", items, 1);
 		console.log(items);
 	}
 
 
+	function copyItems() {
+		let copiedItems = []; // 빈 배열 생성
+		for(let i = 0; i < items.length; i++) { // items의 모든 요소를 순회
+			copiedItems.push(items[i]); // 각 요소를 새로운 배열에 추가
+		}
+		return copiedItems; // 복사된 아이템들을 반환
+	}
 
+	function createButtonsFromItems() {
+		let copiedItems = copyItems(); // 위에서 정의한 copyItems 함수를 호출하여 items 배열 복사본을 얻음
+		
+		// copiedItems.push(getCookie("input_val")); // newbtn의 시간값도 복사본 배열에 추가
+		let inputValues = JSON.parse(getCookie("input_vals")) || [];
+		copiedItems = copiedItems.concat(inputValues);
 
+		
+		copiedItems.sort(function(a, b) {
+			return a.localeCompare(b);
+		});
+		
+		let address = document.getElementById('attach_btns');
+		let attach = address.parentNode;
+		
+		for(let i = 0; i < copiedItems.length; i++) { 
+			let arrbtn = document.createElement("button"); 
+			arrbtn.textContent = copiedItems[i];
+			
+			// 클릭 이벤트 리스너 추가
+			arrbtn.addEventListener('click', function(event) {
+				event.preventDefault();
 
+				// 기존에 존재하는 time input 삭제
+				let oldTimeInput = document.querySelector('.time-input');
+				if (oldTimeInput) oldTimeInput.remove();
 
+				// 새로운 time input 생성
+				let timeInput = document.createElement("input");
+				timeInput.setAttribute("type", "time");
+				timeInput.classList.add('time-input');
+
+				// 값 변경 이벤트 리스너 추가
+				timeInput.addEventListener('change', function(e) {
+					e.preventDefault();
+
+					// 모든 버튼 가져오기
+					let buttons = Array.from(attach.querySelectorAll('button'));
+					
+					// 동일한 값을 가진 버튼이 이미 있는지 확인
+					for (let button of buttons) {
+						if (button.textContent === this.value) {
+							alert("이미 존재하는 시간입니다.");
+							this.style.display = '';
+							return;
+						}
+					}
+
+					arrbtn.textContent = this.value;
+
+				// 텍스트(시간 값) 기준으로 오름차순 정렬
+				buttons.push(arrbtn);  // arrbtn을 다시 리스트에 추가 후 정렬
+				buttons.sort((a, b) => {
+					return a.textContent.localeCompare(b.textContent);
+				});
+
+				// 정렬된 버튼들로 DOM 업데이트
+				attach.innerHTML = '';
+				for (let button of buttons) {
+					attach.appendChild(button);
+				}
+				this.remove();
+				});
+
+			event.target.parentNode.insertBefore(timeInput, event.target.nextSibling);
+			});
+
+			attach.appendChild(arrbtn); 
+		}
+	}
+	createButtonsFromItems();
 
 
 

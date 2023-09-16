@@ -332,6 +332,8 @@ class Update(LoginRequiredMixin, UpdateView):
         print("쿠키 데이터2 : ", push_val2)
         input_val = self.request.COOKIES.get('input_val', None)
         print("쿠키 데이터3 : ", input_val)
+        input_vals = self.request.COOKIES.get('input_vals', None)
+        print("쿠키 데이터4 : ", input_vals)
         store_data = []
         
         for store in filtered_store_list: # 필터링된 목록사용

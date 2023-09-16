@@ -32,10 +32,14 @@
                             <button class="time-item-{{ obj.id }}" type="button" data-time="{{ time.reservation_time }}" id="time-style">{{  time.reservation_time  }}</button>
                             {% endfor %}
                             <span id="btnwrap">
-                              <button type="button" id="addbtn">&#43;</button>
+                              <button type="button" class="addbtn">&#43;</button>
                             </span>
                           <br>
-                          <button type="submit">추가하기</button>
+                          <button type="button">추가하기</button>
+                          <div class="parent">
+                            <div id="attach_btns"></div>
+                          </div>
+                          <button type="button">저장하기</button>
                         </form>
                       </div>
                     </div>

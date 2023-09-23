@@ -88,29 +88,6 @@
 		}
 	});
 
-
-	// document.getElementById('add_cookies').addEventListener('click', function() {
-	// 	// "+" 버튼 찾기
-	// 	let addBtn = document.querySelector('.addbtn');
-		
-	// 	// "+" 버튼이 있다면 클릭 이벤트 발생시키기
-	// 	if (addBtn) {
-	// 		addBtn.click();
-			
-	// 		// "확인" 버튼 찾기
-	// 		let checkBtn = document.querySelector('.checkbt');
-			
-	// 		// "확인" 버튼이 있다면 클릭 이벤트 발생시키기
-	// 		if (checkBtn) {
-	// 			checkBtn.click();
-				
-	// 			// 쿠키에서 값 가져와서 화면에 표시하기
-	// 			createButtonsFromItems();
-	// 		}
-	// 	}
-	// });
-	
-
 	// 쿠키테스트... 임시
 	console.log(getCookie("input_vals"));
 	let inputValues = []; // 입력 값을 저장할 배열
@@ -150,7 +127,6 @@
 	});
 
 	console.log(getCookie("input_vals"));
-	console.log("야아아아아", inputValues)
 
 		parentElement.appendChild(finishBt);
 
@@ -239,33 +215,28 @@
 						}
 					}
 
-					// 변경된 값을 배열에 추가하기 
-					// copiedItems.push(this.value);
-						arrbtn.textContent = this.value;
+					arrbtn.textContent = this.value;
 
-						// 텍스트(시간 값) 기준으로 오름차순 정렬
-						buttons.push(arrbtn);  // arrbtn을 다시 리스트에 추가 후 정렬
-						buttons.sort((a, b) => {
-							return a.textContent.localeCompare(b.textContent);
-						});
-
-						// 정렬된 버튼들로 DOM 업데이트
-						attach.innerHTML = '';
-						for (let button of buttons) {
-							attach.appendChild(button);
-						}
-						this.remove();
-						});
-
-					event.target.parentNode.insertBefore(timeInput, event.target.nextSibling);
+				// 텍스트(시간 값) 기준으로 오름차순 정렬
+				buttons.push(arrbtn);  // arrbtn을 다시 리스트에 추가 후 정렬
+				buttons.sort((a, b) => {
+					return a.textContent.localeCompare(b.textContent);
 				});
 
-				attach.appendChild(arrbtn); 
-			}
-			console.log("복사한 배열값", copiedItems);
-			console.log("인풋값", inputValues);
+				// 정렬된 버튼들로 DOM 업데이트
+				attach.innerHTML = '';
+				for (let button of buttons) {
+					attach.appendChild(button);
+				}
+				this.remove();
+				});
+
+			event.target.parentNode.insertBefore(timeInput, event.target.nextSibling);
+			});
+
+			attach.appendChild(arrbtn); 
+		}
 	}
-	// console.log(items);
 	createButtonsFromItems();
 
 

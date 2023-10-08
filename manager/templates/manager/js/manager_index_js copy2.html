@@ -1,7 +1,7 @@
 <script>
-  let nc = null;
+
   window.addEventListener("DOMContentLoaded", () => {
-    nc = new NotificationCenter();
+    const nc = new NotificationCenter();
   });
 
   document.addEventListener('DOMContentLoaded', function () {
@@ -24,38 +24,25 @@
     }
     // Click events
 
-    if (c1) c1.addEventListener('click', handleElementClick);
-    if (c2) c2.addEventListener('click', handleElementClick);
-    if (c3) c3.addEventListener('click', handleElementClick);
+    if (c1) c1.addEventListener('click', handleClick);
+    if (c2) c2.addEventListener('click', handleClick);
+    if (c3) c3.addEventListener('click', handleClick);
   });
 
   class NotificationCenter {
-    constructor(storeId) {
+    constructor() {
       this.items = [];
       this.itemsToKill = [];
-      this.storeManager = new StoreManager(storeId); // Create an instance of StoreManager
-      this.currentMessageIndex = 0;
+      this.messages = NotificationMessages();
       this.killTimeout = null;
 
-      // this.spawnNotes(3);
-    }
-
-    async init() {
-      // console.log(this.messages);
-
-      await this.storeManager.handleClick();
-      if (this.messages && Array.isArray(this.messages)) {
-        this.spawnNotes(3);
-      }
+      this.spawnNotes(3);
     }
     spawnNote() {
-      console.log('Current state of messages:', this.messages);
-
-      if (!this.messages || !Array.isArray(this.messages)) return;
-
       const id = this.random(0, 2 ** 32, true).toString(16);
       // console.log(id);
-      const message = this.messages[this.currentMessageIndex];
+      const draw = this.random(0, this.messages.length - 1, true);
+      const message = this.messages[draw];
       const note = new Notification({
         id: `note-${id}`,
         icon: message.icon,
@@ -63,25 +50,12 @@
         subtitle: message.subtitle,
         actions: message.actions
       });
-      // console.log(note);
       const transY = 1 * this.items.length;
 
       note.el.style.transform = `translateY(${transY}%)`;
-      // note.el.addEventListener("click", this.killNote.bind(this, note.id));
-      // this.items.push(note);
-      note.el.addEventListener("click", () => {
-        nc.killNote(note.id);
-        nc.spawnNotes();
-      });
+      note.el.addEventListener("click", this.killNote.bind(this, note.id));
 
-      nc.items.push(note);
-
-      // Increment the current message index for the next call
-      if (this.currentMessageIndex > 0) {
-        --this.currentMessageIndex;
-      }else {
-        this.currentMessageIndex = this.messages.length -1;
-      }
+      this.items.push(note);
     }
     spawnNotes(amount) {
       let count = typeof amount === "number" ? amount : this.random(1, 5, true);
@@ -129,14 +103,6 @@
       const relativeValue = (max - min) * percent;
 
       return min + (round === true ? Math.round(relativeValue) : +relativeValue.toFixed(2));
-    }
-
-    clearNotes() {
-      const parent = document.getElementById("svg_noti");
-      this.items.forEach(note => {
-        parent.removeChild(note.el);
-      });
-      this.items = [];
     }
   }
 
@@ -229,86 +195,15 @@
     }
   }
 
-  async function fetchStoreData(storeId) {
-    if (!storeId) {
-      console.warn('storeId is not defined. Skipping fetch.');
-      return [];
-    }
-
-    try {
-      const response = await fetch(`api/store-times/?store_id=${storeId}`);
-      const data = await response.json();
-
-      let dataResult = data[0].map((item) => {
-        return [item.user_name, item.user_phone, item.reservation_date, item.user_time];
-      });
-
-      return dataResult.map(element => ({
+  function NotificationMessages() {
+    return [
+      {
         icon: "up",
         title: "새로운 예약",
-        subtitle: element,
+        subtitle: "여기에 뭘 쓰면 어떻게 되니",
         actions: ["확인"]
-      }));
-
-    } catch (error) {
-      console.error('Error:', error);
-
-      // Return an empty array in case of error
-      return [];
-    }
-  }
-
-  class StoreManager {
-    constructor(storeId = null) {
-      this.storeId = storeId;
-      this.storeData = null;
-      // Add other properties if needed
-    }
-
-    async handleClick(inputStoreId) {
-      this.storeId = inputStoreId;
-      let newData = await fetchStoreData(this.storeId);
-
-      console.log(newData);
-
-      if (nc) { // Check if the NotificationCenter instance exists
-        nc.messages = newData;
-        nc.currentMessageIndex = nc.messages.length - 1;
-        nc.clearNotes(); // Remove existing notifications
-        // nc.spawnNotes(3); 
-        // console.log("이건 nc", nc);
-        setTimeout(() => {
-          nc.spawnNotes(3);
-        }, 0);
-      }
-    }
-
-  }
-
-  function handleElementClick() {
-    const currentTransform = this.style.transform;
-
-    if (currentTransform === `translate(${translateX}, ${translateY1}) ${scale_value1} ${rotate_value1}`) {
-      changeSlides(true);
-    }
-
-    if (currentTransform === `translate(${translateX}, ${translateY2}) ${scale_value1} ${rotate_value2}`) {
-      changeSlides(false);
-    }
-
-    let clickedStoreId = this.querySelector("[class$='_storeId']").textContent;
-
-    // let myStoreManager = new StoreManager(clickedStoreId);
-    // myStoreManager.handleClick(clickedStoreId);
-    if (clickedStoreId) {
-      if (nc && nc.storeManager) { // Check if the NotificationCenter instance and its storeManager property exist
-        nc.storeManager.handleClick(clickedStoreId);
-        // nc.spawnNotes(3);
-      }
-    } else {
-      console.log("없어");
-      pass;
-    }
+      },
+    ]
   }
 
   let myPlus = document.getElementById("plus");
@@ -316,6 +211,9 @@
   let box = document.getElementById("plus_box");
   let num = 2
 
+  // window.onload = function () {
+  //   applyRecentzIndex();
+  // }
 
 
 
@@ -472,7 +370,104 @@
     });
   }
 
+  // function recent_f(storeIdVal) {
+  //   fetch(`api/store-times/?store_id=${storeIdVal}`)  // Django view endpoint returning store times in JSON
+  //     .then(response => {
+  //       return response.json();
+  //     })
+  //     .then(data => {
+  //       console.log(data);  // 출력: storeIdVal 값과 일치하는 "store_id"의 데이터들
+  //     })
+  //     .catch(error => console.error('Error:', error));
+  // }
 
+  function recent_f(storeIdVal) {
+    fetch(`api/store-times/?store_id=${storeIdVal}`)
+      .then(response => response.json())
+      .then(data => {
+        // console.log(data);
+        // document.querySelector('.recent').innerText = JSON.stringify(data);
+      })
+      .catch(error => console.error('Error:', error));
+  }
+
+  (async () => {
+    const result = await applyRecentzIndex();
+    // console.log(result);
+    recent_f(result.storeIdVal);
+
+  })();
+
+  function applyRecentzIndex() {
+    // 'c1', 'c2', 'c3' 클래스를 가진 모든 요소를 가져옵니다.
+    let elements = document.querySelectorAll('.c1, .c2, .c3');
+
+    let promises = Array.from(elements).map(element => new Promise(resolve => {
+      setTimeout(() => {
+        let zIndexValue = window.getComputedStyle(element).zIndex;
+        // console.log('Original zIndex:', zIndexValue);
+
+        zIndexValue = parseInt(zIndexValue);
+        if (isNaN(zIndexValue)) {
+          zIndexValue = 0; // Or any default value you want
+        }
+
+        // console.log('Parsed zIndex:', zIndexValue);
+
+        resolve({ element: element, value: zIndexValue });
+      }, 0);
+    }));
+
+    return Promise.all(promises).then(results => {
+      let reSetzIndexElement = null;
+      let reSetzIndexValue = -Infinity;
+
+      results.forEach(result => {
+        if (result.value === 1) {
+          result.element.style.cursor = "pointer";
+        }
+      });
+
+      for (let result of results) {
+
+        if (result.value > reSetzIndexValue) {
+          reSetzIndexElement = result.element;
+          reSetzIndexValue = result.value;
+          // console.log(reSetzIndexElement);
+        }
+      };
+
+      if (reSetzIndexElement !== null) {
+
+        // _storeId로 끝나는 클래스가 있다면 그 값(value)을 가져옵니다.
+        let storeIdVal = "";
+        let storeIdClassDiv = reSetzIndexElement.querySelector("[class$='_storeId']");
+
+        if (storeIdClassDiv) {
+          storeIdVal = storeIdClassDiv.textContent;
+        }
+
+        return { maxZindex: reSetzIndexValue, storeIdVal: storeIdVal };
+      }
+    });
+  }
+  // console.log("이건 뭐냐", applyRecentzIndex());
+  // applyRecentzIndex().then(recentZindex => console.log("리센트인덱스 되냐", recentZindex));
+
+  async function handleClick() {
+    const currentTransform = this.style.transform;
+
+    if (currentTransform === `translate(${translateX}, ${translateY1}) ${scale_value1} ${rotate_value1}`) {
+      await changeSlides(true);
+    }
+
+    if (currentTransform === `translate(${translateX}, ${translateY2}) ${scale_value1} ${rotate_value2}`) {
+      await changeSlides(false);
+    }
+
+    let clickedStoreId = this.querySelector("[class$='_storeId']").textContent;
+    recent_f(clickedStoreId);
+  }
 
   function updateElement(elementClassName, storeName, storeId) {
 

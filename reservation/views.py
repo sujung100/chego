@@ -48,6 +48,7 @@ def write(request):
     return render(request, 'reservation/write.html')
 
 def detail(request,pk):
+    print("왜안되냐")
     sto = get_object_or_404(models.Store, pk=pk)
     sto_time = models.Store_times.objects.filter(store_id=pk)
 
@@ -75,7 +76,7 @@ def detail(request,pk):
         })
     context = {"store":sto, "sto_time":sto_time,
                "store_dates_json": json.dumps(store_dates, cls=DjangoJSONEncoder),}
-    return render(request,"reservation/detail.html",context)
+    return render(request,"reservation/reserve.html",context)
 
 def list_up(request):
     return render(request, "listup.html")

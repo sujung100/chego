@@ -1,0 +1,197 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'manager/css/manager_index.css' %}?after">
+  <title>Manager</title>
+</head>
+
+<body>
+  <div id="wrap">
+    <div class="box1">
+      <div class="content1">
+        {% if request.user.is_authenticated %}
+        <div class="cont_box1">
+          <!-- <div class="prev">Previous</div> -->
+          <div class="container2">
+            {% for s in manager %}
+            {% with forloop.counter0|divisibleby:3 as divisible_by_3 %}
+            {% if divisible_by_3 %}
+            {% if s.store_name %}
+            <div class="c1">
+              <div class="store_box1-1">
+                <div class="store_name">
+                  {{ s.store_name }}
+                </div>
+                <div class="store_in" data-url="{% url 'store_detail' s.id %}">
+                  <input type="button" value="들어가기">
+                </div>
+              </div>
+              <div class="store_box1-2"></div>
+            </div>
+            {% else %}
+            <div class="empty_store"></div>
+            {% endif %}
+
+            {% elif forloop.counter0|add:"-1"|divisibleby:3 %}
+            {% if s.store_name %}
+            <div class="c2">
+              <div class="store_box2-1">
+                <div class="store_name">
+                  {{ s.store_name }}
+                </div>
+                <div class="store_in" data-url="{% url 'store_detail' s.id %}">
+                  <input type="button" value="들어가기">
+                </div>
+              </div>
+              <div class="store_box2-2"></div>
+            </div>
+
+            {% else %}
+            <div class="empty_store"></div>
+            {% endif %}
+
+            {% else %}
+            {% if s.store_name %}
+            <div class="c3">
+              <div class="store_box3-1">
+                <div class="store_name">
+                  {{ s.store_name }}
+                </div>
+                <div class="store_in" data-url="{% url 'store_detail' s.id %}">
+                  <input type="button" value="들어가기">
+                </div>
+              </div>
+              <div class="store_box3-2"></div>
+            </div>
+
+            {% else %}
+            <div class="empty_store"></div>
+            {% endif %}
+
+            {% endif %}
+            {% endwith %}
+            {% endfor %}
+          </div>
+          <!-- <img src="https://raw.githubusercontent.com/DaftCreation/Card-Slider/master/NEW%20YORK.jpg" alt="store1"
+              class="c1">
+            <img src="https://raw.githubusercontent.com/DaftCreation/Card-Slider/master/PARIS.jpg" alt="store2"
+              class="c2">
+            <img src="https://raw.githubusercontent.com/DaftCreation/Card-Slider/master/AGRA.jpg" alt="store3"
+              class="c3"> -->
+        </div>
+
+        <a href="/manager/write">
+          <button class="rsv_test" type="button">예약테스트</button>
+        </a>
+        <!-- <div class="next">Next</div> -->
+
+        <!-- <a href="/manager/write">
+            <button class="rsv_test" type="button">예약테스트</button>
+          </a>
+          <div id="store">
+            <div class="store_item1"></div>
+            <div class="store_item2">
+              {% for s in manager %}
+              {{ s.store_name}}
+              {% endfor %}
+
+            </div>
+            <div class="store_item3"></div>
+
+          </div>
+          <div class="store_test"></div> -->
+      </div>
+      {% else %}
+      <div class="container">
+        <svg viewBox="0 0 960 300">
+          <symbol id="s-text">
+            <text text-anchor="middle" x="50%" y="80%">CHEGO</text>
+          </symbol>
+
+          <g class="g-ants">
+            <use xlink:href="#s-text" class="text-copy"></use>
+            <use xlink:href="#s-text" class="text-copy"></use>
+            <use xlink:href="#s-text" class="text-copy"></use>
+            <use xlink:href="#s-text" class="text-copy"></use>
+            <use xlink:href="#s-text" class="text-copy"></use>
+          </g>
+        </svg>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="box2">
+    <div class="content2">
+      {% if request.user.is_authenticated %}
+      <div class="con2_nav">
+        <button class="nav_button1" type="button">
+          <img src="../../static/manager/img/right-arrow (1).png" alt="접기">
+        </button>
+
+        <a href="/manager/logout">
+          <button class="nav_button2" type="button">
+            <img src="../../static/manager/img/turn-off (1).png" alt="로그아웃">
+          </button>
+        </a>
+      </div>
+      <div class="con2_manager1">
+        <img class="profile_img" src="../../static/manager/img/user.png" alt="이미지">
+        <span>{{ request.user.username }}</span>
+      </div>
+      <a href="/manager/logout">
+        <button class="logout_test" type="button">로그아웃</button>
+      </a>
+
+
+      {% else %}
+      <form class="login_form" method="POST">
+        {% csrf_token %}
+
+        <div class="form_box1">
+          <!-- <label for="manager_id">Username:</label> -->
+          <input type="text" class="form-control" id="manager_id" name="username"
+            value="{{ form.username.value|default:'' }}" placeholder="USERNAME" required />
+          {{ form.username.errors }}
+          <!-- <div class="test_after1"></div> -->
+          <!-- <div class="test_after1"></div> -->
+        </div>
+
+
+        <div class="form_box2">
+          <!-- <label for="manager_pwd">Password:</label> -->
+          <input type="password" class="form-control" id="manager_pwd" name="password"
+            value="{{ form.password.value|default:'' }}" placeholder="PASSWORD" required />
+          {{ form.password.errors }}
+        </div>
+
+        <div class="form_box3">
+          <!-- <span>Login</span> -->
+          <input type="submit" value="Login">
+        </div>
+        <!-- <div>
+            <button type="submit" value="Login" class="btn btn-primary">Login</button>
+          </div> -->
+      </form>
+
+      <!-- <a href="/manager/login">
+          <button class="login_test" type="button">로그인</button>
+        </a>
+        <a href="/manager/signup">
+          <button class="signup_test" type="button">회원가입</button>
+        </a> -->
+      {% endif %}
+    </div>
+  </div>
+
+  </div>
+</body>
+
+</html>
+
+
+{% include "manager/js/manager_index_js.html" %}

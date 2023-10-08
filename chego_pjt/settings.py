@@ -32,6 +32,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "channels",
+    "daphne",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -71,6 +73,12 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'chego_pjt.wsgi.application'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
 
 
 # Database
@@ -135,3 +143,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # 로그인 후 이동할 url설정
 LOGIN_REDIRECT_URL = '/manager'
 LOGOUT_REDIRECT_URL = '/manager'
+
+ASGI_APPLICATION = 'chego_pjt.asgi.application'

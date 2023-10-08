@@ -12,4 +12,12 @@ urlpatterns = [
   path("signup/done",views.UserCreateDoneTV.as_view(),name="signup_done"),
   # path("",views.write, name="write"),
   # path('<int:pk>/',views.detail, name='detail'),
+  path('<int:store_id>/', views.detail_list, name='store_detail'),
+
+  # chat 테스트
+  path("testchat/", views.test_chat, name="test_chat"),
+  path("<str:room_name>/", views.test_room, name="test_room"),
+
+  # ajax
+  path('api/store-times/', views.StoreTimesView.as_view(), name='store_times'),
 ]

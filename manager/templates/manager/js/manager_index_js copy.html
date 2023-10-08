@@ -30,32 +30,27 @@
   });
 
   class NotificationCenter {
-    constructor(storeId) {
+    constructor() {
       this.items = [];
       this.itemsToKill = [];
-      this.storeManager = new StoreManager(storeId); // Create an instance of StoreManager
-      this.currentMessageIndex = 0;
+      this.storeManager = new StoreManager(); // Create an instance of StoreManager
+      (async () => {
+        this.messages = await this.storeManager.getNotificationMessage();
+        console.log(this.messages);  // Now it should print the correct data.
+
+        // Rest of your logic here...
+
+        this.spawnNotes(3);
+      })();
       this.killTimeout = null;
 
       // this.spawnNotes(3);
     }
-
-    async init() {
-      // console.log(this.messages);
-
-      await this.storeManager.handleClick();
-      if (this.messages && Array.isArray(this.messages)) {
-        this.spawnNotes(3);
-      }
-    }
     spawnNote() {
-      console.log('Current state of messages:', this.messages);
-
-      if (!this.messages || !Array.isArray(this.messages)) return;
-
       const id = this.random(0, 2 ** 32, true).toString(16);
       // console.log(id);
-      const message = this.messages[this.currentMessageIndex];
+      const draw = this.random(0, this.messages.length - 1, true);
+      const message = this.messages[draw];
       const note = new Notification({
         id: `note-${id}`,
         icon: message.icon,
@@ -67,21 +62,9 @@
       const transY = 1 * this.items.length;
 
       note.el.style.transform = `translateY(${transY}%)`;
-      // note.el.addEventListener("click", this.killNote.bind(this, note.id));
-      // this.items.push(note);
-      note.el.addEventListener("click", () => {
-        nc.killNote(note.id);
-        nc.spawnNotes();
-      });
+      note.el.addEventListener("click", this.killNote.bind(this, note.id));
 
-      nc.items.push(note);
-
-      // Increment the current message index for the next call
-      if (this.currentMessageIndex > 0) {
-        --this.currentMessageIndex;
-      }else {
-        this.currentMessageIndex = this.messages.length -1;
-      }
+      this.items.push(note);
     }
     spawnNotes(amount) {
       let count = typeof amount === "number" ? amount : this.random(1, 5, true);
@@ -229,35 +212,6 @@
     }
   }
 
-  async function fetchStoreData(storeId) {
-    if (!storeId) {
-      console.warn('storeId is not defined. Skipping fetch.');
-      return [];
-    }
-
-    try {
-      const response = await fetch(`api/store-times/?store_id=${storeId}`);
-      const data = await response.json();
-
-      let dataResult = data[0].map((item) => {
-        return [item.user_name, item.user_phone, item.reservation_date, item.user_time];
-      });
-
-      return dataResult.map(element => ({
-        icon: "up",
-        title: "새로운 예약",
-        subtitle: element,
-        actions: ["확인"]
-      }));
-
-    } catch (error) {
-      console.error('Error:', error);
-
-      // Return an empty array in case of error
-      return [];
-    }
-  }
-
   class StoreManager {
     constructor(storeId = null) {
       this.storeId = storeId;
@@ -265,21 +219,118 @@
       // Add other properties if needed
     }
 
-    async handleClick(inputStoreId) {
-      this.storeId = inputStoreId;
-      let newData = await fetchStoreData(this.storeId);
+    async fetchRecentData() {
+      if (!this.storeId) { // Check if the storeId exists
+        console.warn('storeId is not defined. Skipping fetch.');
+        if (nc) { // Check if the NotificationCenter instance exists
+          nc.clearNotes(); // Remove all notifications
+        }
+        return; // Exit the function early
+      }
 
-      console.log(newData);
+      try {
+        const response = await fetch(`api/store-times/?store_id=${this.storeId}`);
+        const data = await response.json();
+        // console.log('Fetched data:', data);
+        let dataResult = data[0].map((item) => {
+          return [item.user_name, item.user_phone, item.reservation_date, item.user_time];
+        });
+        console.log(dataResult);
+        this.storeData = dataResult;
+        // this.storeData = JSON.stringify(data);
+        
+      } catch (error) {
+        console.error('Error:', error);
+        if (nc) { // Check if the NotificationCenter instance exists
+          nc.clearNotes(); // Remove all notifications
+        }
+      }
+    }
+
+    async getNotificationMessage() {
+      await this.fetchRecentData();
+      // Check if the storeData is not null and is an array
+      // console.log(this.storeData);
+
+      return [
+        {
+          icon: "up",
+          title: "새로운 예약",
+          subtitle: this.storeData,
+          actions: ["확인"]
+        },
+      ];
+
+    }
+
+    // async applyRecentzIndex() {
+    //   /* Implementation here */
+    //   // This method should also call the recent_f function, now replaced by this.fetchRecentData()
+    //   // await this.fetchRecentData();
+
+    //   // Rest of your applyRecentzIndex logic here...
+    //   let elements = document.querySelectorAll('.c1, .c2, .c3');
+
+    //   let promises = Array.from(elements).map(element => new Promise(resolve => {
+    //     setTimeout(() => {
+    //       let zIndexValue = window.getComputedStyle(element).zIndex;
+    //       // console.log('Original zIndex:', zIndexValue);
+
+    //       zIndexValue = parseInt(zIndexValue);
+    //       if (isNaN(zIndexValue)) {
+    //         zIndexValue = 0; // Or any default value you want
+    //       }
+
+    //       // console.log('Parsed zIndex:', zIndexValue);
+
+    //       resolve({ element: element, value: zIndexValue });
+    //     }, 0);
+    //   }));
+
+    //   return Promise.all(promises).then(results => {
+    //     let reSetzIndexElement = null;
+    //     let reSetzIndexValue = -Infinity;
+
+    //     results.forEach(result => {
+    //       if (result.value === 1) {
+    //         result.element.style.cursor = "pointer";
+    //       }
+    //     });
+
+    //     for (let result of results) {
+
+    //       if (result.value > reSetzIndexValue) {
+    //         reSetzIndexElement = result.element;
+    //         reSetzIndexValue = result.value;
+    //         // console.log(reSetzIndexElement);
+    //       }
+    //     };
+
+    //     if (reSetzIndexElement !== null) {
+
+    //       // _storeId로 끝나는 클래스가 있다면 그 값(value)을 가져옵니다.
+    //       let storeIdVal = "";
+    //       let storeIdClassDiv = reSetzIndexElement.querySelector("[class$='_storeId']");
+
+    //       if (storeIdClassDiv) {
+    //         storeIdVal = storeIdClassDiv.textContent;
+    //       }
+
+    //       return { maxZindex: reSetzIndexValue, storeIdVal: storeIdVal };
+    //     }
+    //   });
+    // }
+
+    async handleClick(inputStoreId) {
+      // const result = await this.applyRecentzIndex();
+      this.storeId = inputStoreId;
+      // await this.fetchRecentData(result.storeIdVal);
+      // await this.fetchRecentData();
 
       if (nc) { // Check if the NotificationCenter instance exists
-        nc.messages = newData;
-        nc.currentMessageIndex = nc.messages.length - 1;
         nc.clearNotes(); // Remove existing notifications
-        // nc.spawnNotes(3); 
-        // console.log("이건 nc", nc);
-        setTimeout(() => {
-          nc.spawnNotes(3);
-        }, 0);
+        nc.messages = await this.getNotificationMessage();
+        nc.spawnNotes(3); // Generate new notifications based on the updated data
       }
     }
 

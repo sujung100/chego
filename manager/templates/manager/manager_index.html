@@ -5,106 +5,203 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="{% static 'manager/css/manager_index.css' %}?after">
-  <title>Document</title>
+  <link rel="stylesheet" href="{% static 'manager/css/manager_index.css' %}">
+  <title>Manager</title>
 </head>
 
 <body>
   <div id="wrap">
     <div class="box1">
       <div class="content1">
-        <div class="section1">
-          <a href="/manager/write">
-            <button class="rsv_test" type="button">예약테스트</button>
-          </a>
-          <div id="store">
-            <ul>
-              
-              {% for s in manager %}
-                <li>{{ s.store_name}}</li>  
-              {% endfor %}
-            </ul>
+        {% if request.user.is_authenticated %}
+        <div class="cont_box1">
+
+          <!-- <div class="prev">Previous</div> -->
+          <div class="container2">
+
+            <div class="c1">
+
+              <div class="store_view">
+                <div class="store_create">
+                  <label for="add-form-checkbox">
+                    <i class="create_icon"></i>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="c2">
+              <div class="store_view">
+                <div class="store_create">
+                  <label for="add-form-checkbox">
+                    <i class="create_icon"></i>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="c3">
+              <div class="store_view">
+                <div class="store_create">
+                  <label for="add-form-checkbox">
+                    <i class="create_icon"></i>
+                  </label>
+                </div>
+              </div>
+            </div>
+
           </div>
-          <div class="store_test"></div>
+
+        </div>
+        <div class="cont_box2">
+
+          <input type="checkbox" id="add-form-checkbox" style="display: none;">
+          <section class="add-form">
+            <form action="" method="POST">{% csrf_token %}
+              <input type="hidden" name="form_name" value="store_create">
+              <table>
+
+                <br>
+                <label for="store_name">업체명</label>
+                <input type="text" name="store_name" id="store_name">
+                <br>
+                <label for="address">주소</label>
+                <input type="text" name="address" id="address">
+                <br>
+                <label for="select_time1">예약시간</label>
+                <input type="time" name="select_time[]" id="select_time1">
+                <button type="button" id="plus">추가</button>
+                <div id="plus_box"></div>
+              </table>
+              <button type="submit">확인</button>
+            </form>
+          </section>
+
+          <div id="svg_noti" class="recent">
+
+            <svg display="none">
+              <symbol id="clock" viewBox="0 0 32 32">
+                <circle r="15" cx="16" cy="16" fill="none" stroke="currentColor" stroke-width="2" />
+                <polyline points="16,7 16,16 23,16" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" />
+              </symbol>
+              <symbol id="error" viewBox="0 0 32 32">
+                <circle r="15" cx="16" cy="16" fill="none" stroke="hsl(13,90%,55%)" stroke-width="2" />
+                <line x1="10" y1="10" x2="22" y2="22" stroke="hsl(13,90%,55%)" stroke-width="2"
+                  stroke-linecap="round" />
+                <line x1="22" y1="10" x2="10" y2="22" stroke="hsl(13,90%,55%)" stroke-width="2"
+                  stroke-linecap="round" />
+              </symbol>
+              <symbol id="message" viewBox="0 0 32 32">
+                <polygon points="1,6 31,6 31,26 1,26" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" />
+                <polyline points="1,6 16,18 31,6" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" />
+              </symbol>
+              <symbol id="success" viewBox="0 0 32 32">
+                <circle r="15" cx="16" cy="16" fill="none" stroke="hsl(93,90%,40%)" stroke-width="2" />
+                <polyline points="9,18 13,22 23,12" fill="none" stroke="hsl(93,90%,40%)" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" />
+              </symbol>
+              <symbol id="up" viewBox="0 0 32 32">
+                <circle r="15" cx="16" cy="16" fill="none" stroke="currentColor" stroke-width="2" />
+                <polyline points="11,15 16,10 21,15" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" />
+                <line x1="16" y1="10" x2="16" y2="22" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              </symbol>
+              <symbol id="warning" viewBox="0 0 32 32">
+                <polygon points="16,1 31,31 1,31" fill="none" stroke="hsl(33,90%,55%)" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" />
+                <line x1="16" y1="12" x2="16" y2="20" stroke="hsl(33,90%,55%)" stroke-width="2"
+                  stroke-linecap="round" />
+                <line x1="16" y1="25" x2="16" y2="25" stroke="hsl(33,90%,55%)" stroke-width="3"
+                  stroke-linecap="round" />
+              </symbol>
+            </svg>
+          </div>
         </div>
 
+        <!-- <a href="/manager/write">
+          <button class="rsv_test" type="button">예약테스트</button>
+        </a> -->
+
+      </div>
+      {% else %}
+      <div class="container">
+        <svg viewBox="0 0 960 300">
+          <symbol id="s-text">
+            <text text-anchor="middle" x="50%" y="80%">CHEGO</text>
+          </symbol>
+
+          <g class="g-ants">
+            <use xlink:href="#s-text" class="text-copy"></use>
+            <use xlink:href="#s-text" class="text-copy"></use>
+            <use xlink:href="#s-text" class="text-copy"></use>
+            <use xlink:href="#s-text" class="text-copy"></use>
+            <use xlink:href="#s-text" class="text-copy"></use>
+          </g>
+        </svg>
       </div>
     </div>
-
-    <div class="box2">
-      <div class="content2">
-        {% if request.user.is_authenticated %}
-          <div class="con2_nav">
-            <button class="nav_button1" type="button">
-              <img src="../../static/manager/img/right-arrow (1).png" alt="접기">
-            </button>
-
-            <a href="/manager/logout">
-              <button class="nav_button2" type="button">
-                <img src="../../static/manager/img/turn-off (1).png" alt="로그아웃">
-              </button>
-            </a>
-          </div>
-          <div class="con2_manager1">
-            <img class="profile_img" src="../../static/manager/img/user.png" alt="이미지">
-            <span>{{ request.user.username }}</span>
-          </div>
-          <a href="/manager/logout">
-            <button class="logout_test" type="button">로그아웃</button>
-        </a>
-        {% else %}
-          <img class="profile_img" src="../../static/manager/img/user.png" alt="이미지">
-          <a href="/manager/login">
-            <button class="login_test" type="button">로그인</button>
-          </a>
-          <a href="/manager/signup">
-            <button class="signup_test" type="button">회원가입</button>
-          </a>
-        {% endif %}
-      </div>
-    </div>
-
+    {% endif %}
   </div>
+  <div class="box2">
+    <div class="content2">
+      {% if request.user.is_authenticated %}
+      <div class="con2_nav">
+        <button class="nav_button1" type="button">
+          <img src="../../static/manager/img/right-arrow (1).png" alt="접기">
+        </button>
+
+        <a href="/manager/logout">
+          <button class="nav_button2" type="button">
+            <img src="../../static/manager/img/turn-off (1).png" alt="로그아웃">
+          </button>
+        </a>
+      </div>
+      <div class="con2_manager1">
+        <img class="profile_img" src="../../static/manager/img/user.png" alt="이미지">
+        <span>{{ request.user.username }}</span>
+      </div>
+      <a href="/manager/logout">
+        <button class="logout_test" type="button">로그아웃</button>
+      </a>
+
+
+      {% else %}
+      <form class="login_form" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="form_name" value="form_login">
+
+        <div class="form_box1">
+          <input type="text" class="form-control" id="manager_id" name="username"
+            value="{{ form.username.value|default:'' }}" placeholder="USERNAME" required />
+          {{ form.username.errors }}
+        </div>
+
+        <div class="form_box2">
+          <input type="password" class="form-control" id="manager_pwd" name="password"
+            value="{{ form.password.value|default:'' }}" placeholder="PASSWORD" required />
+          {{ form.password.errors }}
+        </div>
+
+        <div class="form_box3">
+          <input type="submit" value="Login">
+        </div>
+
+      </form>
+
+
+      {% endif %}
+    </div>
+  </div>
+  </div>
+
+
+
 </body>
 
 </html>
 
-<script>
-  const store = document.getElementById("store");
-  const storeTest = document.querySelector(".store_test");
 
-  function swapPosition() {
-    // 현재 위치 저장
-    const storeStyle = getComputedStyle(store);
-    const storeTestStyle = getComputedStyle(storeTest);
-
-    const storePosition = {
-      top: storeStyle.top,
-      left: storeStyle.left,
-      transform: storeStyle.transform,
-      zIndex: storeStyle.zIndex
-    };
-
-    const storeTestPosition = {
-      top: storeTestStyle.top,
-      left: storeTestStyle.left,
-      transform: storeTestStyle.transform,
-      zIndex: storeTestStyle.zIndex
-    };
-
-    // 서로의 위치 및 z-index 값을 교환
-    store.style.top = storeTestPosition.top;
-    store.style.left = storeTestPosition.left;
-    store.style.transform = storeTestPosition.transform;
-    store.style.zIndex = storeTestPosition.zIndex;
-
-    storeTest.style.top = storePosition.top;
-    storeTest.style.left = storePosition.left;
-    storeTest.style.transform = storePosition.transform;
-    storeTest.style.zIndex = storePosition.zIndex;
-  }
-
-  // 클릭 이벤트 등록
-  store.addEventListener("click", swapPosition);
-  storeTest.addEventListener("click", swapPosition);
-</script>
+{% include "manager/js/manager_index_js.html" %}

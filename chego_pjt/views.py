@@ -61,7 +61,7 @@ from django.urls import reverse
     #     context['store_dates_json'] = json.dumps(store_dates, cls=DjangoJSONEncoder)
     #     return context
 class Idx_list(TemplateView):
-    template_name = "reservation/main4.html"
+    template_name = "reservation/main.html"
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

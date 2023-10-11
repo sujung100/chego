@@ -3,31 +3,24 @@
 	let items = Array.prototype.slice.call(document.querySelectorAll("[id^='time-style']"), 0).map(function (obj) { return obj.textContent });
 	console.log(items);
 
-	function setCookie(cname, cvalue, exdays) {
-		var d = new Date();
-		d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-		var expires = "expires=" + d.toUTCString();
-		document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-	}
-
-	function getCookie(cname) {
-		let name = cname + "=";
-		let decodedCookie = decodeURIComponent(document.cookie);
-		let ca = decodedCookie.split(';');
-		for(let i = 0; i <ca.length; i++) {
-			let c = ca[i];
-			while (c.charAt(0) == ' ') {
-				c = c.substring(1);
-			}
-			if (c.indexOf(name) == 0) {
-				return c.substring(name.length, c.length);
+	// csrf용 쿠키
+	function getCookie(name) {
+		let cookieValue = null;
+		if (document.cookie && document.cookie !== '') {
+			const cookies = document.cookie.split(';');
+			for (let i = 0; i < cookies.length; i++) {
+				const cookie = cookies[i].trim();
+				if (cookie.substring(0, name.length + 1) === (name + '=')) {
+					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+					break;
+				}
 			}
 		}
-		return "";
+		return cookieValue;
 	}
 
-	setCookie("push_val", items, 1);
 
+	let inputVals = [];
 	function handleAddBtnClick(event) {
 		let parentElement = event.target.parentNode;
 
@@ -43,119 +36,226 @@
 		parentElement.insertBefore(checkbt, addInput.nextSibling);
 
 		event.target.style.display = "none";
-		
-		checkbt.addEventListener('click', function(event){
-			event.preventDefault(); 
-			let val=addInput.value;
+			
+			checkbt.addEventListener('click', function(event){
+				event.preventDefault(); 
+				let val=addInput.value;
 
-			// inputValues 배열 안에 이미 동일한 값이 있는지 확인
-			if (inputValues.includes(val)) {
-				alert("중복된 시간입니다. 다른 시간을 입력해주세요.");
+				if (inputVals.includes(val)) {
+					alert("중복된 시간입니다. 다른 시간을 입력해주세요.");
+					return;
+				}
 				
-				return; // 중복 값이 있으면 함수 종료
-			}
+				inputVals.push(val); 
 
-			getInputValue(parentElement,checkbt,addInput); 
+				// Add button의 데이터 속성에서 pk와 store_id 값 가져오기
+				let pk = parentElement.dataset.pk;
+    			let store_id = parentElement.dataset.storeId;
 
-			let newAddBtn = document.createElement("button");
-			newAddBtn.setAttribute("class", "addbtn");
-			newAddBtn.setAttribute("type", "button");
-			newAddBtn.textContent = "+";
+				console.log("pk값1:",pk);
+				console.log("id값1:",store_id);
+				console.log("찍어라",parentElement.dataset);
 
-			// 클릭된 버튼의 부모 요소에 새로운 'addbtn' 추가
-			parentElement.appendChild(newAddBtn);
 
-			// 클릭된 버튼의 다음 형제 요소인 'newAddBtn'으로 포커스 이동
-			newAddBtn.focus();
+				fetch(`/manager/update/${pk}_${store_id}/`, {
+					method: 'POST',
+					body: JSON.stringify({ time: val }),
+					headers: { 
+						'Content-Type': 'application/json',
+						'X-CSRFToken': getCookie('csrftoken') // CSRF 토큰 값 추가
+					}
+				})
+				.then(response => response.json())
+				.then(data => { console.log(data); /* 성공적으로 응답 받은 후 작업들... */ })
+				.catch((error) => { /* console.error('Error:', error); 에러 발생 시 작업들... */ });
 
-			// 클릭된 버튼 제거
-			checkbt.remove();
-		});
-	}
+
+				getInputValue(parentElement,checkbt,addInput); 
+
+				// "+" 버튼 추가
+				let newAddBtn = document.createElement("button");
+				newAddBtn.setAttribute("class", "addbtn");
+				newAddBtn.setAttribute("type", "button");
+				newAddBtn.textContent = "+";
+
+				parentElement.appendChild(newAddBtn); // 클릭된 버튼의 부모 요소에 새로운 'addbtn' 추가
+				// 수정 10.09
+				// 클릭된 버튼의 다음 형제 요소인 'newAddBtn'으로 포커스 이동
+				newAddBtn.focus();
+
+				// 클릭된 버튼 제거
+				checkbt.remove();
+				
+			});
+		}
+		console.log("inputVals찍어보기", inputVals)
+
+
+
 
 	document.addEventListener('click', function (event) {
 		if (event.target.matches('.addbtn')) {
 			handleAddBtnClick(event);
-			// 쿠키 값 가져오기
-			let cookieValue = getCookie("input_vals");
-			
-			// 화면에 표시할 요소 선택 (예: id가 'cookieDisplay'인 div)
-			let displayElement = document.getElementById('attach_btns');
-			
-			// if (displayElement) {
-			// 	displayElement.textContent = cookieValue; // 가져온 쿠키 값을 화면에 표시
-			// }
+
 		}
 	});
 
 
-	// document.getElementById('add_cookies').addEventListener('click', function() {
-	// 	// "+" 버튼 찾기
-	// 	let addBtn = document.querySelector('.addbtn');
-		
-	// 	// "+" 버튼이 있다면 클릭 이벤트 발생시키기
-	// 	if (addBtn) {
-	// 		addBtn.click();
-			
-	// 		// "확인" 버튼 찾기
-	// 		let checkBtn = document.querySelector('.checkbt');
-			
-	// 		// "확인" 버튼이 있다면 클릭 이벤트 발생시키기
-	// 		if (checkBtn) {
-	// 			checkBtn.click();
+
+	// document.querySelectorAll('.add_cookies').forEach(function(addButton) {
+	// 	addButton.addEventListener('click', function() {
+	// 		let pk = this.dataset.pk;
+    // 		let store_id = this.dataset.storeId;
+	// 		console.log("pk값2:",pk);
+	// 		console.log("id값2:",store_id);
+
+	// 		// let inputFields = this.parentNode.querySelectorAll('.addinput');
+	// 		let parentElement = this.parentNode;
+    //     	let inputFields = parentElement.querySelectorAll('.addinput');
+	
+	// 		inputFields.forEach(function(inputField) {
+
+	// 			let val = inputField.value;
+
+	// 			if (val) {
+	// 				let newButton = document.createElement("button");
+	// 				newButton.textContent = val;
+					
+	// 				this.parentNode.querySelector('#attach_btns').appendChild(newButton);
+	// 			}
+
+	// 			fetch(`/manager/update/${pk}_${store_id}/`, {
+	// 			method: 'POST',
+	// 			headers: {
+	// 				'Content-Type': 'application/json',
+	// 				// Django의 CSRF 쿠키에서 토큰 값 가져오기
+	// 				'X-CSRFToken': getCookie('csrftoken')
+	// 			},
+	// 			body: JSON.stringify({ time: val })
+	// 			})
+	// 			.then(response => response.json())
+	// 			.then(data => { console.log(data); /* 성공적으로 응답 받은 후 작업들... */ })
+	// 			.catch((error) => { console.error('Error:', error); /* 에러 발생 시 작업들... */ });
+
 				
-	// 			// 쿠키에서 값 가져와서 화면에 표시하기
-	// 			createButtonsFromItems();
-	// 		}
+	// 		console.log("인풋값 잘 들어가나? ", val)
+	// }.bind(this));
+	// });
+	// });
+
+	// 2번째
+	// document.addEventListener('click', function(event) {
+	// 	if (event.target.matches('.add_cookies')) {
+	// 		// preventDefault 이거 나중에 삭제하기(오류 보려고 넣음)
+	// 		event.preventDefault();
+	// 		let parentElement = event.target.parentNode;
+	// 		let inputFields = parentElement.querySelectorAll('.addinput');
+	// 		console.log("inputFields출력 ", inputFields.length)
+
+	// 		inputFields.forEach(function(inputField) {
+	// 			let val = inputField.value;
+
+	// 			if (val) {
+	// 				// 새로운 버튼 생성
+	// 				let newButton = document.createElement("button");
+	// 				newButton.textContent = val;
+
+	// 				// attach_btns 요소 아래에 추가
+	// 				parentElement.querySelector('#attach_btns').appendChild(newButton);
+	// 			}
+	// 		});
 	// 	}
 	// });
-	
 
-	// 쿠키테스트... 임시
-	console.log(getCookie("input_vals"));
+	// 3번째
+	// // .add_cookies 버튼 클릭 이벤트
+	// document.addEventListener('click', function(event) {
+	// 	if (event.target.matches('.add_cookies')) {
+	// 		event.preventDefault();
+	// 		let inputFields = document.querySelectorAll('.addinput');
+			
+	// 		inputFields.forEach(function(inputField) {
+	// 			let val = inputField.value;
+
+	// 			if (val) {
+	// 				// 새로운 버튼 생성
+	// 				let newButton = document.createElement("button");
+	// 				newButton.textContent = val;
+
+	// 				// attach_btns 요소 아래에 추가
+	// 				let parentElement = event.target.parentNode;
+	// 				parentElement.querySelector('#attach_btns').appendChild(newButton);
+	// 			}
+	// 		});
+	// 	}
+	// });
+
+	// // MutationObserver 설정
+	// let observer = new MutationObserver(function(mutations) {
+	// 	mutations.forEach(function(mutation) {
+	// 		if (mutation.type === 'childList') {
+	// 			// .addinput 클래스가 추가된 경우, .add_cookies 버튼 클릭 이벤트 재실행
+	// 			let addedNodes = Array.from(mutation.addedNodes);
+	// 			addedNodes.forEach(function(node) {
+	// 				if (node.matches && node.matches('.addinput')) {
+	// 					document.querySelector('.add_cookies').click();
+	// 				}
+	// 			});
+	// 		}
+	// 	});
+	// });
+
+	// // btnwrap 아이디를 가진 요소의 자식 노드 변경을 감시
+	// observer.observe(document.getElementById('btnwrap'), { childList: true });
+
+	// 4번째
+	document.addEventListener('click', function(event) {
+		if (event.target.matches('.add_cookies')) {
+			event.preventDefault();
+
+			// #attach_btns 요소 찾기
+			let attachBtnsElement = document.querySelector('#attach_btns');
+			
+			// 기존에 추가되었던 버튼들 제거
+			while (attachBtnsElement.firstChild) {
+				attachBtnsElement.removeChild(attachBtnsElement.firstChild);
+			}
+
+			// inputVals 배열의 모든 값으로 새로운 버튼 생성
+			inputVals.forEach(function(val) {
+				let newButton = document.createElement("button");
+				newButton.textContent = val;
+				attachBtnsElement.appendChild(newButton);
+			});
+		}
+	});
+
+
+
+
+
 	let inputValues = []; // 입력 값을 저장할 배열
 
-	
 	function getInputValue(parentElement, checkButtonElement,inputElement){
 		let val=inputElement.value;
-
-		// inputValues 배열 안에 이미 동일한 값이 있는지 확인
-		if (inputValues.includes(val)) {
-			alert("중복된 시간입니다. 다른 시간을 입력해주세요.");
-
-			// 중복 값이 있으면 입력 필드와 확인 버튼을 다시 표시
-			inputElement.style.display = '';
-			checkButtonElement.style.display = '';
-			return;
-		}
 		
-		inputValues.push(val); // 입력 값 추가
-		let cookieVal = JSON.stringify(inputValues);
-    	console.log("Setting cookie with value:", cookieVal);
-    
-    setCookie("input_vals", cookieVal, 1); // 쿠키 설정
-
-		// setCookie("input_vals", JSON.stringify(inputValues), 1); // 쿠키 설정
-
 		let finishBt=document.createElement('button');
-		finishBt.textContent=val; // 직접 val 사용
+		finishBt.textContent=val; 
 		finishBt.id='time-style'; 
 
 		checkButtonElement.style.display='none';
 		inputElement.style.display='none';
 
 		items.push(val);
+		
 		items.sort(function(a,b){ 
 			return new Date('1970/01/01 '+ a ) - new Date('1970/01/01 '+ b);
-	});
-
-	console.log(getCookie("input_vals"));
-	console.log("야아아아아", inputValues)
+		});
 
 		parentElement.appendChild(finishBt);
 
 		let timeItems=Array.from(parentElement.querySelectorAll("[id^='time-style']"));
-		
+
 		// 화면상의 모든 버튼을 다시 불러와서 시간 순서대로 정렬
 		timeItems.sort((a, b) => {
 			return new Date(`1970/01/01 ${a.textContent}`) - new Date(`1970/01/01 ${b.textContent}`);
@@ -164,7 +264,7 @@
 		parentElement.innerHTML = ''; // 부모 요소의 모든 자식 요소를 제거
 
 		for(let i=0; i<timeItems.length; i++){
-		parentElement.appendChild(timeItems[i]); // 정렬된 버튼들을 다시 추가
+			parentElement.appendChild(timeItems[i]); // 정렬된 버튼들을 다시 추가
 		}
 
 		finishBt.addEventListener('click', function(event){
@@ -172,65 +272,65 @@
 			inputElement.style.display='';
 			checkButtonElement.style.display='';
 			this.remove();
+			
 			let index = items.indexOf(this.textContent);
+			
 			if (index > -1) {
 				items.splice(index, 1);
+				inputValues.splice(inputValues.indexOf(val), 1); // 추가: inputValues 배열에도 값 제거
 			}
+			
 			console.log(items);
 		});
-		setCookie("push_val2", items, 1);
+		
 		console.log(items);
 	}
 
 
 	function copyItems() {
-		let copiedItems = []; // 빈 배열 생성
-		for(let i = 0; i < items.length; i++) { // items의 모든 요소를 순회
-			copiedItems.push(items[i]); // 각 요소를 새로운 배열에 추가
+		let copiedItems = [];
+		for (let i = 0; i < items.length; i++) {
+			copiedItems.push(items[i]);
 		}
-		return copiedItems; // 복사된 아이템들을 반환
+		return copiedItems;
 	}
 
-	function createButtonsFromItems() {
-		let copiedItems = copyItems(); // 위에서 정의한 copyItems 함수를 호출하여 items 배열 복사본을 얻음
-		
-		// copiedItems.push(getCookie("input_val")); // newbtn의 시간값도 복사본 배열에 추가
-		let inputValues = JSON.parse(getCookie("input_vals")) || [];
-		copiedItems = copiedItems.concat(inputValues);
 
-		
-		copiedItems.sort(function(a, b) {
+	function createButtonsFromItems() {
+
+		let copiedItems = copyItems();
+
+		copiedItems = copiedItems.concat(inputValues);
+		console.log("카피아이템 잘들어가나?", copiedItems)
+
+		copiedItems.sort(function (a, b) {
 			return a.localeCompare(b);
 		});
-		
+
 		let address = document.getElementById('attach_btns');
 		let attach = address.parentNode;
-		
-		for(let i = 0; i < copiedItems.length; i++) { 
-			let arrbtn = document.createElement("button"); 
+
+		for (let i = 0; i < copiedItems.length; i++) {
+			let arrbtn = document.createElement("button");
 			arrbtn.textContent = copiedItems[i];
-			
-			// 클릭 이벤트 리스너 추가
-			arrbtn.addEventListener('click', function(event) {
+
+			arrbtn.addEventListener('click', function (event) {
 				event.preventDefault();
 
-				// 기존에 존재하는 time input 삭제
 				let oldTimeInput = document.querySelector('.time-input');
-				if (oldTimeInput) oldTimeInput.remove();
 
-				// 새로운 time input 생성
-				let timeInput = document.createElement("input");
-				timeInput.setAttribute("type", "time");
+				if (oldTimeInput)
+					oldTimeInput.remove();
+
+				let timeInput = document.createElement('input');
+				timeInput.setAttribute('type', 'time');
 				timeInput.classList.add('time-input');
 
-				// 값 변경 이벤트 리스너 추가
-				timeInput.addEventListener('change', function(e) {
+				timeInput.addEventListener('change', function (e) {
 					e.preventDefault();
 
-					// 모든 버튼 가져오기
 					let buttons = Array.from(attach.querySelectorAll('button'));
-					
-					// 동일한 값을 가진 버튼이 이미 있는지 확인
+
 					for (let button of buttons) {
 						if (button.textContent === this.value) {
 							alert("이미 존재하는 시간입니다.");
@@ -239,118 +339,35 @@
 						}
 					}
 
-					// 변경된 값을 배열에 추가하기 
-					// copiedItems.push(this.value);
-						arrbtn.textContent = this.value;
+					arrbtn.textContent = this.value;
 
-						// 텍스트(시간 값) 기준으로 오름차순 정렬
-						buttons.push(arrbtn);  // arrbtn을 다시 리스트에 추가 후 정렬
-						buttons.sort((a, b) => {
-							return a.textContent.localeCompare(b.textContent);
-						});
+					buttons.push(arrbtn);
+					buttons.sort((a, b) => {
+						return a.textContent.localeCompare(b.textContent);
+					});
 
-						// 정렬된 버튼들로 DOM 업데이트
-						attach.innerHTML = '';
-						for (let button of buttons) {
-							attach.appendChild(button);
-						}
-						this.remove();
-						});
+					attach.innerHTML = '';
 
-					event.target.parentNode.insertBefore(timeInput, event.target.nextSibling);
+					for (let button of buttons) {
+						attach.appendChild(button);
+					}
+
+
+					this.remove();
 				});
 
-				attach.appendChild(arrbtn); 
-			}
-			console.log("복사한 배열값", copiedItems);
-			console.log("인풋값", inputValues);
+				event.target.parentNode.insertBefore(timeInput, event.target.nextSibling);
+
+			});
+
+			attach.appendChild(arrbtn);
+
+		}
+		console.log("복사한 배열값", copiedItems);
+		console.log("인풋값", inputValues);
+
 	}
-	// console.log(items);
 	createButtonsFromItems();
 
-
-
-
-	// let myPlus = document.getElementById("plus");
-	// let selectTime = document.getElementById("select_time");
-	// let box = document.getElementById("plus_box");
-	// let num = 2
-
-	// // function roundToNearestHalfHour(timeStr) {
-	// //   const timeArr = timeStr.split(':');
-	// //   const minutes = parseInt(timeArr[1]);
-
-	// //   if (minutes < 30) {
-	// //     timeArr[1] = '00';
-	// //   } else {
-	// //     timeArr[1] = '30';
-	// //   }
-
-	// //   return timeArr.join(':');
-	// // }
-
-	// function validateTime(timeInput) {
-	// 	let minValue = timeInput.getAttribute('min');
-	// 	let value = timeInput.value;
-
-	// 	// value = roundToNearestHalfHour(value);
-	// 	// timeInput.value = value;
-	// 	if (minValue && value < minValue) {
-	// 	// Show an alert if the input value is less than the min value
-	// 	alert("시간은 이전 시간 이후로 설정해 주세요.");
-	// 	// Set the input value to the minimum value
-	// 	timeInput.value = minValue;
-	// 	}
-	// }
-
-	// myPlus.addEventListener("click", function () {
-	// 	let newPlus = document.createElement("button");
-	// 	let newMinus = document.createElement("button");
-	// 	let newLine1 = document.createElement("br");
-
-	// 	let newInput = document.createElement("input");
-	// 	let prevInput = document.getElementById("select_time" + (num - 1));
-
-	// 	// console.log(prevInput.value)
-	// 	newInput.type = "time";
-	// 	newInput.min = prevInput.value;
-	// 	// newInput.step = "1800";
-	// 	newInput.name = "select_time[]";
-	// 	newInput.id = "select_time" + num;
-
-	// 	newInput.onchange = function () {
-	// 	validateTime(newInput)
-	// 	};
-
-	// 	newPlus.type = "button";
-	// 	newPlus.textContent = "추가";
-	// 	newPlus.id = "plus" + num;
-
-	// 	newPlus.addEventListener("click", myPlus.click.bind(myPlus));
-
-	// 	newMinus.type = "button";
-	// 	newMinus.textContent = "삭제";
-	// 	newMinus.id = "minus" + num;
-
-	// 	newMinus.addEventListener("click", function () {
-	// 	const idNum = this.id.replace("minus", "");
-
-	// 	const plusToRemove = document.getElementById("plus" + idNum);
-	// 	const minusToRemove = document.getElementById("minus" + idNum);
-	// 	const newInputRemove = document.getElementById("select_time" + idNum);
-
-	// 	newInputRemove.remove();
-	// 	// plusToRemove.remove();
-	// 	minusToRemove.remove();
-	// 	newLine1.remove();
-	// 	});
-
-	// 	box.appendChild(newInput);
-	// 	// box.appendChild(newPlus);
-	// 	box.appendChild(newMinus);
-	// 	box.appendChild(newLine1);
-
-	// 	num += 1
-	// });
 
 </script>

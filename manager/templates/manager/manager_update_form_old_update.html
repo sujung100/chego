@@ -20,34 +20,37 @@
             <div class="section1">
               <div class="timetable">
                 <div class="showtime">
-                  <div class="store-table">
-                    <div class="st-name">
-                      <div class="st-id">{{ store.id }}</div>
-                      {{ store.store_name }}
+                  {% for obj in store_list %}
+                    <div class="store-table">
+                      <div class="st-name">
+                        <div class="st-id">{{ obj.id }}</div>
+                        {{ obj.store_name }}
+                      </div>
+                      <div class="st-time">
+                        <form action="" method="post">{% csrf_token %}
+                          {% for time in store_times_dict|get_item:store_list.0.pk %}
+                            <button class="time-item-{{ obj.id }}" type="button" data-time="{{ time.reservation_time }}" id="time-style">{{  time.reservation_time  }}</button>
+                            {% endfor %}
+                            <!-- <span id="btnwrap" data-pk="{{ store.pk }}" data-store-id="{{ store.id }}">
+                              <button type="button" class="addbtn">&#43;</button>
+                              <button type="button" class="addbtn" id="addbtn-{{ obj.id }}" data-pk="{{ obj.pk }}" data-store-id="{{ obj.id }}">&#43;</button>
+                            </span> -->
+                            <span id="btnwrap" data-pk="{{ manager.pk }}" data-store-id="{{ obj.id }}">
+                              <button type="button" class="addbtn">&#43;</button>
+                            </span>
+
+                          <br>
+                          <!-- <button type="button" class="add_cookies">추가하기</button> -->
+                          <!-- <button class="add_cookies" data-pk="{{ store.pk }}" data-store-id="{{ store.id }}">추가하기</button> -->
+                          <button class="add_cookies" id="add-cookies-{{ obj.id }}" data-pk="{{ manager.pk }}" data-store-id="{{ obj.id }}">추가하기</button>
+                          <div class="parent">
+                            <div id="attach_btns"></div>
+                          </div>
+                          <button type="button">저장하기</button>
+                        </form>
+                      </div>
                     </div>
-                    <div class="st-time">
-                      <form action="" method="post">{% csrf_token %}
-                        {% for time in sto_time_objects %}
-                          <button class="time-item-{{ store.id }}" type="button" data-time="{{ time.reservation_time }}" id="time-style">{{  time.reservation_time  }}</button>
-                        {% endfor %}
-                        <!-- <span id="btnwrap" data-pk="{{ store.pk }}" data-store-id="{{ store.id }}">
-                          <button type="button" class="addbtn">&#43;</button>
-                          <button type="button" class="addbtn" id="addbtn-{{ obj.id }}" data-pk="{{ obj.pk }}" data-store-id="{{ obj.id }}">&#43;</button>
-                        </span> -->
-                        <span id="btnwrap" data-pk="{{ manager.pk }}" data-store-id="{{ store.id }}">
-                          <button type="button" class="addbtn">&#43;</button>
-                        </span>
-                        <br>
-                        <!-- <button type="button" class="add_cookies">추가하기</button> -->
-                        <!-- <button class="add_cookies" data-pk="{{ store.pk }}" data-store-id="{{ store.id }}">추가하기</button> -->
-                        <button class="add_cookies" id="add-cookies-{{ store.id }}" data-pk="{{ manager.pk }}" data-store-id="{{ store.id }}">추가하기</button>
-                        <div class="parent">
-                          <div id="attach_btns"></div>
-                        </div>
-                        <button type="button">저장하기</button>
-                      </form>
-                    </div>
-                  </div>
+                  {% endfor %}
                 </div>
               </div>
               <br>

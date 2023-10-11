@@ -20,6 +20,8 @@ from django.contrib import messages
 import json
 from .forms import ManagerUpdateForm, StoreUpdateForm, UpdateForm
 
+from datetime import datetime
+
 
 
 
@@ -303,7 +305,7 @@ class ManagerStoreUpdateView(LoginRequiredMixin, FormView):
 #         return context
     
 
-
+# 수정중
 class Update(LoginRequiredMixin, UpdateView):
     model = rsv.Store
     form_class = UpdateForm
@@ -311,35 +313,86 @@ class Update(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        store_list = rsv.Store.objects.all()
 
         # URL에서 store_id값 가져오기
         requested_store_id = self.kwargs.get('store_id')
 
-        # store.pk값이 있는 상점만 필터링
-        filtered_store_list = [store for store in store_list if store.pk == requested_store_id]
-        context['store_list'] = filtered_store_list
+        # 해당 store_id를 가진 Store 객체 찾기
+        store = get_object_or_404(rsv.Store, pk=requested_store_id)
 
-        store_times_dict = {}
-        for store in filtered_store_list: # 필터링된 목록사용
-            store_times = rsv.Store_times.objects.filter(store_id=store.pk)
-            store_times_dict[store.pk] = store_times
-        context['store_times_dict'] = store_times_dict
+        if store:
+            context['store'] = store
 
-        push_val = self.request.COOKIES.get('push_val', None)
-        print("쿠키 데이터 : ", push_val)
-        push_val2 = self.request.COOKIES.get('push_val2', None)
-        print("쿠키 데이터2 : ", push_val2)
-        input_val = self.request.COOKIES.get('input_val', None)
-        print("쿠키 데이터3 : ", input_val)
-        input_vals = self.request.COOKIES.get('input_vals', None)
-        print("쿠키 데이터4 : ", input_vals)
-        store_data = []
-        
-        for store in filtered_store_list: # 필터링된 목록사용
-            sto_time = rsv.Store_times.objects.filter(store_id=store.pk)
-            store_data.append({
+            # Store의 owner(User 객체)와 연결된 Manager 찾기
+            manager_of_the_store = Manager.objects.filter(user=store.owner).first()
+            
+            if manager_of_the_store:
+                context['manager'] = manager_of_the_store
+
+            sto_time_objects = rsv.Store_times.objects.filter(store_id=store.pk)
+            context['sto_time_objects'] = sto_time_objects
+            
+            sto_time_values_list  = {
                 'store_id': store.pk,
-                'sto_time': list(sto_time.values()),
-            })
+                'sto_time': list(sto_time_objects.values()),
+            }
+
+            print()
+            print("이거 찍어봐: ", sto_time_values_list)
+            print()
+             # 예약 정보 가져오기 
+            disabled_dates_info_list = []
+            # for sto_time in sto_time_objects:
+            #     reservation_user_objects = rsv.Reservation_user.objects.filter(
+            #          Q(store_id=store) &
+            #          Q(user_time=sto_time.reservation_time)
+            #     )
+
+            #     hour_disabled_dates_dict = {}
+
+            #     for reservation in reservation_user_objects:
+            #         user_date_str = reservation.reservation_date  # 이제 strftime을 호출하지 않습니다.
+                    
+            #         datetime_obj = datetime.strptime(reservation.user_time, '%H:%M')
+            #         formatted_time_str = datetime_obj.strftime('%H:%M')
+
+            #         if user_date_str not in hour_disabled_dates_dict:
+            #             hour_disabled_dates_dict[user_date_str] = []
+
+            #         hour_disabled_dates_dict[user_date_str].append(formatted_time_str)
+
+            #     disabled_dates_info_list.append({
+            #         'hour_disabled_dates': hour_disabled_dates_dict,
+            #         'user_date': [info.reservation_date for info in reservation_user_objects],  # strftime을 호출하지 않습니다.
+            #         'disable_time': [datetime.strptime(info.user_time, '%H:%M').strftime("%H:%M") for info in reservation_user_objects]
+            #     })
+            for sto_time in sto_time_objects:
+                reservation_user_objects = rsv.Reservation_user.objects.filter(
+                    Q(store_id=store) &
+                    Q(user_time=sto_time.reservation_time)
+                )
+
+                if reservation_user_objects.exists():  # Add this line
+                    hour_disabled_dates_dict = {}
+
+                    for reservation in reservation_user_objects:
+                        user_date_str = reservation.reservation_date
+                                
+                        datetime_obj = datetime.strptime(reservation.user_time, '%H:%M')
+                        formatted_time_str = datetime_obj.strftime('%H:%M')
+
+                        if user_date_str not in hour_disabled_dates_dict:
+                            hour_disabled_dates_dict[user_date_str] = []
+
+                        hour_disabled_dates_dict[user_date_str].append(formatted_time_str)
+
+                    disabled_dates_info_list.append({
+                        'hour_disabled_dates': hour_disabled_dates_dict,
+                        'user_date': [info.reservation_date for info in reservation_user_objects],
+                        'disable_time': [datetime.strptime(info.user_time, '%H:%M').strftime("%H:%M") for info in reservation_user_objects]
+                    })
+
+            context['disabled_dates_info_json'] = json.dumps(disabled_dates_info_list , cls=DjangoJSONEncoder)
+        print(context['disabled_dates_info_json'])
+
         return context

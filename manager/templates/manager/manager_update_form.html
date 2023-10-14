@@ -27,8 +27,10 @@
                     </div>
                     <div class="st-time">
                       <form action="" method="post">{% csrf_token %}
+                        <br>
+                        <div>새로운 시간 추가</div>
                         {% for time in sto_time_objects %}
-                          <button class="time-item-{{ store.id }}" type="button" data-time="{{ time.reservation_time }}" id="time-style">{{  time.reservation_time  }}</button>
+                          <button class="time-item-{{ store.id }}" type="button" data-time="{{ time.reservation_time }}" id="time-style" style="display: none;">{{  time.reservation_time  }}</button>
                         {% endfor %}
                         <!-- <span id="btnwrap" data-pk="{{ store.pk }}" data-store-id="{{ store.id }}">
                           <button type="button" class="addbtn">&#43;</button>
@@ -41,6 +43,9 @@
                         <!-- <button type="button" class="add_cookies">추가하기</button> -->
                         <!-- <button class="add_cookies" data-pk="{{ store.pk }}" data-store-id="{{ store.id }}">추가하기</button> -->
                         <button class="add_cookies" id="add-cookies-{{ store.id }}" data-pk="{{ manager.pk }}" data-store-id="{{ store.id }}">추가하기</button>
+                        
+                        <br>
+                        <div>시간표 변경</div>
                         <div class="parent">
                           <div id="attach_btns"></div>
                         </div>

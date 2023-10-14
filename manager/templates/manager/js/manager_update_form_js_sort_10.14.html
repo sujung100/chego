@@ -20,7 +20,6 @@
 	}
 
 
-	// "+"버튼 클릭시 이벤트
 	let inputVals = [];
 	function handleAddBtnClick(event) {
 		let parentElement = event.target.parentNode;
@@ -102,44 +101,139 @@
 	});
 
 
-	// 추가 10.14 - 새로운 input값 받아온 버튼도 다시 클릭하면 값 변경 가능하게...
-	// 버튼 클릭 이벤트 핸들러를 별도의 함수로 정의
-	function handleButtonClick(event, attach, newButton) {
-		event.preventDefault();
-		let oldTimeInput = document.querySelector('.time-input');
-		if (oldTimeInput)
-			oldTimeInput.remove();
-		let timeInput = document.createElement('input');
-				timeInput.setAttribute('type', 'time');
-				timeInput.classList.add('time-input');
-				timeInput.addEventListener('change', function (e) {
-					e.preventDefault();
-					let buttons = Array.from(attach.querySelectorAll('button'));
 
-					for (let button of buttons) {
-						if (button.textContent === this.value) {
-							alert("이미 존재하는 시간입니다.");
-							this.style.display = '';
-							return;
-						}
-					}
-					newButton.textContent = this.value;
-					buttons.push(newButton);
-					buttons.sort((a, b) => {
-						return a.textContent.localeCompare(b.textContent);
-					});
-					attach.innerHTML = '';
-					for (let button of buttons) {
-						attach.appendChild(button);
-					}
-					this.remove();
-				});
+	// document.querySelectorAll('.add_cookies').forEach(function(addButton) {
+	// 	addButton.addEventListener('click', function() {
+	// 		let pk = this.dataset.pk;
+    // 		let store_id = this.dataset.storeId;
+	// 		console.log("pk값2:",pk);
+	// 		console.log("id값2:",store_id);
 
-				event.target.parentNode.insertBefore(timeInput, event.target.nextSibling);
-	}
+	// 		// let inputFields = this.parentNode.querySelectorAll('.addinput');
+	// 		let parentElement = this.parentNode;
+    //     	let inputFields = parentElement.querySelectorAll('.addinput');
+	
+	// 		inputFields.forEach(function(inputField) {
+
+	// 			let val = inputField.value;
+
+	// 			if (val) {
+	// 				let newButton = document.createElement("button");
+	// 				newButton.textContent = val;
+					
+	// 				this.parentNode.querySelector('#attach_btns').appendChild(newButton);
+	// 			}
+
+	// 			fetch(`/manager/update/${pk}_${store_id}/`, {
+	// 			method: 'POST',
+	// 			headers: {
+	// 				'Content-Type': 'application/json',
+	// 				// Django의 CSRF 쿠키에서 토큰 값 가져오기
+	// 				'X-CSRFToken': getCookie('csrftoken')
+	// 			},
+	// 			body: JSON.stringify({ time: val })
+	// 			})
+	// 			.then(response => response.json())
+	// 			.then(data => { console.log(data); /* 성공적으로 응답 받은 후 작업들... */ })
+	// 			.catch((error) => { console.error('Error:', error); /* 에러 발생 시 작업들... */ });
+
+				
+	// 		console.log("인풋값 잘 들어가나? ", val)
+	// }.bind(this));
+	// });
+	// });
+
+	// 2번째
+	// document.addEventListener('click', function(event) {
+	// 	if (event.target.matches('.add_cookies')) {
+	// 		// preventDefault 이거 나중에 삭제하기(오류 보려고 넣음)
+	// 		event.preventDefault();
+	// 		let parentElement = event.target.parentNode;
+	// 		let inputFields = parentElement.querySelectorAll('.addinput');
+	// 		console.log("inputFields출력 ", inputFields.length)
+
+	// 		inputFields.forEach(function(inputField) {
+	// 			let val = inputField.value;
+
+	// 			if (val) {
+	// 				// 새로운 버튼 생성
+	// 				let newButton = document.createElement("button");
+	// 				newButton.textContent = val;
+
+	// 				// attach_btns 요소 아래에 추가
+	// 				parentElement.querySelector('#attach_btns').appendChild(newButton);
+	// 			}
+	// 		});
+	// 	}
+	// });
+
+	// 3번째
+	// // .add_cookies 버튼 클릭 이벤트
+	// document.addEventListener('click', function(event) {
+	// 	if (event.target.matches('.add_cookies')) {
+	// 		event.preventDefault();
+	// 		let inputFields = document.querySelectorAll('.addinput');
+			
+	// 		inputFields.forEach(function(inputField) {
+	// 			let val = inputField.value;
+
+	// 			if (val) {
+	// 				// 새로운 버튼 생성
+	// 				let newButton = document.createElement("button");
+	// 				newButton.textContent = val;
+
+	// 				// attach_btns 요소 아래에 추가
+	// 				let parentElement = event.target.parentNode;
+	// 				parentElement.querySelector('#attach_btns').appendChild(newButton);
+	// 			}
+	// 		});
+	// 	}
+	// });
+
+	// // MutationObserver 설정
+	// let observer = new MutationObserver(function(mutations) {
+	// 	mutations.forEach(function(mutation) {
+	// 		if (mutation.type === 'childList') {
+	// 			// .addinput 클래스가 추가된 경우, .add_cookies 버튼 클릭 이벤트 재실행
+	// 			let addedNodes = Array.from(mutation.addedNodes);
+	// 			addedNodes.forEach(function(node) {
+	// 				if (node.matches && node.matches('.addinput')) {
+	// 					document.querySelector('.add_cookies').click();
+	// 				}
+	// 			});
+	// 		}
+	// 	});
+	// });
+
+	// // btnwrap 아이디를 가진 요소의 자식 노드 변경을 감시
+	// observer.observe(document.getElementById('btnwrap'), { childList: true });
 
 
-	// "추가하기" 버튼 클릭시 이벤트
+	
+	// // 4번째
+	// document.addEventListener('click', function(event) {
+	// 	if (event.target.matches('.add_cookies')) {
+	// 		event.preventDefault();
+
+	// 		// #attach_btns 요소 찾기
+	// 		let address = document.getElementById('attach_btns');
+	// 		let attach = address.parentNode;
+			
+	// 		// 기존에 추가되었던 버튼들 제거
+	// 		// while (attachBtnsElement.firstChild) {
+	// 		// 	attachBtnsElement.removeChild(attachBtnsElement.firstChild);
+	// 		// }
+
+	// 		// inputVals 배열의 모든 값으로 새로운 버튼 생성
+	// 		inputVals.forEach(function(val) {
+	// 			let newButton = document.createElement("button");
+	// 			newButton.textContent = val;
+	// 			attach.appendChild(newButton);
+	// 		});
+	// 	}
+	// });
+
+
 	// 정렬작업중1
 	// 기존 시간표랑 같이 정렬하기 위한 전역변수
 	let allButtons = [];
@@ -152,31 +246,25 @@
 			let attach = document.getElementById('attach_btns');
 			// 위치 수정
 			// let attach = address.parentNode;
+			
+			// 기존에 추가되었던 버튼들 제거
+			// while (attachBtnsElement.firstChild) {
+			// 	attachBtnsElement.removeChild(attachBtnsElement.firstChild);
+			// }
 
 			// inputVals 배열의 모든 값으로 새로운 버튼 생성
 			inputVals.forEach(function(val) {
 				let newButton = document.createElement("button");
 				newButton.textContent = val;
-				// attach.appendChild(newButton);
-
-				// allButtons 배열에서 동일한 textContent를 가진 버튼이 있는지 확인
-				if (!allButtons.some(button => button.textContent === newButton.textContent)) {
-					attach.appendChild(newButton);
-					allButtons.push(newButton);
-				}
-
+				attach.appendChild(newButton);
 
 				// 전역변수에 추가
 				allButtons.push(newButton);
-				// 버튼에 이벤트 리스너 추가
-				newButton.addEventListener('click', function(event) {
-					handleButtonClick(event, attach, newButton);
-				});
 			});
 			console.log("전역변수 버튼들 ", allButtons);
 
-			
-			
+
+	
 			// 추가-10.14 추가하기누를때 정렬하기
 			let buttons = Array.from(attach.querySelectorAll('button'));
 			buttons.sort((a, b) => {
@@ -195,7 +283,7 @@
 
 
 
-	// input값 가져오는 이벤트
+
 	let inputValues = []; // 입력 값을 저장할 배열
 
 	function getInputValue(parentElement, checkButtonElement,inputElement){
@@ -249,22 +337,89 @@
 	}
 
 
-	// function copyItems() {
-	// 	let copiedItems = [];
-	// 	for (let i = 0; i < items.length; i++) {
-	// 		copiedItems.push(items[i]);
-	// 	}
-	// 	return copiedItems;
-	// }
-
 	function copyItems() {
-		return Array.from(document.querySelectorAll("[id^='time-style']")).map(obj => obj.textContent);
+		let copiedItems = [];
+		for (let i = 0; i < items.length; i++) {
+			copiedItems.push(items[i]);
+		}
+		return copiedItems;
 	}
 
+	// 이전 10.12
+	// function createButtonsFromItems() {
 
-	
+	// 	let copiedItems = copyItems();
 
-	// 기존시간값 가져와서 복사한후, 밑에 뿌리는 이벤트
+	// 	copiedItems = copiedItems.concat(inputValues);
+	// 	console.log("카피아이템 잘들어가나?", copiedItems)
+
+	// 	copiedItems.sort(function (a, b) {
+	// 		return a.localeCompare(b);
+	// 	});
+
+	// 	let address = document.getElementById('attach_btns');
+	// 	let attach = address.parentNode;
+
+	// 	for (let i = 0; i < copiedItems.length; i++) {
+	// 		let arrbtn = document.createElement("button");
+	// 		arrbtn.textContent = copiedItems[i];
+
+	// 		arrbtn.addEventListener('click', function (event) {
+	// 			event.preventDefault();
+
+	// 			let oldTimeInput = document.querySelector('.time-input');
+
+	// 			if (oldTimeInput)
+	// 				oldTimeInput.remove();
+
+	// 			let timeInput = document.createElement('input');
+	// 			timeInput.setAttribute('type', 'time');
+	// 			timeInput.classList.add('time-input');
+
+	// 			timeInput.addEventListener('change', function (e) {
+	// 				e.preventDefault();
+
+	// 				let buttons = Array.from(attach.querySelectorAll('button'));
+
+	// 				for (let button of buttons) {
+	// 					if (button.textContent === this.value) {
+	// 						alert("이미 존재하는 시간입니다.");
+	// 						this.style.display = '';
+	// 						return;
+	// 					}
+	// 				}
+
+	// 				arrbtn.textContent = this.value;
+
+	// 				buttons.push(arrbtn);
+	// 				buttons.sort((a, b) => {
+	// 					return a.textContent.localeCompare(b.textContent);
+	// 				});
+
+	// 				attach.innerHTML = '';
+
+	// 				for (let button of buttons) {
+	// 					attach.appendChild(button);
+	// 				}
+
+
+	// 				this.remove();
+	// 			});
+
+	// 			event.target.parentNode.insertBefore(timeInput, event.target.nextSibling);
+
+	// 		});
+
+	// 		attach.appendChild(arrbtn);
+
+	// 	}
+	// 	console.log("복사한 배열값", copiedItems);
+	// 	console.log("인풋값", inputValues);
+
+	// }
+	// createButtonsFromItems();
+
+
 	// 정렬작업중2
 	function createButtonsFromItems() {
 
@@ -286,14 +441,19 @@
 
 			arrbtn.addEventListener('click', function (event) {
 				event.preventDefault();
+
 				let oldTimeInput = document.querySelector('.time-input');
+
 				if (oldTimeInput)
 					oldTimeInput.remove();
+
 				let timeInput = document.createElement('input');
 				timeInput.setAttribute('type', 'time');
 				timeInput.classList.add('time-input');
+
 				timeInput.addEventListener('change', function (e) {
 					e.preventDefault();
+
 					let buttons = Array.from(attach.querySelectorAll('button'));
 
 					for (let button of buttons) {
@@ -303,15 +463,21 @@
 							return;
 						}
 					}
+
 					arrbtn.textContent = this.value;
+
 					buttons.push(arrbtn);
 					buttons.sort((a, b) => {
 						return a.textContent.localeCompare(b.textContent);
 					});
+
 					attach.innerHTML = '';
+
 					for (let button of buttons) {
 						attach.appendChild(button);
 					}
+
+
 					this.remove();
 				});
 

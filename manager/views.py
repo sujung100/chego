@@ -227,6 +227,19 @@ class Update(LoginRequiredMixin, UpdateView):
     form_class = UpdateForm
     template_name = 'manager/manager_update_form.html'
 
+
+    # 권한설정
+    def dispatch(self, request, *args, **kwargs):
+        self.manager = get_object_or_404(Manager, pk=kwargs['pk'])
+        self.store = get_object_or_404(Store, pk=kwargs['store_id'])
+        
+        # 조건3개
+        if request.user.is_authenticated and request.user == self.manager.user and self.manager.user == self.store.owner:
+            return super(Update, self).dispatch(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -288,4 +301,5 @@ class Update(LoginRequiredMixin, UpdateView):
         print(context['disabled_dates_info_json'])
 
         return context
+
     

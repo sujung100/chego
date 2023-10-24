@@ -89,9 +89,6 @@
 				
 			});
 		}
-		console.log("inputVals찍어보기", inputVals)
-
-
 
 
 	document.addEventListener('click', function (event) {
@@ -137,7 +134,7 @@
 
 				event.target.parentNode.insertBefore(timeInput, event.target.nextSibling);
 	}
-
+	console.log("inputVals1은: ", inputVals)
 
 	// "추가하기" 버튼 클릭시 이벤트
 	// 정렬작업중1
@@ -167,7 +164,7 @@
 
 
 				// 전역변수에 추가
-				allButtons.push(newButton);
+				// allButtons.push(newButton);
 				// 버튼에 이벤트 리스너 추가
 				newButton.addEventListener('click', function(event) {
 					handleButtonClick(event, attach, newButton);
@@ -179,6 +176,12 @@
 			
 			// 추가-10.14 추가하기누를때 정렬하기
 			let buttons = Array.from(attach.querySelectorAll('button'));
+
+			// finishBt 요소 제거하기 - 10.16
+			let finishBtns = Array.from(document.querySelectorAll('#time-style'));
+			finishBtns.forEach(btn => btn.remove());
+
+
 			buttons.sort((a, b) => {
 				return a.textContent.localeCompare(b.textContent);
 			});
@@ -191,6 +194,7 @@
 
 		}
 	});
+	console.log("inputVals2은: ", inputVals)
 
 
 
@@ -271,7 +275,7 @@
 		let copiedItems = copyItems();
 
 		copiedItems = copiedItems.concat(inputValues);
-		console.log("카피아이템 잘들어가나?", copiedItems)
+		// console.log("카피아이템 잘들어가나?", copiedItems)
 
 		copiedItems.sort(function (a, b) {
 			return a.localeCompare(b);
@@ -326,7 +330,7 @@
 
 		}
 		console.log("복사한 배열값", copiedItems);
-		console.log("인풋값", inputValues);
+		// console.log("인풋값", inputValues);
 
 	}
 	createButtonsFromItems();
@@ -338,7 +342,8 @@
 	let address = document.getElementById('attach_btns');
 	address.innerHTML = '';
 	for (let button of allButtons) {
-	address.appendChild(button);
+		address.appendChild(button);
+		// console.log("전역변수 버튼 값: ", button.textContent);
 	}
 	console.log("전역변수 버튼들 ", allButtons)
 

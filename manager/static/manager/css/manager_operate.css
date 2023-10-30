@@ -107,6 +107,16 @@ ol, ul{
   color: #fff;
 }
 
+.content1 .store_item1 label {
+  position: absolute;
+  top: 1rem;
+  /* right: 14rem; */
+  right: 14.5rem;
+  padding: 0.3rem;
+  font-size: 0.8rem;
+  color: #555;
+}
+
 
 .content1 .store_item2 {
   /* border: 1px solid red; */
@@ -191,6 +201,7 @@ ol, ul{
   padding: 0.3rem;
   background-color: #fff;
   border: none;
+  caret-color: #009476;
 }
 
 .content1 #search_kw:focus {

@@ -22,9 +22,10 @@
             </div>
             <div class="section1">
               <div id="store">
-                <form action="{% url 'search' %}" method="get">
+                <form action="{% url 'mng_update' pk=manager.pk store_id=store.pk %}" method="get">
                   <div class="store_item1">
-                    <input type="text" id="search_kw" value="{{ kw|default_if_none:'' }}" placeholder="Search"></input>
+                    <label for="search_kw">예약일 예시&#41; 2024-01-01 / 2024-01 / 2024</label>
+                    <input type="text" id="search_kw" name="kw" value="{{ kw|default_if_none:'' }}" placeholder="이름, 전화번호, 예약일"></input>
                     <button type="submit" id="btn_search">검색</button>
                   </div>
                 </form>
@@ -32,7 +33,7 @@
                   <div class="head-user">
                     <p>이름</p>
                     <p>전화번호</p>
-                    <p>예약 날짜</p>
+                    <p>예약일</p>
                     <p>예약 시간</p>
                   </div>
                   <hr>
@@ -40,7 +41,7 @@
                   <div class="user-info">
                       <p>이름: {{ rsv.user_name }}</p>
                       <p>전화번호: {{ rsv.user_phone }}</p>
-                      <p>예약 날짜: {{ rsv.reservation_date }}</p>
+                      <p>예약일: {{ rsv.reservation_date }}</p>
                       <p>예약 시간: {{ rsv.user_time }}</p>
                   </div>
                   <hr>
@@ -50,38 +51,31 @@
                 <div class="pagination">
                   <span class="step-links">
                       {% if page_obj.has_previous %}
-                          <a href="?page=1">&laquo; 처음</a>
-                          <a href="?page={{ page_obj.previous_page_number }}">이전</a>
+                        <a href="?page=1&kw={{ kw|default_if_none:'' }}">&laquo; 처음</a>
+                        <a href="?page={{ page_obj.previous_page_number }}&kw={{ kw|default_if_none:'' }}">이전</a>
                       {% else %}
-                          <span class="disabled">&laquo; 처음</span>
-                          <span class="disabled">이전</span>
+                        <span class="disabled">&laquo; 처음</span>
+                        <span class="disabled">이전</span>
                       {% endif %}
               
-                      {% for i in page_obj.paginator.page_range %}
-                          {% if page_obj.number == i %}
-                              <a href="?page={{ i }}" class="active">{{ i }}</a>
+                      {% for num in page_obj.paginator.page_range %}
+                          {% if page_obj.number == num %}
+                            <a href="?page={{ num }}&kw={{ kw|default_if_none:'' }}" class="active">{{ num }}</a>
                           {% else %}
-                              <a href="?page={{ i }}">{{ i }}</a>
+                            <a href="?page={{ num }}&kw={{ kw|default_if_none:'' }}">{{ num }}</a>
                           {% endif %}
                       {% endfor %}
               
                       {% if page_obj.has_next %}
-                          <a href="?page={{ page_obj.next_page_number }}">다음</a>
-                          <a href="?page={{ page_obj.paginator.num_pages }}">마지막 &raquo;</a>
+                        <a href="?page={{ page_obj.next_page_number }}&kw={{ kw|default_if_none:'' }}">다음</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}&kw={{ kw|default_if_none:'' }}">마지막 &raquo;</a>
                       {% else %}
-                          <span class="disabled">다음</span>
-                          <span class="disabled">마지막 &raquo;</span>
+                        <span class="disabled">다음</span>
+                        <span class="disabled">마지막 &raquo;</span>
                       {% endif %}
                   </span>
                 </div>
                 <!-- 페이지네이션 끝 -->
-
-                <!-- 검색어와 페이지값 -->
-                <form id="searchForm" method="get" action="{% url 'search' %}">
-                  <input type="hidden" id="kw" name="kw" value="{{ kw|default_if_none:'' }}">
-                  <input type="hidden" id="page" name="page" value="{{ page }}">
-                </form>
-
                 <div class="store_item3"></div>
 
               </div>

@@ -23,9 +23,7 @@ from .forms import ManagerUpdateForm, StoreUpdateForm, UpdateForm
 
 from datetime import datetime
 
-# 검색기능 - 전화번호 조회시 기호제거
-from django.db.models import F, Func, Value, CharField
-from django.db.models.functions import Replace
+
 
 
 
@@ -196,6 +194,21 @@ class ManagerStoreUpdateView(LoginRequiredMixin, FormView):
         else:
             raise PermissionDenied
 
+    # def get_context_data(self, **kwargs):
+    #     context = super(ManagerStoreUpdateView, self).get_context_data(**kwargs)
+    #     context['form'] = ManagerUpdateForm(instance=self.manager)
+    #     context['form_store'] = StoreUpdateForm(instance=self.store)
+
+        
+    #     # 예약목록 가져오기
+    #     reservations = Reservation_user.objects.filter(store_id=self.store)
+    #     # 페이지네이션 설정
+    #     paginator = Paginator(reservations, 10) # Show 10 user-info per page.
+    #     page_number = self.request.GET.get('page')
+    #     page_obj = paginator.get_page(page_number)
+        
+    #     context['page_obj'] = page_obj
+    #     return context
 
     def get_context_data(self, **kwargs):
         context = super(ManagerStoreUpdateView, self).get_context_data(**kwargs)
@@ -218,14 +231,10 @@ class ManagerStoreUpdateView(LoginRequiredMixin, FormView):
                 except ValueError:
                     date_filter = Q(reservation_date__startswith=kw)  # 수정: startswith 사용
                     
-            kw_without_hyphen = kw.replace("-", "")  # 검색어에서 '-' 문자 제거
-            
-            reservations = Reservation_user.objects.annotate(
-                user_phone_without_hyphen=Replace('user_phone', Value('-'), Value(''), output_field=CharField())  # 추가: user_phone에서 '-' 문자 제거
-            ).filter(
+            reservations = Reservation_user.objects.filter(
                 Q(user_name__icontains=kw) | 
-                Q(user_phone_without_hyphen=kw_without_hyphen) |  # 수정: '-' 문자를 제거한 user_phone과 비교
-                date_filter,
+                Q(user_phone__icontains=kw) |
+                date_filter,  # 수정: date_filter 적용
                 store_id=self.store
             ).distinct()
         else:

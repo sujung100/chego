@@ -9,6 +9,7 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, TemplateView, ListView, UpdateView, FormView
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.core.serializers.json import DjangoJSONEncoder
+from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
@@ -196,10 +197,17 @@ class ManagerStoreUpdateView(LoginRequiredMixin, FormView):
         context['form'] = ManagerUpdateForm(instance=self.manager)
         context['form_store'] = StoreUpdateForm(instance=self.store)
 
+        
         # 예약목록 가져오기
         reservations = Reservation_user.objects.filter(store_id=self.store)
-        context['reservations'] = reservations
+        # 페이지네이션 설정
+        paginator = Paginator(reservations, 10) # Show 10 user-info per page.
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        
+        context['page_obj'] = page_obj
         return context
+
 
     def form_valid(self, form):
         manager_form = form
@@ -219,7 +227,21 @@ class ManagerStoreUpdateView(LoginRequiredMixin, FormView):
         return self.render_to_response(context)
 
 
+
+# 검색...수정중
+def search(request):
+    kw = request.GET.get('kw')
+    if kw:
+        results = Reservation_user.objects.filter(
+            Q(user_name__icontains=kw) | 
+            Q(user_phone__icontains=kw)
+        ).distinct() # 중복제거
+    else:
+        results = Reservation_user.objects.none()
     
+    return render(request, 'manager/manager_search.html', {'results': results})
+
+
 
 # 수정중
 class Update(LoginRequiredMixin, UpdateView):

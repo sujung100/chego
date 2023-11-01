@@ -25,9 +25,9 @@
                 <form action="{% url 'mng_update' pk=manager.pk store_id=store.pk %}" method="get">
                   <div class="store_item1">
                     <label for="search_kw">예약일 예시&#41; 2024-01-01 / 2024-01 / 2024</label>
-                    <input type="text" id="search_name" name="name" value="{{ request.GET.name|default:'' }}" placeholder="이름" autocomplete="off">
-                    <input type="text" id="search_phone" name="phone" value="{{ request.GET.phone|default:'' }}" placeholder="전화번호" autocomplete="off">
-                    <input type="text" id="search_kw" name="kw" value="{{ kw|default_if_none:'' }}" placeholder="예약일" autocomplete="off"></input>
+                    <input type="text" id="search_name" name="name" value="{{ request.GET.name|default:'' }}" placeholder="이름">
+                    <input type="text" id="search_phone" name="phone" value="{{ request.GET.phone|default:'' }}" placeholder="전화번호">
+                    <input type="text" id="search_kw" name="kw" value="{{ kw|default_if_none:'' }}" placeholder="예약일"></input>
                     <button type="submit" id="btn_search">검색</button>
                   </div>
                 </form>

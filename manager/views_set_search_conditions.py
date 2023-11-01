@@ -204,42 +204,63 @@ class ManagerStoreUpdateView(LoginRequiredMixin, FormView):
         context['manager'] = self.manager
         context['store'] = self.store
 
-
-        name = self.request.GET.get('name')
-        phone = self.request.GET.get('phone')
         kw = self.request.GET.get('kw')
-        
-        date_filter = Q()
         if kw:
             try:
+                # 'YYYY-MM-DD' 형식의 문자열을 날짜로 변환
                 datetime.strptime(kw, '%Y-%m-%d')
                 date_filter = Q(reservation_date__icontains=kw)
             except ValueError:
                 try:
+                    # 'YYYY-MM' 형식의 문자열을 날짜로 변환
                     datetime.strptime(kw, '%Y-%m')
                     date_filter = Q(reservation_date__icontains=kw)
                 except ValueError:
-                    date_filter = Q(reservation_date__startswith=kw)
+                    date_filter = Q(reservation_date__startswith=kw)  # 수정: startswith 사용
                     
-        phone_without_hyphen = phone.replace("-", "") if phone else None
+            # 입력에서 이름과 전화번호 또는 예약일 분리
+            if ',' in kw:
+                condition1, condition2 = [x.strip() for x in kw.split(',', 1)]
+                condition1_without_hyphen = condition1.replace("-", "")
+                condition2_without_hyphen = condition2.replace("-", "")
 
-        reservations = Reservation_user.objects.annotate(
-            user_phone_without_hyphen=Replace('user_phone', Value('-'), Value(''), output_field=CharField())
-        ).filter(
-            Q(user_name__icontains=name) if name else Q(),
-            Q(user_phone_without_hyphen__icontains=phone_without_hyphen) if phone else Q(),
-            date_filter if kw else Q(),
-            store_id=self.store
-        ).distinct()
+                # 이름과 전화번호, 이름과 예약일, 전화번호와 예약일 모두 만족하는 결과 반환
+                reservations = Reservation_user.objects.annotate(
+                    user_phone_without_hyphen=Replace('user_phone', Value('-'), Value(''), output_field=CharField())
+                ).filter(
+                    (
+                        (Q(user_name__icontains=condition1) & Q(user_phone_without_hyphen__icontains=condition2_without_hyphen)) |
+                        (Q(user_name__icontains=condition1) & Q(reservation_date__iexact=condition2)) |
+                        (Q(user_phone_without_hyphen__icontains=condition1_without_hyphen) & Q(reservation_date__iexact=condition2))
+                    ),
+                    store_id=self.store
+                ).distinct()
+            else:
+                name_or_phone_or_date = kw.replace("-", "")
+
+                reservations = Reservation_user.objects.annotate(
+                    user_phone_without_hyphen=Replace('user_phone', Value('-'), Value(''), output_field=CharField())
+                ).filter(
+                    Q(user_name__icontains=name_or_phone_or_date) |  # OR 연산자 사용
+                    Q(user_phone_without_hyphen__icontains=name_or_phone_or_date) |
+                    Q(reservation_date__iexact=name_or_phone_or_date),
+                    store_id=self.store
+                ).distinct()
+        else:
+            reservations = Reservation_user.objects.filter(
+                store_id=self.store  # store_id가 현재 스토어의 ID와 같을때만 검색해서 조회가능
+            )
+
 
         paginator = Paginator(reservations, 10)
         page_number = self.request.GET.get('page')
         page_obj = paginator.get_page(page_number)
 
         context['page_obj'] = page_obj
-        context['kw'] = kw
+        context['kw'] = kw  # 검색어를 context에 추가
 
         return context
+
 
     def form_valid(self, form):
         manager_form = form

@@ -109,9 +109,9 @@ ol, ul{
 
 .content1 .store_item1 label {
   position: absolute;
-  top: 1rem;
+  top: 2.5rem;
+  right: 1rem;
   /* right: 14rem; */
-  right: 14.5rem;
   padding: 0.3rem;
   font-size: 0.8rem;
   color: #555;
@@ -190,12 +190,11 @@ ol, ul{
 }
 /* 페이지네이션 끝 */
 
-.content1 #search_kw {
+#search_kw, #search_phone, #search_name {
 
   position: absolute;
-  width: 10rem;
+  width: 7rem;
   top: 1rem;
-  right: 3.5rem;
   /* right: 3rem; */
   border-radius: 0.3rem;
   padding: 0.3rem;
@@ -203,6 +202,19 @@ ol, ul{
   border: none;
   caret-color: #009476;
 }
+
+.content1 #search_name {
+  right: 20rem;
+}
+
+.content1 #search_phone {
+  right: 12rem;
+}
+
+.content1 #search_kw {
+  right: 4rem;
+}
+
 
 .content1 #search_kw:focus {
   outline: none;

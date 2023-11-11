@@ -1,0 +1,64 @@
+<script>
+	
+	var clickedInputs = [];
+
+	window.onload = function() {
+		// 페이지 로드 시 모든 체크박스를 disabled 상태로 설정하고 display: none; 적용
+		document.querySelectorAll('input[type="checkbox"]').forEach(function (checkbox) {
+			var inputId = checkbox.getAttribute('data-input-id');
+			var input = document.getElementById(inputId);
+			input.setAttribute('disabled', 'disabled');
+			input.style.display = 'none';
+		});
+	};
+
+	function toggleInput(id, checked) {
+		var input = document.getElementById(id);
+
+		if (checked) {
+			if (!clickedInputs.includes(id)) {
+				clickedInputs.push(id);
+			}
+
+			input.removeAttribute('disabled');
+			input.style.display = '';  // display 값을 초기 상태로 되돌림
+		} else {
+			input.setAttribute('disabled', 'disabled');
+			input.style.display = 'none';  // display: none; 적용
+			input.style.right = '';
+			var index = clickedInputs.indexOf(id);
+			if (index !== -1) {
+				clickedInputs.splice(index, 1);
+			}
+		}
+	}
+
+	// 체크박스 클릭 시 toggleInput 함수 호출
+	document.querySelectorAll('input[type="checkbox"]').forEach(function (checkbox) {
+		checkbox.addEventListener('click', function () {
+			toggleInput(checkbox.getAttribute('data-input-id'), checkbox.checked);
+
+			// enabledSiblingCount 계산
+			var enabledSiblingCount = 0;
+			var siblings = Array.from(checkbox.parentNode.children);
+			siblings.forEach(function (sibling) {
+				if (!sibling.disabled && sibling.tagName === 'INPUT' && sibling.type === 'checkbox' && sibling.checked) {
+					enabledSiblingCount++;
+				}
+			});
+
+			// 체크박스 클릭에 따른 조정
+			if (enabledSiblingCount === 3) {
+				document.getElementById(clickedInputs[0]).style.right = '20rem';
+				document.getElementById(clickedInputs[1]).style.right = '12rem';
+				document.getElementById(clickedInputs[2]).style.right = '4rem';
+			} else if (enabledSiblingCount === 2) {
+				document.getElementById(clickedInputs[0]).style.right = '12rem';
+				document.getElementById(clickedInputs[1]).style.right = '4rem';
+			} else if (enabledSiblingCount === 1) {
+				document.getElementById(clickedInputs[0]).style.right = '4rem';
+			}
+		});
+	});
+
+</script>

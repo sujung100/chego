@@ -1,13 +1,12 @@
 from django.shortcuts import render
-from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView, TemplateView, View
+from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView, TemplateView
 from calendar_app import models
 
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
 from django.core.serializers.json import DjangoJSONEncoder
-from django.core.exceptions import ValidationError
 import json
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 
 # 이름변경
@@ -242,49 +241,11 @@ class Idx_list(TemplateView):
             rst_user.user_phone = request.POST["detail_user_phone"]
             rst_user.reservation_date = request.POST["detail_user_date"]
             rst_user.user_time = request.POST["detail_user_time"]
-            rst_user.password = int(request.POST["password"])
             rst_user.store_id = sto
-
-            try:
-                rst_user.full_clean()  # 모델의 유효성 검사 수행
-                rst_user.save()
-            except ValidationError as e:
-                # 유효성 검사 실패 시 에러
-                error_message = str(e)
-                return HttpResponse(error_message, status=400)
+            rst_user.save()
 
             # POST 처리 완료 시 리디렉션
             return HttpResponseRedirect(reverse('Idx_list'))
 
         return self.get(request, *args, **kwargs)
 
-
-# 예약 조회
-class FindReservationView(View):
-    template_name = 'calendar_app/find_reservation.html'
-    context = {}
-
-    def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
-
-    def post(self, request, *args, **kwargs):
-        user_name = request.POST.get('user_name').strip()
-        user_phone = request.POST.get('user_phone')
-
-        try:
-            reservation = models.Reservation_user.objects.get(user_name=user_name, user_phone=user_phone)
-        except models.Reservation_user.DoesNotExist:
-            return HttpResponse("해당하는 예약 정보가 없습니다.")
-
-        store = reservation.store_id
-        store_name = store.store_name
-
-        context = {
-            'user_name': reservation.user_name,
-            'user_phone': reservation.user_phone,
-            'reservation_date': reservation.reservation_date,
-            'user_time': reservation.user_time,
-            'store_name': store_name,
-        }
-
-        return render(request, 'calendar_app/reservation_detail.html', context)

@@ -118,7 +118,7 @@
 section.navi-wrapper {width: 100%; position: relative; z-index: 99;}
 section.navi-wrapper .fixed-nav {width: 600px; margin: 0 auto; background-color: #343434;/*  opacity: 70%;  */border-radius: 0.6rem; position: fixed; top: 85%; left: 50%; transform: translateX( -50% );}
 section.navi-wrapper .fixed-nav .inner {}
-.fixed-nav__inner .fixed-nav__wrapper {border: 1px solid #555; border-radius: 0.6rem;}
+.fixed-nav__inner .fixed-nav__wrapper {}
 .fixed-nav__inner .fixed-nav__wrapper .fixed-nav__open {}
 .fixed-nav__inner .fixed-nav__wrapper .fixed-nav__close {display: flex;}
 .fixed-nav__close .fixed-nav__layout_1 {background-color: #222;/*  opacity: 70%; */ border-radius: 0.6rem; color: white; margin: 0.5rem 0 0.5rem 0.5rem; position: static; flex: 1; padding: 0.8rem 1rem;}
@@ -446,7 +446,7 @@ section.intro {
 
 /******************** main-wrap ********************/
 .green {background-color: #009476 !important;}
-.selected {background-color: #333; color: #fff}
+.selected {background-color: #242424; color: #fff}
 
 
 section.md-wrapper .reservation {width: 80%; margin: 5rem auto; /* background-color: #333; height: 500px; */ border-radius: 1.5rem; position: relative;}
@@ -479,7 +479,7 @@ rs-tabs, rs-list, rs-date, rs-info
 
 
 /* .reserve-wrap .rs-body .rs-list {width: 40%; background-color: #333;} */
-.reserve-wrap .rs-body .rs-list {width: 30%; background-color: #242424; border-radius: 0 0 1.5rem 0;}
+.reserve-wrap .rs-body .rs-list {width: 30%; background-color: #333;}
 .rs-list h1 {color: #fff; margin: 1.2rem; text-align: center;}
 .rs-list .store-table {width: calc(100% - 2.4rem); border: 1px solid #818181; padding: 1.5rem 0; margin: 1.2rem; color: #fff; border-radius: 1rem; display: flex; }
 .rs-list .store-table .st-name {width: 30%; border-right: 1px solid #818181; text-align: center; margin: auto 0;}
@@ -496,14 +496,14 @@ rs-tabs, rs-list, rs-date, rs-info
 
 
 /* .reserve-wrap .rs-body .rs-date {width: 35%; background-color: #242424; margin: 0 0 0 auto; border-radius: 0 0 1.5rem 0; padding-bottom: 2rem;} */
-.reserve-wrap .rs-body .rs-date {width: 60%; background-color: #333; margin: 0 0 0 auto; padding-bottom: 2rem;}
+.reserve-wrap .rs-body .rs-date {width: 60%; background-color: #242424; margin: 0 0 0 auto; border-radius: 0 0 1.5rem 0; padding-bottom: 2rem;}
 .rs-date .name {color: #fff; margin: 1.2rem; text-align: center; font-weight: bold; font-size: 1.2rem;}
 .rs-date .next {width: 100%; text-align: center;}
 .rs-date .send-bt {cursor: pointer; /* border: 0; */ outline: 0; background-color: #333; color: #fff; border: 1px solid #818181; border-radius: 2rem; margin: 2rem 25% 0 25%; padding: 0.5rem; width: 20%; font-weight: bold;}
 .rs-date .send-bt:hover {background-color: #009476; color: #fff; border: 1px solid #009476;}
 
 
-.reserve-wrap .rs-body .rs-info {width: calc(100% - (10% + 30% + 35%)); background-color: #333; color: #fff;}
+.reserve-wrap .rs-body .rs-info {width: calc(100% - (10% + 30% + 35%)); background-color: #242424; color: #fff; border-radius: 0 0 1.5rem 0;}
 .rs-info .info {position: relative;}
 .rs-info .info #back-btn {position: absolute; font-size: 0.8rem; margin-left: 0.5rem; cursor: pointer; background-color: #333; color: #fff; border: 1px solid #818181; border-radius: 2rem; padding: 0.3rem;}
 .rs-info .info h1 {margin: 1.2rem; text-align: center;}
@@ -659,12 +659,12 @@ rs-tabs, rs-list, rs-date, rs-info
 /******************** 스크롤바 ********************/
 .scroll{
   display: inline-block;
-  height: 65vh;  
+  height: 68vh;  
   /* padding: 20px; */
   overflow-y: auto;
   box-sizing: border-box;
   color: white;
-  background-color: #242424;
+  background-color: #333;
 }
 
 /* 스크롤바 설정*/
@@ -828,7 +828,6 @@ td {
   .reserve-wrap .rs-body .rs-tabs {width: 15%;}
   .reserve-wrap .rs-body .rs-list {width: 40%;}
   .reserve-wrap .rs-body .rs-date {width: calc(100% - (15% + 40%))}
-  .reserve-wrap .rs-body .rs-info {width: calc(100% - (15% + 40%))}
   /* .rs-tabs .tabs ul li {margin: auto 1rem; font-size: 0.9rem;} */
   div#mainCalendar {width: 30vw;/*  margin: 0; */}
 }

@@ -6,6 +6,9 @@ urlpatterns = [
     # 변경
 
   path('', views.Idx_list.as_view(), name='Idx_list'),
+  path('reservation/', views.FindReservationView.as_view(), name='Reserve_list'),
+
+
   path('first/', views.First_list.as_view(), name='First_list'),
   path('reserve/', views.reserve, name='reserve'),
   # path('info/', views.info, name='info'),

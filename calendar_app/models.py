@@ -5,6 +5,8 @@ from django.urls import reverse
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+from django.core.validators import MinValueValidator, MaxValueValidator
+
 
 # Create your models here.
 
@@ -55,6 +57,7 @@ class Reservation_user(models.Model):
     reservation_date = models.CharField(max_length=20, null=True)
     user_time = models.CharField(max_length=20, null=True)
     date = models.DateTimeField(auto_now_add = True)
+    password = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(9999)], null=True)
 
 class Store_times(models.Model):
     store_id = models.ForeignKey(Store, on_delete=models.CASCADE, db_column="store_id")

@@ -1,0 +1,19 @@
+
+
+<form method="POST">
+    {% csrf_token %}
+    <label for="user_name">이름:</label><br>
+    <input type="text" id="user_name" name="user_name"><br>
+    <label for="user_phone">핸드폰번호:</label><br>
+    <input type="text" id="user_phone" name="user_phone"><br>
+    <input type="submit" value="예약 정보 찾기">
+</form>
+
+<script>
+    document.querySelector('#user_phone').addEventListener('keyup', function () {
+        this.value = this.value
+            .match(/\d*/g).join('')
+            .match(/(\d{0,3})(\d{0,4})(\d{0,4})/).slice(1).join('-')
+            .replace(/-*$/g, '');
+    });
+</script>

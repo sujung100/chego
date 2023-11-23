@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TEST ROOM</title>
+</head>
+
+<body>
+  <textarea id="chat-log" cols="100" rows="20"></textarea><br>
+  <input id="chat-message-input" type="text" size="100"><br>
+  <input id="chat-message-submit" type="button" value="Send">
+  {{ room_name|json_script:"room-name" }}
+</body>
+
+</html>
+{% include "manager/test/reconnecting-websocket.html" %}
+<script>
+  // const roomName = JSON.parse(document.getElementById('room-name').textContent);
+  let roomName = {{ room_name_json }} ;
+  let userName = {{ username }} ;
+
+  const chatSocket = new ReconnectingWebSocket(
+    'ws://'
+    + window.location.host
+    + '/ws/chat/'
+    + roomName
+    + '/'
+  );
+
+  chatSocket.onmessage = function (e) {
+    const data = JSON.parse(e.data);
+    const message = data["message"];
+    const author = message["author"];
+    const msgListTag = document.createElement("li");
+    const pTag = document.createElement("p");
+    pTag.textContent = message.content;
+    if (author == userName){
+      msgListTag.className = "-sent";
+    } else {
+      msgListTag.className = "-replies";
+    }
+    // document.querySelector('#chat-log').value += (data.message + '\n');
+    msgListTag.appendChild(pTag);
+    document.querySelector("#chat-log").appendChild(msgListTag);
+  };
+
+  chatSocket.onclose = function (e) {
+    console.error('Chat socket closed unexpectedly');
+  };
+
+  document.querySelector('#chat-message-input').focus();
+  document.querySelector('#chat-message-input').onkeyup = function (e) {
+    if (e.keyCode === 13) {  // enter, return
+      document.querySelector('#chat-message-submit').click();
+    }
+  };
+
+  document.querySelector('#chat-message-submit').onclick = function (e) {
+    const messageInputDom = document.querySelector('#chat-message-input');
+    const message = messageInputDom.value;
+    if (chatSocket.readyState === WebSocket.OPEN) { // Check if WebSocket is in OPEN state
+      chatSocket.send(JSON.stringify({
+        'command': "new_message",
+        'message': message,
+        'from' : userName,
+      }));
+    }
+    messageInputDom.value = '';
+  };
+</script>

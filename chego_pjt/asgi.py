@@ -15,9 +15,11 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'chego_pjt.settings')
 
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
-    "websocket": AuthMiddlewareStack(
-        URLRouter(
-            manager.routing.websocket_urlpatterns
+    "websocket": AllowedHostsOriginValidator(
+        AuthMiddlewareStack(
+            URLRouter(
+                manager.routing.websocket_urlpatterns
+            )
         )
     ),
 })

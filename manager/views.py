@@ -18,8 +18,9 @@ from django.http import HttpResponseRedirect
 from django.http import JsonResponse, QueryDict, HttpRequest
 from django.views import View
 from django.core.paginator import Paginator
-
-
+from django.utils.safestring import mark_safe
+from django.contrib.auth.decorators import login_required
+from . import models
 
 # Create your views here.
 def store_list(request):
@@ -44,6 +45,7 @@ class ManagerStoreList(LoginRequiredMixin, ListView, LoginView, FormView):
         context = super().get_context_data(**kwargs)
 
         current_user = self.request.user
+        context["username"] = current_user.username if current_user.is_authenticated else None
 
         context['manager'] = self.get_queryset()
         print(context['manager'])
@@ -55,14 +57,16 @@ class ManagerStoreList(LoginRequiredMixin, ListView, LoginView, FormView):
 
         if current_user.is_authenticated:
             rsvs = rsv.Reservation_user.objects.all().order_by("-reservation_date")
+            messages = models.Message.all_messages(current_user.username)
             context["rsvs"] = rsvs
+            context["messages"] = messages
         return context
     
     
     def post(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             if request.method == 'POST':
-                print("안돼야 되잖아")
+                # print("안돼야 되잖아")
                 sto = rsv.Store()
                 # print(atc.title)
                 sto.store_name = request.POST["store_name"]
@@ -232,6 +236,17 @@ def write(request):
 def test_chat(request):
     return render(request, "manager/test/test_chat.html")
 
+@login_required
 def test_room(request, room_name):
-    return render(request, "manager/test/test_room.html", {"room_name": room_name})
+    context = {
+        "room_name_json" : mark_safe(json.dumps(room_name)),
+        "username" : request.user.username,
+    }
+    return render(request, "manager/test/test_room.html", context)
+
+def admin_chat(request):
+    context = {
+        "username" : request.user.username,
+    }
+    return render(request, "manager/test/admin_chat.html", context)
 

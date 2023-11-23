@@ -16,7 +16,8 @@ urlpatterns = [
 
   # chat 테스트
   path("testchat/", views.test_chat, name="test_chat"),
-  path("<str:room_name>/", views.test_room, name="test_room"),
+  path("testchat/<str:room_name>/", views.test_room, name="test_room"),
+  path("customer_service_center/inquiry/", views.admin_chat, name="admin_chat"),
 
   # ajax
   path('api/store-times/', views.StoreTimesView.as_view(), name='store_times'),

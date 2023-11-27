@@ -625,6 +625,14 @@
         });
     });
 
+    // 예약시 전화번호 입력칸에 자동 대쉬
+    document.querySelector('#detail_user_phone').addEventListener('keyup', function () {
+        this.value = this.value
+            .match(/\d*/g).join('')
+            .match(/(\d{0,3})(\d{0,4})(\d{0,4})/).slice(1).join('-')
+            .replace(/-*$/g, '');
+    });
+
 
 </script>
 {% endautoescape %}

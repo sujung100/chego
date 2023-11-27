@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 
 
 # Create your models here.
@@ -57,7 +57,8 @@ class Reservation_user(models.Model):
     reservation_date = models.CharField(max_length=20, null=True)
     user_time = models.CharField(max_length=20, null=True)
     date = models.DateTimeField(auto_now_add = True)
-    password = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(9999)], null=True)
+    password = models.CharField(validators=[RegexValidator(r'^[0-9]*$', '숫자만 입력해주세요.', 'invalid'),], max_length=4, null=True)
+    visitor_num = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(99)], null=True)
 
 class Store_times(models.Model):
     store_id = models.ForeignKey(Store, on_delete=models.CASCADE, db_column="store_id")

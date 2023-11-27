@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView, TemplateView, View
 from calendar_app import models
 
@@ -9,6 +9,7 @@ from django.core.exceptions import ValidationError
 import json
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
+from django.forms.models import model_to_dict
 
 # 이름변경
 class First_list(ListView):
@@ -242,7 +243,8 @@ class Idx_list(TemplateView):
             rst_user.user_phone = request.POST["detail_user_phone"]
             rst_user.reservation_date = request.POST["detail_user_date"]
             rst_user.user_time = request.POST["detail_user_time"]
-            rst_user.password = int(request.POST["password"])
+            rst_user.visitor_num = int(request.POST["v_num"])
+            rst_user.password = request.POST["password"]
             rst_user.store_id = sto
 
             try:
@@ -259,10 +261,89 @@ class Idx_list(TemplateView):
         return self.get(request, *args, **kwargs)
 
 
-# 예약 조회
+# # 예약 조회 1
+# class FindReservationView(View):
+#     template_name = 'calendar_app/find_reservation.html'
+#     context = {}
+
+#     def get(self, request, *args, **kwargs):
+#         return render(request, self.template_name)
+
+#     def post(self, request, *args, **kwargs):
+#         user_name = request.POST.get('user_name').strip()
+#         user_phone = request.POST.get('user_phone')
+
+#         try:
+#             reservation = models.Reservation_user.objects.get(user_name=user_name, user_phone=user_phone)
+#         except models.Reservation_user.DoesNotExist:
+#             return HttpResponse("해당하는 예약 정보가 없습니다.")
+
+#         store = reservation.store_id
+#         store_name = store.store_name
+
+#         context = {
+#             'user_name': reservation.user_name,
+#             'user_phone': reservation.user_phone,
+#             'reservation_date': reservation.reservation_date,
+#             'user_time': reservation.user_time,
+#             'visitor_num': reservation.visitor_num,
+#             'store_name': store_name,
+#         }
+
+#         return render(request, 'calendar_app/reservation_detail.html', context)
+
+
+
+# # 예약조회2
+# class FindReservationView(View):
+#     template_name = 'calendar_app/find_reservation.html'
+
+#     def get(self, request, *args, **kwargs):
+#         return render(request, self.template_name)
+
+#     def post(self, request, *args, **kwargs):
+#         user_name = request.POST.get('user_name').strip()
+#         user_phone = request.POST.get('user_phone')
+
+#         try:
+#             reservation = models.Reservation_user.objects.get(user_name=user_name, user_phone=user_phone)
+#         except models.Reservation_user.DoesNotExist:
+#             return HttpResponse("해당하는 예약 정보가 없습니다.")
+
+#         store = reservation.store_id
+#         store_name = store.store_name
+
+#         return redirect('Detail_view', reservation_id=reservation.id)
+
+
+# class DetailView(View):
+#     template_name = 'calendar_app/reservation_detail.html'
+
+#     def get(self, request, reservation_id):
+#         input_user_name = request.GET.get('user_name', '')
+#         reservation = models.Reservation_user.objects.get(id=reservation_id)
+#         print("1", reservation.user_name)
+#         print("2", input_user_name)
+
+#         if reservation.user_name != input_user_name:
+#             return HttpResponse("입력하신 사용자 이름이 일치하지 않습니다.")
+        
+
+#         context = {
+#             'user_name': reservation.user_name,
+#             'user_phone': reservation.user_phone,
+#             'reservation_date': reservation.reservation_date,
+#             'user_time': reservation.user_time,
+#             'visitor_num': reservation.visitor_num,
+#             'store_name': reservation.store_name,
+#         }
+
+#         return render(request, self.template_name, context)
+
+
+# 예약조회3
 class FindReservationView(View):
     template_name = 'calendar_app/find_reservation.html'
-    context = {}
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name)
@@ -276,15 +357,32 @@ class FindReservationView(View):
         except models.Reservation_user.DoesNotExist:
             return HttpResponse("해당하는 예약 정보가 없습니다.")
 
-        store = reservation.store_id
-        store_name = store.store_name
+        request.session['reservation'] = model_to_dict(reservation)  # model_to_dict: dict로 변환
 
-        context = {
-            'user_name': reservation.user_name,
-            'user_phone': reservation.user_phone,
-            'reservation_date': reservation.reservation_date,
-            'user_time': reservation.user_time,
-            'store_name': store_name,
-        }
+        return redirect('input_user_pw')
+    
 
-        return render(request, 'calendar_app/reservation_detail.html', context)
+class InputUserNameView(View):
+    def get(self, request):
+        return render(request, 'calendar_app/input_user_pw.html')
+
+    def post(self, request):
+        input_pw = request.POST.get('input_pw')
+        request.session['input_user_pw'] = input_pw
+        return redirect('detail_view')
+    
+
+class DetailView(View):
+    template_name = 'calendar_app/reservation_detail.html'
+
+    def get(self, request):
+        reservation = request.session.get('reservation')
+        input_pw = request.session.get('input_user_pw')
+
+        if reservation is None or input_pw != reservation['password']:
+            return HttpResponse("입력하신 비밀번호가 틀렸습니다.")
+        
+        store_name = models.Store.objects.get(id=reservation['store_id']).store_name
+        reservation['store_name'] = store_name
+
+        return render(request, self.template_name, reservation)

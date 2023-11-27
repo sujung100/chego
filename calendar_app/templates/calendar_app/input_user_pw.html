@@ -1,0 +1,8 @@
+
+
+<form method="post" action="{% url 'input_user_pw' %}">
+    {% csrf_token %}
+    <label for="input_pw">비밀번호를 입력하세요: </label>
+    <input type="text" id="input_pw" name="input_pw">
+    <input type="submit" value="Submit">
+  </form>

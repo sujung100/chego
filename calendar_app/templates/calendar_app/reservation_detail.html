@@ -1,10 +1,13 @@
 
-
-<p>이름: {{ user_name }}</p>
-<p>전화번호: {{ user_phone }}</p>
+<p>이름: {{ reservation.user_name }}</p>
+<p>전화번호: {{ reservation.user_phone }}</p>
 <br>
-<p>예약 매장명: {{ store_name }}</p>
-<p>예약 날짜: {{ reservation_date }}</p>
-<p>예약 시간: {{ user_time }}</p>
-<p>예약 인원: {{ visitor_num }}</p>
+<p>예약 매장명: {{ reservation.store_id.store_name }}</p>
+<p>예약 날짜: {{ reservation.reservation_date }}</p>
+<p>예약 시간: {{ reservation.user_time }}</p>
+<p>예약 인원: {{ reservation.visitor_num }}</p>
 
+<form method="post">
+    {% csrf_token %}
+    <input type="submit" value="예약 삭제">
+</form>

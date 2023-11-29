@@ -15,6 +15,7 @@ urlpatterns = [
   path('find_reservation/', views.FindReservationView.as_view(), name='find_reservation'),
   path('input_user_pw/', views.InputUserNameView.as_view(), name='input_user_pw'),
   path('detail_view/', views.DetailView.as_view(), name='detail_view'),
+  path('delete_fin/', views.ReservationDeletedView.as_view(), name='reservation_deleted_view'),
 
 
   path('first/', views.First_list.as_view(), name='First_list'),

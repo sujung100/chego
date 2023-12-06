@@ -1,13 +1,80 @@
+{% extends 'base.html' %}
+{% load filters %}
+{% load static %}
 
-<p>이름: {{ reservation.user_name }}</p>
-<p>전화번호: {{ reservation.user_phone }}</p>
-<br>
-<p>예약 매장명: {{ reservation.store_id.store_name }}</p>
-<p>예약 날짜: {{ reservation.reservation_date }}</p>
-<p>예약 시간: {{ reservation.user_time }}</p>
-<p>예약 인원: {{ reservation.visitor_num }}</p>
+<!-- css -->
+{% block style %}
+<link rel="stylesheet" href="{% static 'calendar_app/css/main.css' %}?after">
+{% endblock style %}
 
-<form method="post">
-    {% csrf_token %}
-    <input type="submit" value="예약 삭제">
-</form>
+<!-- title -->
+{% block title %}List up{% endblock %}
+
+{% block container %}
+<div class="rs-tabs" id="anchor3">
+    <div class="tabs">
+      <ul>
+        <li><a href="{% url 'Idx_list' %}#reserve_pg">업체예약</a></li>
+      </ul>
+      <ul class="active">
+        <li><a href="{% url 'find_reservation' %}#anchor1">예약조회</a></li>
+      </ul>
+      <ul>
+        <li><a href="">상세정보</a></li>
+      </ul>
+      <ul>
+        <li><a href="">tab</a></li>
+      </ul>
+      <ul>
+        <li><a href="">tab</a></li>
+      </ul>
+      <ul>
+        <li><a href="">tab</a></li>
+      </ul>
+    </div>
+</div>
+
+<div>
+  {% if messages %}
+  <button>뒤로가기</button>
+  <div class="messages">
+      {% for message in messages %}
+      <div{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</div>
+      {% endfor %}
+  </div>
+  {% else %}
+  
+  <div>이름: {{ reservation.user_name }}</div>
+  <div>전화번호: {{ reservation.user_phone }}</div>
+  <br>
+  <div>예약 매장명: {{ reservation.store_id.store_name }}</div>
+  <div>예약 날짜: {{ reservation.reservation_date }}</div>
+  <div>예약 시간: {{ reservation.user_time }}</div>
+  <div>예약 인원: {{ reservation.visitor_num }}</div>
+  
+  <form method="post">
+      {% csrf_token %}
+      <input type="submit" value="예약취소">
+  </form>
+  
+  {% endif %}
+</div>
+
+
+<!-- 리다이렉션 후 스크롤되게 -->
+{% if anchor3 %}
+<script>
+window.onload = function() {
+    location.hash = "#{{ anchor3 }}";
+};
+</script>
+{% endif %}
+
+{% if invalid_access %}
+<script>
+alert("잘못된 접근입니다.");
+window.location.href = "{% url 'find_reservation' %}#anchor1";
+</script>
+{% endif %}
+
+{% endblock %}

@@ -1,19 +1,79 @@
+{% extends 'base.html' %}
+{% load filters %}
+{% load static %}
 
+<!-- css -->
+{% block style %}
+<link rel="stylesheet" href="{% static 'calendar_app/css/main.css' %}?after">
+{% endblock style %}
 
-<form method="POST">
+<!-- title -->
+{% block title %}List up{% endblock %}
+
+{% block container %}
+<div class="rs-tabs" id="anchor1">
+    <div class="tabs">
+      <ul>
+        <li><a href="{% url 'Idx_list' %}#reserve_pg">업체예약</a></li>
+      </ul>
+      <ul class="active">
+        <li><a href="{% url 'find_reservation' %}#anchor1">예약조회</a></li>
+      </ul>
+      <ul>
+        <li><a href="">상세정보</a></li>
+      </ul>
+      <ul>
+        <li><a href="">tab</a></li>
+      </ul>
+      <ul>
+        <li><a href="">tab</a></li>
+      </ul>
+      <ul>
+        <li><a href="">tab</a></li>
+      </ul>
+    </div>
+</div>
+
+<div>
+  
+  {% if messages %}
+  <button>뒤로가기</button>
+  <div class="messages">
+      {% for message in messages %}
+      <div{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</div>
+      {% endfor %}
+  </div>
+  {% else %}
+  <form method="POST">
     {% csrf_token %}
     <label for="user_name">이름:</label><br>
     <input type="text" id="user_name" name="user_name"><br>
     <label for="user_phone">핸드폰번호:</label><br>
     <input type="text" id="user_phone" name="user_phone"><br>
     <input type="submit" value="예약 정보 찾기">
-</form>
+  </form>
+  {% endif %}
+</div>
+
+{% if anchor1 %}
+<script>
+  // 앵커포인트 가져오기
+  window.onload = function() {
+      location.hash = "#{{ anchor1 }}";
+  };
+</script>
+{% endif %}
+
 
 <script>
-    document.querySelector('#user_phone').addEventListener('keyup', function () {
-        this.value = this.value
-            .match(/\d*/g).join('')
-            .match(/(\d{0,3})(\d{0,4})(\d{0,4})/).slice(1).join('-')
-            .replace(/-*$/g, '');
-    });
+  // 핸드폰번호 입력시 자동대쉬
+  document.querySelector('#user_phone').addEventListener('keyup', function () {
+      this.value = this.value
+          .match(/\d*/g).join('')
+          .match(/(\d{0,3})(\d{0,4})(\d{0,4})/).slice(1).join('-')
+          .replace(/-*$/g, '');
+  });
 </script>
+
+
+{% endblock %}

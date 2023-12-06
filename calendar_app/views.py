@@ -10,6 +10,8 @@ import json
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.forms.models import model_to_dict
+from django.contrib import messages
+
 
 # 이름변경
 class First_list(ListView):
@@ -275,12 +277,16 @@ class FindReservationView(View):
         try:
             reservation = models.Reservation_user.objects.get(user_name=user_name, user_phone=user_phone)
         except models.Reservation_user.DoesNotExist:
-            return HttpResponse("해당하는 예약 정보가 없습니다.")
+            messages.error(request, "해당하는 예약 정보가 없습니다.")
+            return render(request, self.template_name, {'anchor1': 'anchor1'})
 
         request.session['reservation'] = model_to_dict(reservation)  # model_to_dict: dict로 변환
 
-        return redirect('input_user_pw')
+        # Create URL and add anchor
+        url = reverse('input_user_pw') + '#anchor2'
+        return HttpResponseRedirect(url)
     
+
 # 본인확인
 class InputUserNameView(View):
     def get(self, request):
@@ -289,94 +295,13 @@ class InputUserNameView(View):
     def post(self, request):
         input_pw = request.POST.get('input_pw')
         request.session['input_user_pw'] = input_pw
-        return redirect('detail_view')
-    
-# 예약조회
-# class DetailView(View):
-#     template_name = 'calendar_app/reservation_detail.html'
-
-#     def get(self, request):
-#         reservation = request.session.get('reservation')
-#         input_pw = request.session.get('input_user_pw')
-
-#         if reservation is None or input_pw != reservation['password']:
-#             return HttpResponse("입력하신 비밀번호가 틀렸습니다.")
-        
-#         store_name = models.Store.objects.get(id=reservation['store_id']).store_name
-#         reservation['store_name'] = store_name
-
-#         return render(request, self.template_name, reservation)
+        # return redirect('detail_view')
+    # Create URL and add anchor
+        url = reverse('detail_view') + '#anchor3'
+        return HttpResponseRedirect(url)
 
 
-
-# # 예약 조회 및 삭제 테스트
-# class DetailView(View):
-#     template_name = 'calendar_app/reservation_detail.html'
-
-#     def get(self, request):
-#         reservation = models.Reservation_user.objects.get(password=request.session.get('input_user_pw'))
-#         input_user_name = request.session.get('input_user_pw')
-
-#         if reservation is None or input_user_name != reservation.password:
-#             return HttpResponse("예약 정보가 없거나, 입력하신 사용자 이름이 예약자와 일치하지 않습니다.")
-
-#         store_name = models.Store.objects.get(id=reservation.store_id_id).store_name
-#         context = {
-#             'reservation': reservation,
-#             'store_name': store_name
-#         }
-
-#         return render(request, self.template_name, context)
-
-#     def post(self, request):
-#         reservation = models.Reservation_user.objects.get(password=request.session.get('input_user_pw'))
-#         reservation.delete()  # Delete the reservation
-#         return redirect('reservation_deleted_view')  # Redirect to a view that shows a message about the deletion
-    
-
-# class ReservationDeletedView(View):
-#     template_name = 'calendar_app/reservation_deleted.html'
-
-#     def get(self, request):
-#         return render(request, self.template_name)
-
-
-
-# # 예약 조회 및 삭제 테스트
-# class DetailView(View):
-#     template_name = 'calendar_app/reservation_detail.html'
-
-#     def get(self, request):
-#         input_user_pw = request.session.get('input_user_pw')
-#         reservations = models.Reservation_user.objects.filter(password=input_user_pw).select_related('store_id')
-#         # Q하기-필터로 조건두개
-
-#         if not reservations:
-#             return HttpResponse("예약 정보가 없거나, 입력하신 사용자 이름이 예약자와 일치하지 않습니다.")
-
-#         context = {
-#             'reservations': reservations
-#         }
-
-#         return render(request, self.template_name, context)
-
-#     def post(self, request):
-#         input_user_pw = request.session.get('input_user_pw')
-#         reservations = models.Reservation_user.objects.filter(password=input_user_pw)
-#         reservations.delete()  # Delete the reservation
-#         return redirect('reservation_deleted_view')  # Redirect to a view that shows a message about the deletion
-    
-
-# class ReservationDeletedView(View):
-#     template_name = 'calendar_app/reservation_deleted.html'
-
-#     def get(self, request):
-#         return render(request, self.template_name)
-
-
-
-
-# 예약 조회 및 삭제 테스트2
+# 예약 조회 및 취소
 class DetailView(View):
     template_name = 'calendar_app/reservation_detail.html'
 
@@ -387,20 +312,39 @@ class DetailView(View):
         try:
             reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'], password=input_user_pw)
         except models.Reservation_user.DoesNotExist:
-            return HttpResponse("예약 정보가 존재하지 않습니다.")
+            messages.error(request, "예약 정보가 존재하지 않습니다.")
+            return render(request, self.template_name)
         
         context = {'reservation': reservations}
         return render(request, self.template_name, context)
     
-
+    # 수정중
+    # def post(self, request):
+    #     reservation = request.session.get('reservation')
+    #     input_user_pw = request.session.get('input_user_pw')
+    #     reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'], password=input_user_pw)
+    #     reservations.delete()  # 조회한 예약삭제
+    #     # return redirect('reservation_deleted_view')
+    #     url = reverse('reservation_deleted_view') + '#anchor4'
+    #     return HttpResponseRedirect(url)
+    
     def post(self, request):
         reservation = request.session.get('reservation')
         input_user_pw = request.session.get('input_user_pw')
-        reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'], password=input_user_pw)
-        reservations.delete()  # 조회한 예약삭제
-        return redirect('reservation_deleted_view')
-    
 
+        try:
+            reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'], password=input_user_pw)
+        except models.Reservation_user.DoesNotExist:
+            return render(request, self.template_name, {'invalid_access': True})
+        
+        reservations.delete()  # 조회한 예약삭제
+        # return redirect('reservation_deleted_view')
+        url = reverse('reservation_deleted_view') + '#anchor4'
+        return HttpResponseRedirect(url)
+
+
+
+# 취소후 화면
 class ReservationDeletedView(View):
     template_name = 'calendar_app/reservation_deleted.html'
 

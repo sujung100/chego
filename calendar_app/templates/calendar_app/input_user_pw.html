@@ -1,8 +1,55 @@
+{% extends 'base.html' %}
+{% load filters %}
+{% load static %}
 
+<!-- css -->
+{% block style %}
+<link rel="stylesheet" href="{% static 'calendar_app/css/main.css' %}?after">
+{% endblock style %}
 
-<form method="post" action="{% url 'input_user_pw' %}">
-    {% csrf_token %}
-    <label for="input_pw">비밀번호를 입력하세요: </label>
-    <input type="text" id="input_pw" name="input_pw">
-    <input type="submit" value="Submit">
+<!-- title -->
+{% block title %}List up{% endblock %}
+
+{% block container %}
+<div class="rs-tabs" id="anchor2">
+  <div class="tabs">
+    <ul>
+      <li><a href="{% url 'Idx_list' %}#reserve_pg">업체예약</a></li>
+    </ul>
+    <ul class="active">
+      <li><a href="{% url 'find_reservation' %}#anchor1">예약조회</a></li>
+    </ul>
+    <ul>
+      <li><a href="">상세정보</a></li>
+    </ul>
+    <ul>
+      <li><a href="">tab</a></li>
+    </ul>
+    <ul>
+      <li><a href="">tab</a></li>
+    </ul>
+    <ul>
+      <li><a href="">tab</a></li>
+    </ul>
+  </div>
+</div>
+<div>
+  <form method="post" action="{% url 'input_user_pw' %}">
+      {% csrf_token %}
+      <label for="input_pw">비밀번호를 입력하세요: </label>
+      <input type="text" id="input_pw" name="input_pw">
+      <input type="submit" value="Submit">
   </form>
+</div>
+
+<!-- 리다이렉션 후 스크롤되게 -->
+{% if anchor2 %}
+<script>
+window.onload = function() {
+    location.hash = "#{{ anchor2 }}";
+};
+</script>
+{% endif %}
+
+  
+{% endblock %}

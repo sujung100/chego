@@ -1,5 +1,18 @@
 {% autoescape off %}
 <script>
+    // 공통
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(";").shift();
+    }
+
+    function setCookie(name, value, days) {
+        const expires = new Date(Date.now() + days * 864e5).toUTCString();
+        document.cookie = `${name}=${value}; expires=${expires}; path=/`;
+    }
+
+
     // 달력 시작
     let availableCompanyDates;
     let totalDisableTimes;
@@ -428,6 +441,202 @@
         modal.style.display = "none";
     };
 
+
+    // top-wrapper 텍스트효과
+    function applyAnimation(text, className) {
+        const strText = text.textContent;
+        const splitText = strText.split("");
+
+        text.textContent = "";
+
+        for (let i = 0; i < splitText.length; i++) {
+            text.innerHTML += "<span class='" + className + "'>" + splitText[i] + "</span>";
+        }
+
+        let char = 0;
+        let timer = setInterval(onTick, 50);
+
+        function onTick() {
+            const span = text.querySelectorAll("span")[char];
+            span.classList.add("fade");
+            char++;
+            if (char == splitText.length) {
+                complete();
+                return;
+            }
+        }
+
+        function complete() {
+            clearInterval(timer);
+            timer = null;
+        }
+    }
+
+    const h1Elements = document.querySelectorAll(".content-center h1");
+
+    h1Elements.forEach((h1, index) => {
+        applyAnimation(h1, "text-animation-" + index);
+    });
+
+
+
+
+    // 슬라이드 효과
+    function moveToNextSlide() {
+        var currentSlideNav = document.querySelector(".slide-nav.active");
+        var nextSlideNav;
+        if (currentSlideNav.nextElementSibling) {
+        nextSlideNav = currentSlideNav.nextElementSibling;
+        } else {
+        // 첫 번째 슬라이드로 돌아가기
+        nextSlideNav = document.querySelector(".slide-nav:first-child");
+        }
+        nextSlideNav.click();
+    }
+    
+    // 3초 인터벌
+    var autoSlideInterval = setInterval(moveToNextSlide, 3000);
+    
+    // slide nav 클릭시
+    document.querySelectorAll(".slide-nav").forEach(function(navItem) {
+        navItem.addEventListener("click", function(e) {
+        e.preventDefault();
+    
+        // 기존 인터벌 취소후, 자동 인터벌
+        clearInterval(autoSlideInterval);
+        autoSlideInterval = setInterval(moveToNextSlide, 3000);
+    
+        var current = document.querySelector(".flex-active").dataset.slide;
+        var next = this.dataset.slide;
+    
+        document.querySelectorAll(".slide-nav").forEach(function(slideNav) {
+            slideNav.classList.remove("active");
+        });
+        this.classList.add("active");
+    
+        if (current === next) {
+            return false;
+        } else {
+            var sliderWrapper = document.querySelector(".slider_wrapper");
+            sliderWrapper.querySelector(".flex_con[data-slide='" + next + "']").classList.add("flex-preStart");
+            document.querySelector(".flex-active").classList.add("animate-end");
+    
+            setTimeout(function() {
+            var preStartElement = document.querySelector(".flex-preStart");
+            preStartElement.classList.remove("animate-start", "flex-preStart");
+            preStartElement.classList.add("flex-active");
+    
+            var animateEndElement = document.querySelector(".animate-end");
+            animateEndElement.classList.add("animate-start");
+            animateEndElement.classList.remove("animate-end", "flex-active");
+            }, 800);
+        }
+        });
+    });
+    
+
+
+    // scroll-text 텍스트효과
+    window.addEventListener('scroll', function () {
+    // 스크롤 위치
+    let st = window.pageYOffset || document.documentElement.scrollTop;
+
+    // flow-text1 효과
+    let motionTaget = document.querySelector('.flow-text');
+    let leftText = motionTaget.querySelector('.left-text');
+    let rightText = motionTaget.querySelector('.right-text');
+
+    leftText.style.left = st - (motionTaget.offsetTop - (st / 4)) + 'px';
+    rightText.style.right = st - (motionTaget.offsetTop - (st / 10)) + 'px';
+
+    // flow-text2 효과
+    let motionTaget2 = document.querySelector('.flow-text2');
+    let rightText2 = motionTaget2.querySelector('.right-text');
+    rightText2.style.right = st - motionTaget2.offsetTop + 100 + 'px';
+
+    let sectionInfo = []; // section top 값
+    let sectionObj = document.querySelector('section.intro');
+
+    // section의 top 위치를 배열에 push
+    sectionInfo.push(sectionObj.offsetTop);
+    // 현재 스크롤 위치
+    let scrPosition = window.pageYOffset + 500;
+
+    // 스크롤시 해당 section보다 현재 스크롤이 크거나 같다면
+    if (scrPosition >= sectionInfo[0]) {
+        sectionObj.classList.add('active');
+    } else {
+        sectionObj.classList.remove('active');
+    }
+
+});
+
+
+    // guide 효과
+    function onScroll() {
+        let scTop = window.pageYOffset;
+        let winHei = window.innerHeight;
+
+        let sum = scTop + winHei;
+
+        let aniElements = document.querySelectorAll('.ani');
+        aniElements.forEach(function (element) {
+            let top = element.getBoundingClientRect().top + window.pageYOffset;
+            // console.log(top);
+
+            if (sum > top) {
+                if (element.dataset.delay) {
+                    element.style.animationDelay = element.dataset.delay;
+                }
+                element.style.animationPlayState = 'running';
+            }
+        });
+    }
+    window.addEventListener('scroll', onScroll);
+
+
+
+    // 네비 클릭 이동
+    document.addEventListener("DOMContentLoaded", function () {
+        var breadcrumb = document.querySelector(".fixed-nav__breadcrumb").querySelector("strong");
+        breadcrumb.addEventListener("click", function () {
+            var offset = document.querySelector(".top-wrapper").offsetTop;
+            window.scrollTo({ top: offset, behavior: "smooth" });
+        });
+        var topsection = document.querySelector(".fixed-nav__title-section");
+        topsection.addEventListener("click", function () {
+            var offset = document.querySelector(".top-wrapper").offsetTop;
+            window.scrollTo({ top: offset, behavior: "smooth" });
+        });
+
+        var navLinks = document.querySelectorAll(".fixed-nav__item");
+        navLinks.forEach(function (link, index) {
+            link.addEventListener("click", function (event) {
+            event.preventDefault();
+            var targetSelector;
+
+            switch (index) {
+                case 0:
+                targetSelector = ".md-wrapper";
+                break;
+                case 1:
+                targetSelector = ".guide-wrap";
+                break;
+                case 2:
+                targetSelector = ".reservation";
+                break;
+                case 3:
+                targetSelector = ".footer-wrap";
+                break;
+            }
+
+            if (targetSelector) {
+                var offset = document.querySelector(targetSelector).offsetTop;
+                window.scrollTo({ top: offset, behavior: "smooth" });
+            }
+            });
+        });
+    });
 
     // 예약시 전화번호 입력칸에 자동 대쉬
     document.querySelector('#detail_user_phone').addEventListener('keyup', function () {

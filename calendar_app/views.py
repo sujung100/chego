@@ -210,7 +210,7 @@ class Idx_list(TemplateView):
                     user_date = res.reservation_date
                     user_time = res.user_time
 
-                    # 일부 예약이 이미 비활성 시간에 추가된 경우 해당 시간을 추가하고, 그렇지 않은 경우 새로운 항목을 만듭니다.
+                    # 일부 예약이 이미 비활성 시간에 추가된 경우 해당 시간을 추가하고, 그렇지 않은 경우 새로운 항목 생성
                     if user_date in hour_disabled_dates:
                         hour_disabled_dates[user_date].append(user_time)
                     else:
@@ -251,7 +251,7 @@ class Idx_list(TemplateView):
             rst_user.visitor_num = int(request.POST["v_num"])
             rst_user.store_id = sto
 
-            # 나중에 password 삭제하기(그냥 저장했던것)
+            # 그냥 입력받은 password
             password = request.POST["password"]
 
 
@@ -296,7 +296,6 @@ class FindReservationView(View):
 
         request.session['reservation'] = model_to_dict(reservation)  # model_to_dict: dict로 변환
 
-        # Create URL and add anchor
         url = reverse('input_user_pw') + '#anchor2'
         return HttpResponseRedirect(url)
     
@@ -308,15 +307,9 @@ class InputUserNameView(View):
 
     def post(self, request):
         input_pw = request.POST.get('input_pw')
-        ###
-        # salt = bcrypt.gensalt()
-        # to_byte_pw = input_pw.encode('utf-8')
-        # salted_pw = bcrypt.hashpw(to_byte_pw, salt)
-        # to_str_pw = salted_pw.decode('utf-8')
-        ###
         request.session['input_user_pw'] = input_pw
         # return redirect('detail_view')
-    # Create URL and add anchor
+
         url = reverse('detail_view') + '#anchor3'
         return HttpResponseRedirect(url)
 
@@ -330,8 +323,6 @@ class DetailView(View):
         input_user_pw = request.session.get('input_user_pw')
 
         try:
-            # 해시 비교... 이걸 이제 밑에 reservations에 녹여야함
-            # if문넣어서 true면 가져오도록할까?
             print('1: ', input_user_pw.encode('utf-8'))
             print('2: ', reservation['pwhash'].encode('utf-8'))
             compare = bcrypt.checkpw(input_user_pw.encode('utf-8'), reservation['pwhash'].encode('utf-8'))
@@ -350,22 +341,15 @@ class DetailView(View):
         context = {'reservation': reservations}
         return render(request, self.template_name, context)
     
-    # 수정중
-    # def post(self, request):
-    #     reservation = request.session.get('reservation')
-    #     input_user_pw = request.session.get('input_user_pw')
-    #     reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'], password=input_user_pw)
-    #     reservations.delete()  # 조회한 예약삭제
-    #     # return redirect('reservation_deleted_view')
-    #     url = reverse('reservation_deleted_view') + '#anchor4'
-    #     return HttpResponseRedirect(url)
     
     def post(self, request):
         reservation = request.session.get('reservation')
         input_user_pw = request.session.get('input_user_pw')
 
         try:
-            reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'], password=input_user_pw)
+            compare = bcrypt.checkpw(input_user_pw.encode('utf-8'), reservation['pwhash'].encode('utf-8'))
+            if compare:
+                reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'])
         except models.Reservation_user.DoesNotExist:
             return render(request, self.template_name, {'invalid_access': True})
         

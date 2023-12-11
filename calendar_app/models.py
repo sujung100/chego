@@ -57,8 +57,9 @@ class Reservation_user(models.Model):
     reservation_date = models.CharField(max_length=20, null=True)
     user_time = models.CharField(max_length=20, null=True)
     date = models.DateTimeField(auto_now_add = True)
-    password = models.CharField(validators=[RegexValidator(r'^[0-9]*$', '숫자만 입력해주세요.', 'invalid'),], max_length=4, null=True)
+    # password = models.CharField(validators=[RegexValidator(r'^[0-9]*$', '숫자만 입력해주세요.', 'invalid'),], max_length=4, null=True)
     visitor_num = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(99)], null=True)
+    pwhash = models.CharField(max_length=200, null=True)
 
 class Store_times(models.Model):
     store_id = models.ForeignKey(Store, on_delete=models.CASCADE, db_column="store_id")

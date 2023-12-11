@@ -1,3 +1,6 @@
+
+import bcrypt
+
 from django.shortcuts import render, redirect
 from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView, TemplateView, View
 from calendar_app import models
@@ -246,8 +249,19 @@ class Idx_list(TemplateView):
             rst_user.reservation_date = request.POST["detail_user_date"]
             rst_user.user_time = request.POST["detail_user_time"]
             rst_user.visitor_num = int(request.POST["v_num"])
-            rst_user.password = request.POST["password"]
             rst_user.store_id = sto
+
+            # 나중에 password 삭제하기(그냥 저장했던것)
+            password = request.POST["password"]
+
+
+            # 암호화
+            salt = bcrypt.gensalt()
+            to_byte_pw = password.encode('utf-8')
+            salted_pw = bcrypt.hashpw(to_byte_pw, salt)
+            to_str_pw = salted_pw.decode('utf-8')
+            rst_user.pwhash = to_str_pw
+
 
             try:
                 rst_user.full_clean()  # 모델의 유효성 검사 수행
@@ -294,6 +308,12 @@ class InputUserNameView(View):
 
     def post(self, request):
         input_pw = request.POST.get('input_pw')
+        ###
+        # salt = bcrypt.gensalt()
+        # to_byte_pw = input_pw.encode('utf-8')
+        # salted_pw = bcrypt.hashpw(to_byte_pw, salt)
+        # to_str_pw = salted_pw.decode('utf-8')
+        ###
         request.session['input_user_pw'] = input_pw
         # return redirect('detail_view')
     # Create URL and add anchor
@@ -310,7 +330,19 @@ class DetailView(View):
         input_user_pw = request.session.get('input_user_pw')
 
         try:
-            reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'], password=input_user_pw)
+            # 해시 비교... 이걸 이제 밑에 reservations에 녹여야함
+            # if문넣어서 true면 가져오도록할까?
+            print('1: ', input_user_pw.encode('utf-8'))
+            print('2: ', reservation['pwhash'].encode('utf-8'))
+            compare = bcrypt.checkpw(input_user_pw.encode('utf-8'), reservation['pwhash'].encode('utf-8'))
+            print('해시비교', compare)
+            if compare:
+                reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'])
+            else:
+                messages.error(request, "비밀번호가 일치하지 않습니다.")
+                return render(request, self.template_name)
+
+            
         except models.Reservation_user.DoesNotExist:
             messages.error(request, "예약 정보가 존재하지 않습니다.")
             return render(request, self.template_name)

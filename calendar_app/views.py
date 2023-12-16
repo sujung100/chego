@@ -14,6 +14,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.forms.models import model_to_dict
 from django.contrib import messages
+from datetime import datetime, timedelta
 
 
 # 이름변경
@@ -314,34 +315,318 @@ class InputUserNameView(View):
         return HttpResponseRedirect(url)
 
 
-# 예약 조회 및 취소
+## 예약 조회 및 취소(비번입력횟수 제한전)1
+# class DetailView(View):
+#     template_name = 'calendar_app/reservation_detail.html'
+
+#     def get(self, request):
+#         reservation = request.session.get('reservation')
+#         input_user_pw = request.session.get('input_user_pw')
+
+#         try:
+#             print('1: ', input_user_pw.encode('utf-8'))
+#             print('2: ', reservation['pwhash'].encode('utf-8'))
+#             compare = bcrypt.checkpw(input_user_pw.encode('utf-8'), reservation['pwhash'].encode('utf-8'))
+#             print('해시비교', compare)
+#             if compare:
+#                 reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'])
+#             else:
+#                 messages.error(request, "비밀번호가 일치하지 않습니다.")
+#                 return render(request, self.template_name)
+
+            
+#         except models.Reservation_user.DoesNotExist:
+#             messages.error(request, "예약 정보가 존재하지 않습니다.")
+#             return render(request, self.template_name)
+        
+#         context = {'reservation': reservations}
+#         return render(request, self.template_name, context)
+    
+    
+#     def post(self, request):
+#         reservation = request.session.get('reservation')
+#         input_user_pw = request.session.get('input_user_pw')
+
+#         try:
+#             compare = bcrypt.checkpw(input_user_pw.encode('utf-8'), reservation['pwhash'].encode('utf-8'))
+#             if compare:
+#                 reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'])
+#         except models.Reservation_user.DoesNotExist:
+#             return render(request, self.template_name, {'invalid_access': True})
+        
+#         reservations.delete()  # 조회한 예약삭제
+#         # return redirect('reservation_deleted_view')
+#         url = reverse('reservation_deleted_view') + '#anchor4'
+#         return HttpResponseRedirect(url)
+
+
+## 예약 조회 및 취소 (재시도횟수 세션에저장)2
+# class DetailView(View):
+#     template_name = 'calendar_app/reservation_detail.html'
+
+#     def get(self, request):
+#         reservation = request.session.get('reservation')
+#         input_user_pw = request.session.get('input_user_pw')
+
+#         try:
+#             print('1: ', input_user_pw.encode('utf-8'))
+#             print('2: ', reservation['pwhash'].encode('utf-8'))
+#             compare = bcrypt.checkpw(input_user_pw.encode('utf-8'), reservation['pwhash'].encode('utf-8'))
+#             print('해시비교', compare)
+#             if compare:
+#                 reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'])
+#             else:
+#                 # 세션에 재시도 횟수가 저장되어 있지 않으면 초기화
+#                 if 'retry_count' not in request.session:
+#                     request.session['retry_count'] = 5
+
+#                 # 재시도 횟수를 감소시키고 메시지를 출력
+#                 request.session['retry_count'] -= 1
+#                 if request.session['retry_count'] > 0:
+#                     messages.error(request, f"비밀번호가 일치하지 않습니다. 재시도 횟수가 {request.session['retry_count']}번 남았습니다.")
+#                 else:
+#                     messages.error(request, "비밀번호 재시도 횟수를 초과하였습니다. ")
+#                     # 재시도 횟수 초과 시, 사용자를 다시 로그인 페이지로 리다이렉트시킬 수 있습니다.
+#                     url = reverse('find_reservation') + '#anchor1'
+#                     return HttpResponseRedirect(url)
+                
+#                 return render(request, self.template_name)
+
+#         except models.Reservation_user.DoesNotExist:
+#             messages.error(request, "예약 정보가 존재하지 않습니다.")
+#             return render(request, self.template_name)
+
+#         context = {'reservation': reservations}
+#         return render(request, self.template_name, context)
+
+
+# ## 예약 조회 및 취소 (재시도횟수 DB에저장)3
+# class DetailView(View):
+#     template_name = 'calendar_app/reservation_detail.html'
+
+#     def get(self, request):
+#         reservation = request.session.get('reservation')
+#         input_user_pw = request.session.get('input_user_pw')
+
+#         try:
+#             print('1: ', input_user_pw.encode('utf-8'))
+#             print('2: ', reservation['pwhash'].encode('utf-8'))
+#             compare = bcrypt.checkpw(input_user_pw.encode('utf-8'), reservation['pwhash'].encode('utf-8'))
+#             print('해시비교', compare)
+#             if compare:
+#                 reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'])
+#             else:
+#                 reservations.retry_count -= 1
+#                 reservations.save()
+
+
+#                 if reservations.retry_count > 0:
+#                     messages.error(request, f"비밀번호가 일치하지 않습니다. 재시도 횟수가 {reservations.retry_count}번 남았습니다.")
+#                 else:
+#                     messages.error(request, "비밀번호 재시도 횟수를 초과하였습니다. 업체에 문의해주세요.")
+#                     url = reverse('find_reservation') + '#anchor1'
+#                     return HttpResponseRedirect(url)
+#                 return render(request, self.template_name)
+            
+
+#         except models.Reservation_user.DoesNotExist:
+#             messages.error(request, "예약 정보가 존재하지 않습니다.")
+#             return render(request, self.template_name)
+
+#         context = {'reservation': reservations}
+#         return render(request, self.template_name, context)
+
+
+## 예약 조회 및 취소 (수정)4
+# class DetailView(View):
+#     template_name = 'calendar_app/reservation_detail.html'
+
+#     def get(self, request):
+#         reservation = request.session.get('reservation')
+#         input_user_pw = request.session.get('input_user_pw')
+
+#         try:
+#             print('1: ', input_user_pw.encode('utf-8'))
+#             print('2: ', reservation['pwhash'].encode('utf-8'))
+#             compare = bcrypt.checkpw(input_user_pw.encode('utf-8'), reservation['pwhash'].encode('utf-8'))
+#             print('해시비교', compare)
+
+#             reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'])
+#             login_infos, created = models.Login_try.objects.get_or_create(user_id=reservations)
+
+#             if compare:
+#                 pass
+                
+#             else:
+#                 # login_infos = models.Login_try.objects.filter(user_id=reservation['id'])
+                
+#                 login_infos.retry_login -= 1
+#                 if login_infos.retry_login == 0:
+#                     login_infos.is_block = 'Y'
+#                     login_infos.block_count += 1
+                
+#                 login_infos.save()
+
+
+#                 if login_infos.retry_login > 0:
+#                     messages.error(request, f"비밀번호가 일치하지 않습니다. 재시도 횟수가 {login_infos.retry_login}번 남았습니다.")
+#                 else:
+#                     messages.error(request, "비밀번호 재시도 횟수를 초과하였습니다. 업체에 문의해주세요.")
+#                     url = reverse('find_reservation') + '#anchor1'
+#                     return HttpResponseRedirect(url)
+#                 return render(request, self.template_name)
+            
+
+#         except models.Reservation_user.DoesNotExist:
+#             messages.error(request, "예약 정보가 존재하지 않습니다.")
+#             return render(request, self.template_name)
+
+#         context = {'reservation': reservations}
+#         return render(request, self.template_name, context)
+
+
+# ## 예약 조회 및 취소 (수정)5
+# class DetailView(View):
+#     template_name = 'calendar_app/reservation_detail.html'
+
+#     def get(self, request):
+#         now = datetime.now()
+#         reservation = request.session.get('reservation')
+#         input_user_pw = request.session.get('input_user_pw')
+
+#         try:
+#             reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'])
+#         except models.Reservation_user.DoesNotExist:
+#             messages.error(request, "예약 정보가 존재하지 않습니다.")
+#             return render(request, self.template_name)
+
+#         login_infos, created = models.Login_try.objects.get_or_create(user_id=reservations)
+        
+#         if login_infos.is_block == 'Y':
+#             if now - login_infos.last_login_date < timedelta(minutes=1):
+#                 messages.error(request, "로그인 시도를 너무 많이 하셨습니다. 10분 후에 다시 시도해주세요.")
+#                 return render(request, self.template_name)
+#             elif login_infos.block_count < 3:
+#                 login_infos.retry_login = 5
+#                 login_infos.is_block = 'N'
+#                 login_infos.block_count += 1
+#                 login_infos.save()
+#             else:
+#                 messages.error(request, "비밀번호 재시도 횟수를 초과하였습니다. 업체에 문의해주세요.")
+#                 url = reverse('find_reservation') + '#anchor1'
+#                 return HttpResponseRedirect(url)
+            
+#         # login_infos.save()
+        
+#         print('1: ', input_user_pw.encode('utf-8'))
+#         print('2: ', reservation['pwhash'].encode('utf-8'))
+#         compare = bcrypt.checkpw(input_user_pw.encode('utf-8'), reservation['pwhash'].encode('utf-8'))
+#         print('해시비교', compare)
+
+
+#         if compare:
+#             login_infos.retry_login = 5  # 비밀번호가 일치하면 retry_login을 5로 재설정
+#             login_infos.is_block = 'N'  # 비밀번호가 일치하면 블록 상태를 해제
+#             login_infos.save()  # 변경된 retry_login 값을 저장
+#         else:
+#             login_infos.retry_login -= 1
+#             login_infos.last_login_date = datetime.now()
+
+#             if login_infos.retry_login == 0:
+#                 login_infos.is_block = 'Y'
+#                 if login_infos.block_count >= 3:
+#                     messages.error(request, "비밀번호 재시도 횟수를 초과하였습니다. 업체에 문의해주세요.")
+#                     return render(request, self.template_name)
+#                 else:
+#                     login_infos.block_count += 1
+#                     login_infos.save()
+#                     messages.error(request, "비밀번호 재시도 횟수를 초과하였습니다. 10분 후에 다시 시도해주세요.")
+#                     return render(request, self.template_name)
+                
+#                 # login_infos.save()
+
+#                 # messages.error(request, "비밀번호 재시도 횟수를 초과하였습니다. 10분 후에 다시 시도해주세요.")
+#                 # url = reverse('find_reservation') + '#anchor1'
+#                 # return HttpResponseRedirect(url)
+            
+#             login_infos.save()
+#             messages.error(request, f"비밀번호가 일치하지 않습니다. 재시도 횟수가 {login_infos.retry_login}번 남았습니다.")
+
+#         context = {'reservation': reservations}
+#         return render(request, self.template_name, context)
+
+
+## 예약 조회 및 취소 (수정)6
 class DetailView(View):
     template_name = 'calendar_app/reservation_detail.html'
 
     def get(self, request):
+        now = datetime.now()
         reservation = request.session.get('reservation')
         input_user_pw = request.session.get('input_user_pw')
 
         try:
-            print('1: ', input_user_pw.encode('utf-8'))
-            print('2: ', reservation['pwhash'].encode('utf-8'))
-            compare = bcrypt.checkpw(input_user_pw.encode('utf-8'), reservation['pwhash'].encode('utf-8'))
-            print('해시비교', compare)
-            if compare:
-                reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'])
-            else:
-                messages.error(request, "비밀번호가 일치하지 않습니다.")
-                return render(request, self.template_name)
-
-            
+            reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'])
         except models.Reservation_user.DoesNotExist:
             messages.error(request, "예약 정보가 존재하지 않습니다.")
             return render(request, self.template_name)
+
+        login_infos, created = models.Login_try.objects.get_or_create(user_id=reservations)
         
+        if login_infos.is_block == 'Y':
+            if now - login_infos.last_login_date < timedelta(minutes=1):
+                messages.error(request, "로그인 시도를 너무 많이 하셨습니다. 10분 후에 다시 시도해주세요.")
+                return render(request, self.template_name)
+            elif login_infos.block_count < 3:
+                login_infos.retry_login = 5
+                login_infos.is_block = 'N'
+                login_infos.block_count += 1
+                login_infos.save()
+            else:
+                messages.error(request, "비밀번호 재시도 횟수를 초과하였습니다. 업체에 문의해주세요.")
+                url = reverse('find_reservation') + '#anchor1'
+                return HttpResponseRedirect(url)
+            
+        # login_infos.save()
+        
+        print('1: ', input_user_pw.encode('utf-8'))
+        print('2: ', reservation['pwhash'].encode('utf-8'))
+        compare = bcrypt.checkpw(input_user_pw.encode('utf-8'), reservation['pwhash'].encode('utf-8'))
+        print('해시비교', compare)
+
+
+        if compare:
+            login_infos.retry_login = 5  # 비밀번호가 일치하면 retry_login을 5로 재설정
+            login_infos.is_block = 'N'  # 비밀번호가 일치하면 블록 상태를 해제
+            login_infos.save()  # 변경된 retry_login 값을 저장
+        else:
+            login_infos.retry_login -= 1
+            login_infos.last_login_date = datetime.now()
+
+            if login_infos.retry_login == 0:
+                login_infos.is_block = 'Y'
+                login_infos.save()
+                if login_infos.block_count >= 3:
+                    messages.error(request, "비밀번호 재시도 횟수를 초과하였습니다. 업체에 문의해주세요.")
+                    return render(request, self.template_name)
+                else:
+                    login_infos.block_count += 1
+                    messages.error(request, "비밀번호 재시도 횟수를 초과하였습니다. 10분 후에 다시 시도해주세요.")
+                    return render(request, self.template_name)
+                
+                # login_infos.save()
+
+                # messages.error(request, "비밀번호 재시도 횟수를 초과하였습니다. 10분 후에 다시 시도해주세요.")
+                # url = reverse('find_reservation') + '#anchor1'
+                # return HttpResponseRedirect(url)
+            
+            login_infos.save()
+            messages.error(request, f"비밀번호가 일치하지 않습니다. 재시도 횟수가 {login_infos.retry_login}번 남았습니다.")
+
         context = {'reservation': reservations}
         return render(request, self.template_name, context)
     
-    
+
     def post(self, request):
         reservation = request.session.get('reservation')
         input_user_pw = request.session.get('input_user_pw')
@@ -354,10 +639,8 @@ class DetailView(View):
             return render(request, self.template_name, {'invalid_access': True})
         
         reservations.delete()  # 조회한 예약삭제
-        # return redirect('reservation_deleted_view')
         url = reverse('reservation_deleted_view') + '#anchor4'
         return HttpResponseRedirect(url)
-
 
 
 # 취소후 화면

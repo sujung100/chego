@@ -341,23 +341,32 @@ class DetailView(View):
             remaining_time_in_seconds = int((login_infos.last_login_date + timedelta(minutes=1) - now).total_seconds())  # 남은 시간(초) 계산
             if remaining_time_in_seconds < 0:
                 remaining_time_in_seconds = 0
-            remaining_minutes, remaining_seconds = divmod(remaining_time_in_seconds, 60)  # 분과 초로 변환
+            
+            context = {
+                'remaining_time_in_seconds': remaining_time_in_seconds,
+                'warning': None,
+                'retry_login': login_infos.retry_login,
+                'block_count': login_infos.block_count,
+            }
+
             # 나중에 테스트끝나고 minutes 10으로 변경할것...
-            if now - login_infos.last_login_date < timedelta(minutes=2):
+            if now - login_infos.last_login_date < timedelta(minutes=1):
                 if login_infos.block_count >= 3:
-                    messages.error(request, "비밀번호 재시도 횟수를 초과하였습니다. 업체에 문의해주세요.")
+                    context['warning'] = "비밀번호 재시도 횟수를 초과하였습니다. 업체에 문의해주세요."
                 else:
-                    messages.error(request, f"로그인 시도를 너무 많이 하셨습니다. 10분 후에 다시 시도해주세요. 남은 시간: {remaining_minutes}분 {remaining_seconds}초")
-                return render(request, self.template_name)
+                    context['warning'] = "로그인 시도를 너무 많이 하셨습니다. 잠시 후에 다시 시도해주세요."
+                return render(request, self.template_name, context)
             elif login_infos.block_count < 3:
                 login_infos.retry_login = 5
                 login_infos.is_block = 'N'
                 login_infos.block_count += 1
                 login_infos.save()
             else:
-                messages.error(request, "비밀번호 재시도 횟수를 초과하였습니다. 업체에 문의해주세요.")
-                url = reverse('find_reservation') + '#anchor1'
-                return HttpResponseRedirect(url)
+                context['warning'] = "비밀번호 재시도 횟수를 초과하였습니다."
+                return render(request, self.template_name, context)
+                # 원래코드...테스트
+                # url = reverse('find_reservation') + '#anchor1'
+                # return HttpResponseRedirect(url)
             
         # login_infos.save()
         print('1: ', input_user_pw.encode('utf-8'))
@@ -371,12 +380,21 @@ class DetailView(View):
             login_infos.retry_login = 5  # 비밀번호가 일치하면 retry_login을 5로 재설정
             login_infos.is_block = 'N'  # 비밀번호가 일치하면 블록 상태를 해제
             login_infos.save()  # 변경된 retry_login 값을 저장
+
+            context = {'reservation': reservations}
+            return render(request, self.template_name, context)
         else:
+            # 비밀번호 불일치
             # 남은시간표시
             remaining_time_in_seconds = int((login_infos.last_login_date + timedelta(minutes=1) - now).total_seconds())  # 남은 시간(초) 계산
             if remaining_time_in_seconds < 0:
                 remaining_time_in_seconds = 0
-            remaining_minutes, remaining_seconds = divmod(remaining_time_in_seconds, 60)  # 분과 초로 변환
+
+            # context = {
+            #     'remaining_time_in_seconds': remaining_time_in_seconds,
+            #     'warning': None,
+            #     'retry_login': login_infos.retry_login,
+            # }
 
             login_infos.retry_login -= 1
             login_infos.last_login_date = datetime.now()
@@ -384,18 +402,34 @@ class DetailView(View):
             if login_infos.retry_login == 0:
                 login_infos.is_block = 'Y'
                 login_infos.save()
+
                 if login_infos.block_count >= 3:
-                    messages.error(request, "비밀번호 재시도 횟수를 초과하였습니다. 업체에 문의해주세요.")
-                    return render(request, self.template_name)
+                    context = {
+                        'remaining_time_in_seconds': remaining_time_in_seconds,
+                        'warning': "비밀번호 재시도 횟수를 초과하였습니다.",
+                        'retry_login': login_infos.retry_login,
+                        'block_count': login_infos.block_count,
+                    }
+                    return render(request, self.template_name, context)
                 else:
                     login_infos.block_count += 1
-                    messages.error(request, f"비밀번호 재시도 횟수를 초과하였습니다. 10분 후에 다시 시도해주세요. 남은 시간: {remaining_minutes}분 {remaining_seconds}초")
-                    return render(request, self.template_name)
+                    context = {
+                        'remaining_time_in_seconds': remaining_time_in_seconds,
+                        'warning': "비밀번호 재시도 횟수를 초과하였습니다. 10분 후에 다시 시도해주세요.",
+                        'retry_login': login_infos.retry_login,
+                        'block_count': login_infos.block_count,
+                    }
+                    return render(request, self.template_name, context)
                 
             login_infos.save()
-            messages.error(request, f"비밀번호가 일치하지 않습니다. 재시도 횟수가 {login_infos.retry_login}번 남았습니다.")
+            context = {
+                'remaining_time_in_seconds': remaining_time_in_seconds,
+                'warning': "비밀번호가 일치하지 않습니다.",
+                'retry_login': login_infos.retry_login,
+                'block_count': login_infos.block_count,
+            }
 
-        context = {'reservation': reservations}
+        # context = {'reservation': reservations}
         return render(request, self.template_name, context)
     
 

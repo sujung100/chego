@@ -58,7 +58,9 @@
   var blockCount = {{ block_count }};  // 서버에서 받은 block_count
   document.getElementById("retry_login").innerText = "재시도 횟수: " + retryLogin + "회";
 
-  if (retryLogin === 0 && blockCount < 3) {
+  console.log('retryLogin:', retryLogin)
+  console.log('blockCount:', blockCount)
+  if (retryLogin === 0 && blockCount <= 3) {
       var countDownDate = new Date().getTime() + {{ remaining_time_in_seconds }} * 1000;  // 서버에서 받은 남은 시간(초)을 밀리초로 변환
 
       var countdownFunction = setInterval(function() {
@@ -104,9 +106,9 @@
 <!-- 리다이렉션 후 스크롤되게 -->
 {% if anchor3 %}
 <script>
-window.onload = function() {
+  window.onload = function () {
     location.hash = "#{{ anchor3 }}";
-};
+  };
 </script>
 {% endif %}
 
@@ -116,5 +118,15 @@ alert("잘못된 접근입니다.");
 window.location.href = "{% url 'find_reservation' %}#anchor1";
 </script>
 {% endif %}
+
+
+<script>
+document.addEventListener('DOMContentLoaded', (event) => {
+  if(performance.navigation.type == 1){
+    // alert("비밀번호를 다시 입력해주세요.");
+    location.href = "{% url 'input_user_pw' %}#anchor2";
+  }
+});
+</script>
 
 {% endblock %}

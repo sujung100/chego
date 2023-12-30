@@ -36,8 +36,8 @@
 <div>
   <form method="post" action="{% url 'input_user_pw' %}">
       {% csrf_token %}
-      <label for="input_pw">비밀번호를 입력하세요: </label>
-      <input type="text" id="input_pw" name="input_pw">
+      <label for="input_pw">비밀번호를 입력하세요: (네자리 숫자)</label>
+      <input type="password" id="input_pw" name="input_pw" required placeholder="0000" pattern="[0-9]+" maxlength='4'>
       <input type="submit" value="Submit">
   </form>
 </div>
@@ -47,6 +47,7 @@
 <script>
 window.onload = function() {
     location.hash = "#{{ anchor2 }}";
+    document.getElementById('input_pw').value = '';
 };
 </script>
 {% endif %}

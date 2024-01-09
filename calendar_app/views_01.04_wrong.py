@@ -323,27 +323,17 @@ class InputUserNameView(View):
                 print("확인", check_pw)
 
                 if check_pw:
-                    # messages.error(request, "확인확인")
+                    messages.error(request, "확인확인")
                     request.session['pw_checked'] = True
-                    # url = reverse('detail_view') + '#anchor3'
-                    # return HttpResponseRedirect(url)
+                    url = reverse('detail_view') + '#anchor3'
+                    return HttpResponseRedirect(url)
                 else:
-                    # messages.error(request, "비밀번호가 일치하지 않습니다.")
-                    request.session['pw_checked'] = False
-                    # url = reverse('find_reservation') + '#anchor1'
-                    # return HttpResponseRedirect(url)
-                    # return render(request, 'calendar_app/input_user_pw.html')
+                    messages.error(request, "비밀번호가 일치하지 않습니다.")
+                    return render(request, 'calendar_app/input_user_pw.html')
             else:
-                # 둘 중 하나가 없을 때,,근데 input속성으로 안넣으면 어짜피 submit불가
-                # messages.error(request, "비밀번호가 입력되지 않았습니다.")
-                request.session['pw_checked'] = False
-                # url = reverse('find_reservation') + '#anchor1'
-                # return HttpResponseRedirect(url)
-                # return render(request, 'calendar_app/input_user_pw.html')
-            
-            # 이동할 url
-            url = reverse('detail_view') + '#anchor3'
-            return HttpResponseRedirect(url)
+                # 입력이 되지않았거나, 
+                messages.error(request, "비밀번호가 입력되지 않았습니다.")
+                return render(request, 'calendar_app/input_user_pw.html')
 
 
 ## 예약 조회 및 취소 (수정)
@@ -352,12 +342,12 @@ class DetailView(View):
     MAX_BLOCK_COUNT = 3  # 재시도 횟수 상수화
 
     # 남은시간 계산
-    def calculate_remaining_time(self, last_login_date, now):
-        remaining_time_in_seconds = int((last_login_date + timedelta(minutes=1) - now).total_seconds())  # 남은 시간(초) 계산
-        return 0 if remaining_time_in_seconds < 0 else remaining_time_in_seconds
-
     # def calculate_remaining_time(self, last_login_date, now):
-    #     return 600 - int((now - last_login_date).total_seconds())
+    #     remaining_time_in_seconds = int((last_login_date + timedelta(minutes=1) - now).total_seconds())  # 남은 시간(초) 계산
+    #     return 0 if remaining_time_in_seconds < 0 else remaining_time_in_seconds
+
+    def calculate_remaining_time(self, last_login_date, now):
+        return 600 - int((now - last_login_date).total_seconds())
 
 
     def get(self, request):
@@ -371,105 +361,65 @@ class DetailView(View):
             reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'])
         except models.Reservation_user.DoesNotExist:
             context['warning'] = "예약 정보가 존재하지 않습니다."
-            print("콘텍스트 출력1 ", context)
             return render(request, self.template_name, context)
 
         login_infos, created = models.Login_try.objects.get_or_create(user_id=reservations)
         
 
-        if pw_checked == False:
-        # if not request.session.get('pw_checked', False):
+        # 정지여부(is_block), 정지횟수(block_count) 확인
+        if login_infos.is_block == 'Y':
+            # 남은시간표시
+            remaining_time_in_seconds = self.calculate_remaining_time(login_infos.last_login_date, now)
 
-        #     if 'form_submitted' in request.session:
-        #         request.session['form_submitted'] = not request.session['form_submitted']
-        #     else:
-        #         request.session['form_submitted'] = False
-
-
-            context['warning'] = "비밀번호 확인이 필요합니다."
-            
-            # 정지여부(is_block), 정지횟수(block_count) 확인
-            if login_infos.is_block == 'Y':
-                # 남은시간표시
-                remaining_time_in_seconds = self.calculate_remaining_time(login_infos.last_login_date, now)
-
-                context = {
-                    'remaining_time_in_seconds': remaining_time_in_seconds,
-                    # 'warning': None,
-                    'retry_login': login_infos.retry_login,
-                    'block_count': login_infos.block_count,
-                }
+            context = {
+                'remaining_time_in_seconds': remaining_time_in_seconds,
+                # 'warning': None,
+                'retry_login': login_infos.retry_login,
+                'block_count': login_infos.block_count,
+            }
 
 
-                # 위치 수정하기....
-                # 세션에서 비밀번호 확인 여부를 확인
-                
-                if now - login_infos.last_login_date < timedelta(minutes=1):
-                    if login_infos.block_count >= self.MAX_BLOCK_COUNT:
-                        context['warning'] = "비밀번호 재시도 횟수를 초과하였습니다. 업체에 문의해주세요."
-                        print("콘텍스트 출력2 ", context)
-                    else:
-                        context['warning'] = "로그인 시도를 너무 많이 하셨습니다. 잠시 후에 다시 시도해주세요."
-                        print("콘텍스트 출력3 ", context)
-                elif login_infos.block_count < self.MAX_BLOCK_COUNT:
-                    login_infos.retry_login = 5
-                    login_infos.is_block = 'N'
-                    login_infos.block_count += 1
-                    login_infos.save()
+            # 위치 수정하기....
+            # 세션에서 비밀번호 확인 여부를 확인
+            if pw_checked == False:
+                context['warning'] = "비밀번호 확인이 필요합니다."
+            elif now - login_infos.last_login_date < timedelta(minutes=1):
+                if login_infos.block_count >= self.MAX_BLOCK_COUNT:
+                    context['warning'] = "비밀번호 재시도 횟수를 초과하였습니다. 업체에 문의해주세요."
                 else:
-                    context['warning'] = "비밀번호 재시도 횟수를 초과하였습니다."
-                    print("콘텍스트 출력4 ", context)
-            
-            else:
-                remaining_time_in_seconds = self.calculate_remaining_time(login_infos.last_login_date, now)
-                login_infos.retry_login -= 1
-                login_infos.last_login_date = datetime.now()
-                # context = {
-                #     'remaining_time_in_seconds': remaining_time_in_seconds,
-                #     'retry_login': login_infos.retry_login,
-                #     'block_count': login_infos.block_count,
-                # }
-                if login_infos.retry_login == 0:
-                    login_infos.is_block = 'Y'
-                    login_infos.save()
-                    if login_infos.block_count >= self.MAX_BLOCK_COUNT:
-                        # context['warning'] = "비밀번호 재시도 횟수를 초과하였습니다."
-                        context = {
-                            'remaining_time_in_seconds': remaining_time_in_seconds,
-                            'warning': "비밀번호 재시도 횟수를 초과하였습니다.",
-                            'retry_login': login_infos.retry_login,
-                            'block_count': login_infos.block_count,
-                        }
-                        print("콘텍스트 출력6 ", context)
-                    else:
-                        login_infos.block_count += 1
-                        # context['warning'] = "비밀번호 재시도 횟수를 초과하였습니다. 10분 후에 다시 시도해주세요."
-                        context = {
-                            'remaining_time_in_seconds': remaining_time_in_seconds,
-                            'warning': "비밀번호 재시도 횟수를 초과하였습니다. 10분 후에 다시 시도해주세요.",
-                            'retry_login': login_infos.retry_login,
-                            'block_count': login_infos.block_count,
-                        }
-                        print("콘텍스트 출력7 ", context)
-                                
+                    context['warning'] = "로그인 시도를 너무 많이 하셨습니다. 잠시 후에 다시 시도해주세요."
+            elif login_infos.block_count < self.MAX_BLOCK_COUNT:
+                login_infos.retry_login = 5
+                login_infos.is_block = 'N'
+                login_infos.block_count += 1
                 login_infos.save()
-                # context['warning'] = "비밀번호가 일치하지 않습니다."
-                context = {
-                    'remaining_time_in_seconds': remaining_time_in_seconds,
-                    'warning': "비밀번호가 일치하지 않습니다.",
-                    'retry_login': login_infos.retry_login,
-                    'block_count': login_infos.block_count,
-                }
-                print("콘텍스트 출력8 ", context)
-
-        elif pw_checked:
+            else:
+                context['warning'] = "비밀번호 재시도 횟수를 초과하였습니다."
+        else:
+            if pw_checked:
                 login_infos.retry_login = 5
                 login_infos.is_block = 'N'
                 login_infos.save()
                 context = {'reservation': reservations}
-                print("콘텍스트 출력5 ", context)
-        
-
+            else:
+                remaining_time_in_seconds = self.calculate_remaining_time(login_infos.last_login_date, now)
+                login_infos.retry_login -= 1
+                login_infos.last_login_date = datetime.now()
+                context = {
+                    'remaining_time_in_seconds': remaining_time_in_seconds,
+                    'retry_login': login_infos.retry_login,
+                    'block_count': login_infos.block_count,
+                }
+                if login_infos.retry_login == 0:
+                    login_infos.is_block = 'Y'
+                    login_infos.save()
+                    if login_infos.block_count >= self.MAX_BLOCK_COUNT:
+                        context['warning'] = "비밀번호 재시도 횟수를 초과하였습니다."
+                    else:
+                        login_infos.block_count += 1
+                        context['warning'] = "비밀번호 재시도 횟수를 초과하였습니다. 10분 후에 다시 시도해주세요."
+                else:
+                    context['warning'] = "비밀번호가 일치하지 않습니다."
 
         return render(request, self.template_name, context)
 
@@ -544,6 +494,7 @@ class DetailView(View):
     
 
 
+    # 얘는 아직 수정안함
     def post(self, request):
         reservation = request.session.get('reservation')
         pw_checked = request.session.get('pw_checked')

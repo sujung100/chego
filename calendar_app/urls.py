@@ -18,6 +18,12 @@ urlpatterns = [
   path('delete_fin/', views.ReservationDeletedView.as_view(), name='reservation_deleted_view'),
 
 
+
+  # 비동기 url 생성
+  path('detail_view/pass/', views.FetchView.as_view(), name='fetch_view'),
+
+
+
   path('first/', views.First_list.as_view(), name='First_list'),
   path('reserve/', views.reserve, name='reserve'),
   # path('info/', views.info, name='info'),

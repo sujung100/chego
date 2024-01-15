@@ -44,40 +44,112 @@
   </div> -->
 
   <script>
-  var warning = "{{ warning }}";  // 서버에서 받은 메시지
-  if (warning) {
-    alert(warning);
-  }
 
   
 
   // document.getElementById("retry_login").innerText = "재시도 횟수: {{ retry_login }}회";  // 서버에서 받은 재시도 횟수
 
-
+  // 수정전
   var retryLogin = {{ retry_login }};  // 서버에서 받은 재시도 횟수
   var blockCount = {{ block_count }};  // 서버에서 받은 block_count
-  document.getElementById("retry_login").innerText = "재시도 횟수: " + retryLogin + "회";
+  var hasWaiting = {{ has_waiting_time|yesno:"true,false" }}; // 서버에서 받은 대기시간 존재여부
 
-  console.log('retryLogin:', retryLogin)
-  console.log('blockCount:', blockCount)
-  if (retryLogin === 0 && blockCount <= 3) {
-      var countDownDate = new Date().getTime() + {{ remaining_time_in_seconds }} * 1000;  // 서버에서 받은 남은 시간(초)을 밀리초로 변환
+  // console.log(hasWaiting);
 
-      var countdownFunction = setInterval(function() {
-          var now = new Date().getTime();
-          var distance = countDownDate - now;
+  // var warning = "{{ warning }}";  // 서버에서 받은 메시지
+  // if (warning) {
+  //   // alert(warning);
+  //   if (hasWaiting === true) {
+  //       var addmsg = "재시도 횟수: " + retryLogin + "회";
+  //       alert(warning + addmsg);
+  //       console.log(addmsg);
+  //       // alert(warning + addmsg);
+  //   } else {
+  //       alert(warning);
+  //       console.log(addmsg);
+  //   }
+  // }
+  // console.log(addmsg);
 
-          var minutes = Math.floor(distance / (1000 * 60));
-          var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-          document.getElementById("timer").innerHTML = minutes + "분 " + seconds + "초 ";
+  window.onload = function() {
+    fetchData();
+  };
 
-          if (distance < 0) {
-              clearInterval(countdownFunction);
-              document.getElementById("timer").innerHTML = "0분 0초";
-          }
-      }, 1000);
+  var hasWaiting;
+
+  // has_waiting_time 값에서 null값을 false로 바꾸기위함
+  function yesno(value) {
+    if (value === null) return false;
+    return value;
   }
+
+
+  async function fetchData() {
+        //     // fetch('/detail_view/')
+        //     fetch('http://127.0.0.1:8000/detail_view/')
+        //         .then(response => {
+        //             if (!response.ok) {
+        //                 throw new Error("HTTP error " + response.status);
+        //             }
+        //             return response.json();
+        //         })
+        //         .then(data => {
+        //             console.log(data.has_waiting_time);
+
+        //             var retryLogin = data.retry_login;  // 서버에서 받은 재시도 횟수
+        //             var blockCount = data.block_count;  // 서버에서 받은 block_count
+        //             var hasWaiting = data.has_waiting_time; // 서버에서 받은 대기시간 존재여부
+        //             var warning = data.warning;  // 서버에서 받은 메시지
+                    
+        //             console.log(hasWaiting);
+
+        //             if (warning) {
+        //                 if (hasWaiting === true) {
+        //                     var addmsg = "재시도 횟수: " + retryLogin + "회";
+        //                     alert(warning + addmsg);
+        //                     console.log(addmsg);
+        //                 } else {
+        //                     alert(warning);
+        //                     console.log(addmsg);
+        //                 }
+        //             }
+        //             console.log(addmsg);
+
+        //         })
+        //         .catch(function(error) {
+        //             console.log("Fetch error occurred: ", error);
+        //         });
+
+        const response = await fetch("pass/");  
+        const jsongogo = await response.json();
+        hasWaiting = yesno(jsongogo.has_waiting_time);
+        console.log(hasWaiting);
+        }
+        // fetchData();
+
+  // document.getElementById("retry_login").innerText = "재시도 횟수: " + retryLogin + "회";
+
+  // console.log('retryLogin:', retryLogin)
+  // console.log('blockCount:', blockCount)
+  // if (retryLogin === 0 && blockCount <= 3) {
+  //     var countDownDate = new Date().getTime() + {{ remaining_time_in_seconds }} * 1000;  // 서버에서 받은 남은 시간(초)을 밀리초로 변환
+
+  //     var countdownFunction = setInterval(function() {
+  //         var now = new Date().getTime();
+  //         var distance = countDownDate - now;
+
+  //         var minutes = Math.floor(distance / (1000 * 60));
+  //         var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  //         document.getElementById("timer").innerHTML = minutes + "분 " + seconds + "초 ";
+
+  //         if (distance < 0) {
+  //             clearInterval(countdownFunction);
+  //             document.getElementById("timer").innerHTML = "0분 0초";
+  //         }
+  //     }, 1000);
+  // }
   
   </script>
 
@@ -104,13 +176,13 @@
 
 
 <!-- 리다이렉션 후 스크롤되게 -->
-{% if anchor3 %}
+<!-- {% if anchor3 %}
 <script>
   window.onload = function () {
     location.hash = "#{{ anchor3 }}";
   };
 </script>
-{% endif %}
+{% endif %} -->
 
 {% if invalid_access %}
 <script>
@@ -124,7 +196,8 @@ window.location.href = "{% url 'find_reservation' %}#anchor1";
 document.addEventListener('DOMContentLoaded', (event) => {
   if(performance.navigation.type == 1){
     // alert("비밀번호를 다시 입력해주세요.");
-    location.href = "{% url 'input_user_pw' %}#anchor2";
+    location.href = "{% url 'input_user_pw' %}";
+    // location.href = "{% url 'input_user_pw' %}#anchor2";
   }
 });
 </script>

@@ -50,9 +50,9 @@
   // document.getElementById("retry_login").innerText = "재시도 횟수: {{ retry_login }}회";  // 서버에서 받은 재시도 횟수
 
   // 수정전
-  // var retryLogin = {{ retry_login }};  // 서버에서 받은 재시도 횟수
-  // var blockCount = {{ block_count }};  // 서버에서 받은 block_count
-  // var hasWaiting = {{ has_waiting_time|yesno:"true,false" }}; // 서버에서 받은 대기시간 존재여부
+  var retryLogin = {{ retry_login }};  // 서버에서 받은 재시도 횟수
+  var blockCount = {{ block_count }};  // 서버에서 받은 block_count
+  var hasWaiting = {{ has_waiting_time|yesno:"true,false" }}; // 서버에서 받은 대기시간 존재여부
 
   // console.log(hasWaiting);
 
@@ -71,7 +71,7 @@
   // }
   // console.log(addmsg);
 
-  // 페이지 로딩후 fetchData 실행
+
   window.onload = function() {
     fetchData();
   };
@@ -84,53 +84,48 @@
     return value;
   }
 
-  // 비동기
+
   async function fetchData() {
+        //     // fetch('/detail_view/')
+        //     fetch('http://127.0.0.1:8000/detail_view/')
+        //         .then(response => {
+        //             if (!response.ok) {
+        //                 throw new Error("HTTP error " + response.status);
+        //             }
+        //             return response.json();
+        //         })
+        //         .then(data => {
+        //             console.log(data.has_waiting_time);
+
+        //             var retryLogin = data.retry_login;  // 서버에서 받은 재시도 횟수
+        //             var blockCount = data.block_count;  // 서버에서 받은 block_count
+        //             var hasWaiting = data.has_waiting_time; // 서버에서 받은 대기시간 존재여부
+        //             var warning = data.warning;  // 서버에서 받은 메시지
+                    
+        //             console.log(hasWaiting);
+
+        //             if (warning) {
+        //                 if (hasWaiting === true) {
+        //                     var addmsg = "재시도 횟수: " + retryLogin + "회";
+        //                     alert(warning + addmsg);
+        //                     console.log(addmsg);
+        //                 } else {
+        //                     alert(warning);
+        //                     console.log(addmsg);
+        //                 }
+        //             }
+        //             console.log(addmsg);
+
+        //         })
+        //         .catch(function(error) {
+        //             console.log("Fetch error occurred: ", error);
+        //         });
+
         const response = await fetch("pass/");  
         const jsongogo = await response.json();
         hasWaiting = yesno(jsongogo.has_waiting_time);
         console.log(hasWaiting);
-        console.log("제이슨", jsongogo);
-
-        var retryLogin = jsongogo.retry_login;
-        var blockCount = jsongogo.block_count;
-        var warning = jsongogo.warning;  // 서버에서 받은 메시지
-        var addRemainTime = ""; // 미리 선언
-        console.log("워닝", warning);
-
-        if (warning) {
-          // 재시도 횟수 출력
-          var addmsg = "재시도 횟수: " + retryLogin + "회";
-
-          if (hasWaiting === true) {
-            // 남은 대기시간 출력
-            if (retryLogin === 0 && blockCount <= 3) {
-              remainingTime = jsongogo.remaining_time_in_seconds;
-              var countDownDate = new Date().getTime() + remainingTime * 1000;  // 서버에서 받은 남은 시간(초)을 밀리초로 변환
-
-              var countdownFunction = setInterval(function() {
-                  var now = new Date().getTime();
-                  var distance = countDownDate - now;
-
-                  var minutes = Math.floor(distance / (1000 * 60));
-                  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                  addRemainTime = minutes + "분 " + seconds + "초 ";
-
-                  if (distance < 0) {
-                      clearInterval(countdownFunction);
-                      addRemainTime = "0분 0초";
-                  }
-                  return addRemainTime;
-              }, 1000);
-            }
-            addmsg += addRemainTime;
-            // var addmsg = "재시도 횟수: " + retryLogin + "회" + addRemainTime;
-          }
-          alert(warning + addmsg);
-          console.log(addmsg);
         }
-      }
         // fetchData();
 
   // document.getElementById("retry_login").innerText = "재시도 횟수: " + retryLogin + "회";
@@ -155,7 +150,6 @@
   //         }
   //     }, 1000);
   // }
-
   
   </script>
 

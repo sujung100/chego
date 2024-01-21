@@ -15,7 +15,7 @@ from django.urls import reverse
 from django.forms.models import model_to_dict
 from django.contrib import messages
 from datetime import datetime, timedelta
-
+from django.forms.models import model_to_dict
 
 # 이름변경
 class First_list(ListView):
@@ -302,76 +302,239 @@ class FindReservationView(View):
         return HttpResponseRedirect(url)
     
 
-# 본인확인
-class InputUserNameView(View):
-    def get(self, request):
-        return render(request, 'calendar_app/input_user_pw.html')
+# # 본인확인(수정전)
+# class InputUserNameView(View):
+#     def get(self, request):
+#         return render(request, 'calendar_app/input_user_pw.html')
 
 
-    def post(self, request):
-            input_pw = request.POST.get('input_pw')
-            reservation = request.session.get('reservation')
+#     def post(self, request):
+#             input_pw = request.POST.get('input_pw')
+#             reservation = request.session.get('reservation')
 
 
-            # DB에 저장된 암호화된 비밀번호
-            hashed_pw = reservation.get('pwhash')
+#             # DB에 저장된 암호화된 비밀번호
+#             hashed_pw = reservation.get('pwhash')
 
-            if input_pw and hashed_pw:
-                input_pw = input_pw.encode('utf-8')
-                hashed_pw = hashed_pw.encode('utf-8')
+#             if input_pw and hashed_pw:
+#                 input_pw = input_pw.encode('utf-8')
+#                 hashed_pw = hashed_pw.encode('utf-8')
 
-                check_pw = bcrypt.checkpw(input_pw, hashed_pw)
-                print("확인", check_pw)
+#                 check_pw = bcrypt.checkpw(input_pw, hashed_pw)
+#                 print("확인", check_pw)
 
-                if check_pw:
-                    request.session['pw_checked'] = True
-                else:
-                    request.session['pw_checked'] = False
-            else:
-                request.session['pw_checked'] = False
+#                 if check_pw:
+#                     request.session['pw_checked'] = True
+#                 else:
+#                     request.session['pw_checked'] = False
+#             else:
+#                 request.session['pw_checked'] = False
             
-            # 이동할 url
-            url = reverse('detail_view')
-            # url = reverse('detail_view') + '#anchor3'
-            return HttpResponseRedirect(url)
+#             # 이동할 url
+#             url = reverse('detail_view')
+#             # url = reverse('detail_view') + '#anchor3'
+#             return HttpResponseRedirect(url)
+    
+
+# # 본인확인(수정1)
+# class InputUserNameView(View):
+
+#     MAX_BLOCK_COUNT = 3  # 재시도 횟수 상수화
+
+#     # 남은시간 계산
+#     def calculate_remaining_time(self, last_login_date, now):
+#         remaining_time_in_seconds = int((last_login_date + timedelta(minutes=1) - now).total_seconds())  # 남은 시간(초) 계산
+#         return 0 if remaining_time_in_seconds < 0 else remaining_time_in_seconds
+    
+#     def get(self, request):
+#         now = datetime.now()
+#         reservation = request.session.get('reservation')
+#         context = {}
+        
+
+#         try:
+#             pw_checked = request.session.get('pw_checked')
+#             reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'])
+#             # 추가
+#             # context['reservation'] = reservations
+#         except models.Reservation_user.DoesNotExist:
+#             context['warning'] = "예약 정보가 존재하지 않습니다."
+#             print("콘텍스트 출력1 ", context)
+#             return render(request, 'calendar_app/input_user_pw.html', context)
+#             # return JsonResponse(context, safe=False)
+
+#         login_infos, created = models.Login_try.objects.get_or_create(user_id=reservations)
+        
+
+#         if pw_checked == False:
+
+#             context['warning'] = "비밀번호 확인이 필요합니다."
+            
+#             if login_infos.is_block == 'Y':
+#                 # 남은시간표시
+#                 remaining_time_in_seconds = self.calculate_remaining_time(login_infos.last_login_date, now)
+
+#                 context = {
+#                     'remaining_time_in_seconds': remaining_time_in_seconds,
+#                     # 'warning': None,
+#                     'retry_login': login_infos.retry_login,
+#                     'block_count': login_infos.block_count,
+#                     'has_waiting_time': None,
+#                 }
+                
+#                 if now - login_infos.last_login_date < timedelta(minutes=1):
+#                     if login_infos.block_count >= self.MAX_BLOCK_COUNT:
+#                         context['warning'] = "비밀번호 재시도 횟수를 초과하였습니다. 업체에 문의해주세요."
+#                         print("콘텍스트 출력2 ", context)
+#                     else:
+#                         context['warning'] = "로그인 시도를 너무 많이 하셨습니다. 잠시 후에 다시 시도해주세요."
+#                         print("콘텍스트 출력3 ", context)
+#                 elif login_infos.block_count < self.MAX_BLOCK_COUNT:
+#                     login_infos.retry_login = 5
+#                     login_infos.is_block = 'N'
+#                     login_infos.block_count += 1
+#                     login_infos.save()
+#                 else:
+#                     context['warning'] = "비밀번호 재시도 횟수를 초과하였습니다."
+#                     context['has_waiting_time'] = False
+#                     print("콘텍스트 출력4 ", context)
+            
+#             else:
+#                 remaining_time_in_seconds = self.calculate_remaining_time(login_infos.last_login_date, now)
+#                 login_infos.retry_login -= 1
+#                 login_infos.last_login_date = datetime.now()
+#                 if login_infos.retry_login == 0:
+#                     login_infos.is_block = 'Y'
+#                     login_infos.save()
+#                     if login_infos.block_count >= self.MAX_BLOCK_COUNT:
+#                         context = {
+#                             'remaining_time_in_seconds': remaining_time_in_seconds,
+#                             'warning': "비밀번호 재시도 횟수를 초과하였습니다.",
+#                             'retry_login': login_infos.retry_login,
+#                             'block_count': login_infos.block_count,
+#                             'has_waiting_time': True,
+#                         }
+#                         print("콘텍스트 출력6 ", context)
+#                     else:
+#                         login_infos.block_count += 1
+#                         context = {
+#                             'remaining_time_in_seconds': remaining_time_in_seconds,
+#                             'warning': "비밀번호 재시도 횟수를 초과하였습니다. 10분 후에 다시 시도해주세요.",
+#                             'retry_login': login_infos.retry_login,
+#                             'block_count': login_infos.block_count,
+#                         }
+#                         print("콘텍스트 출력7 ", context)
+                                
+#                 login_infos.save()
+#                 context = {
+#                     'remaining_time_in_seconds': remaining_time_in_seconds,
+#                     'warning': "비밀번호가 일치하지 않습니다.",
+#                     'retry_login': login_infos.retry_login,
+#                     'block_count': login_infos.block_count,
+#                 }
+#                 print("콘텍스트 출력8 ", context)
+
+#         elif pw_checked:
+#                 login_infos.retry_login = 5
+#                 login_infos.is_block = 'N'
+#                 login_infos.save()
+#                 context = {'reservation': reservations}
+#                 print("콘텍스트 출력5 ", context)
+        
+#         # return JsonResponse(context, safe=False)
+#         return render(request, 'calendar_app/input_user_pw.html', context)
 
 
-## 예약 조회 및 취소 (수정)
-class DetailView(View):
-    template_name = 'calendar_app/reservation_detail.html'
+#     def post(self, request):
+#             if 'form1' in request.POST:
+#                 context = {}
+#                 input_pw = request.POST.get('input_pw')
+#                 reservation = request.session.get('reservation')
+
+
+#                 # DB에 저장된 암호화된 비밀번호
+#                 hashed_pw = reservation.get('pwhash')
+
+#                 if input_pw and hashed_pw:
+#                     input_pw = input_pw.encode('utf-8')
+#                     hashed_pw = hashed_pw.encode('utf-8')
+
+#                     check_pw = bcrypt.checkpw(input_pw, hashed_pw)
+#                     print("확인", check_pw)
+
+#                     if check_pw:
+#                         request.session['pw_checked'] = True
+#                     else:
+#                         request.session['pw_checked'] = False
+#                 else:
+#                     request.session['pw_checked'] = False
+                
+#                 # # 이동할 url
+#                 # url = reverse('detail_view')
+#                 # # url = reverse('detail_view') + '#anchor3'
+#                 # return HttpResponseRedirect(url)
+#                 context['form_submitted'] = True
+#                 return render(request, 'calendar_app/input_user_pw.html', context)
+#                 # return render(request, 'calendar_app/input_user_pw.html')
+            
+#             elif 'form2' in request.POST:
+#                 reservation = request.session.get('reservation')
+#                 pw_checked = request.session.get('pw_checked')
+#                 # input_user_pw = request.session.get('input_user_pw')
+
+#                 try:
+#                     # compare = bcrypt.checkpw(input_user_pw.encode('utf-8'), reservation['pwhash'].encode('utf-8'))
+#                     if pw_checked:
+#                         reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'])
+#                 except models.Reservation_user.DoesNotExist:
+#                     return render(request, 'calendar_app/input_user_pw.html', {'invalid_access': True})
+                
+#                 reservations.delete()  # 조회한 예약삭제
+#                 url = reverse('reservation_deleted_view')
+#                 # url = reverse('reservation_deleted_view') + '#anchor4'
+#                 return HttpResponseRedirect(url)
+#                 # return JsonResponse(context, safe=False)
+    
+
+
+# 여기에 빈 딕셔너리 만들고
+    
+
+# 공통코드 빼기
+class CommonLogicMixin:
     MAX_BLOCK_COUNT = 3  # 재시도 횟수 상수화
 
     # 남은시간 계산
     def calculate_remaining_time(self, last_login_date, now):
         remaining_time_in_seconds = int((last_login_date + timedelta(minutes=1) - now).total_seconds())  # 남은 시간(초) 계산
         return 0 if remaining_time_in_seconds < 0 else remaining_time_in_seconds
-
-    # def calculate_remaining_time(self, last_login_date, now):
-    #     return 600 - int((now - last_login_date).total_seconds())
-
-
-    def get(self, request):
+    
+    def common_logic(self, request):
         now = datetime.now()
         reservation = request.session.get('reservation')
         context = {}
         
-
         try:
             pw_checked = request.session.get('pw_checked')
             reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'])
+            # 추가
+            # context['reservation'] = reservations
+            # data = [model_to_dict(reserve1) for reserve1 in Store_times]
         except models.Reservation_user.DoesNotExist:
             context['warning'] = "예약 정보가 존재하지 않습니다."
             print("콘텍스트 출력1 ", context)
-            return render(request, self.template_name, context)
+            return context, None
+            # return JsonResponse(context, safe=False)
 
         login_infos, created = models.Login_try.objects.get_or_create(user_id=reservations)
-        
+        # test하는중
+        # Store_times = models.Store_times.objects.all()
+        # data = [model_to_dict(reserve1) for reserve1 in Store_times]
 
         if pw_checked == False:
 
             context['warning'] = "비밀번호 확인이 필요합니다."
             
-            # 정지여부(is_block), 정지횟수(block_count) 확인
             if login_infos.is_block == 'Y':
                 # 남은시간표시
                 remaining_time_in_seconds = self.calculate_remaining_time(login_infos.last_login_date, now)
@@ -382,11 +545,9 @@ class DetailView(View):
                     'retry_login': login_infos.retry_login,
                     'block_count': login_infos.block_count,
                     'has_waiting_time': None,
+                    # 'reservation': reservations,
+                    # 'Store_times' : data
                 }
-
-
-                # 위치 수정하기....
-                # 세션에서 비밀번호 확인 여부를 확인
                 
                 if now - login_infos.last_login_date < timedelta(minutes=1):
                     if login_infos.block_count >= self.MAX_BLOCK_COUNT:
@@ -413,7 +574,6 @@ class DetailView(View):
                     login_infos.is_block = 'Y'
                     login_infos.save()
                     if login_infos.block_count >= self.MAX_BLOCK_COUNT:
-                        # context['warning'] = "비밀번호 재시도 횟수를 초과하였습니다."
                         context = {
                             'remaining_time_in_seconds': remaining_time_in_seconds,
                             'warning': "비밀번호 재시도 횟수를 초과하였습니다.",
@@ -424,18 +584,15 @@ class DetailView(View):
                         print("콘텍스트 출력6 ", context)
                     else:
                         login_infos.block_count += 1
-                        # context['warning'] = "비밀번호 재시도 횟수를 초과하였습니다. 10분 후에 다시 시도해주세요."
                         context = {
                             'remaining_time_in_seconds': remaining_time_in_seconds,
                             'warning': "비밀번호 재시도 횟수를 초과하였습니다. 10분 후에 다시 시도해주세요.",
                             'retry_login': login_infos.retry_login,
                             'block_count': login_infos.block_count,
-                            # 'has_waiting_time': True
                         }
                         print("콘텍스트 출력7 ", context)
                                 
                 login_infos.save()
-                # context['warning'] = "비밀번호가 일치하지 않습니다."
                 context = {
                     'remaining_time_in_seconds': remaining_time_in_seconds,
                     'warning': "비밀번호가 일치하지 않습니다.",
@@ -448,30 +605,258 @@ class DetailView(View):
                 login_infos.retry_login = 5
                 login_infos.is_block = 'N'
                 login_infos.save()
-                context = {'reservation': reservations}
+                context = {
+                    'reservation': reservations,
+                    # 'test': 'sksk',
+                           }
                 print("콘텍스트 출력5 ", context)
+
+
+        # # context의 'reservation' 항목을 JSON 직렬화 가능한 형태로 변환
+        # if 'reservation' in context:
+        #     context['reservation'] = model_to_dict(context['reservation'])
+
+        # context를 세션에 저장
+        if 'warning' in context:
+            request.session['context_return'] = context.get('warning')
+        # yaya = context.get('warning')
+        # print("타입찍기 ", type(yaya), yaya)
+        # print("워닝만찍어보기 ", yaya)
+
+        return context, login_infos
+
+
+
+# 본인확인(수정2)
+class InputUserNameView(CommonLogicMixin, View):
+
+    # MAX_BLOCK_COUNT = 3  # 재시도 횟수 상수화
+
+    # # 남은시간 계산
+    # def calculate_remaining_time(self, last_login_date, now):
+    #     remaining_time_in_seconds = int((last_login_date + timedelta(minutes=1) - now).total_seconds())  # 남은 시간(초) 계산
+    #     return 0 if remaining_time_in_seconds < 0 else remaining_time_in_seconds
+    
+    def get(self, request):
+        context, login_infos = self.common_logic(request)
+        if login_infos is not None:
+            login_infos.save()
+        return render(request, 'calendar_app/input_user_pw.html', context)
         
-
-
-        return render(request, self.template_name, context)
-
 
     def post(self, request):
-        reservation = request.session.get('reservation')
-        pw_checked = request.session.get('pw_checked')
-        # input_user_pw = request.session.get('input_user_pw')
+            if 'form1' in request.POST:
+                context = {}
+                input_pw = request.POST.get('input_pw')
+                reservation = request.session.get('reservation')
+                booking_lists = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'])
 
-        try:
-            # compare = bcrypt.checkpw(input_user_pw.encode('utf-8'), reservation['pwhash'].encode('utf-8'))
-            if pw_checked:
-                reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'])
-        except models.Reservation_user.DoesNotExist:
-            return render(request, self.template_name, {'invalid_access': True})
+
+                # DB에 저장된 암호화된 비밀번호
+                hashed_pw = reservation.get('pwhash')
+
+                if input_pw and hashed_pw:
+                    input_pw = input_pw.encode('utf-8')
+                    hashed_pw = hashed_pw.encode('utf-8')
+
+                    check_pw = bcrypt.checkpw(input_pw, hashed_pw)
+                    # context['form_submitted'] = True
+
+                    print("확인", check_pw)
+
+                    if check_pw:
+                        request.session['pw_checked'] = True
+                        context = {
+                        'booking': booking_lists,
+                        'pw_checked': request.session['pw_checked'],
+                        # 'test': 'sksk',
+                            }
+                        # context = {
+                        #     'warning': request.session.get('context_return'),
+                        #     }
+                    else:
+                        request.session['pw_checked'] = False
+                        context['pw_checked'] = request.session['pw_checked']
+                        print("패스워드확인여부1 ", context)
+                        # context['warning'] = request.session.get('context_return')
+                        # print("얘도찍어봐 ", request.session.get('context_return'))
+                        # print("콘텍스트 잘들어감1? ", context)
+                else:
+                    request.session['pw_checked'] = False
+                    context['pw_checked'] = request.session['pw_checked']
+                    print("패스워드확인여부2 ", context)
+                    # context['warning'] = request.session.get('context_return')
+                    # print("콘텍스트 잘들어감2? ", context)
+                    # context['form_submitted'] = False
+                
+                # # 이동할 url
+                # url = reverse('detail_view')
+                # # url = reverse('detail_view') + '#anchor3'
+                # return HttpResponseRedirect(url)
+                context['form_submitted'] = True
+                # 추가함....
+                context['pw_checked'] = request.session['pw_checked']
+                # test하는중2
+                # context['test'] = 'meme'
+
+                return render(request, 'calendar_app/input_user_pw.html', context)
+                # return render(request, 'calendar_app/input_user_pw.html')
+            
+            elif 'form2' in request.POST:
+                reservation = request.session.get('reservation')
+                pw_checked = request.session.get('pw_checked')
+                # input_user_pw = request.session.get('input_user_pw')
+
+                try:
+                    # compare = bcrypt.checkpw(input_user_pw.encode('utf-8'), reservation['pwhash'].encode('utf-8'))
+                    if pw_checked:
+                        reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'])
+                except models.Reservation_user.DoesNotExist:
+                    return render(request, 'calendar_app/input_user_pw.html', {'invalid_access': True})
+                
+                reservations.delete()  # 조회한 예약삭제
+                url = reverse('reservation_deleted_view')
+                # url = reverse('reservation_deleted_view') + '#anchor4'
+                return HttpResponseRedirect(url)
+                # return JsonResponse(context, safe=False)
+
+
+# ## 예약 조회 및 취소 (수정) -detailview 삭제
+# class DetailView(View):
+#     template_name = 'calendar_app/reservation_detail.html'
+#     MAX_BLOCK_COUNT = 3  # 재시도 횟수 상수화
+
+#     # 남은시간 계산
+#     def calculate_remaining_time(self, last_login_date, now):
+#         remaining_time_in_seconds = int((last_login_date + timedelta(minutes=1) - now).total_seconds())  # 남은 시간(초) 계산
+#         return 0 if remaining_time_in_seconds < 0 else remaining_time_in_seconds
+
+#     # def calculate_remaining_time(self, last_login_date, now):
+#     #     return 600 - int((now - last_login_date).total_seconds())
+
+
+#     def get(self, request):
+#         now = datetime.now()
+#         reservation = request.session.get('reservation')
+#         context = {}
         
-        reservations.delete()  # 조회한 예약삭제
-        url = reverse('reservation_deleted_view')
-        # url = reverse('reservation_deleted_view') + '#anchor4'
-        return HttpResponseRedirect(url)
+
+#         try:
+#             pw_checked = request.session.get('pw_checked')
+#             reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'])
+#         except models.Reservation_user.DoesNotExist:
+#             context['warning'] = "예약 정보가 존재하지 않습니다."
+#             print("콘텍스트 출력1 ", context)
+#             return render(request, self.template_name, context)
+
+#         login_infos, created = models.Login_try.objects.get_or_create(user_id=reservations)
+        
+
+#         if pw_checked == False:
+
+#             context['warning'] = "비밀번호 확인이 필요합니다."
+            
+#             # 정지여부(is_block), 정지횟수(block_count) 확인
+#             if login_infos.is_block == 'Y':
+#                 # 남은시간표시
+#                 remaining_time_in_seconds = self.calculate_remaining_time(login_infos.last_login_date, now)
+
+#                 context = {
+#                     'remaining_time_in_seconds': remaining_time_in_seconds,
+#                     # 'warning': None,
+#                     'retry_login': login_infos.retry_login,
+#                     'block_count': login_infos.block_count,
+#                     'has_waiting_time': None,
+#                 }
+
+
+#                 # 위치 수정하기....
+#                 # 세션에서 비밀번호 확인 여부를 확인
+                
+#                 if now - login_infos.last_login_date < timedelta(minutes=1):
+#                     if login_infos.block_count >= self.MAX_BLOCK_COUNT:
+#                         context['warning'] = "비밀번호 재시도 횟수를 초과하였습니다. 업체에 문의해주세요."
+#                         print("콘텍스트 출력2 ", context)
+#                     else:
+#                         context['warning'] = "로그인 시도를 너무 많이 하셨습니다. 잠시 후에 다시 시도해주세요."
+#                         print("콘텍스트 출력3 ", context)
+#                 elif login_infos.block_count < self.MAX_BLOCK_COUNT:
+#                     login_infos.retry_login = 5
+#                     login_infos.is_block = 'N'
+#                     login_infos.block_count += 1
+#                     login_infos.save()
+#                 else:
+#                     context['warning'] = "비밀번호 재시도 횟수를 초과하였습니다."
+#                     context['has_waiting_time'] = False
+#                     print("콘텍스트 출력4 ", context)
+            
+#             else:
+#                 remaining_time_in_seconds = self.calculate_remaining_time(login_infos.last_login_date, now)
+#                 login_infos.retry_login -= 1
+#                 login_infos.last_login_date = datetime.now()
+#                 if login_infos.retry_login == 0:
+#                     login_infos.is_block = 'Y'
+#                     login_infos.save()
+#                     if login_infos.block_count >= self.MAX_BLOCK_COUNT:
+#                         # context['warning'] = "비밀번호 재시도 횟수를 초과하였습니다."
+#                         context = {
+#                             'remaining_time_in_seconds': remaining_time_in_seconds,
+#                             'warning': "비밀번호 재시도 횟수를 초과하였습니다.",
+#                             'retry_login': login_infos.retry_login,
+#                             'block_count': login_infos.block_count,
+#                             'has_waiting_time': True,
+#                         }
+#                         print("콘텍스트 출력6 ", context)
+#                     else:
+#                         login_infos.block_count += 1
+#                         # context['warning'] = "비밀번호 재시도 횟수를 초과하였습니다. 10분 후에 다시 시도해주세요."
+#                         context = {
+#                             'remaining_time_in_seconds': remaining_time_in_seconds,
+#                             'warning': "비밀번호 재시도 횟수를 초과하였습니다. 10분 후에 다시 시도해주세요.",
+#                             'retry_login': login_infos.retry_login,
+#                             'block_count': login_infos.block_count,
+#                             # 'has_waiting_time': True
+#                         }
+#                         print("콘텍스트 출력7 ", context)
+                                
+#                 login_infos.save()
+#                 # context['warning'] = "비밀번호가 일치하지 않습니다."
+#                 context = {
+#                     'remaining_time_in_seconds': remaining_time_in_seconds,
+#                     'warning': "비밀번호가 일치하지 않습니다.",
+#                     'retry_login': login_infos.retry_login,
+#                     'block_count': login_infos.block_count,
+#                 }
+#                 print("콘텍스트 출력8 ", context)
+
+#         elif pw_checked:
+#                 login_infos.retry_login = 5
+#                 login_infos.is_block = 'N'
+#                 login_infos.save()
+#                 context = {'reservation': reservations}
+#                 print("콘텍스트 출력5 ", context)
+        
+
+
+#         return render(request, self.template_name, context)
+
+
+#     def post(self, request):
+#         reservation = request.session.get('reservation')
+#         pw_checked = request.session.get('pw_checked')
+#         # input_user_pw = request.session.get('input_user_pw')
+
+#         try:
+#             # compare = bcrypt.checkpw(input_user_pw.encode('utf-8'), reservation['pwhash'].encode('utf-8'))
+#             if pw_checked:
+#                 reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'])
+#         except models.Reservation_user.DoesNotExist:
+#             return render(request, self.template_name, {'invalid_access': True})
+        
+#         reservations.delete()  # 조회한 예약삭제
+#         url = reverse('reservation_deleted_view')
+#         # url = reverse('reservation_deleted_view') + '#anchor4'
+#         return HttpResponseRedirect(url)
 
 
 
@@ -485,13 +870,195 @@ class ReservationDeletedView(View):
     
 
 
-class FetchView(View):
+# class FetchView(View):
+#     # template_name = 'calendar_app/reservation_detail.html'
+
+#     def get(self, request):
+#         # context = {
+#         #     "test": True,
+#         # }
+#         context = {
+#                             # 'remaining_time_in_seconds': 5,
+#                             'warning': "비밀번호 재시도 횟수를 초과하였습니다.",
+#                             'retry_login': 5,
+#                             'block_count': 5,
+#                             'has_waiting_time': True,
+#                         }
+#         # return render (request, context)
+#         # return JsonResponse([], safe=False)
+#         # return JsonResponse({'has_waiting_time': True}, safe=False)
+#         return JsonResponse(context, safe=False)
+
+
+
+# # 수정전
+# class FetchView(View):
+#     # template_name = 'calendar_app/reservation_detail.html'
+#     MAX_BLOCK_COUNT = 3  # 재시도 횟수 상수화
+
+#     # 남은시간 계산
+#     def calculate_remaining_time(self, last_login_date, now):
+#         remaining_time_in_seconds = int((last_login_date + timedelta(minutes=1) - now).total_seconds())  # 남은 시간(초) 계산
+#         return 0 if remaining_time_in_seconds < 0 else remaining_time_in_seconds
+
+#     def get(self, request):
+#         now = datetime.now()
+#         reservation = request.session.get('reservation')
+#         context = {}
+        
+
+#         try:
+#             pw_checked = request.session.get('pw_checked')
+#             reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'])
+#         except models.Reservation_user.DoesNotExist:
+#             context['warning'] = "예약 정보가 존재하지 않습니다."
+#             print("콘텍스트 출력1 ", context)
+#             # return render(request, self.template_name, context)
+#             return JsonResponse(context, safe=False)
+
+#         login_infos, created = models.Login_try.objects.get_or_create(user_id=reservations)
+        
+
+#         if pw_checked == False:
+
+#             context['warning'] = "비밀번호 확인이 필요합니다."
+            
+#             # 정지여부(is_block), 정지횟수(block_count) 확인
+#             if login_infos.is_block == 'Y':
+#                 # 남은시간표시
+#                 remaining_time_in_seconds = self.calculate_remaining_time(login_infos.last_login_date, now)
+
+#                 context = {
+#                     'remaining_time_in_seconds': remaining_time_in_seconds,
+#                     # 'warning': None,
+#                     'retry_login': login_infos.retry_login,
+#                     'block_count': login_infos.block_count,
+#                     'has_waiting_time': None,
+#                 }
+
+
+#                 # 위치 수정하기....
+#                 # 세션에서 비밀번호 확인 여부를 확인
+                
+#                 if now - login_infos.last_login_date < timedelta(minutes=1):
+#                     if login_infos.block_count >= self.MAX_BLOCK_COUNT:
+#                         context['warning'] = "비밀번호 재시도 횟수를 초과하였습니다. 업체에 문의해주세요."
+#                         print("콘텍스트 출력2 ", context)
+#                     else:
+#                         context['warning'] = "로그인 시도를 너무 많이 하셨습니다. 잠시 후에 다시 시도해주세요."
+#                         print("콘텍스트 출력3 ", context)
+#                 elif login_infos.block_count < self.MAX_BLOCK_COUNT:
+#                     login_infos.retry_login = 5
+#                     login_infos.is_block = 'N'
+#                     login_infos.block_count += 1
+#                     login_infos.save()
+#                 else:
+#                     context['warning'] = "비밀번호 재시도 횟수를 초과하였습니다."
+#                     context['has_waiting_time'] = False
+#                     print("콘텍스트 출력4 ", context)
+            
+#             else:
+#                 remaining_time_in_seconds = self.calculate_remaining_time(login_infos.last_login_date, now)
+#                 login_infos.retry_login -= 1
+#                 login_infos.last_login_date = datetime.now()
+#                 if login_infos.retry_login == 0:
+#                     login_infos.is_block = 'Y'
+#                     login_infos.save()
+#                     if login_infos.block_count >= self.MAX_BLOCK_COUNT:
+#                         # context['warning'] = "비밀번호 재시도 횟수를 초과하였습니다."
+#                         context = {
+#                             'remaining_time_in_seconds': remaining_time_in_seconds,
+#                             'warning': "비밀번호 재시도 횟수를 초과하였습니다.",
+#                             'retry_login': login_infos.retry_login,
+#                             'block_count': login_infos.block_count,
+#                             'has_waiting_time': True,
+#                         }
+#                         print("콘텍스트 출력6 ", context)
+#                     else:
+#                         login_infos.block_count += 1
+#                         # context['warning'] = "비밀번호 재시도 횟수를 초과하였습니다. 10분 후에 다시 시도해주세요."
+#                         context = {
+#                             'remaining_time_in_seconds': remaining_time_in_seconds,
+#                             'warning': "비밀번호 재시도 횟수를 초과하였습니다. 10분 후에 다시 시도해주세요.",
+#                             'retry_login': login_infos.retry_login,
+#                             'block_count': login_infos.block_count,
+#                             # 'has_waiting_time': True
+#                         }
+#                         print("콘텍스트 출력7 ", context)
+                                
+#                 login_infos.save()
+#                 # context['warning'] = "비밀번호가 일치하지 않습니다."
+#                 context = {
+#                     'remaining_time_in_seconds': remaining_time_in_seconds,
+#                     'warning': "비밀번호가 일치하지 않습니다.",
+#                     'retry_login': login_infos.retry_login,
+#                     'block_count': login_infos.block_count,
+#                 }
+#                 print("콘텍스트 출력8 ", context)
+
+#         elif pw_checked:
+#                 login_infos.retry_login = 5
+#                 login_infos.is_block = 'N'
+#                 login_infos.save()
+#                 context = {'reservation': reservations}
+#                 print("콘텍스트 출력5 ", context)
+        
+
+
+#         # return render(request, self.template_name, context)
+#         return JsonResponse(context, safe=False)
+
+
+#     # def post(self, request):
+#     #     reservation = request.session.get('reservation')
+#     #     pw_checked = request.session.get('pw_checked')
+#     #     # input_user_pw = request.session.get('input_user_pw')
+
+#     #     try:
+#     #         # compare = bcrypt.checkpw(input_user_pw.encode('utf-8'), reservation['pwhash'].encode('utf-8'))
+#     #         if pw_checked:
+#     #             reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'])
+#     #     except models.Reservation_user.DoesNotExist:
+#     #         return render(request, 'calendar_app/input_user_pw.html', {'invalid_access': True})
+        
+#     #     reservations.delete()  # 조회한 예약삭제
+#     #     url = reverse('reservation_deleted_view')
+#     #     # url = reverse('reservation_deleted_view') + '#anchor4'
+#     #     return HttpResponseRedirect(url)
+#     #     # return JsonResponse(context, safe=False)
+
+
+
+# 수정1
+class FetchView(CommonLogicMixin, View):
     # template_name = 'calendar_app/reservation_detail.html'
+    # MAX_BLOCK_COUNT = 3  # 재시도 횟수 상수화
+
+    # # 남은시간 계산
+    # def calculate_remaining_time(self, last_login_date, now):
+    #     remaining_time_in_seconds = int((last_login_date + timedelta(minutes=1) - now).total_seconds())  # 남은 시간(초) 계산
+    #     return 0 if remaining_time_in_seconds < 0 else remaining_time_in_seconds
 
     def get(self, request):
-        # context = {
-        #     "test": True,
-        # }
-        # return render (request, context)
-        # return JsonResponse([], safe=False)
-        return JsonResponse({'has_waiting_time': None}, safe=False)
+        context, _ = self.common_logic(request)
+        print("찍어라 ", context)
+        return JsonResponse(context)
+        
+
+    # def post(self, request):
+    #     reservation = request.session.get('reservation')
+    #     pw_checked = request.session.get('pw_checked')
+    #     # input_user_pw = request.session.get('input_user_pw')
+
+    #     try:
+    #         # compare = bcrypt.checkpw(input_user_pw.encode('utf-8'), reservation['pwhash'].encode('utf-8'))
+    #         if pw_checked:
+    #             reservations = models.Reservation_user.objects.select_related('store_id').get(id=reservation['id'])
+    #     except models.Reservation_user.DoesNotExist:
+    #         return render(request, 'calendar_app/input_user_pw.html', {'invalid_access': True})
+        
+    #     reservations.delete()  # 조회한 예약삭제
+    #     url = reverse('reservation_deleted_view')
+    #     # url = reverse('reservation_deleted_view') + '#anchor4'
+    #     return HttpResponseRedirect(url)
+    #     # return JsonResponse(context, safe=False)

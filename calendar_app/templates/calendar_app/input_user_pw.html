@@ -33,14 +33,122 @@
     </ul>
   </div>
 </div>
-<div>
-  <form method="post" action="{% url 'input_user_pw' %}">
-      {% csrf_token %}
-      <label for="input_pw">비밀번호를 입력하세요: (네자리 숫자)</label>
-      <input type="password" id="input_pw" name="input_pw" required placeholder="0000" pattern="[0-9]+" maxlength='4'>
-      <input type="submit" value="Submit">
-  </form>
-</div>
+{% if not form_submitted %}
+  <div>
+    <form method="post" action="{% url 'input_user_pw' %}">
+        {% csrf_token %}
+        <label for="input_pw">비밀번호를 입력하세요: (네자리 숫자)</label>
+        <input type="password" id="input_pw" name="input_pw" required placeholder="0000" pattern="[0-9]+" maxlength='4'>
+        <input type="submit" value="Submit" name="form1">
+    </form>
+  </div>
+
+{% elif form_submitted %}
+<!-- detail 합치기 -->
+  <div>
+    <!-- <div>예약있을때만 뜨는 줄-나중삭제{{ booking }}</div>
+    {% if not pw_checked %}
+    <div>잉{{ warning }}</div>
+    <button>뒤로가기</button>
+    <div id="retry_login"></div>
+    <p id="timer"></p> -->
+
+    <script>
+    // 페이지 로딩후 fetchData 실행
+    window.onload = function() {
+        fetchData();
+      };
+
+      var hasWaiting;
+
+      // has_waiting_time 값에서 null값을 false로 바꾸기위함
+      function yesno(value) {
+        if (value === null) return false;
+        return value;
+      }
+
+      // 비동기
+      async function fetchData() {
+            const response = await fetch("pass/");  
+            const jsongogo = await response.json();
+            hasWaiting = yesno(jsongogo.has_waiting_time);
+            console.log(hasWaiting);
+            console.log("제이슨", jsongogo);
+
+            var retryLogin = jsongogo.retry_login;
+            var blockCount = jsongogo.block_count;
+            var warning = jsongogo.warning;  // 서버에서 받은 메시지
+            var addRemainTime = ""; // 미리 선언
+            console.log("워닝", warning);
+
+            if (warning) {
+              // 재시도 횟수 출력
+              var addmsg = "재시도 횟수: " + retryLogin + "회";
+
+              if (hasWaiting === true) {
+                // 남은 대기시간 출력
+                if (retryLogin === 0 && blockCount <= 3) {
+                  remainingTime = jsongogo.remaining_time_in_seconds;
+                  var countDownDate = new Date().getTime() + remainingTime * 1000;  // 서버에서 받은 남은 시간(초)을 밀리초로 변환
+
+                  var countdownFunction = setInterval(function() {
+                      var now = new Date().getTime();
+                      var distance = countDownDate - now;
+
+                      var minutes = Math.floor(distance / (1000 * 60));
+                      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                      addRemainTime = minutes + "분 " + seconds + "초 ";
+
+                      if (distance < 0) {
+                          clearInterval(countdownFunction);
+                          addRemainTime = "0분 0초";
+                      }
+                      return addRemainTime;
+                  }, 1000);
+                }
+                addmsg += addRemainTime;
+                // var addmsg = "재시도 횟수: " + retryLogin + "회" + addRemainTime;
+              }
+              alert(warning + addmsg);
+              // 확인누른후 페이지리로드
+              // window.location.reload();
+              window.location.href = window.location.pathname;
+              console.log(addmsg);
+            }
+          }
+    </script>
+
+
+    {% else %}
+    <div>워닝안떠야 정상-나중삭제{{ warning }}</div>
+    <!-- <div>워닝: {{ test }}</div> -->
+    <div>이름: {{ booking.user_name }}</div>
+    <div>전화번호: {{ booking.user_phone }}</div>
+    <br>
+    <div>예약 매장명: {{ booking.store_id.store_name }}</div>
+    <div>예약 날짜: {{ booking.reservation_date }}</div>
+    <div>예약 시간: {{ booking.user_time }}</div>
+    <div>예약 인원: {{ booking.visitor_num }}</div>
+    
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" value="예약취소" name="form2">
+    </form>
+
+    {% endif %}
+  </div>
+  <!-- detail 합치기 끝 -->
+{% endif %}
+
+{% if invalid_access %}
+<script>
+alert("잘못된 접근입니다.");
+window.location.href = "{% url 'find_reservation' %}#anchor1";
+</script>
+{% endif %}
+
+
 
 <!-- 리다이렉션 후 스크롤되게 -->
 <!-- {% if anchor2 %}

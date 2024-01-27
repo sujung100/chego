@@ -761,9 +761,18 @@ class InputUserNameView(CommonLogicMixin, View):
                     return render(request, 'calendar_app/input_user_pw.html', {'invalid_access': True})
                 
                 reservations.delete()  # 조회한 예약삭제
-                url = reverse('reservation_deleted_view')
+
+                request.session['delete_rsv'] = True
+                context = {
+                    'delete_rsv': request.session['delete_rsv'],
+                    }
+                # context['delete_rsv'] = request.session['delete_rsv']
+                print("삭제후 ", context)
+
+                return render(request, 'calendar_app/input_user_pw.html', context)
+                # url = reverse('reservation_deleted_view')
                 # url = reverse('reservation_deleted_view') + '#anchor4'
-                return HttpResponseRedirect(url)
+                # return HttpResponseRedirect(url)
                 # return JsonResponse(context, safe=False)
 
 
@@ -908,11 +917,11 @@ class InputUserNameView(CommonLogicMixin, View):
 
 
 # 취소후 화면
-class ReservationDeletedView(View):
-    template_name = 'calendar_app/reservation_deleted.html'
+# class ReservationDeletedView(View):
+#     template_name = 'calendar_app/reservation_deleted.html'
 
-    def get(self, request):
-        return render(request, self.template_name)
+#     def get(self, request):
+#         return render(request, self.template_name)
     
 
 

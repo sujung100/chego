@@ -33,7 +33,14 @@
     </ul>
   </div>
 </div>
-{% if not form_submitted %}
+{% if delete_rsv %}
+  <div>
+    <title>예약 삭제 완료</title>
+    <div>예약이 삭제되었습니다.</div>
+    <a href="{% url 'find_reservation' %}#anchor1">다른 예약 조회하기</a>
+  </div>
+
+{% elif not form_submitted %}
   <div>
     <form method="post" action="{% url 'input_user_pw' %}">
         {% csrf_token %}
@@ -237,6 +244,9 @@
     {% endif %}
   </div>
   <!-- detail 합치기 끝 -->
+
+
+
 {% endif %}
 
 {% if invalid_access %}

@@ -67,7 +67,8 @@
     }
     
     // 3초 인터벌
-    var autoSlideInterval = setInterval(moveToNextSlide, 3000);
+    // 나중에 키기
+    // var autoSlideInterval = setInterval(moveToNextSlide, 3000);
     
     // slide nav 클릭시
     document.querySelectorAll(".slide-nav").forEach(function(navItem) {
@@ -75,8 +76,9 @@
         e.preventDefault();
     
         // 기존 인터벌 취소후, 자동 인터벌
-        clearInterval(autoSlideInterval);
-        autoSlideInterval = setInterval(moveToNextSlide, 3000);
+        // 나중에 키기
+        // clearInterval(autoSlideInterval);
+        // autoSlideInterval = setInterval(moveToNextSlide, 3000);
     
         var current = document.querySelector(".flex-active").dataset.slide;
         var next = this.dataset.slide;
@@ -109,39 +111,40 @@
 
 
     // scroll-text 텍스트효과
-    window.addEventListener('scroll', function () {
-    // 스크롤 위치
-    let st = window.pageYOffset || document.documentElement.scrollTop;
+    // 나중에 키기
+//     window.addEventListener('scroll', function () {
+//     // 스크롤 위치
+//     let st = window.pageYOffset || document.documentElement.scrollTop;
 
-    // flow-text1 효과
-    let motionTaget = document.querySelector('.flow-text');
-    let leftText = motionTaget.querySelector('.left-text');
-    let rightText = motionTaget.querySelector('.right-text');
+//     // flow-text1 효과
+//     let motionTaget = document.querySelector('.flow-text');
+//     let leftText = motionTaget.querySelector('.left-text');
+//     let rightText = motionTaget.querySelector('.right-text');
 
-    leftText.style.left = st - (motionTaget.offsetTop - (st / 4)) + 'px';
-    rightText.style.right = st - (motionTaget.offsetTop - (st / 10)) + 'px';
+//     leftText.style.left = st - (motionTaget.offsetTop - (st / 4)) + 'px';
+//     rightText.style.right = st - (motionTaget.offsetTop - (st / 10)) + 'px';
 
-    // flow-text2 효과
-    let motionTaget2 = document.querySelector('.flow-text2');
-    let rightText2 = motionTaget2.querySelector('.right-text');
-    rightText2.style.right = st - motionTaget2.offsetTop + 100 + 'px';
+//     // flow-text2 효과
+//     let motionTaget2 = document.querySelector('.flow-text2');
+//     let rightText2 = motionTaget2.querySelector('.right-text');
+//     rightText2.style.right = st - motionTaget2.offsetTop + 100 + 'px';
 
-    let sectionInfo = []; // section top 값
-    let sectionObj = document.querySelector('section.intro');
+//     let sectionInfo = []; // section top 값
+//     let sectionObj = document.querySelector('section.intro');
 
-    // section의 top 위치를 배열에 push
-    sectionInfo.push(sectionObj.offsetTop);
-    // 현재 스크롤 위치
-    let scrPosition = window.pageYOffset + 500;
+//     // section의 top 위치를 배열에 push
+//     sectionInfo.push(sectionObj.offsetTop);
+//     // 현재 스크롤 위치
+//     let scrPosition = window.pageYOffset + 500;
 
-    // 스크롤시 해당 section보다 현재 스크롤이 크거나 같다면
-    if (scrPosition >= sectionInfo[0]) {
-        sectionObj.classList.add('active');
-    } else {
-        sectionObj.classList.remove('active');
-    }
+//     // 스크롤시 해당 section보다 현재 스크롤이 크거나 같다면
+//     if (scrPosition >= sectionInfo[0]) {
+//         sectionObj.classList.add('active');
+//     } else {
+//         sectionObj.classList.remove('active');
+//     }
 
-});
+// });
 
 
     // guide 효과

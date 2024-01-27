@@ -544,7 +544,7 @@ class CommonLogicMixin:
                     # 'warning': None,
                     'retry_login': login_infos.retry_login,
                     'block_count': login_infos.block_count,
-                    'has_waiting_time': None,
+                    # 'has_waiting_time': False,
                     # 'reservation': reservations,
                     # 'Store_times' : data
                 }
@@ -552,15 +552,34 @@ class CommonLogicMixin:
                 if now - login_infos.last_login_date < timedelta(minutes=1):
                     if login_infos.block_count >= self.MAX_BLOCK_COUNT:
                         context['warning'] = "비밀번호 재시도 횟수를 초과하였습니다. 업체에 문의해주세요."
+                        context['has_waiting_time'] = False
                         print("콘텍스트 출력2 ", context)
                     else:
                         context['warning'] = "로그인 시도를 너무 많이 하셨습니다. 잠시 후에 다시 시도해주세요."
+                        context['has_waiting_time'] = True
                         print("콘텍스트 출력3 ", context)
                 elif login_infos.block_count < self.MAX_BLOCK_COUNT:
                     login_infos.retry_login = 5
+                    # 추가추가추가 - (5-1=4)부터 시작
+                    login_infos.retry_login -= 1
                     login_infos.is_block = 'N'
-                    login_infos.block_count += 1
+                    # 얘없애도되나
+                    # login_infos.block_count += 1
                     login_infos.save()
+                    # 에러뜨는부분
+                    # context['warning'] = "비밀번호가 일치하지 않습니다."
+                    # context['has_waiting_time'] = False
+
+                    
+                    context = {
+                        # 'remaining_time_in_seconds': remaining_time_in_seconds,
+                        'warning': "비밀번호가 일치하지 않습니다.",
+                        'retry_login': login_infos.retry_login,
+                        'block_count': login_infos.block_count,
+                        'has_waiting_time': False,
+                    }
+                    print("이거봐", context)
+
                 else:
                     context['warning'] = "비밀번호 재시도 횟수를 초과하였습니다."
                     context['has_waiting_time'] = False
@@ -568,38 +587,57 @@ class CommonLogicMixin:
             
             else:
                 remaining_time_in_seconds = self.calculate_remaining_time(login_infos.last_login_date, now)
-                login_infos.retry_login -= 1
+                print("몇개 ", login_infos.retry_login)
+                if not created:  # login_infos를 첫 생성시에는 retry_login-1하지않음
+                    login_infos.retry_login -= 1
                 login_infos.last_login_date = datetime.now()
                 if login_infos.retry_login == 0:
                     login_infos.is_block = 'Y'
                     login_infos.save()
                     if login_infos.block_count >= self.MAX_BLOCK_COUNT:
                         context = {
+                            # has_waiting_time False 추가
                             'remaining_time_in_seconds': remaining_time_in_seconds,
                             'warning': "비밀번호 재시도 횟수를 초과하였습니다.",
                             'retry_login': login_infos.retry_login,
                             'block_count': login_infos.block_count,
-                            'has_waiting_time': True,
+                            # 원래 T
+                            'has_waiting_time': False,
                         }
                         print("콘텍스트 출력6 ", context)
                     else:
                         login_infos.block_count += 1
-                        context = {
-                            'remaining_time_in_seconds': remaining_time_in_seconds,
-                            'warning': "비밀번호 재시도 횟수를 초과하였습니다. 10분 후에 다시 시도해주세요.",
-                            'retry_login': login_infos.retry_login,
-                            'block_count': login_infos.block_count,
-                        }
+                        # 추가추가추가 01.27 3이아닐때만 context뜨게
+                        if login_infos.block_count != self.MAX_BLOCK_COUNT:
+                            context = {
+                                # has_waiting_time True 추가
+                                'remaining_time_in_seconds': remaining_time_in_seconds,
+                                'warning': "비밀번호 재시도 횟수를 초과하였습니다. 10분 후에 다시 시도해주세요.",
+                                'retry_login': login_infos.retry_login,
+                                'block_count': login_infos.block_count,
+                                'has_waiting_time': True,
+                            }
+                        else:
+                            context = {
+                                # 'remaining_time_in_seconds': remaining_time_in_seconds,
+                                'warning': "비밀번호 재시도 횟수를 초과하였습니다. 업체에 문의해주세요.",
+                                'retry_login': login_infos.retry_login,
+                                'block_count': login_infos.block_count,
+                                'has_waiting_time': False,
+                            }
                         print("콘텍스트 출력7 ", context)
                                 
                 login_infos.save()
-                context = {
-                    'remaining_time_in_seconds': remaining_time_in_seconds,
-                    'warning': "비밀번호가 일치하지 않습니다.",
-                    'retry_login': login_infos.retry_login,
-                    'block_count': login_infos.block_count,
-                }
-                print("콘텍스트 출력8 ", context)
+                if login_infos.retry_login != 0:
+                    print("이거")
+                    context = {
+                        'remaining_time_in_seconds': remaining_time_in_seconds,
+                        'warning': "비밀번호가 일치하지 않습니다.",
+                        'retry_login': login_infos.retry_login,
+                        'block_count': login_infos.block_count,
+                        'has_waiting_time': False,
+                    }
+                    print("콘텍스트 출력8 ", context)
 
         elif pw_checked:
                 login_infos.retry_login = 5
@@ -681,6 +719,14 @@ class InputUserNameView(CommonLogicMixin, View):
                         # context['warning'] = request.session.get('context_return')
                         # print("얘도찍어봐 ", request.session.get('context_return'))
                         # print("콘텍스트 잘들어감1? ", context)
+                        
+                        # 잠시...
+                        # submission = request.POST.get('submission', 'false') == 'true'
+                        # if submission:
+                        #     # 폼 제출 처리
+                        #     # 비밀번호 확인, retryLogin 감소 등
+                        # else:
+                        #     # 폼 제출이 아닌 경우 (새로 고침 등)
                 else:
                     request.session['pw_checked'] = False
                     context['pw_checked'] = request.session['pw_checked']
@@ -1042,8 +1088,17 @@ class FetchView(CommonLogicMixin, View):
     def get(self, request):
         context, _ = self.common_logic(request)
         print("찍어라 ", context)
-        return JsonResponse(context)
+        # return JsonResponse(context)
         
+        if 'warning' in context:
+            print("찍어라2 ", context)
+            return JsonResponse(context,safe=False)
+        else:
+            print("찍어라3 ", context)
+            # return HttpResponse()  # 빈 응답 반환
+            return JsonResponse([],safe=False)  # 빈 응답 반환
+        
+
 
     # def post(self, request):
     #     reservation = request.session.get('reservation')

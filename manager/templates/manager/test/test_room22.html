@@ -20,17 +20,18 @@
 <script>
   // const roomName = JSON.parse(document.getElementById('room-name').textContent);
   let roomName = {{ room_name_json }} ;
-  let userName = {{ username }} ;
+  let userName = "{{ username|escapejs }}";
 
   const chatSocket = new ReconnectingWebSocket(
     'ws://'
     + window.location.host
-    + '/ws/chat/'
+    + '/manager/testchat/'
     + roomName
     + '/'
   );
 
   chatSocket.onmessage = function (e) {
+    console.log("연결됐냐");
     const data = JSON.parse(e.data);
     const message = data["message"];
     const author = message["author"];

@@ -1,4 +1,5 @@
 @import url(https://fonts.googleapis.com/css?family=Montserrat);
+@import "https://fonts.googleapis.com/css?family=Material+Icons";
 
 
 html, body, div, span, applet, object, iframe,
@@ -30,7 +31,7 @@ ul {
 body {
   /* background-image: linear-gradient(to bottom right, #7A7A7A, #565656); */
   background-image: url("../img/uplecz.jpg");
-}
+} 
 
 #wrap {
   width: 100%;
@@ -656,6 +657,48 @@ svg {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+
+.content2 .con2_nav .notification-icon {
+  position: relative;
+  width:2rem;
+  height:auto;
+  display:flex;
+  justify-content: center;
+  /* margin-right: 1em; */
+  border-radius: 5px;
+  background: #ecf0f1;
+}
+
+.content2 .con2_nav .notification-icon i {
+  background-image:linear-gradient(300deg, #acccea, #6495ed);
+  background-clip: text;
+  /* -webkit-background-clip: text; */
+  -webkit-text-fill-color: transparent;
+}
+
+.content2 .con2_nav .notification-icon .num-count{
+  /* visibility:hidden; */
+  position: absolute;
+  user-select: none;
+  cursor: default;
+  font-size: 0.6rem;
+  background: #e74c3c;
+  width: 1.2rem;
+  height: 1.2rem;
+  color: #ecf0f1;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  top: -0.33rem;
+  right: -0.66rem;
+  box-sizing: border-box;
+}
+
+.num-count-start {
+  visibility:hidden;
 }
 
 .content2 .con2_nav a .nav_button2 {

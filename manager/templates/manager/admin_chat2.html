@@ -1,0 +1,344 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'manager/css/admin_chat2.css' %}?after">
+  <title>TEST ADMIN CHAT2</title>
+</head>
+
+
+<body>
+  <div id="root">
+    <div class="container">
+      <div class="app">
+        <section class="section" id="navigation">
+          <nav class="nav">
+           <!-- <div class="logo">
+              <img src="https://cdn2.iconfinder.com/data/icons/ios7-inspired-mac-icon-set/1024/messages_5122x.png" alt="logo" class="logo-img" />
+            </div> -->
+
+            <div class="main-nav">
+              <a class="nav-icon" href="#"><i class="fa-solid fa-pen"></i></a>
+              <a class="nav-icon" href="#"><i class="fa-regular fa-user"></i></a>
+              <a class="nav-icon" href="#" style="color: var(--blue--);"><i class="fa-regular fa-message"></i><span class="circle">4</span></a>
+              <a class="nav-icon" href="#"><i class="fa-regular fa-bell"></i></a>
+              <a class="nav-icon" href="#"><i class="fa-regular fa-calendar"></i></a>
+              <a class="nav-icon" href="#"><i class="fa-regular fa-moon"></i></a>
+              <a class="nav-icon" href="#"><i class="fa-solid fa-gear"></i></a>
+            </div>
+
+            <div class="other-nav">
+              <a class="nav-icon" href="#"> 
+                <div class="profile-pic">
+                  <img src="https://images.unsplash.com/photo-1612214070475-1e73f478188c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1160&q=80" alt="contact picture" class="contact-pic" />
+                  <span class="online"></span>
+                </div>
+              </a>
+            </div>
+
+          </nav>
+        </section>
+
+        <section class="section" id="chat-list">
+          <div class="chat-list-header">
+            <div class="collapse-nav">
+              <h2 class="chats">Chats</h2>
+              <span class="collapse-nav-items"><i class="fa-solid fa-ellipsis-vertical"></i></span>
+            </div>
+            <input type="search" placeholder="search messages or user" class="search-input" />
+          </div>
+          <div class="chat-box">
+
+            <!-- <div class="chat" id="William Wright">
+              <div class="box-one">
+                <div class="profile-pic">
+                  <img src="https://images.unsplash.com/photo-1612214070475-1e73f478188c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1160&q=80" alt="contact picture" class="contact-pic" />
+                  <span class="online"></span>
+                </div>
+
+                <div class="description">
+                  <span class="name">William Wright</span>
+                  <span class="text">Hello! Yeah I'm going to meet a friend of Mine at the department...</span>
+                </div>
+              </div>
+              <div class="info">
+                <span class="time">12:45PM</span>
+                <span class="msg-count">4</span>
+              </div>
+            </div> -->
+
+
+            
+            
+
+            <!-- <div class="chat" id="Amelia Clear">
+              <div class="box-one">
+                <div class="profile-pic">
+                  <img src="https://images.unsplash.com/photo-1607367955878-c5a221d1b5c0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" alt="contact picture" class="contact-pic" />
+                  <span class="online"></span>
+                </div>
+
+                <div class="description">
+                  <span class="name">Amelia Clear</span>
+                  <span class="text">Hi! Yeah I'm going to meet a friend of Mine at the department...</span>
+                </div>
+              </div>
+
+              <div class="info">
+                <span class="time">8:00AM</span>
+
+              </div>
+            </div> -->
+
+            <!-- <div class="chat" id="Warren White">
+              <div class="box-one">
+                <div class="profile-pic">
+                  <img src="https://images.unsplash.com/photo-1519689373023-dd07c7988603?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80" alt="contact picture" class="contact-pic" />
+                  <span class="online"></span>
+                </div>
+
+                <div class="description">
+                  <span class="name">Warren White</span>
+                  <span class="text textload">
+                    <span class="typing typ1"></span>
+                    <span class="typing typ2"></span>
+                    <span class="typing typ3"></span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="info">
+                <span class="time">3:13PM</span>
+                <span class="msg-count">5</span>
+              </div>
+            </div> -->
+
+          
+            <!-- <div class="loading chat">
+              <div class="loading-pic"></div>
+              <div class="loading-box">
+                <div class="loading-name load"></div>
+                <div class="loading-descrip load"></div>
+                <div class="loading-info load"></div>
+              </div> 
+            </div>
+            <div class="loading chat">
+              <div class="loading-pic"></div>
+              <div class="loading-box">
+                <div class="loading-name load"></div>
+                <div class="loading-descrip load"></div>
+                <div class="loading-info load"></div>
+              </div> 
+            </div> -->
+
+
+          </div>
+        </section>
+
+        <!-- <section class='section hide' id='setting'>
+
+          <div class='setting-header'>
+            <span class='back-icon'><i class="fa-sharp fa-solid fa-arrow-left-long"></i></span>
+            <h2 class='s-heading'>Settings</h2>
+          </div>
+
+          <div class='setting-content'>
+
+            <div class='setting-option'>
+              <span class='setting-icon'><i class="fa-solid fa-user"></i></span>
+              <div class='setting-info'>
+                <h4 class='setting-name'>Your Profile</h4>
+                <p class='setting-descript'>Change number, about, profile picture</p>
+              </div>
+            </div>
+
+
+            <div class='setting-option'>
+              <span class='setting-icon'><i class="fa-solid fa-users"></i></span>
+              <div class='setting-info'>
+                <h4 class='setting-name'>Add Friends</h4>
+                <p class='setting-descript'>Add friends into a group chat</p>
+              </div>
+            </div>
+
+            <div class='setting-option'>
+              <span class='setting-icon'><i class="fa-solid fa-bell"></i></span>
+              <div class='setting-info'>
+                <h4 class='setting-name'>Notifications</h4>
+                <p class='setting-descript'>Message, groups & call times</p>
+              </div>
+            </div>
+
+            <div class='setting-option'>
+              <span class='setting-icon'><i class="fa-solid fa-user-group"></i></span>
+              <div class='setting-info'>
+                <h4 class='setting-name'>Chats</h4>
+                <p class='setting-descript'>Change & remove wallpaper, chat history</p>
+              </div>
+            </div>
+
+            <div class='setting-option'>
+              <span class='setting-icon'><i class="fa-solid fa-moon"></i></span>
+              <div class='setting-info'>
+                <h4 class='setting-name'>Themes</h4>
+                <p class='setting-descript'>System default</p>
+              </div>
+            </div>
+
+            <div class='setting-option'>
+              <span class='setting-icon'><i class="fa-solid fa-circle-info"></i></span>
+              <div class='setting-info'>
+                <h4 class='setting-name'>Support</h4>
+                <p class='setting-descript'>Help center, contact us</p>
+              </div>
+            </div>
+
+            <div class='setting-option'>
+              <span class='setting-icon'><i class="fa-solid fa-lock"></i></span>
+              <div class='setting-info'>
+                <h4 class='setting-name'>Privacy</h4>
+                <p class='setting-descript'>Block contacts, disappearing messages</p>
+              </div>
+            </div>
+
+            <div class='setting-option'>
+              <span class='setting-icon'><i class="fa-solid fa-globe"></i></span>
+              <div class='setting-info'>
+                <h4 class='setting-name'>Languages</h4>
+                <p class='setting-descript'>English (phone's default)</p>
+              </div>
+            </div>
+
+          </div>
+        </section> -->
+
+        <section class="section hidden" id="chat-room">
+          <div id="chat-msg-room">
+
+            <div class="chat-room-header">
+              <div class="box-one" style="width: 60%">
+                <span class="go-back-icon"><i class="fa-sharp fa-solid fa-arrow-left-long"></i></span>
+                <div class="profile-pic">
+                  <img src="https://images.unsplash.com/photo-1612214070475-1e73f478188c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1160&q=80" alt="contact picture" class="contact-pic small-contact-pic" />
+                </div>
+                <div class="description">
+                  <span class="name">William Wright</span>
+                </div>
+              </div>
+              <div class="user-options">
+                <span href="#" class="opt-one opt"><i class="fa-solid fa-video"></i></span>
+                <span href="#" class="opt-two opt"><i class="fa-solid fa-phone"></i></span>
+                <span class="other-opts opt"><i class="fa-solid fa-ellipsis-vertical"></i></span>
+              </div>
+            </div>  
+
+            <div id="messages-room">
+              <div class="contact-msg msg-box">
+                <p class="contact msg">
+                  Hey, Marshall! How are you? Can you please change the
+                  color theme of the website to pink and purple?
+                </p>
+                <p class="contact msg">Send me the files please.</p>
+                <span class="msg-time">12:45PM</span>
+              </div>
+
+              <div class="user-msg msg-box">
+                <p class="user msg">
+                  Hey, Marshall! How are you? Can you please change the
+                  color theme of the website to pink and purple?
+                </p>
+                <p class="user msg"><i class="fa-solid fa-arrow-down"></i> filename.json</p>
+                <span class="msg-time" style="margin-right: 10px;">12:45PM</span>
+              </div>
+
+              <div class="contact-msg msg-box">
+                <p class="contact msg">
+                  Hey, Marshall! How are you? Can you please change the
+                  color theme of the website to pink and purple?
+                </p>
+                <span class="msg-time">12:45PM</span>
+              </div>
+
+              <div class="user-msg msg-box">
+                <p class="user msg" id="img-msg">
+                  <img src="https://offsetcode.com/themes/messenger/2.2.0/assets/img/chat/1.jpg" alt="image" class="sent-img" />
+                  <img src="https://offsetcode.com/themes/messenger/2.2.0/assets/img/chat/2.jpg" alt="image" class="sent-img" />
+                </p>
+                <span class="msg-time" style="margin-right: 10px;">12:45PM</span>
+              </div>
+
+              <div class="contact-msg msg-box">
+                <p class="contact msg">
+                  Hey, Marshall! How are you? Can you please change the
+                  color theme of the website to pink and purple?
+                </p>
+                <span class="msg-time">12:45PM</span>
+              </div>
+
+              <div class="user-msg msg-box">
+                <p class="user msg">
+                  Hey, Marshall! How are you? Can you please change the
+                  color theme of the website to pink and purple?
+                </p>
+                <span class="msg-time" style="margin-right: 10px;">12:45PM</span>
+              </div>
+
+              <div class="contact-msg msg-box">
+                <p class="contact msg">
+                  Hey, Marshall! How are you? Can you please change the
+                  color theme of the website to pink and purple?
+                </p>
+                <p class="contact msg">Send me the files please.</p>
+                <span class="msg-time">12:45PM</span>
+              </div>
+
+              <div class="user-msg msg-box">
+                <p class="user msg">
+                  Hey, Marshall! How are you? Can you please change the
+                  color theme of the website to pink and purple?
+                </p>
+                <span class="msg-time" style="margin-right: 10px;">12:45PM</span>
+              </div>
+
+              <div class="contact-msg msg-box">
+                <p class="contact msg">
+                  Hey, Marshall! How are you? Can you please change the
+                  color theme of the website to pink and purple?
+                </p>
+                <span class="msg-time">12:45PM</span>
+              </div>
+
+              <div class="user-msg msg-box">
+                <p class="user msg">
+                  Hey, Marshall! How are you? Can you please change the
+                  color theme of the website to pink and purple?
+                </p>
+                <span class="msg-time" style="margin-right: 10px;">12:45PM</span>
+              </div>
+
+              <div class="contact-msg msg-box">
+                <p class="contact msg">
+                  Alright then.
+                </p>
+                <span class="msg-time">12:45PM</span>
+              </div>
+
+            </div>
+
+            <div class="chat-input-box">
+              <input type="text" class="text-input" placeholder="Type your message..." />
+              <button class="send" type="submit"><i class="fa-sharp fa-solid fa-paper-plane"></i></button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
+
+{% include "manager/js/admin_chat2_js.html" %}

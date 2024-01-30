@@ -20,11 +20,7 @@ from django.views import View
 from django.core.paginator import Paginator
 from django.utils.safestring import mark_safe
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from . import models
-
-
-ADMIN_USERS = { "admin" : True,}
 
 # Create your views here.
 def store_list(request):
@@ -50,11 +46,9 @@ class ManagerStoreList(LoginRequiredMixin, ListView, LoginView, FormView):
 
         current_user = self.request.user
         context["username"] = current_user.username if current_user.is_authenticated else None
-        for admin_user in ADMIN_USERS.keys():
-            context["adminusers"] = admin_user
 
         context['manager'] = self.get_queryset()
-        # print(context['manager'])
+        print(context['manager'])
          # QuerySet to list of dicts.
         manager_list_dicts = [model_to_dict(manager) for manager in self.get_queryset()]
         
@@ -161,119 +155,62 @@ class StoreTimesView(View):
 #         except Message.DoesNotExist:
 #             return JsonResponse({'error': 'Chatroom not found'}, status=404)
 
-class UserInfo(View):
-    def get(self, request):
-        current_user = request.user
-        if not current_user.is_authenticated:
-            return JsonResponse([], safe=False)
-        usernames = list(User.objects.filter(is_superuser=False).values_list('username', flat=True))
-        response = {
-            "user_names" : usernames,
-            "current_user" : current_user.username,
-        }
-        return JsonResponse(response, safe=False)
-
 class ChatRoom(View):
     def get(self, request):
+        # print('request.GET:', request.GET)
         # 인증된 사용자인지 확인
         current_user = request.user
-        print("유저타입",type(current_user))
         if not current_user.is_authenticated:
             return JsonResponse([], safe=False)
 
         # 쿼리 파라미터에서 chatroom 값을 가져옴
-        # chatroom_name = request.GET.get('chatroom', None)
+        chatroom_name = request.GET.get('chatroom', None)
+        # print("챗룸네임",chatroom_name)
 
-        # # chatroom 값이 제공되었다면 해당 채팅방만 필터링, 그렇지 않다면 모든 채팅방 반환
-        # if chatroom_name:
-        #     chatrooms = models.Message.objects.filter(chatroom=chatroom_name)
-        #     print("트라이",chatrooms)
-        # else:
-        #     chatrooms = models.Message.latest_messages()
-        #     print("엘스",chatrooms)
+        # chatroom 값이 제공되었다면 해당 채팅방만 필터링, 그렇지 않다면 모든 채팅방 반환
+        if chatroom_name:
+            # chatrooms = models.Message.objects.filter(chatroom=chatroom_name)
+            chatrooms = models.Message.latest_messages.filter(chatroom=chatroom_name)
+            # print(chatrooms)
+        else:
+            # chatrooms = models.Message.objects.all()
+            chatrooms = models.Message.latest_messages()
+            # print("엘스",chatrooms)
 
         # 채팅방 정보를 JSON 형식으로 변환
+        # data = [model_to_dict(chatroom) for chatroom in chatrooms]
+        
+        # for chatroom, chatroom_dict in zip(chatrooms, data):
+        #     formatted_time = chatroom["recent_timestamp"].timestamp.strftime('%Y-%m-%d %H:%M')
+        #     chatroom_dict["timestamp"] = formatted_time
         data = []
-        chatrooms = models.Message.latest_messages()
-        
-        
         for chatroom in chatrooms:
-            # print(chatroom)
             formatted_time = chatroom["recent_timestamp"].strftime('%Y-%m-%d %H:%M')
-            unread_count = models.Message.unread_messages(chatroom["chatroom"])  # 채팅방별로 읽지 않은 메시지의 수를 구함
             data.append({
                 "chatroom" : chatroom["chatroom"],
-                "recent_content" : chatroom["recent_content"],
                 "timestamp" : formatted_time,
-                "unread_messages" : unread_count,
-                
             })
 
         return JsonResponse(data, safe=False)
-        
+
 class EnterChatRoom(View):
-
-    def get_queryset(self):
-        # 원하는 쿼리셋을 반환하는 로직을 여기에 작성하세요.
-        return self.model.objects.all()
-
-    def get_messages(self, chatroom_name, page_number):
-        # 원하는 메시지를 반환하는 로직을 여기에 작성하세요.
-        return models.Message.all_messages(chatroom_name, page_number)
-
-    
-
-
-    # print("이거 찍히냐",get_messages())
-    def get(self, request, chatroom_name,):
+    def get(self, request, chatroom_name):
         # 인증된 사용자인지 확인
         current_user = request.user
         if not current_user.is_authenticated:
             return JsonResponse([], safe=False)
-        page_number = int(request.GET.get("page_number", 1))
-        messages = self.get_messages(chatroom_name, page_number)
-        # print(messages)
+
         # 해당 채팅방의 모든 메시지를 가져옴
-        # messages = models.Message.objects.filter(chatroom=chatroom_name)
-        # print("메시지 가져와 지냐", messages)
+        messages = models.Message.objects.filter(chatroom=chatroom_name)
+        print("메시지 가져와 지냐", messages)
         # 메시지 정보를 JSON 형식으로 변환
         data = [model_to_dict(message) for message in messages]
-        # print("겟 메세지",data)
         for message, message_dict in zip(messages, data):
             formatted_time = message.timestamp.strftime('%Y-%m-%d %H:%M')
             message_dict["timestamp"] = formatted_time
 
-        unread_count = models.Message.unread_messages(chatroom_name)
-        # message_dict["unread_messages"] = unread_count
-        response = {
-            "messages" : data,
-            "unread_messages" : unread_count,
-        }
-
-        return JsonResponse(response, safe=False)
+        return JsonResponse(data, safe=False)
     
-    # def get_context_data(self, **kwargs):
-    #     context = {}
-    #     current_user = self.request.user
-    #     context["username"] = current_user.username if current_user.is_authenticated else None
-    #     # for admin_user in ADMIN_USERS.keys():
-    #     #     context["adminusers"] = admin_user
-
-    #     context["adminusers"] = list(ADMIN_USERS.keys())
-
-    #     context['manager'] = self.get_queryset()
-
-    #     # QuerySet to list of dicts.
-    #     manager_list_dicts = [model_to_dict(manager) for manager in context['manager']]
-        
-    #     # List of dicts to JSON string.
-    #     context['store_json'] = json.dumps(manager_list_dicts, cls=DjangoJSONEncoder)
-    #     if current_user.is_authenticated:
-    #         rsvs = rsv.Reservation_user.objects.all().order_by("-reservation_date")
-    #         messages = self.get_messages(current_user.username)
-    #         context["rsvs"] = rsvs
-    #         context["messages"] = messages
-    #     return JsonResponse(context, safe=False)
 
 # class ManagerStoreList(LoginRequiredMixin, ListView):
 #     model = rsv.Store
@@ -386,46 +323,4 @@ def admin_chat(request):
         "username" : request.user.username,
     }
     return render(request, "manager/test/admin_chat.html", context)
-    # return render(request, "manager/admin_chat2.html", context)
-
-def admin_chat2(request):
-    context = {
-        "username" : request.user.username,
-    }
-    # return render(request, "manager/test/admin_chat.html", context)
-    return render(request, "manager/admin_chat2.html", context)
-
-class AdminChat2(ListView):
-    model = models.Message
-    template_name = "manager/admin_chat2.html"
-    def get_queryset(self):
-        # 원하는 쿼리셋을 반환하는 로직을 여기에 작성하세요.
-        return self.model.objects.all()
-
-    def get_messages(self, username):
-        # 원하는 메시지를 반환하는 로직을 여기에 작성하세요.
-        return models.Message.all_messages(username)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        current_user = self.request.user
-        context["username"] = current_user.username if current_user.is_authenticated else None
-        for admin_user in ADMIN_USERS.keys():
-            context["adminusers"] = admin_user
-
-        context['manager'] = self.get_queryset()
-
-        # QuerySet to list of dicts.
-        manager_list_dicts = [model_to_dict(manager) for manager in context['manager']]
-        
-        # List of dicts to JSON string.
-        context['store_json'] = json.dumps(manager_list_dicts, cls=DjangoJSONEncoder)
-        if current_user.is_authenticated:
-            rsvs = rsv.Reservation_user.objects.all().order_by("-reservation_date")
-            messages = self.get_messages(current_user.username)
-            context["rsvs"] = rsvs
-            context["messages"] = messages
-        return context
-    
-     
 

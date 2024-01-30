@@ -18,7 +18,16 @@ urlpatterns = [
   path("testchat/", views.test_chat, name="test_chat"),
   path("testchat/<str:room_name>/", views.test_room, name="test_room"),
   path("customer_service_center/inquiry/", views.admin_chat, name="admin_chat"),
+  # path("admin_chat2/", views.admin_chat2, name="admin_chat2"),
+  path("admin_chat2/", views.AdminChat2.as_view(), name="admin_chat2"),
 
   # ajax
   path('api/store-times/', views.StoreTimesView.as_view(), name='store_times'),
+  path("customer_service_center/inquiry/api/chat-room/", views.ChatRoom.as_view(), name="chat_room"),
+  path("admin_chat2/api/chat-room/", views.ChatRoom.as_view(), name="chat_room2"),
+  path('customer_service_center/inquiry/api/chat-room/<str:chatroom_name>/', views.EnterChatRoom.as_view(), name='enter_chatroom'),
+  # path("admin_chat2/api/chat-room/<str:chatroom_name>/", views.EnterChatRoom.as_view(), name="enter_chatroom2"),
+  path("admin_chat2/api/chat-room/<str:chatroom_name>/messages", views.EnterChatRoom.as_view(), name="enter_chatroom2"),
+  # path("admin_chat2/api/chat-room/<int:page_number>/", views.EnterChatRoom.as_view(), name="enter_chatroom2"),
+  path("admin_chat2/api/chat-room/user_info", views.UserInfo.as_view(), name="user_info"),
 ]

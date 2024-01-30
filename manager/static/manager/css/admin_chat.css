@@ -6,6 +6,11 @@
   box-sizing: border-box;
 }
 
+ol,
+ul {
+  list-style: none;
+}
+
 :root {
   --white: #fff;
   --black: #000;
@@ -300,7 +305,7 @@ body {
   border-radius: 5px;
 }
 
-.container .chat-message-box .write input {
+.container .chat-message-box .write .chat-form-input {
   font-size: 16px;
   float: left;
   width: 347px;
@@ -314,7 +319,7 @@ body {
   font-weight: 400;
 }
 
-.container .chat-message-box .write .write-link.attach:before {
+/* .container .chat-message-box .write .write-link.attach:before {
   display: inline-block;
   float: left;
   width: 20px;
@@ -323,9 +328,9 @@ body {
   background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/382994/attachment.png");
   background-repeat: no-repeat;
   background-position: center;
-}
+} */
 
-.container .chat-message-box .write .write-link.smiley:before {
+/* .container .chat-message-box .write .write-link.smiley:before {
   display: inline-block;
   float: left;
   width: 20px;
@@ -334,15 +339,13 @@ body {
   background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/382994/smiley.png");
   background-repeat: no-repeat;
   background-position: center;
-}
+} */
 
-.container .chat-message-box .write .write-link.send:before {
-  display: inline-block;
-  float: left;
-  width: 20px;
+.container .chat-message-box .write .chat-form-button {
+  width: 40px;
   height: 42px;
-  margin-left: 11px;
-  content: "";
+  display: flex;
+  justify-content: right;
   background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/382994/send.png");
   background-repeat: no-repeat;
   background-position: center;

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "reservation",
     "manager",
+    "rest_framework",
 ]
 
 MIDDLEWARE = [
@@ -151,5 +152,8 @@ CHANNEL_LAYERS = {
         "CONFIG": {
             "hosts": [("127.0.0.1", 6379)],
         },
+        "MIDDLEWEAR" : [
+            "channels.middleware.AuthMiddlewareStack"
+        ],
     },
 }

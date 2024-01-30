@@ -5,7 +5,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="{% static 'manager/css/manager_index.css' %}">
+  <link rel="stylesheet" href="{% static 'manager/css/manager_index.css' %}?after">
   <title>Manager</title>
 </head>
 
@@ -152,6 +152,11 @@
         <button class="nav_button1" type="button">
           <img src="../../static/manager/img/right-arrow (1).png" alt="접기">
         </button>
+
+        <div class="notification-icon">
+          <i class="material-icons dp48">email</i>
+          <span class="num-count"></span>
+        </div>
 
         <a href="/manager/logout">
           <button class="nav_button2" type="button">

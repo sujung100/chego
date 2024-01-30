@@ -10,6 +10,8 @@
 </head>
 
 <body>
+  
+  
   <!-- <textarea id="chat-log" cols="100" rows="20"></textarea><br>
   <input id="chat-message-input" type="text" size="100"><br>
   <input id="chat-message-submit" type="button" value="Send">
@@ -52,6 +54,15 @@
         <div id="chat-messages" class="chat-messages">
           <div class="chat-messages-content">
             <ul id="chat-log">
+              <!-- {% for message in messages %}
+                <li class="chat-message {% if message.author_id == request.user.id %}-sent{% else %}-replies{% endif %}">
+                  <div class="chat-message-text">
+                    <p>
+                      {{ message.content }}
+                    </p>
+                  </div>
+                </li>
+              {% endfor %} -->
               <li class="chat-message -replies">
                 <div class="chat-message-avatar">
                   <img src="https://cdn.pixabay.com/photo/2017/08/30/17/27/business-woman-2697954_960_720.jpg" alt=""
@@ -64,17 +75,7 @@
                 </div>
               </li>
 
-              <!-- <li class="chat-message -replies">
-                <div class="chat-message-avatar">
-                  <img src="https://cdn.pixabay.com/photo/2016/04/10/21/34/woman-1320810_960_720.jpg" alt=""
-                    class="chat-avatar -small">
-                </div>
-                <div class="chat-message-text">
-                  <p>
-                    Lorem ipsum dolor sit amet.
-                  </p>
-                </div>
-              </li> -->
+              
               <li class="chat-message -sent">
                 <div class="chat-message-text">
                   <p>
@@ -82,12 +83,7 @@
                   </p>
                 </div>
               </li>
-              <!-- <div class="chat-message -right">
-                <div class="chat-message-text"></div>
-              </div>
-              <div class="chat-message -right">
-                <div class="chat-message-text"></div>
-              </div> -->
+              
             </ul>
           </div>
         </div>
@@ -122,77 +118,9 @@
     </label>
   </div>
   <!-- {{ room_name|json_script:"room-name" }} -->
+  
 </body>
 
 </html>
 {% include "manager/test/reconnecting-websocket.html" %}
-<script>
-  // const roomName = JSON.parse(document.getElementById('room-name').textContent);
-  let roomName = {{ room_name_json }};
-  // console.log("잘 찍히냐?", roomName);
-  let userName = "{{ username|escapejs }}";
-  // userName = userName.replace(/"/g, "");
-
-  const chatSocket = new ReconnectingWebSocket(
-    'ws://'
-    + window.location.host
-    + '/manager/testchat/'
-    + roomName
-    + '/'
-  );
-
-  chatSocket.onmessage = function (e) {
-    console.log("연결 됐냐?");
-    const data = JSON.parse(e.data);
-    console.log(data);
-    const message = data["message"];
-    const author = message["author"];
-    const msgListTag = document.createElement("li");
-    const msgDiv = document.createElement("div");
-    msgDiv.className = "chat-message-text";
-    // msgListTag.className = "chat-message";
-    const pTag = document.createElement("p");
-    pTag.textContent = message.content;
-    const chatMsg = document.querySelector("#chat-messages");
-    const chatLog = document.querySelector("#chat-log");
-    const isScrolledToBottom = chatMsg.scrollHeight - chatMsg.clientHeight <= chatMsg.scrollTop + 1;
-    if (author == userName) {
-      msgListTag.className = "chat-message -sent";
-    } else {
-      msgListTag.className = "chat-message -replies";
-    }
-    // document.querySelector('#chat-log').value += (data.message + '\n');
-    msgListTag.appendChild(msgDiv);
-    msgDiv.appendChild(pTag);
-    chatLog.appendChild(msgListTag);
-
-    if (isScrolledToBottom) {
-      chatMsg.scrollTop = chatMsg.scrollHeight;
-    }
-
-  };
-
-  chatSocket.onclose = function (e) {
-    console.error('Chat socket closed unexpectedly');
-  };
-
-  document.querySelector('#chat-message-input').focus();
-  document.querySelector('#chat-message-input').onkeyup = function (e) {
-    if (e.keyCode === 13) {  // enter, return
-      document.querySelector('#chat-message-submit').click();
-    }
-  };
-
-  document.querySelector('#chat-message-submit').onclick = function (e) {
-    const messageInputDom = document.querySelector('#chat-message-input');
-    const message = messageInputDom.value;
-    if (chatSocket.readyState === WebSocket.OPEN) { // Check if WebSocket is in OPEN state
-      chatSocket.send(JSON.stringify({
-        'command': "new_message",
-        'message': message,
-        'from': userName,
-      }));
-    }
-    messageInputDom.value = '';
-  };
-</script>
+{% include "manager/js/chatroom_js.html" %}

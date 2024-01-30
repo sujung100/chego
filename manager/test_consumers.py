@@ -9,6 +9,8 @@ from django.contrib.sessions.models import Session
 
 from . import models
 
+
+
 @database_sync_to_async
 def change_session_data(session_key, data):
     session = Session.objects.get(session_key=session_key)
@@ -18,8 +20,7 @@ def change_session_data(session_key, data):
     session.save()
 
 User = get_user_model()
-ADMIN_USERS = { "admin" : True,}
-
+ALLOWED_USERS = {"user1", "user2", "user3"}
 # TEST 코드
 class ChatConsumer(WebsocketConsumer):
 
@@ -32,29 +33,27 @@ class ChatConsumer(WebsocketConsumer):
 
     def new_message(self,data):
         author = data["from"]
-        recipient_username = "admin"
-
         author = author.strip('"')
-        try:
-            author_user = User.objects.get(username=author)
-            recipient_user = User.objects.get(username=recipient_username)
-        except User.DoesNotExist:
-            users = User.objects.all()
-            for user in users:
-                print(user.username)
-            return
-
-        # if author_user.username not in ALLOWED_USERS and recipient_user.username not in ALLOWED_USERS:
+        author_user = User.objects.filter(username = author)[0]
+        # try:
+        #     author_user = User.objects.get(username=author)
+        # except User.DoesNotExist:
+        #     print(f"No user with username {author}")
+        #     print(f"Actual value of author: {author}")
+        #     users = User.objects.all()
+        #     for user in users:
+        #         print(user.username)
         #     return
 
-        message = models.Message.objects.create(author=author_user, recipient=recipient_user ,content=data["message"], chatroom=self.room_name)
+
+        message = models.Message.objects.create(author=author_user, content=data["message"], chatroom=author)
         content = {
                 "command" : "new_message",
                 "message" : self.message_to_json(message)
             }
         return self.send_chat_messages(content)
         
-
+        
         
 
     def messages_to_json(self, messages):
@@ -65,7 +64,9 @@ class ChatConsumer(WebsocketConsumer):
 
     def message_to_json(self, message):
         return {
-     
+            # "author" : models.Message.author.username,
+            # "content" : models.Message.content,
+            # "timestamp" : str(models.Message.timestamp),
             "author" : message.author.username,
             "content" : message.content,
             "timestamp" : message.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
@@ -76,28 +77,11 @@ class ChatConsumer(WebsocketConsumer):
         "new_message" : new_message,
     }
 
-
-    # async def connect(self):
-    #     self.room_name = self.scope['url_route']['kwargs']['room_name']
-    #     print("셀프룸네임",self.room_name)
-    #     self.room_group_name = f"chat_{self.room_name}"
-    #     await self.channel_layer.group_add(
-    #         self.room_group_name,
-    #         self.channel_name
-    #     )
-    #     await self.accept()
+    
     def connect(self):
-        ROOM_NAME = {}
-        current_user = self.scope["user"].username
-        
-        ROOM_NAME[current_user] = current_user
-        for admin_user in ADMIN_USERS.keys():
-            ROOM_NAME[admin_user] = admin_user
-
-        
-        self.room_name = ".".join(ROOM_NAME.values())
+        print("셀프유저", self.scope["user"])
+        self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.room_group_name = f"chat_{self.room_name}"
-        print(self.room_group_name)
 
         # Join room group
         async_to_sync(self.channel_layer.group_add)(
@@ -105,8 +89,19 @@ class ChatConsumer(WebsocketConsumer):
         )
 
         self.accept()
-        # self.send(json.dumps({"room_name": self.room_group_name}))
 
+    # 기본 connect()
+    # def connect(self):
+    #     print(self.scope["url_route"])
+    #     self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
+    #     self.room_group_name = f"chat_{self.room_name}"
+
+    #     # Join room group
+    #     async_to_sync(self.channel_layer.group_add)(
+    #         self.room_group_name, self.channel_name
+    #     )
+
+    #     self.accept()
 
     def disconnect(self, close_code):
         # Leave room group
@@ -117,6 +112,8 @@ class ChatConsumer(WebsocketConsumer):
     # Receive message from WebSocket
     def receive(self, text_data):
         data = json.loads(text_data)
+        # print("테스트 리시브",data)
+        # print("이건 뭐지",self.commands[data["command"]](self, data))
         self.commands[data["command"]](self, data)
 
     def send_chat_messages(self, message):

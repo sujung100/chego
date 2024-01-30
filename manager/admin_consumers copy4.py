@@ -11,7 +11,6 @@ from . import models
 
 User = get_user_model()
 ADMIN_USERS = { "admin" : True,}
-connected_count = 0
 # TEST 코드
 class AdminChatConsumer(AsyncWebsocketConsumer):
 
@@ -22,7 +21,7 @@ class AdminChatConsumer(AsyncWebsocketConsumer):
     async def fetch_messages(self,data):
         messages = await sync_to_async(models.Message.all_messages)()
         content = {
-            "messages" : await self.messages_to_json(messages)
+            "messages" : self.messages_to_json(messages)
         }
         await self.send_chat_messages(content)
 
@@ -37,7 +36,6 @@ class AdminChatConsumer(AsyncWebsocketConsumer):
             # "author" : latestMessage['author'],
             "content" : latestMessage["recent_content"],
             "timestamp" : latestMessage["recent_timestamp"].strftime("%Y-%m-%d %H:%M:%S"),
-            "is_read" : latestMessage["recent_is_read"],
         }
 
         return message_json
@@ -62,29 +60,25 @@ class AdminChatConsumer(AsyncWebsocketConsumer):
         latestMessage = await self.fetch_latest_message(self.room_name)
         content = {
                 "command" : "new_message",
-                "message" : await self.message_to_json(message),
+                "message" : self.message_to_json(message),
                 "lates_message" : latestMessage,
             }
         await self.send_chat_messages(content)
         
 
 
-    async def messages_to_json(self, messages):
+    def messages_to_json(self, messages):
         result = []
         for message in messages:
-            result.append(await self.message_to_json(message))
+            result.append(self.message_to_json(message))
         return result
 
-    async def message_to_json(self, message):
-        unread_count = await sync_to_async(message.unread_messages)(self.room_name)
+    def message_to_json(self, message):
         return {
-            "id" : message.id,
+     
             "author" : message.author.username,
             "content" : message.content,
             "timestamp" : message.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
-            "unread_messages" : message.is_read,
-            "chatroom" : message.chatroom,
-            "unread_count" : unread_count,
         }
         
     async def test_command(self, data):
@@ -99,7 +93,6 @@ class AdminChatConsumer(AsyncWebsocketConsumer):
         self.commands = {
             "fetch_messages" : self.fetch_messages,
             "new_message" : self.new_message,
-            # "real_time_new_message" : self.new_message,
             "test" : self.test_command,
             "message_id" : self.mark_as_read,
         }
@@ -112,6 +105,7 @@ class AdminChatConsumer(AsyncWebsocketConsumer):
 
 
 
+
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = f"chat_{self.room_name}"
@@ -119,10 +113,7 @@ class AdminChatConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
-        global connected_count
-        connected_count += 1
         await self.accept()
-        print(f'Current connections: {connected_count}')
 
 
 
@@ -132,9 +123,6 @@ class AdminChatConsumer(AsyncWebsocketConsumer):
                 self.room_group_name,
                 self.channel_name
             )
-            global connected_count
-            connected_count -= 1
-            print(f'Current connections: {connected_count}')
         else:
             print("디스커넥트에서 못찾음.")
         # # Leave room group
@@ -147,39 +135,38 @@ class AdminChatConsumer(AsyncWebsocketConsumer):
         data = json.loads(text_data)
         print("리시브 데이터임", data)
 
-        key_command = data.get("command")
-        key_message_id = data.get("message_id")
+        data_command = data.get("command")
 
-        # if key_command == ""
-
-        if key_command == "mark_as_read":
-            # if key_message_id is not None:
-            if key_message_id :
-                await self.mark_as_read(key_message_id)
+        if data_command == "mark_as_read":
+            message_id = data.get("message_id")
+            if message_id is not None:
+                message = await sync_to_async(models.Message.objects.get, thread_sensitive=True)(id=message_id)
+                await sync_to_async(message.read_message, thread_sensitive=True)()
         
         # await self.send(text_data=json.dumps({
         #     "message" : "읽었다.",
         # }))
-        elif key_command == "new_message":
-            # if key_command in self.commands:
-            await self.commands[key_command](data)
-            # self.send(text_data=json.dumps({
-            #     "message" : "메세지 왔다.",
-            # }))
-            # else:
-            #     print(f"Unknown command: {key_command}")
-        
-        elif key_command == "real_time_new_message":
-            await self.mark_as_read(key_message_id)
-
+        elif data_command == "new_message":
+            command = data.get("command")
+            if command in self.commands:
+                await self.commands[command](data)
+            else:
+                print(f"Unknown command: {command}")
 
         else:
-            print(f"Unknown command : {key_command}")
+            print(f"Unknown command : {data_command}")
+        # await self.commands[data["command"]](self, data)
 
-    async def mark_as_read(self, message_id):
-        message = await sync_to_async(models.Message.objects.get, thread_sensitive=True)(id=message_id)
-        await sync_to_async(message.read_message, thread_sensitive=True)()
-        
+
+        # Send notification to room group
+        # await self.channel_layer.group_send(
+        #     self.room_group_name,
+        #     {
+        #         'type': 'chat_message',
+        #         'message': data["message"],
+        #         'notification': 'New message!'
+        #     }
+        # )
 
     async def send_chat_messages(self, message):
 

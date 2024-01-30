@@ -10,8 +10,8 @@
 </head>
 
 <body>
-  
-  
+
+
   <!-- <textarea id="chat-log" cols="100" rows="20"></textarea><br>
   <input id="chat-message-input" type="text" size="100"><br>
   <input id="chat-message-submit" type="button" value="Send">
@@ -23,16 +23,7 @@
     <!-- chat toggle -->
     <input id="chat-widget-toggle" class="chat-widget-toggle" type="checkbox">
 
-    <!-- chat close button -->
-    <label title="close chat" for="chat-widget-toggle" class="chat-widget-button chat-close-button">
-      <svg xmlns="http://www.w3.org/2000/svg" width="64" version="1.1" height="64" viewBox="0 0 64 64"
-        enable-background="new 0 0 64 64">
-        <g>
-          <path fill="#1D1D1B"
-            d="M28.941,31.786L0.613,60.114c-0.787,0.787-0.787,2.062,0,2.849c0.393,0.394,0.909,0.59,1.424,0.59   c0.516,0,1.031-0.196,1.424-0.59l28.541-28.541l28.541,28.541c0.394,0.394,0.909,0.59,1.424,0.59c0.515,0,1.031-0.196,1.424-0.59   c0.787-0.787,0.787-2.062,0-2.849L35.064,31.786L63.41,3.438c0.787-0.787,0.787-2.062,0-2.849c-0.787-0.786-2.062-0.786-2.848,0   L32.003,29.15L3.441,0.59c-0.787-0.786-2.061-0.786-2.848,0c-0.787,0.787-0.787,2.062,0,2.849L28.941,31.786z" />
-        </g>
-      </svg>
-    </label>
+
 
     <div class="chat-box">
       <!-- chat user info     -->
@@ -54,7 +45,7 @@
         <div id="chat-messages" class="chat-messages">
           <div class="chat-messages-content">
             <ul id="chat-log">
-              {% for message in messages %}
+              <!-- {% for message in messages %}
                 <li class="chat-message {% if message.author_id == request.user.id %}-sent{% else %}-replies{% endif %}">
                   <div class="chat-message-text">
                     <p>
@@ -62,7 +53,7 @@
                     </p>
                   </div>
                 </li>
-              {% endfor %}
+              {% endfor %} -->
               <li class="chat-message -replies">
                 <div class="chat-message-avatar">
                   <img src="https://cdn.pixabay.com/photo/2017/08/30/17/27/business-woman-2697954_960_720.jpg" alt=""
@@ -75,17 +66,7 @@
                 </div>
               </li>
 
-              <!-- <li class="chat-message -replies">
-                <div class="chat-message-avatar">
-                  <img src="https://cdn.pixabay.com/photo/2016/04/10/21/34/woman-1320810_960_720.jpg" alt=""
-                    class="chat-avatar -small">
-                </div>
-                <div class="chat-message-text">
-                  <p>
-                    Lorem ipsum dolor sit amet.
-                  </p>
-                </div>
-              </li> -->
+
               <li class="chat-message -sent">
                 <div class="chat-message-text">
                   <p>
@@ -93,12 +74,7 @@
                   </p>
                 </div>
               </li>
-              <!-- <div class="chat-message -right">
-                <div class="chat-message-text"></div>
-              </div>
-              <div class="chat-message -right">
-                <div class="chat-message-text"></div>
-              </div> -->
+
             </ul>
           </div>
         </div>
@@ -131,9 +107,20 @@
         </g>
       </svg>
     </label>
+
+    <!-- chat close button -->
+    <label title="close chat" for="chat-widget-toggle" class="chat-widget-button chat-close-button">
+      <svg xmlns="http://www.w3.org/2000/svg" width="64" version="1.1" height="64" viewBox="0 0 64 64"
+        enable-background="new 0 0 64 64">
+        <g>
+          <path fill="#1D1D1B"
+            d="M28.941,31.786L0.613,60.114c-0.787,0.787-0.787,2.062,0,2.849c0.393,0.394,0.909,0.59,1.424,0.59   c0.516,0,1.031-0.196,1.424-0.59l28.541-28.541l28.541,28.541c0.394,0.394,0.909,0.59,1.424,0.59c0.515,0,1.031-0.196,1.424-0.59   c0.787-0.787,0.787-2.062,0-2.849L35.064,31.786L63.41,3.438c0.787-0.787,0.787-2.062,0-2.849c-0.787-0.786-2.062-0.786-2.848,0   L32.003,29.15L3.441,0.59c-0.787-0.786-2.061-0.786-2.848,0c-0.787,0.787-0.787,2.062,0,2.849L28.941,31.786z" />
+        </g>
+      </svg>
+    </label>
   </div>
   <!-- {{ room_name|json_script:"room-name" }} -->
-  
+
 </body>
 
 </html>

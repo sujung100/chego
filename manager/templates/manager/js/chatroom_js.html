@@ -1,16 +1,93 @@
+{% include "manager/test/reconnecting-websocket.html" %}
 <script>
   // const roomName = JSON.parse(document.getElementById('room-name').textContent);
+  let room_name_source = {}
   let userName = "{{ username|escapejs }}";
+  let adminUsers = "{{ adminusers|escapejs }}";
+  // console.log(userName);
+  // console.log(adminUsers);
+  room_name_source["user"] = userName;
+  room_name_source["admin"] = adminUsers;
+  room_name = Object.values(room_name_source).join('.');
+  // console.log("이거니?",room_name);
+  // let data = null;
+  // console.log(data);
+
+  let numCount = document.querySelector(".num-count");
+  // console.log(numCount);
+  numCount.classList.add("num-count-start");
 
   const loc = window.location;
+  let loc2 = "127.0.0.1:8000/manager/admin_chat2/"
   let weStart = "ws://";
   if (loc.protocol === "https:") {
     weStart = "wss://"
   }
-  const endpoint = weStart + loc.host + loc.pathname + loc.search;
+  // const endpoint = weStart + loc.host + loc.pathname + loc.search;
+  let endpoint = weStart + loc2 + room_name + "/";
   const chatSocket = new ReconnectingWebSocket(endpoint);
 
+  chatSocket.onopen = function (e) {
+    console.log(chatSocket.url);
+    console.log('Chat socket opened successfully');
+
+  };
+  let chatWidgetToggle = document.querySelector('#chat-widget-toggle');
+  // console.log(chatWidgetToggle);
+  let isOpen = false;
+
+  function checkChat() {
+    if (!chatWidgetToggle.checked) {
+      console.log("채팅방 닫힘");
+      return openChat();
+    }
+    else {
+      console.log("채팅방 열림");
+      return closeChat();
+    }
+  }
+
+  function openChat() {
+    isOpen = true;
+    chatSocket.addEventListener("message", handleChatEvent);
+    // chatSocket.removeEventListener("message", handleChatEvent);
+  }
+  function closeChat() {
+    isOpen = false;
+    chatSocket.removeEventListener("message", handleChatEvent);
+    // chatSocket.addEventListener("message", handleChatEvent);
+  }
+  // checkChat();
+  let eventCount = 0;
+
+  function handleChatEvent(event) {
+    numCount.classList.remove("num-count-start");
+    eventCount++;
+    const data = JSON.parse(event.data);
+    const notification = data.message;
+
+    const numCountElement = document.querySelector(".num-count");
+    numCountElement.textContent = eventCount;
+  }
+
+  chatWidgetToggle.addEventListener("change", checkChat);
+
+  // chatSocket.addEventListener("message", (event) => {
+  //   if (checkChat() === closeChat()) {
+
+  //     numCount.classList.remove("num-count-start");
+  //     eventCount++;
+  //     const data = JSON.parse(event.data);
+  //     const notification = data.message;
+      
+
+  //     const numCountElement = document.querySelector(".num-count");  // num-count 클래스를 가진 요소를 선택합니다.
+  //     numCountElement.textContent = eventCount;
+  //   }
+  // })
+
   chatSocket.onmessage = function (e) {
+    // console.log("연결 잘 됐냐", chatSocket.url);
     const data = JSON.parse(e.data);
     const message = data["message"];
     const author = message["author"];
@@ -39,9 +116,45 @@
 
   };
 
+  // chatSocket.onmessage = function (e) {
+  //   const data = JSON.parse(e.data);
+  //   console.log(data);
+
+
+
+  //   if (data.message) {
+  //     const message = data["message"];
+  //     // const author = message["author"] ? message["author"] : "Unknown";
+  //     const author = message["author"] || "Unknown";
+  //     const msgListTag = document.createElement("li");
+  //     const msgDiv = document.createElement("div");
+  //     msgDiv.className = "chat-message-text";
+  //     const pTag = document.createElement("p");
+  //     pTag.textContent = message.content;
+  //     const chatMsg = document.querySelector("#chat-messages");
+  //     const chatLog = document.querySelector("#chat-log");
+  //     const isScrolledToBottom = chatMsg.scrollHeight - chatMsg.clientHeight <= chatMsg.scrollTop + 1;
+
+  //     if (author == userName) {
+  //       msgListTag.className = "chat-message -sent";
+  //     } else {
+  //       msgListTag.className = "chat-message -replies";
+  //     }
+
+  //     msgListTag.appendChild(msgDiv);
+  //     msgDiv.appendChild(pTag);
+  //     chatLog.appendChild(msgListTag);
+
+  //     if (isScrolledToBottom) {
+  //       chatMsg.scrollTop = chatMsg.scrollHeight;
+  //     }
+  //   }
+  // };
+
   chatSocket.onclose = function (e) {
     console.error('Chat socket closed unexpectedly');
   };
+
 
   document.querySelector('#chat-message-input').focus();
   document.querySelector('#chat-message-input').onkeyup = function (e) {

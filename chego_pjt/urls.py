@@ -29,4 +29,7 @@ urlpatterns = [
     path('reservation/', include('reservation.urls')),
     path('manager/', include('manager.urls')),
     path('manager/',include('django.contrib.auth.urls')),
+
+    # REST 프레임워크
+    path("api-auth/", include("rest_framework.urls")),
 ]

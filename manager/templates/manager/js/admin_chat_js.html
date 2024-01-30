@@ -1,7 +1,7 @@
 {% include "manager/test/reconnecting-websocket.html" %}
 <script>
-  document.querySelector('.chat[data-chat=person2]').classList.add('active-chat')
-  document.querySelector('.person[data-chat=person2]').classList.add('active')
+  // document.querySelector('.chat[data-chat=person2]').classList.add('active-chat')
+  // document.querySelector('.person[data-chat=person2]').classList.add('active')
 
   // console.log(document.querySelector('.chat[data-chat=person2]').classList);  
 
@@ -9,13 +9,13 @@
     list: document.querySelector('ul.people'),
     all: document.querySelectorAll('.user-box .person'),
     name: ""
-  },
-    chat = {
-      container: document.querySelector('.container .chat-message-box'),
-      current: null,
-      person: null,
-      name: document.querySelector('.container .chat-message-box .chat-header .name')
-    }
+  }
+  let chat = {
+    container: document.querySelector('.container .chat-message-box'),
+    current: null,
+    person: null,
+    name: document.querySelector('.container .chat-message-box .chat-header .name')
+  }
 
   friends.all.forEach(s => {
     s.addEventListener('click', () => {
@@ -35,6 +35,7 @@
   }
 
   let userName = "{{ username|escapejs }}";
+  // console.log(userName);
 
   const loc = window.location;
   let weStart = "ws://";
@@ -42,49 +43,190 @@
     weStart = "wss://"
   }
   const endpoint = weStart + loc.host + loc.pathname + loc.search;
-  const chatSocket = new ReconnectingWebSocket(endpoint);
+  console.log("엔드포인트", endpoint);
+  let chatSocket = new ReconnectingWebSocket(endpoint);
 
-  chatSocket.onmessage = function (e) {
-    const data = JSON.parse(e.data);
-    const message = data["message"];
-    const author = message["author"];
-    const msgListTag = document.createElement("li");
-    const msgDiv = document.createElement("div");
-    msgDiv.className = "chat-message-text";
-    // msgListTag.className = "chat-message";
-    const pTag = document.createElement("p");
-    pTag.textContent = message.content;
-    const chatMsg = document.querySelector("#chat-messages");
-    const chatLog = document.querySelector("#chat-log");
-    const isScrolledToBottom = chatMsg.scrollHeight - chatMsg.clientHeight <= chatMsg.scrollTop + 1;
-    if (author == userName) {
-      msgListTag.className = "chat-message -sent";
-    } else {
-      msgListTag.className = "chat-message -replies";
+  // chatSocket.onopen = function (e) {
+  //   console.log('홈 웹소켓 접속');
+  //   console.log('Chat socket opened successfully');
+  //   // chatSocket.send(JSON.stringify({
+  //   //   'message': 'Hello, server!',
+  //   //   'command': "test",
+  //   // }));
+  // };
+
+  // chatSocket.onmessage = function (e) {
+  //   console.log("onmessage called");
+  //   const data = JSON.parse(e.data);
+  //   console.log("data parsed", data);
+  //   const message = data["message"];
+  //   console.log("message extracted", message);
+  //   // const author = message["author"];
+  //   // console.log("author extracted", author);
+  //   const chatUl = document.getElementById("chat-log");
+  //   // console.log("chatUserList found", chatUserList);
+  //   const chat = document.createElement("li");
+  //   // console.log("chatUserListItem created", chatUserListItem);
+  //   chat.className = "newchat";
+  //   chatUl.appendChild(chat);
+  //   // console.log("chatUserListItem appended");
+  // };
+
+  // chatSocket.onclose = function (e) {
+  //   console.error('홈 웹소켓 접속이 끊어짐');
+  //   console.error('Chat socket closed unexpectedly');
+  // };
+
+  // 채팅 목록 조회
+  async function fetchChatRooms() {
+    const response = await fetch("api/chat-room/");  // 채팅방 목록을 반환하는 URL로 수정해주세요.
+    const chatrooms = await response.json();
+    // console.log(chatrooms);
+
+    // chatrooms.forEach(chatroom => {
+    //   chatroom_sender.push(chatroom.chatroom.split("."));
+    // });
+    const chatroomList = document.querySelector("#chat-list");
+    // chatroomList.innerHTML = "";
+    for (let chatroom of chatrooms) {
+      let chatroom_sender = [];
+      chatroom_sender.push(chatroom.chatroom.split("."));
+      // console.log("챗룸센더",chatroom_sender);
+      let person = document.createElement("li");
+      person.dataset.crm = chatroom.chatroom;
+      person.className = "person";
+      let personImg = document.createElement("img");
+      personImg.src = "";
+      personImg.alt = "Image";
+      let personName = document.createElement("span");
+      personName.className = "name";
+      personName.textContent = chatroom_sender[0][0];
+      let personLastMessageTime = document.createElement("span");
+      personLastMessageTime.className = "time";
+      personLastMessageTime.textContent = chatroom.timestamp;
+      let personPreview = document.createElement("span");
+      personPreview.className = "preview";
+      personPreview.textContent = chatroom.recent_content;
+      chatroomList.appendChild(person);
+      person.appendChild(personImg);
+      person.appendChild(personName);
+      person.appendChild(personLastMessageTime);
+      person.appendChild(personPreview);
+
+      person.addEventListener('click', function () {  // 클릭 이벤트 리스너 추가
+        // console.log();
+        const chatName = this.querySelector(".name").textContent;
+        const headerChatName = document.querySelector("#chat-name");
+        headerChatName.textContent = chatName;
+        let roomName = this.dataset.crm;
+
+        // if (userName ==="admin") {
+        //   let className = this.className.split(" ");
+        // }
+        enterChatRoom(roomName);  // 채팅방 접속
+
+        // let urlParts = window.location.href.split("/");
+        // urlParts.pop();
+        // urlParts.push(roomName);
+        // let newUrl = urlParts.join("/");
+        // // let newUrl = window.location.href + roomName;
+        // window.history.pushState({}, null, newUrl);
+      });
     }
-    // document.querySelector('#chat-log').value += (data.message + '\n');
-    msgListTag.appendChild(msgDiv);
-    msgDiv.appendChild(pTag);
-    chatLog.appendChild(msgListTag);
 
-    if (isScrolledToBottom) {
-      chatMsg.scrollTop = chatMsg.scrollHeight;
+
+    // 채팅방 목록을 화면에 표시하는 코드를 작성해주세요.
+  }
+
+  // 채팅방 접속
+  async function enterChatRoom(chatroom) {
+    const response = await fetch(`api/chat-room/${chatroom}`);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-  };
+    const messages = await response.json();
+    console.log(messages);
+    // 채팅 메시지를 화면에 표시하는 코드를 작성해주세요.
+    const chatBox = document.querySelector("#chat-message-box");
+    let chats = document.querySelectorAll(".chat");
 
-  chatSocket.onclose = function (e) {
-    console.error('Chat socket closed unexpectedly');
-  };
 
-  document.querySelector('#chat-message-input').focus();
-  document.querySelector('#chat-message-input').onkeyup = function (e) {
-    if (e.keyCode === 13) {  // enter, return
-      document.querySelector('#chat-message-submit').click();
+    chats.forEach(chat => {
+      chat.dataset.crm = chatroom
+      if (chat.dataset.crm === chatroom) {
+        chat.textContent = "";
+      }
+    });
+
+    const newChat = document.createElement("ul");
+    newChat.id = "chat-log";
+    // newChat.textContent = "왜 안되냐";
+    chatBox.append(newChat);
+
+    // 이전 웹소켓 연결이 있으면 닫기
+    if (chatSocket) {
+      chatSocket.close();
     }
-  };
 
-  document.querySelector('#chat-message-submit').onclick = function (e) {
+    // 새로운 웹소켓 연결 생성
+    const loc = window.location;
+    let wsStart = "ws://";
+    if (loc.protocol === "https:") {
+      wsStart = "wss://"
+    }
+    const endpoint = weStart + loc.host + loc.pathname + loc.search + chatroom + "/";
+    // const endpoint = weStart + loc.host + loc.pathname + loc.search;
+    chatSocket = new ReconnectingWebSocket(endpoint);
+    console.log(chatSocket.url);
+    // 웹소켓 이벤트 핸들러 설정
+    chatSocket.onopen = function (e) {
+      console.log(chatSocket.url);
+      console.log('Chat socket opened successfully');
+      // chatSocket.send(JSON.stringify({
+      //   'message': 'Hello, server!',
+      //   'command': "test",
+      // }));
+    };
+
+    chatSocket.onmessage = function (e) {
+      // console.log("onmessage called");
+      const data = JSON.parse(e.data);
+      // console.log("data parsed", data);
+      const message = data["message"];
+      console.log(message);
+      // console.log("message extracted", message);
+      // const author = message["author"];
+      // console.log("author extracted", author);
+      const chatUl = document.getElementById("conversation");
+      // console.log("chatUL found", chatUl);
+      const chat = document.createElement("li");
+      // console.log("chatUserListItem created", chat);
+      chat.textContent = message.content;
+      chat.className = "newchat";
+      chatUl.appendChild(chat);
+      // console.log("chatUserListItem appended");
+    };
+
+    chatSocket.onclose = function (e) {
+      console.error(chatSocket.url);
+      console.error('Chat socket closed unexpectedly');
+    };
+
+    MessageSendShortcut();
+  }
+
+  // 초기화
+  function ChatInit() {
+    fetchChatRooms();
+
+    // 채팅방에 접속하는 버튼의 클릭 이벤트에 enterChatRoom 함수를 연결하는 코드를 작성해주세요.
+  }
+  fetchChatRooms();
+  // ChatInit();
+
+  function SendMessage() {
     const messageInputDom = document.querySelector('#chat-message-input');
     const message = messageInputDom.value;
     if (chatSocket.readyState === WebSocket.OPEN) { // Check if WebSocket is in OPEN state
@@ -95,5 +237,34 @@
       }));
     }
     messageInputDom.value = '';
-  };
+  }
+
+  function MessageSendShortcut() {
+
+    document.querySelector('#chat-message-input').focus();
+    document.querySelector('#chat-message-input').onkeyup = function (e) {
+      if (e.keyCode === 13) {  // enter, return
+        e.preventDefault();
+        // document.querySelector('#chat-message-submit').click();
+        SendMessage();
+      }
+    };
+    document.querySelector('#chat-message-submit').onclick = function (e) {
+      SendMessage();
+    };
+
+    // document.querySelector('#chat-message-submit').onclick = function (e) {
+    //   const messageInputDom = document.querySelector('#chat-message-input');
+    //   const message = messageInputDom.value;
+    //   if (chatSocket.readyState === WebSocket.OPEN) { // Check if WebSocket is in OPEN state
+    //     chatSocket.send(JSON.stringify({
+    //       'command': "new_message",
+    //       'message': message,
+    //       'from': userName,
+    //     }));
+    //   }
+    //   messageInputDom.value = '';
+    // };
+  }
+
 </script>

@@ -42,11 +42,10 @@
 
 {% elif not form_submitted %}
   <div>
-    <form method="post" action="{% url 'input_user_pw' %}">
+    <form method="post" action="{% url 'input_user_pw' %}" class="passwordForm">
         {% csrf_token %}
         <label for="input_pw">비밀번호를 입력하세요: (네자리 숫자)</label>
         <input type="password" id="input_pw" name="input_pw" required placeholder="0000" pattern="[0-9]+" maxlength='4'>
-        <!-- <input type="hidden" name="submission" value="true"> -->
         <input type="submit" value="Submit" name="form1">
     </form>
   </div>
@@ -55,17 +54,11 @@
 <!-- detail 합치기 -->
   <div>
     {% if not pw_checked %}
-    <!-- <div>예약있을때만 뜨는 줄-나중삭제{{ booking }}</div>
-    <div>잉{{ warning }}</div>
-    <button>뒤로가기</button>
-    <div id="retry_login"></div>
-    <p id="timer"></p> -->
     <div>
-      <form method="post" action="{% url 'input_user_pw' %}">
+      <form method="post" action="{% url 'input_user_pw' %}" class="passwordForm">
           {% csrf_token %}
           <label for="input_pw">비밀번호를 입력하세요: (네자리 숫자)</label>
           <input type="password" id="input_pw" name="input_pw" required placeholder="0000" pattern="[0-9]+" maxlength='4'>
-          <!-- <input type="hidden" name="submission" value="true"> -->
           <input type="submit" value="Submit" name="form1">
       </form>
     </div>
@@ -84,62 +77,6 @@
         return value;
       }
 
-      // // 비동기
-      // async function fetchData() {
-      //       const response = await fetch("pass/");  
-      //       const jsongogo = await response.json();
-      //       hasWaiting = yesno(jsongogo.has_waiting_time);
-      //       console.log(hasWaiting);
-      //       console.log("제이슨", jsongogo);
-
-      //       var retryLogin = jsongogo.retry_login;
-      //       var blockCount = jsongogo.block_count;
-      //       var warning = jsongogo.warning;  // 서버에서 받은 메시지
-      //       var addRemainTime = ""; // 미리 선언
-      //       console.log("워닝", warning);
-
-      //       if (warning) {
-      //         // 재시도 횟수 출력
-      //         var addmsg = "재시도 횟수: " + retryLogin + "회";
-      //         console.log("hasWaiting", hasWaiting);
-      //         console.log("jsongogo.has_waiting_time", jsongogo.has_waiting_time);
-      //         if (hasWaiting === true) {
-      //           console.log("retryLogin", retryLogin);
-      //           console.log("blockCount", blockCount);
-      //           // 남은 대기시간 출력
-      //           if (retryLogin === 0 && blockCount <= 3) {
-      //             remainingTime = jsongogo.remaining_time_in_seconds;
-      //             console.log("remainingTime", remainingTime);
-      //             var countDownDate = new Date().getTime() + remainingTime * 1000;  // 서버에서 받은 남은 시간(초)을 밀리초로 변환
-
-      //             var countdownFunction = setInterval(function() {
-      //                 var now = new Date().getTime();
-      //                 var distance = countDownDate - now;
-
-      //                 var minutes = Math.floor(distance / (1000 * 60));
-      //                 var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-      //                 addRemainTime = minutes + "분 " + seconds + "초 ";
-
-      //                 if (distance < 0) {
-      //                     clearInterval(countdownFunction);
-      //                     addRemainTime = "0분 0초";
-      //                 }
-      //                 return addRemainTime;
-      //             }, 1000);
-      //           }
-      //           addmsg += addRemainTime;
-      //           // var addmsg = "재시도 횟수: " + retryLogin + "회" + addRemainTime;
-      //         }
-      //         alert(warning + addmsg);
-      //         // 확인누른후 페이지리로드
-      //         // window.location.reload();
-      //         //  현재 페이지의 URL로 이동, 새로고침과 비슷하지만 폼 데이터를 유지X
-      //         // window.location.href = window.location.pathname;
-      //         console.log(addmsg);
-      //       }
-      //     }
-
 
       // 비동기 수정
       async function fetchData() {
@@ -157,12 +94,24 @@
             var addRemainTime = ""; // 미리 선언
             console.log("워닝", warning);
 
+            // blockCount와 retryLogin 값을 체크하여 폼 제출을 막는 로직
+            var passwordForms = document.getElementsByClassName('passwordForm');
+            console.log("passwordForms", passwordForms)
+            // 조건이 잘못되서 그런가..?
+            console.log("blockCount", blockCount)
+            console.log("retryLogin", retryLogin)
 
+            // 재시도횟수 초과시 폼 전송x
+            for (var i = 0; i < passwordForms.length; i++) {
+                passwordForms[i].addEventListener('submit', function(e) {
+                    if (blockCount >= 3 && retryLogin === 0) {
+                        e.preventDefault();
+                        alert("비밀번호 재시도 횟수를 초과하여 잠금되었습니다. 업체에 문의해주세요.");
+                    }
+                });
+            }
             // 수정수정
             if (warning) {
-              // 재시도 횟수 출력
-              // var addmsg = "재시도 횟수: " + retryLogin + "회";
-              // var addmsg = "";
               var addmsg = warning + "\n\n재시도 횟수: " + retryLogin + "회\n\n";
 
               console.log("hasWaiting", hasWaiting);
@@ -177,7 +126,6 @@
                   var countDownDate = new Date().getTime() + remainingTime * 1000;  // 서버에서 받은 남은 시간(초)을 밀리초로 변환
                   console.log("countDownDate", countDownDate)
 
-                  // var countdownFunction = setInterval(function() {
                   var now = new Date().getTime();
                   console.log("now", now)
                   var distance = countDownDate - now;
@@ -190,44 +138,28 @@
                   console.log("seconds", seconds)
 
                   addRemainTime ="남은 대기시간: "+ minutes + "분 " + seconds + "초 ";
-                  // addmsg += "재시도 횟수: " + retryLogin + "회 ";
                   addmsg += addRemainTime;
 
                   console.log("addRemainTime", addRemainTime)
-                  // addmsg += ", " + addRemainTime;
-                  // alert(warning + addmsg);
 
-                      // if (distance < 0) {
-                      //     clearInterval(countdownFunction);
-                      //     addRemainTime = "0분 0초";
-                      // }
-                      // addmsg = "재시도 횟수: " + retryLogin + "회" + addRemainTime;
-                      // if (distance < 0) {
-                      //     alert(warning + addmsg);
-                      // }
-                      // addmsg = "재시도 횟수: " + retryLogin + "회" + addRemainTime;
-                  // }, 1000);
                 }
-                // var addmsg = "재시도 횟수: " + retryLogin + "회" + addRemainTime;
+                alert(addmsg);
               }
-              // alert(warning + addmsg);
-              // 확인누른후 페이지리로드
-              // window.location.reload();
-              //  현재 페이지의 URL로 이동, 새로고침과 비슷하지만 폼 데이터를 유지X
-              // window.location.href = window.location.pathname;
-              // console.log(addmsg);
-              alert(addmsg);
+              else{
+                alert(warning);
+              }
             }
           }
 
 
 
     </script>
+    {% elif pw_checked and block_account %}
+    <div> {{ warning }}</div>
+
 
 
     {% else %}
-    <div>워닝안떠야 정상-나중삭제{{ warning }}</div>
-    <!-- <div>워닝: {{ test }}</div> -->
     <div>이름: {{ booking.user_name }}</div>
     <div>전화번호: {{ booking.user_phone }}</div>
     <br>
@@ -236,17 +168,31 @@
     <div>예약 시간: {{ booking.user_time }}</div>
     <div>예약 인원: {{ booking.visitor_num }}</div>
     
-    <form method="post">
+    <form method="post" id="delete-form">
         {% csrf_token %}
-        <input type="submit" value="예약취소" name="form2">
+        <input type="submit" value="예약취소" name="form2" id="delete-btn">
     </form>
 
-    {% endif %}
+
   </div>
+  
+  <script>
+    let deleteButton = document.querySelector('#delete-btn');
+    let deleteForm = document.querySelector('#delete-form');
+
+    deleteForm.addEventListener('submit', function(e) {
+      var result = confirm('정말로 삭제하시겠습니까?');
+      
+      if (!result) {
+        // 사용자가 'Cancel'을 클릭한 경우, 폼 전송을 취소합니다.
+        e.preventDefault();
+      }
+    });
+  </script>
   <!-- detail 합치기 끝 -->
 
 
-
+  {% endif %}
 {% endif %}
 
 {% if invalid_access %}

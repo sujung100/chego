@@ -267,6 +267,16 @@ class Update(LoginRequiredMixin, UpdateView):
     form_class = UpdateForm
     template_name = 'manager/manager_update_form.html'
 
+    # 임시...테스트용 form_vaild검증 없이 그냥 post요청 들어오면 update_data함수 실행되도록함..
+    def post(self, request, *args, **kwargs):
+        self.update_data(request, **kwargs)  # update_data 함수 호출
+        return super().post(request, *args, **kwargs)  # 원래 post 함수 호출
+    
+    # 얘도 임시...나중 수정하기
+    # def get_object(self, queryset=None):
+    #     requested_store_id = self.kwargs.get('store_id')
+    #     return get_object_or_404(rsv.Store, pk=requested_store_id)
+
 
     # 권한설정
     def dispatch(self, request, *args, **kwargs):
@@ -285,8 +295,10 @@ class Update(LoginRequiredMixin, UpdateView):
 
         # URL에서 store_id값 가져오기
         requested_store_id = self.kwargs.get('store_id')
+        print("찍어보자1", requested_store_id)
 
         # 해당 store_id를 가진 Store 객체 찾기
+        # Store테이블의 id값찾기 (url에서 가져온 store_id값과 일치하는)
         store = get_object_or_404(rsv.Store, pk=requested_store_id)
 
         if store:
@@ -294,12 +306,17 @@ class Update(LoginRequiredMixin, UpdateView):
 
             # Store의 owner(User 객체)와 연결된 Manager 찾기
             manager_of_the_store = Manager.objects.filter(user=store.owner).first()
+            print("찍어보자2", manager_of_the_store)
             
             if manager_of_the_store:
                 context['manager'] = manager_of_the_store
 
+            # Store의 pk값과 Store_times의 store_id값과 일치하는 Store_times 가져오기
             sto_time_objects = rsv.Store_times.objects.filter(store_id=store.pk)
             context['sto_time_objects'] = sto_time_objects
+            print("찍어보자3", sto_time_objects)
+            print("찍어보자3-1", sto_time_objects.values)
+            
             
             sto_time_values_list  = {
                 'store_id': store.pk,
@@ -307,9 +324,12 @@ class Update(LoginRequiredMixin, UpdateView):
             }
 
             print()
-            print("이거 찍어봐: ", sto_time_values_list)
+            print("찍어보자4 ", sto_time_values_list)
             print()
-             # 예약 정보 가져오기 
+
+
+            # 예약 정보 가져오기
+            # Reservation_user
             disabled_dates_info_list = []
             for sto_time in sto_time_objects:
                 reservation_user_objects = rsv.Reservation_user.objects.filter(
@@ -317,14 +337,20 @@ class Update(LoginRequiredMixin, UpdateView):
                     Q(user_time=sto_time.reservation_time)
                 )
 
+                # Reservation_user(사용자 예약내역)가 존재하면: 
+                # hour_disabled_dates_dict에 추가
                 if reservation_user_objects.exists():  # Add this line
                     hour_disabled_dates_dict = {}
 
                     for reservation in reservation_user_objects:
                         user_date_str = reservation.reservation_date
+                        # print("user_date_str찍어보기", user_date_str)
                                 
                         datetime_obj = datetime.strptime(reservation.user_time, '%H:%M')
+                        
+                        # print("datetime_obj찍어보기", datetime_obj)
                         formatted_time_str = datetime_obj.strftime('%H:%M')
+                        # print("formatted_time_str찍어보기", formatted_time_str)
 
                         if user_date_str not in hour_disabled_dates_dict:
                             hour_disabled_dates_dict[user_date_str] = []
@@ -336,10 +362,129 @@ class Update(LoginRequiredMixin, UpdateView):
                         'user_date': [info.reservation_date for info in reservation_user_objects],
                         'disable_time': [datetime.strptime(info.user_time, '%H:%M').strftime("%H:%M") for info in reservation_user_objects]
                     })
-
+                    
+            # 예약이 불가능한 날짜와 시간을 가져와 disabled_dates_info_json에 저장
             context['disabled_dates_info_json'] = json.dumps(disabled_dates_info_list , cls=DjangoJSONEncoder)
         print(context['disabled_dates_info_json'])
 
+        print("콘텍스트", context)
         return context
+
+
+
+
+    # update함수 만들기
+    def update_data(self, request, **kwargs):
+
+        # context = super(Update, self).get_context_data(**kwargs)
+        
+
+        # URL에서 store_id값 가져오기
+        requested_store_id = self.kwargs.get('store_id')
+
+        # 해당 store_id를 가진 Store 객체 찾기
+        # Store테이블의 id값찾기 (url에서 가져온 store_id값과 일치하는)
+        store = get_object_or_404(rsv.Store, pk=requested_store_id)
+
+        if store:
+            # Store의 owner(User 객체)와 연결된 Manager 찾기
+            manager_of_the_store = Manager.objects.filter(user=store.owner).first()
+
+            # if manager_of_the_store:
+            #     context['manager'] = manager_of_the_store
+            
+
+            # Store의 pk값과 Store_times의 store_id값과 일치하는 Store_times 가져오기
+            sto_time_objects = rsv.Store_times.objects.filter(store_id=store.pk)
+            
+            
+            # sto_time_values_list  = {
+            #     'store_id': store.pk,
+            #     'sto_time': list(sto_time_objects.values()),
+            # }
+
+            
+
+
+            if request.method == 'POST':
+                button_values_str = request.POST.get('button_values')
+                added_time = json.loads(button_values_str)
+                print()
+                print("button_values_str야야", button_values_str)
+                print("added_time야야", added_time)
+                print()
+
+
+                # 예약 정보 가져오기
+                # Reservation_user
+
+                # disabled_dates_info_list = []
+
+                original_time = []
+                for sto_time in sto_time_objects:
+                    reservation_user_objects = rsv.Reservation_user.objects.filter(
+                        Q(store_id=store) &
+                        Q(user_time=sto_time.reservation_time)
+                    )
+
+                    # Reservation_user(사용자 예약내역)가 존재하면: 
+                    # hour_disabled_dates_dict에 추가
+
+                    if reservation_user_objects.exists():  # Add this line
+                        # hour_disabled_dates_dict = {}
+                        
+                        for reservation in reservation_user_objects:
+                            # user_date_str = reservation.reservation_date
+                            # print("user_date_str찍어보기", user_date_str)
+                                    
+                            datetime_obj = datetime.strptime(reservation.user_time, '%H:%M')
+                            print("datetime_obj찍어보기", datetime_obj)
+                            formatted_time_str = datetime_obj.strftime('%H:%M')
+                            print("formatted_time_str찍어보기", formatted_time_str)
+                            print("="*30)
+
+                            original_time.append(formatted_time_str)
+
+                        
+                    print("YAAAA보기", original_time)
+                    print("WAEEEEE보기", len(original_time))
+
+                for time in original_time:
+                    if time in added_time:
+                        print(f"{time}는 added_time에 존재합니다.")
+                        # context = {
+                        #     "exist_time" :  time,
+                        #     "does_time_exist" : True,
+                        # }
+                    else:
+                        print(f"{time}는 added_time에 존재하지 않습니다.")
+                        # context = {
+                        #     "added_time" :  time,
+                        #     "does_time_exist" : False,
+                        # }
+                        
+
+
+
+                        # if user_date_str not in hour_disabled_dates_dict:
+                        #     hour_disabled_dates_dict[user_date_str] = []
+
+                        # hour_disabled_dates_dict[user_date_str].append(formatted_time_str)
+
+                    # disabled_dates_info_list.append({
+                    #     'hour_disabled_dates': hour_disabled_dates_dict,
+                    #     'user_date': [info.reservation_date for info in reservation_user_objects],
+                    #     'disable_time': [datetime.strptime(info.user_time, '%H:%M').strftime("%H:%M") for info in reservation_user_objects]
+                    # })
+                    
+        #     # 예약이 불가능한 날짜와 시간을 가져와 disabled_dates_info_json에 저장
+        #     context['disabled_dates_info_json'] = json.dumps(disabled_dates_info_list , cls=DjangoJSONEncoder)
+        # print(context['disabled_dates_info_json'])
+
+        # return context
+        return render(request, 'manager/manager_update_form.html')
+    
+
+
 
     

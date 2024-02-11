@@ -25,9 +25,11 @@ urlpatterns = [
 
 
 
-  path('first/', views.First_list.as_view(), name='First_list'),
-  path('reserve/', views.reserve, name='reserve'),
+  # path('first/', views.First_list.as_view(), name='First_list'),
+  # path('reserve/', views.reserve, name='reserve'),
   # path('info/', views.info, name='info'),
-  path('write/', views.write, name='write'),
+  # path('write/', views.write, name='write'),
+  
+  # 성우님꺼 테스트(주석처리)
   path('test/', views.Test_list.as_view(), name='Test_list'),
 ]

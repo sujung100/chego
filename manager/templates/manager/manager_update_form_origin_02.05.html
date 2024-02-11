@@ -16,7 +16,7 @@
     <div class="box1">
       <div class="content1">
         {% if request.user.is_authenticated %}
-          <div class="layout">
+          <form action="" method="post">{% csrf_token %}
             <div class="section1">
               <div class="timetable">
                 <div class="showtime">
@@ -84,10 +84,9 @@
                 </g>
               </svg>
             </div>
-          </div>
+          </form>
         {% endif %}
       </div>
-    </div>
     </div>
 
     <div class="box2">

@@ -268,9 +268,9 @@ class Update(LoginRequiredMixin, UpdateView):
     template_name = 'manager/manager_update_form.html'
 
     # 임시...테스트용 form_vaild검증 없이 그냥 post요청 들어오면 update_data함수 실행되도록함..
-    def post(self, request, *args, **kwargs):
-        self.update_data(request, **kwargs)  # update_data 함수 호출
-        return super().post(request, *args, **kwargs)  # 원래 post 함수 호출
+    # def post(self, request, *args, **kwargs):
+    #     self.update_data(request, **kwargs)  # update_data 함수 호출
+    #     return super().post(request, *args, **kwargs)  # 원래 post 함수 호출
     
     # 얘도 임시...나중 수정하기
     # def get_object(self, queryset=None):
@@ -374,7 +374,7 @@ class Update(LoginRequiredMixin, UpdateView):
 
 
     # update함수 만들기
-    def update_data(self, request, **kwargs):
+    def post(self, request, *args, **kwargs):
 
         # context = super(Update, self).get_context_data(**kwargs)
         
@@ -395,6 +395,10 @@ class Update(LoginRequiredMixin, UpdateView):
             # print("sto_time_objects", sto_time_objects)
             # print("sto_time_objects갯수", len(sto_time_objects))
             # print()
+
+            # HttpResponseRedirect를 위한 전달인자
+            pk_value = manager_of_the_store.pk
+            store_id_value = requested_store_id
             
 
             # sto_time_objects의 reservation_time 값들을 리스트로 가져오기
@@ -518,28 +522,10 @@ class Update(LoginRequiredMixin, UpdateView):
                         # 오류잡기용
                         print("3-3/ 추가된시간값과 기존시간값의 갯수가 다르거나 값이 존재")
 
-                    # 여기에 수정되는 경우의 조건도 넣어줘야할듯...
-                    # 조건을 어떻게 짜야할까 
-
-
-
-                        # if user_date_str not in hour_disabled_dates_dict:
-                        #     hour_disabled_dates_dict[user_date_str] = []
-
-                        # hour_disabled_dates_dict[user_date_str].append(formatted_time_str)
-
-                    # disabled_dates_info_list.append({
-                    #     'hour_disabled_dates': hour_disabled_dates_dict,
-                    #     'user_date': [info.reservation_date for info in reservation_user_objects],
-                    #     'disable_time': [datetime.strptime(info.user_time, '%H:%M').strftime("%H:%M") for info in reservation_user_objects]
-                    # })
-                    
-        #     # 예약이 불가능한 날짜와 시간을 가져와 disabled_dates_info_json에 저장
-        #     context['disabled_dates_info_json'] = json.dumps(disabled_dates_info_list , cls=DjangoJSONEncoder)
-        # print(context['disabled_dates_info_json'])
-
-        # return context
-        return render(request, 'manager/manager_update_form.html')
+                # POST 처리 완료 시 리디렉션
+                return HttpResponseRedirect(reverse('update', kwargs={'pk': pk_value, 'store_id': store_id_value}))
+        
+        return self.get(request, *args, **kwargs)
     
 
 

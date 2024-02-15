@@ -454,8 +454,11 @@ class Update(LoginRequiredMixin, UpdateView):
                 added_time_set = set(added_time)
                 # 교집합
                 matching_times_set = original_time_set & added_time_set
+                check_added_set = added_time_set - original_time_set
+
                 print("matching_times_set", matching_times_set)
                 print("matching_times_set갯수", len(matching_times_set))
+                print("check_added_set갯수", len(check_added_set))
                 print("="*30)
                 print()
 
@@ -493,21 +496,12 @@ class Update(LoginRequiredMixin, UpdateView):
                     print("added_time_set갯수", len(added_time_set))
                     print("original_time_set갯수", len(original_time_set))
 
-                    # 기존 시간값이 모두 삭제된경우
+                    # 기존 시간값이 모두 없을경우(삭제 혹은 변경)
                     # 이건 삭제를 프론트에서 아직 처리안해줬기때문에 프론트 수정후 테스트가능
-                    if len(added_time_set) == 0 and len(original_time_set) == 0:
+                    if len(original_time_set) == 0:
                         print("3-1/ 기존 시간값이 모두 삭제된경우")
 
                         # original_time 삭제
-                        for time in original_time_set:
-                            rsv.Store_times.objects.filter(store_id=store, reservation_time=time).delete()
-                            print(f"{time} 시간이 rsv.Store_times에서 삭제되었습니다.")
-
-                    # 기존 시간값이 모두 변경(삭제후 추가)된 경우
-                    elif len(added_time_set) == len(original_time_set):
-                        print("3-2/ 기존 시간값이 모두 변경된경우")
-
-                        # original_time 삭제, added_time 추가
                         for time in original_time_set:
                             rsv.Store_times.objects.filter(store_id=store, reservation_time=time).delete()
                             print(f"{time} 시간이 rsv.Store_times에서 삭제되었습니다.")
@@ -516,11 +510,80 @@ class Update(LoginRequiredMixin, UpdateView):
                             new_store_time = rsv.Store_times.objects.create(store_id=store, reservation_time=time)
                             new_store_time.save()
                             print(f"{time} 시간이 rsv.Store_times에 추가되었습니다.")
+
+                    # # 기존 시간값이 모두 변경(삭제후 추가)된 경우
+                    # elif len(added_time_set) != 0 and len(original_time_set) != 0 and len(added_time_set) == len(original_time_set):
+                    #     print("3-2/ 기존 시간값이 모두 변경된경우")
+
+                    #     # original_time 삭제, added_time 추가
+                    #     for time in original_time_set:
+                    #         rsv.Store_times.objects.filter(store_id=store, reservation_time=time).delete()
+                    #         print(f"{time} 시간이 rsv.Store_times에서 삭제되었습니다.")
+
+                    #     for time in added_time_set:
+                    #         new_store_time = rsv.Store_times.objects.create(store_id=store, reservation_time=time)
+                    #         new_store_time.save()
+                    #         print(f"{time} 시간이 rsv.Store_times에 추가되었습니다.")
                         
                     # 그 외
-                    else:
+                    elif len(check_added_set) == len(added_time_set):
+                        # 추가된 시간 - 기존시간을 뺀 값 갯수 = 추가된 시간 갯수 일경우:
+                        # 오리지널이 없거나 변경되는 경우도 추가해줘야함..
+                        # 애초에 기준값을 오리지널로 잡았기때문에 자꾸 else에 걸리는거
                         # 오류잡기용
                         print("3-3/ 추가된시간값과 기존시간값의 갯수가 다르거나 값이 존재")
+                        for time in original_time_set:
+                            rsv.Store_times.objects.filter(store_id=store, reservation_time=time).delete()
+                            print(f"{time} 시간이 rsv.Store_times에서 삭제되었습니다.")
+                        
+                        for time in added_time_set:
+                            new_store_time = rsv.Store_times.objects.create(store_id=store, reservation_time=time)
+                            new_store_time.save()
+                            print(f"{time} 시간이 rsv.Store_times에 추가되었습니다.")
+
+                    else: 
+                        print("3-4/ 그외")
+
+
+
+
+                    # # 기존 시간값이 모두 삭제된경우
+                    # # 이건 삭제를 프론트에서 아직 처리안해줬기때문에 프론트 수정후 테스트가능
+                    # if len(added_time_set) == 0 and len(original_time_set) == 0:
+                    #     print("3-1/ 기존 시간값이 모두 삭제된경우")
+
+                    #     # original_time 삭제
+                    #     for time in original_time_set:
+                    #         rsv.Store_times.objects.filter(store_id=store, reservation_time=time).delete()
+                    #         print(f"{time} 시간이 rsv.Store_times에서 삭제되었습니다.")
+
+                    # # 기존 시간값이 모두 변경(삭제후 추가)된 경우
+                    # elif len(added_time_set) != 0 and len(original_time_set) != 0 and len(added_time_set) == len(original_time_set):
+                    #     print("3-2/ 기존 시간값이 모두 변경된경우")
+
+                    #     # original_time 삭제, added_time 추가
+                    #     for time in original_time_set:
+                    #         rsv.Store_times.objects.filter(store_id=store, reservation_time=time).delete()
+                    #         print(f"{time} 시간이 rsv.Store_times에서 삭제되었습니다.")
+
+                    #     for time in added_time_set:
+                    #         new_store_time = rsv.Store_times.objects.create(store_id=store, reservation_time=time)
+                    #         new_store_time.save()
+                    #         print(f"{time} 시간이 rsv.Store_times에 추가되었습니다.")
+                        
+                    # # 그 외
+                    # else:
+                    #     # 오리지널이 없거나 변경되는 경우도 추가해줘야함..
+                    #     # 애초에 기준값을 오리지널로 잡았기때문에 자꾸 else에 걸리는거
+                    #     # 오류잡기용
+                    #     print("3-3/ 추가된시간값과 기존시간값의 갯수가 다르거나 값이 존재")
+                    #     for time in added_time:
+                    #         sto_time, created = rsv.Store_times.objects.get_or_create(
+                    #             store_id=store,
+                    #             reservation_time=time,
+                    #         )
+                    #         if created:
+                    #             print(f"{time}에 대한 새로운 Store_times 객체가 생성되었습니다.")
 
                 # POST 처리 완료 시 리디렉션
                 return HttpResponseRedirect(reverse('update', kwargs={'pk': pk_value, 'store_id': store_id_value}))

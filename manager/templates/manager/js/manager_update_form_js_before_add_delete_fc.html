@@ -58,6 +58,19 @@
 				console.log("id값1:",store_id);
 				console.log("찍어라",parentElement.dataset);
 
+				// 02.07 패치 수정해야함..
+				// fetch(`/manager/update/${pk}_${store_id}/`, {
+				// 	method: 'POST',
+				// 	body: JSON.stringify({ time: val }),
+				// 	headers: { 
+				// 		'Content-Type': 'application/json',
+				// 		'X-CSRFToken': getCookie('csrftoken') // CSRF 토큰 값 추가
+				// 	}
+				// })
+				// .then(response => response.json())
+				// .then(data => { console.log(data); /* 성공적으로 응답 받은 후 작업들... */ })
+				// .catch((error) => { /* console.error('Error:', error); 에러 발생 시 작업들... */ });
+
 
 				getInputValue(parentElement,checkbt,addInput); 
 
@@ -90,78 +103,49 @@
 	// 추가 10.14 - 새로운 input값 받아온 버튼도 다시 클릭하면 값 변경 가능하게...
 	// 버튼 클릭 이벤트 핸들러를 별도의 함수로 정의
 	function handleButtonClick(event, attach, newButton) {
-			attach = document.getElementById('attach_btns');
-			event.preventDefault();
-			let buttons = [];
+		attach = document.getElementById('attach_btns');
+		event.preventDefault();
+		let oldTimeInput = document.querySelector('.time-input');
+		if (oldTimeInput)
+			oldTimeInput.remove();
+		let timeInput = document.createElement('input');
+				timeInput.setAttribute('type', 'time');
+				timeInput.classList.add('time-input');
+				timeInput.addEventListener('change', function (e) {
+					e.preventDefault();
+					let buttons = Array.from(attach.querySelectorAll('button'));
 
-			let oldTimeInput = document.querySelector('.time-input');
-			if (oldTimeInput)
-				oldTimeInput.remove();
-			let oldOkBt = document.querySelector('.ok-button');
-			if (oldOkBt)
-				oldOkBt.remove();
-			let oldcloseBt = document.querySelector('.close-button');
-			if (oldcloseBt)
-				oldcloseBt.remove();
-
-			let timeInput = document.createElement('input');
-			timeInput.setAttribute('type', 'time');
-			timeInput.classList.add('time-input');
-
-			let okbt = document.createElement("button");
-			okbt.setAttribute("class", "okbt"); 
-			okbt.textContent = "변경";
-			okbt.classList.add('ok-button');
-
-			// arrbtn을 삭제해줄 버튼 생성
-			let closeButton = document.createElement("button");
-			closeButton.classList.add('close-button');
-			closeButton.textContent = "삭제";
-
-			okbt.addEventListener('click', function (e) {
-				e.preventDefault();
-				let buttons = Array.from(attach.querySelectorAll('button:not(.ok-button)'));
-
-				for (let button of buttons) {
-					if (button.textContent === timeInput.value) {
-						alert("이미 존재하는 시간입니다.");
-						timeInput.style.display = '';
-						return;
+					for (let button of buttons) {
+						if (button.textContent === this.value) {
+							alert("이미 존재하는 시간입니다.");
+							this.style.display = '';
+							return;
+						}
 					}
-				}
-				newButton.textContent = timeInput.value;
-				newButton.value = timeInput.value;
-				// 02.07 콘솔
-				// console.log("새버튼 값찍자1: ", newButton.textContent);
-				// buttons.push(newButton);
-				if (!buttons.includes(newButton)) {
+					newButton.textContent = this.value;
+					newButton.value = this.value;
+					// 02.07 콘솔
+					// console.log("새버튼 값찍자1: ", newButton.textContent);
 					buttons.push(newButton);
-				}
-				// console.log("새버튼 값찍자2: ", buttons.textContent);
-				buttons.sort((a, b) => {
-					return a.value.localeCompare(b.value);
+					// console.log("새버튼 값찍자2: ", buttons.textContent);
+					buttons.sort((a, b) => {
+						return a.textContent.localeCompare(b.textContent);
+					});
+					while (attach.firstChild) {
+						attach.removeChild(attach.firstChild);
+					}
+					// 이거 일단 킵
+					// attach.innerHTML = '';
+					for (let button of buttons) {
+						attach.appendChild(button);
+					}
+					this.remove();
 				});
-				while (attach.firstChild) {
-					attach.removeChild(attach.firstChild);
-				}
-				// attach.innerHTML = '';
-				for (let button of buttons) {
-					attach.appendChild(button);
-				}
-				timeInput.remove();
-				okbt.remove();
-				closeButton.remove();
-			});
 
-			event.target.parentNode.insertBefore(timeInput, event.target.nextSibling);
-			event.target.parentNode.insertBefore(okbt, timeInput.nextSibling);
-			event.target.parentNode.insertBefore(closeButton, okbt.nextSibling);
-			// attach.appendChild(timeInput);
-		}
+				// event.target.parentNode.insertBefore(timeInput, event.target.nextSibling);
+				attach.appendChild(timeInput);
+	}
 	console.log("inputVals1은: ", inputVals)
-
-
-
 
 	// "추가하기" 버튼 클릭시 이벤트
 	// 정렬작업중1
@@ -291,14 +275,23 @@
 	}
 
 
+	// function copyItems() {
+	// 	let copiedItems = [];
+	// 	for (let i = 0; i < items.length; i++) {
+	// 		copiedItems.push(items[i]);
+	// 	}
+	// 	return copiedItems;
+	// }
+
 	function copyItems() {
 		return Array.from(document.querySelectorAll("[id^='time-style']")).map(obj => obj.textContent);
 	}
 
 
+	
 
-
-	// // 수정전
+	// // 기존시간값 가져와서 복사한후, 밑에 뿌리는 이벤트
+	// // 정렬작업중2
 	// function createButtonsFromItems() {
 
 	// 	let copiedItems = copyItems();
@@ -311,7 +304,7 @@
 	// 	});
 
 	// 	let address = document.getElementById('attach_btns');
-	// 	// let attach = address.parentNode;
+	// 	let attach = address.parentNode;
 
 	// 	for (let i = 0; i < copiedItems.length; i++) {
 	// 		let arrbtn = document.createElement("button");
@@ -320,32 +313,25 @@
 	// 		// value에 넣어주기
 	// 		arrbtn.value = copiedItems[i];
 
-	// 		// 버튼생성시, 한번만 이벤트리스너 추가
 	// 		arrbtn.addEventListener('click', function (event) {
 	// 			event.preventDefault();
-	// 			// 이전 시간input존재시 제거
 	// 			let oldTimeInput = document.querySelector('.time-input');
 	// 			if (oldTimeInput)
 	// 				oldTimeInput.remove();
-	// 			// 새 시간 input생성
 	// 			let timeInput = document.createElement('input');
 	// 			timeInput.setAttribute('type', 'time');
 	// 			timeInput.classList.add('time-input');
-	// 			// 시간 입력값 변경시 실행되는 이벤트리스너
 	// 			timeInput.addEventListener('change', function (e) {
 	// 				e.preventDefault();
-	// 				// 동일시간 존재여부 확인
-	// 				let buttons = Array.from(address.querySelectorAll('button'));
+	// 				let buttons = Array.from(attach.querySelectorAll('button'));
 
 	// 				for (let button of buttons) {
-	// 					// 동일시간존재시, 경고표시후 함수종료
 	// 					if (button.value === this.value) {
 	// 						alert("이미 존재하는 시간입니다.");
 	// 						this.style.display = '';
 	// 						return;
 	// 					}
 	// 				}
-	// 				// 동일 시간값 미존재시, 버튼 텍스트와 value값 변경
 	// 				arrbtn.textContent = this.value;
 	// 				arrbtn.value = this.value;
 
@@ -354,7 +340,6 @@
 	// 				console.log("!!!!!", arrbtn.textContent)
 	// 				console.log("?????", arrbtn.value)
 
-	// 				// 변경된 버튼을 배열에 추가
 	// 				buttons.push(arrbtn);
 					
 	// 				// console.log("여기텍스트?", buttons.textContent)
@@ -375,19 +360,15 @@
 
 	// 				// 수정 02.07
 	// 				// attach.innerHTML = '';
-
-	// 				// 기존 모든버튼제거후, 새로 정렬된 버튼 추가
-	// 				while (address.firstChild) {
-	// 					address.removeChild(address.firstChild);
+	// 				while (attach.firstChild) {
+	// 					attach.removeChild(attach.firstChild);
 	// 				}
 	// 				for (let button of buttons) {
-	// 					address.appendChild(button);
+	// 					attach.appendChild(button);
 	// 				}
-	// 				// 시간입력input제거
 	// 				this.remove();
 	// 			});
 
-	// 			// 시간입력input을 버튼 다음에 삽입
 	// 			event.target.parentNode.insertBefore(timeInput, event.target.nextSibling);
 
 	// 		});
@@ -395,7 +376,7 @@
 	// 		// 전역변수에 추가
 	// 		allButtons.push(arrbtn);
 
-	// 		address.appendChild(arrbtn);
+	// 		attach.appendChild(arrbtn);
 
 	// 	}
 	// 	console.log("복사한 배열값", copiedItems);
@@ -403,9 +384,7 @@
 
 	// }
 	// createButtonsFromItems();
-
-
-
+	
 
 
 	// 기존시간값 가져와서 복사한후, 밑에 뿌리는 이벤트
@@ -413,94 +392,69 @@
 	// 02.11 수정...이제 값 잘 가져옴 
 	// attach를 왜..? attach때문인듯...제거하고 address에 붙이기
 	function createButtonsFromItems() {
+
 		let copiedItems = copyItems();
+
 		copiedItems = copiedItems.concat(inputValues);
+		// console.log("카피아이템 잘들어가나?", copiedItems)
+
 		copiedItems.sort(function (a, b) {
 			return a.localeCompare(b);
 		});
-		
 
 		let address = document.getElementById('attach_btns');
 		// let attach = address.parentNode;
-		
-		// 동일시간 존재여부 확인
-		let buttons = [];
 
 		for (let i = 0; i < copiedItems.length; i++) {
 			let arrbtn = document.createElement("button");
 			arrbtn.textContent = copiedItems[i];
-			// 02.08 value에 넣어주기
+			// 02.08
+			// value에 넣어주기
 			arrbtn.value = copiedItems[i];
-			arrbtn.classList.add('arrbtn');
-
 
 			// 버튼생성시, 한번만 이벤트리스너 추가
 			arrbtn.addEventListener('click', function (event) {
 				event.preventDefault();
-				
 				// 이전 시간input존재시 제거
 				let oldTimeInput = document.querySelector('.time-input');
 				if (oldTimeInput)
 					oldTimeInput.remove();
-				let oldOkBt = document.querySelector('.ok-button');
-				if (oldOkBt)
-					oldOkBt.remove();
-				let oldcloseBt = document.querySelector('.close-button');
-				if (oldcloseBt)
-					oldcloseBt.remove();
 				// 새 시간 input생성
 				let timeInput = document.createElement('input');
 				timeInput.setAttribute('type', 'time');
 				timeInput.classList.add('time-input');
-
-				// 새 확인 button생성
-				let okbt = document.createElement("button");
-				okbt.setAttribute("class", "okbt"); 
-				okbt.textContent = "변경";
-				okbt.classList.add('ok-button');
-
-				// arrbtn을 삭제해줄 버튼 생성
-				let closeButton = document.createElement("button");
-				closeButton.classList.add('close-button');
-				closeButton.textContent = "삭제";
-				// arrbtn.appendChild(closeButton);
-
 				// 시간 입력값 변경시 실행되는 이벤트리스너
-				okbt.addEventListener('click', function (e) {
+				timeInput.addEventListener('change', function (e) {
 					e.preventDefault();
 					// 동일시간 존재여부 확인
-					let buttons = Array.from(address.querySelectorAll('button:not(.ok-button)'));
+					let buttons = Array.from(address.querySelectorAll('button'));
 
 					for (let button of buttons) {
 						// 동일시간존재시, 경고표시후 함수종료
-						if (button.value === timeInput.value) {
+						if (button.value === this.value) {
 							alert("이미 존재하는 시간입니다.");
-							timeInput.style.display = '';
+							this.style.display = '';
 							return;
 						}
 					}
 					// 동일 시간값 미존재시, 버튼 텍스트와 value값 변경
-					arrbtn.textContent = timeInput.value;
-					arrbtn.value = timeInput.value;
+					arrbtn.textContent = this.value;
+					arrbtn.value = this.value;
 
-					console.log("!!", timeInput)
-					console.log("!!??!", timeInput.value)
+					console.log("!!", this)
+					console.log("!!??!", this.value)
 					console.log("!!!!!", arrbtn.textContent)
 					console.log("?????", arrbtn.value)
 
 					// 변경된 버튼을 배열에 추가
 					buttons.push(arrbtn);
-					// if (!buttons.includes(arrbtn)) {
-					// 	buttons.push(arrbtn);
-					// }
 					
 					// console.log("여기텍스트?", buttons.textContent)
 					// console.log("여기값도?", buttons.value)
-					console.log("!arrbtn버튼값찍어봐라", timeInput.value);
+					console.log("!arrbtn버튼값찍어봐라", this.value);
 					buttons.sort((a, b) => {
 						return a.value.localeCompare(b.value);
 					});
-					console.log("buttons", buttons)
 					// console.log("!buttons버튼값찍어봐라", buttons.value);
 					// console.log("0번: ", buttons[0].textContent);
 					// console.log("0번: ", buttons[0].value);
@@ -522,29 +476,11 @@
 						address.appendChild(button);
 					}
 					// 시간입력input제거
-					timeInput.remove();
-					okbt.remove();
-					closeButton.remove();
-				});
-				closeButton.addEventListener("click", function(e) {
-					e.preventDefault();
-					// 클릭한 arrbtn을 삭제합니다.
-					arrbtn.remove();
-					timeInput.remove();
-					okbt.remove();
-					closeButton.remove();
-					
-					// buttons 배열에서 arrbtn을 제거합니다.
-					let index = buttons.indexOf(arrbtn);
-					if (index > -1) {
-						buttons.splice(index, 1);
-					}
+					this.remove();
 				});
 
 				// 시간입력input을 버튼 다음에 삽입
 				event.target.parentNode.insertBefore(timeInput, event.target.nextSibling);
-				event.target.parentNode.insertBefore(okbt, timeInput.nextSibling);
-				event.target.parentNode.insertBefore(closeButton, okbt.nextSibling);
 
 			});
 
@@ -552,17 +488,6 @@
 			allButtons.push(arrbtn);
 
 			address.appendChild(arrbtn);
-
-			// // arrbtn의 삭제버튼 숨기기/보이기
-			// arrbtn.addEventListener('mouseenter', function() {
-			// closeButton.style.display = 'inline';
-			// });
-			// arrbtn.addEventListener('mouseleave', function() {
-			// closeButton.style.display = 'none';
-			// });
-			// // closeButton.addEventListener('click', function() {
-			// // });
-
 
 		}
 		console.log("복사한 배열값", copiedItems);

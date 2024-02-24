@@ -20,17 +20,16 @@ def change_session_data(session_key, data):
 User = get_user_model()
 ADMIN_USERS = { "admin" : True,}
 
-# TEST 코드
-class ChatConsumer(WebsocketConsumer):
+class ManagerConsumer(AsyncWebsocketConsumer):
 
-    def fetch_messages(self,data):
+    async def fetch_messages(self, data):
         messages = models.Message.all_messages()
         content = {
             "messages" : self.messages_to_json(messages)
         }
-        self.send_chat_messages(content)
+        await self.send_chat_messages(content)
 
-    def new_message(self,data):
+    async def new_message(self, data):
         author = data["from"]
         recipient_username = "admin"
 
@@ -44,18 +43,12 @@ class ChatConsumer(WebsocketConsumer):
                 print(user.username)
             return
 
-        # if author_user.username not in ALLOWED_USERS and recipient_user.username not in ALLOWED_USERS:
-        #     return
-
-        message = models.Message.objects.create(author=author_user, recipient=recipient_user ,content=data["message"], chatroom=self.room_name)
+        message = models.Message.objects.create(author=author_user, recipient=recipient_user, content=data["message"], chatroom=self.room_name)
         content = {
-                "command" : "new_message",
-                "message" : self.message_to_json(message)
-            }
-        return self.send_chat_messages(content)
-        
-
-        
+            "command" : "new_message",
+            "message" : self.message_to_json(message)
+        }
+        await self.send_chat_messages(content)
 
     def messages_to_json(self, messages):
         result = []
@@ -65,7 +58,6 @@ class ChatConsumer(WebsocketConsumer):
 
     def message_to_json(self, message):
         return {
-     
             "author" : message.author.username,
             "content" : message.content,
             "timestamp" : message.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
@@ -76,62 +68,53 @@ class ChatConsumer(WebsocketConsumer):
         "new_message" : new_message,
     }
 
-
-    # async def connect(self):
-    #     self.room_name = self.scope['url_route']['kwargs']['room_name']
-    #     print("셀프룸네임",self.room_name)
-    #     self.room_group_name = f"chat_{self.room_name}"
-    #     await self.channel_layer.group_add(
-    #         self.room_group_name,
-    #         self.channel_name
-    #     )
-    #     await self.accept()
-    def connect(self):
-        ROOM_NAME = {}
+    async def connect(self):
+        print("매니저 커넥트 실행")
+        # ROOM_NAME = {}
         current_user = self.scope["user"].username
-        
-        ROOM_NAME[current_user] = current_user
-        for admin_user in ADMIN_USERS.keys():
-            ROOM_NAME[admin_user] = admin_user
 
-        
-        self.room_name = ".".join(ROOM_NAME.values())
+        # ROOM_NAME[current_user] = current_user
+        # for admin_user in ADMIN_USERS.keys():
+        #     ROOM_NAME[admin_user] = admin_user
+
+        self.room_name = current_user
         self.room_group_name = f"chat_{self.room_name}"
-        print(self.room_group_name)
+        # print("매니저그륩네임",self.room_group_name)
 
-        # Join room group
-        async_to_sync(self.channel_layer.group_add)(
+        await self.channel_layer.group_add(
             self.room_group_name, self.channel_name
         )
 
-        self.accept()
-        # self.send(json.dumps({"room_name": self.room_group_name}))
+        await self.accept()
+        print(f"매니저컨수머 : {self.room_group_name}")
 
-
-    def disconnect(self, close_code):
-        # Leave room group
-        async_to_sync(self.channel_layer.group_discard)(
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(
             self.room_group_name, self.channel_name
         )
 
-    # Receive message from WebSocket
-    def receive(self, text_data):
+    async def receive(self, text_data):
         data = json.loads(text_data)
+        print("매니져 리시브 찍히나", data)
         self.commands[data["command"]](self, data)
 
-    def send_chat_messages(self, message):
-
-        # Send message to room group
-        async_to_sync(self.channel_layer.group_send)(
+    async def send_chat_messages(self, message):
+        await self.channel_layer.group_send(
             self.room_group_name, {"type": "chat.message", "message": message}
         )
 
-    def send_message(self, message):
-        self.send(text_data=json.dumps(message))
+    async def send_message(self, message):
+        await self.send(text_data=json.dumps(message))
 
-    # Receive message from room group
-    def chat_message(self, event):
+    async def chat_message(self, event):
         message = event["message"]
+        await self.send(text_data=json.dumps(message))
 
-        # Send message to WebSocket
-        self.send(text_data=json.dumps(message))
+    async def notification_message(self, event):
+        print("매니저노티피캐이션")
+        message = event["notification_message"]
+        client_message = {
+            "type" : "notification",
+            "content" : message
+        }
+        await self.send(text_data=json.dumps(client_message))

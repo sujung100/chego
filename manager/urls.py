@@ -27,7 +27,9 @@ urlpatterns = [
   path("admin_chat2/api/chat-room/", views.ChatRoom.as_view(), name="chat_room2"),
   path('customer_service_center/inquiry/api/chat-room/<str:chatroom_name>/', views.EnterChatRoom.as_view(), name='enter_chatroom'),
   # path("admin_chat2/api/chat-room/<str:chatroom_name>/", views.EnterChatRoom.as_view(), name="enter_chatroom2"),
-  path("admin_chat2/api/chat-room/<str:chatroom_name>/messages", views.EnterChatRoom.as_view(), name="enter_chatroom2"),
+  path("admin_chat2/api/chat-room/<str:chatroom_name>/messages/", views.EnterChatRoom.as_view(), name="enter_chatroom2"),
   # path("admin_chat2/api/chat-room/<int:page_number>/", views.EnterChatRoom.as_view(), name="enter_chatroom2"),
-  path("admin_chat2/api/chat-room/user_info", views.UserInfo.as_view(), name="user_info"),
+  path("admin_chat2/api/chat-room/user_info/", views.UserInfo.as_view(), name="user_info"),
+  path("api/reservation_id/<int:id>/", views.Reservation_Details.as_view(), name="reservation_id"),
+  path("api/reservation_false/", views.Reservation_Details.as_view(), name="reservation_details"),
 ]

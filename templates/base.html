@@ -8,7 +8,8 @@
 
   <!-- css -->
   {% block style %}{% endblock style %}
-  <link rel="stylesheet" href="{% static 'css/base.css' %}?after">
+  <!-- <link rel="stylesheet" href="{% static 'css/base.css' %}?after"> -->
+  <link rel="stylesheet" href="{% static 'css/sujung_base.css' %}">
 
   <!-- title -->
   <title>{% block title %}Document{% endblock %}</title>
@@ -28,3 +29,4 @@
   </section>
 </body>
 </html>
+{% include "js/sujung_base_js.html" %}

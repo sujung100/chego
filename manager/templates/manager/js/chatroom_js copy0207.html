@@ -1,8 +1,5 @@
 {% include "manager/test/reconnecting-websocket.html" %}
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    pageStart();
-  });
   // const roomName = JSON.parse(document.getElementById('room-name').textContent);
   let room_name_source = {}
   let userName = "{{ username|escapejs }}";
@@ -16,7 +13,7 @@
   // let data = null;
   // console.log(data);
 
-  let numCount = document.querySelector(".notification-icon:nth-of-type(1) > .num-count");
+  let numCount = document.querySelector(".num-count");
   // console.log(numCount);
   numCount.classList.add("num-count-start");
 
@@ -33,7 +30,6 @@
   // let chatSocket;
 
   async function accessAllChannels() {
-    // await 
     let endpoints = [
       { name: "chat", url: weStart + loc2 + userName + "/" },
       { name: "user", url: weStart + loc3 + userName + "/" },
@@ -44,36 +40,17 @@
       // if (manager_webSockets[chat]) {
       //   continue;
       // }
-      let webSocket = new ReconnectingWebSocket(ept.url);
-      manager_webSockets[ept.name] = webSocket;
-      // console.log(ept.name);
+      let chatSocket = new ReconnectingWebSocket(ept.url);
+      manager_webSockets[ept.name] = chatSocket;
 
-      webSocket.onopen = function (e) {
-        console.log(webSocket.url);
-        console.log('Web socket opened successfully');
-      };
-      // webSocket.onmessage = function(e){
-      //   console.log(ept.name);
-      //   handleOnMessage(webSocket,e);
-
-      // };
-      webSocket.addEventListener("message", function (e) {
-        handleOnMessage(webSocket, e);
-      });
-      webSocket.onclose = function (e) {
-        console.error('Socket closed unexpectedly');
+      chatSocket.onopen = function (e) {
+        console.log(chatSocket.url);
+        console.log('Chat socket opened successfully');
       };
     }
+
   }
   accessAllChannels();
-  // console.log(reserVationDetails());
-  // pageStart();
-
-
-
-  // async function handleReservationEvent(){
-
-  // }
   // console.log(manager_webSockets);
   // const endpoint = weStart + loc.host + loc.pathname + loc.search;
   let chatWidgetToggle = document.querySelector('#chat-widget-toggle');
@@ -102,10 +79,8 @@
     // chatSocket.addEventListener("message", handleChatEvent);
   }
   // checkChat();
-
-
-
   let eventCount = 0;
+
   function handleChatEvent(event) {
     numCount.classList.remove("num-count-start");
     eventCount++;
@@ -120,10 +95,11 @@
 
 
   let chatSocket = manager_webSockets["chat"];
-  let managerSocket = manager_webSockets["user"];
-  console.log("유저소켓", managerSocket.url);
+  let managerSocket = manager_webSockets["manager"];
 
-  function handleChatSocket(data) {
+  chatSocket.onmessage = function (e) {
+    // console.log("연결 잘 됐냐", chatSocket.url);
+    const data = JSON.parse(e.data);
     const message = data["message"];
     const author = message["author"];
     const msgListTag = document.createElement("li");
@@ -149,35 +125,13 @@
       chatMsg.scrollTop = chatMsg.scrollHeight;
     }
 
-  }
-
-  function handleUserSocket(data) {
-    let rsv_numCount = document.querySelector(".notification-icon:nth-of-type(2) > .num-count");
-    reserVationDetails(data);
-    console.log("새로운 예약이 생성 되었습니다.")
-  }
-
-  async function handleOnMessage(socket, e) {
-    const data = await JSON.parse(e.data);
-    console.log("데이터", data);
-    // reserVationDetails(data);
-    // if(socket.url === managerSocket.url){
-    //   handleUserSocket(data);
-    //   console.log("URL 비교");
-    // } 
-    if (socket.url === chatSocket.url) {
-      handleChatSocket(data);
-    } else if (data.type === "notification") {
-      handleUserSocket(data);
-      console.log("타입 비교");
-      // console.log(socket.url);
-      // console.log(managerSocket.url);
-
-    }
-  }
+  };
 
 
 
+  chatSocket.onclose = function (e) {
+    console.error('Chat socket closed unexpectedly');
+  };
 
 
   document.querySelector('#chat-message-input').focus();
@@ -204,7 +158,7 @@
         }
       }
     }
-
+    
     messageInputDom.value = '';
   };
 </script>

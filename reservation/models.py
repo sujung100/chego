@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-
+from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 # Create your models here.
 
 
@@ -58,6 +58,9 @@ class Reservation_user(models.Model):
     reservation_date = models.CharField(max_length=20, null=True)
     user_time = models.CharField(max_length=20, null=True)
     date = models.DateTimeField(auto_now_add = True)
+    visitor_num = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(99)], null=True)
+    pwhash = models.CharField(max_length=200, null=True)
+    reservation_check = models.BooleanField(default=False)
 
 class Store_times(models.Model):
     store_id = models.ForeignKey(Store, on_delete=models.CASCADE, db_column="store_id")
@@ -65,3 +68,11 @@ class Store_times(models.Model):
     
     times_cdate = models.DateTimeField(auto_now_add = True)
     times_mdate = models.DateTimeField(auto_now = True)
+
+class Login_try(models.Model):
+    id = models.AutoField(primary_key=True)
+    user_id = models.ForeignKey(Reservation_user, on_delete=models.CASCADE, db_column="user_id")
+    retry_login = models.IntegerField(default=5, validators=[MinValueValidator(0), MaxValueValidator(5)])
+    last_login_date = models.DateTimeField(auto_now = True)
+    is_block = models.CharField(max_length=1, default="N")
+    block_count = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(3)])

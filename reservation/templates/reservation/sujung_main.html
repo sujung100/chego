@@ -1,0 +1,159 @@
+{% extends 'sujung_base.html' %}
+{% load filters %}
+{% load static %}
+
+<!-- css -->
+{% block style %}
+<link rel="stylesheet" href="{% static 'reservation/css/sujung_main.css' %}">
+{% endblock style %}
+
+<!-- title -->
+{% block title %}MAIN{% endblock %}
+
+{% block container %}
+
+  <div class="rs-tabs" id="reserve_pg">
+    <div class="tabs">
+      <ul class="active">
+        <li><a href="{% url 'Idx_list' %}#reserve_pg">업체예약</a></li>
+      </ul>
+      <ul>
+        <li><a href="#">예약조회</a></li>
+      </ul>
+      <ul>
+        <li><a href="">상세정보</a></li>
+      </ul>
+      <ul>
+        <li><a href="">tab</a></li>
+      </ul>
+      <ul>
+        <li><a href="">tab</a></li>
+      </ul>
+      <ul>
+        <li><a href="">tab</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="rs-date" id="date-display">
+    <div class="name" id="selected-store">업체를 선택하세요.</div>
+    <div id="mainCalendar">
+      <table class="Calendar">
+        <thead>
+          <tr>
+            <td onClick="prevCalendar();" style="cursor:pointer;">&#60;</td>
+            <td colspan="5">
+              <span id="calYear"></span>년
+              <span id="calMonth"></span>월
+            </td>
+            <td onClick="nextCalendar();" style="cursor:pointer;">&#62;</td>
+          </tr>
+          <tr>
+            <td>일</td>
+            <td>월</td>
+            <td>화</td>
+            <td>수</td>
+            <td>목</td>
+            <td>금</td>
+            <td>토</td>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="next" id="next-button" style="display: none;">
+      
+      <button type="button" class="send-bt" id="send-bt" onclick="toggleTabs();">다음</button>
+    </div>
+  </div>
+  <div class="rs-info" id="info-display" style="display: none;">
+    <div class="info">
+      <div id="back-btn">&lt;뒤로</div>
+      <h1>예약자 정보</h1>
+      <div class="user-input">
+        <form action="" method="post">{% csrf_token %}
+          <span id="selected_store" style="display: none;"></span>
+          <input type="hidden" name="selected_store2" id="selected_store2"></input><br>
+          <input type="hidden" name="channel_name" id="channel_name"></input><br>
+          <input type="date" name="detail_user_date" id="detail_user_date" style="display: none;">
+          <input type="time" name="detail_user_time" id="detail_user_time" style="display: none;">
+          <div>
+            <!-- <label for="selectedDate">날짜 : </label><br> -->
+            <span id="selectedDate"></span>
+            <br><br>
+          </div>
+          <div>
+            <label for="detail_user_name">이름</label><br>
+            <input type="text" name="detail_user_name" id="detail_user_name" class="check-input" required placeholder="홍길동">
+          </div>
+          <br><br>
+          <div>
+            <label for="detail_user_phone">핸드폰 번호</label><br>
+            <input type="text" name="detail_user_phone" id="detail_user_phone" class="check-input" required placeholder="010-1234-1234">
+          </div>
+          <br><br>
+          <div>
+            <label for="v_num">방문인원</label><br>
+            <input type="number" name="v_num" id="v_num" class="check-input" required placeholder="1">
+            <span></span>
+          </div>
+          <br><br>
+          <div>
+            <label for="password">비밀번호</label><br>
+            <input type="password" name="password" id="password" class="check-input" required placeholder="0000" pattern="[0-9]+" maxlength="4">
+            <span></span>
+          </div>
+          <button type="submit" class="booking">예약하기</button>
+          <!-- 모달 -->
+          <div id="modal">
+            <div class="modal-content">
+              <div class="modal-content-wrap">
+                <div class="modal-header">
+                  <p>예약완료</p>
+                  <span class="close">&times;</span>
+                </div>
+                <div class="modal-body">
+                  <p>예약해주셔서 감사합니다.</p>
+                  <p>예약이 정상적으로 접수되었습니다.</p>
+                  <p></p>
+                </div>
+                <div class="modal-footer">
+                  <p>변경사항이 있으시면 업체에 개별 문의 부탁드립니다.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 모달 끝 -->
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="rs-list">
+    <h1>시간표 조회</h1>
+    <div class="scroll box2">
+      {% for obj in store_list %}
+      <div class="store-table" data-crm="{{ obj.owner.username }}">
+        <div class="st-name">
+          <div class="st-id" data-crm="{{ obj.id }}"></div>
+          {{ obj.store_name }}
+        </div>
+        <div class="st-time">
+          {% for time in store_times_dict|get_item:obj.pk %}
+          <button class="time-item-{{ obj.id }}" type="button" data-time="{{ time.reservation_time }}" id="time-style">{{ time.reservation_time}}</button>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+      <p>STEP1. 달력의 날짜를 선택하세요.</p>
+      <p>STEP2. 업체를 선택하세요.</p>
+      <p>STEP3. 시간을 선택하세요.</p>
+      <p>STEP4. 다음 버튼을 눌러주세요.</p>
+      <p>STEP5. 예약자 정보를 입력하시고 예약하기 버튼을 눌러주세요.</p>
+    </div>
+  </div>
+
+
+  {% include "reservation/js/sujung_main_js.html" %}
+  {% include "reservation/js/sungwoo_main_js.html" %}
+{% endblock %}

@@ -16,9 +16,6 @@
   }
   // let endpoint = weStart + loc.host + loc.pathname + loc.search;
   let url = weStart + loc.host + loc.pathname + loc.search;
-  // let endpoint;
-  // let chatSocket = new ReconnectingWebSocket(url);
-  let chatSocket;
   let my_webSockets = {};
   let my_webSockets2 = {};
   let chat_room_name2 = [];
@@ -43,12 +40,12 @@
       chat_room_name.push(data_value);
     }
     // console.log(chat_room_name);
-    for (let name of updateUserName) {
+    for (let name of userInfo.user_names) {
       if (my_webSockets[name]) {
         continue;
       }
       let endpoint = weStart + loc.host + loc.pathname + loc.search + name + "/";
-      chatSocket = new ReconnectingWebSocket(endpoint);
+      let chatSocket = new ReconnectingWebSocket(endpoint);
       my_webSockets[name] = chatSocket;
 
       chatSocket.onopen = function (e) {
@@ -105,7 +102,7 @@
 
   // 채팅 목록 조회
   async function fetchChatRooms() {
-    const response = await fetch("api/chat-room/");  // 채팅방 목록을 반환하는 URL로 수정해주세요.
+    const response = await fetch("api/chat-room/");
     const chatrooms = await response.json();
     console.log("챗룸", chatrooms);
     const chatroomList = document.querySelector(".chat-box");

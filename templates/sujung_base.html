@@ -1,0 +1,175 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- css -->
+  {% block style %}{% endblock style %}
+  <link rel="stylesheet" href="{% static 'css/sujung_base.css' %}">
+
+  <!-- title -->
+  <title>{% block title %}Document{% endblock %}</title>
+</head>
+<body>
+
+  <!-- navbar 영역 -->
+  {% include "navbar.html" %}
+
+  <section class="top-wrapper">
+    <!-- <section class="colorpart top-section">
+      <div class="content-container content-theme-dark">
+        <div class="content-inner">
+          <div class="content-center">
+            <h1 class="fancy">CHEGO</h1>
+            <p>통합 예약 관리 시스템</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <section class="colorpart bottom-section">
+      <div class="content-container content-theme-light">
+        <div class="content-inner">
+          <div class="content-center">
+            <h1>CHEGO</h1>
+            <p>통합 예약 관리 시스템</p>
+            
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="scroll-text">
+      <div class="flow-text">
+        <div class="inner-text">
+            <span class="left-text">Our</span>
+            <span class="right-text">Service</span>
+        </div>
+        </div>
+    </section> -->
+  </section>
+
+
+
+
+
+
+<section class="md-wrapper">
+  <!-- <section class="intro">
+    <div class="slider_wrapper">
+      <div class="flex_con flex-card1 flex-active" data-slide="1">
+        <div class="flex_item flex_item-left">
+          <div class="flex_content">
+            <p class="text-sub">Strength 1</p>
+            <h1 class="text-big">Time Saving</h1>
+            <p class="text-normal">기존의 개별 홈페이지 및 인스타그램 등의 접근성이 낮고 번거로운 조회 방식에서 벗어나,<br>가맹점주와 고객 모두 시간절약을 할 수 있는 서비스를 제공합니다.</p>
+          </div>
+          <p class="text_background">Time</p>
+        </div>
+        <div class="flex_item flex_item-right"></div>
+        <img class="slider_img" src="{% static 'calendar_app/images/clock.png' %}" />
+      </div>
+      <div class="flex_con flex-card2 animate-start" data-slide="2">
+        <div class="flex_item flex_item-left">
+          <div class="flex_content">
+            <p class="text-sub">Strength 1</p>
+            <h1 class="text-big">One-step</h1>
+            <p class="text-normal">원스텝 서비스를 통해, 일자별 업체 시간표의 통합 조회가 가능합니다.<br>한 곳에서 모든 가맹점의 시간표 조회부터 예약이 가능합니다.</p>
+          </div>
+          <p class="text_background">Onestep</p>
+        </div>
+        <div class="flex_item flex_item-right"></div>
+        <img class="slider_img" src="{% static 'calendar_app/images/calendar.png' %}" />
+      </div>
+      <div class="flex_con flex-card3 animate-start" data-slide="3">
+        <div class="flex_item flex_item-left">
+          <div class="flex_content">
+            <p class="text-sub">Strength 3</p>
+            <h1 class="text-big">Efficient</h1>
+            <p class="text-normal">업체별 시간표 및 가격비교, 분석을 통해 보다 능률적인 예약시스템을 제공합니다.</p>
+          </div>
+          <p class="text_background">Efficient</p>
+        </div>
+        <div class="flex_item flex_item-right"></div>
+        <img class="slider_img" src="{% static 'calendar_app/images/folder.png' %}" />
+      </div>
+    </div>
+    <div class="slider_navi">
+      <a href="#" class="slide-nav active" data-slide="1">pikachu</a>
+      <a href="#" class="slide-nav" data-slide="2">piplup</a>
+      <a href="#" class="slide-nav" data-slide="3">blaziken</a>
+    </div>
+  </section>
+  <section class="scroll-text2">
+    <div class="flow-text2">
+      <div class="inner-text">
+          <span class="right-text">Try <span>Reserve</span></span>
+      </div>
+  </div>
+  </section>
+  <section>
+    <div class="guide-wrap wrapper-small">
+			<div class="title ani fadeInB">예약방법</div>
+			<div class="title ani fadeInB">How To Reserve</div>
+			<div class="contents clear">
+				<div class="content ani fadeInB"><img src="{% static 'calendar_app/images/reserve1.png' %}"><span>STEP1</span>달력의 날짜를 선택하세요.</div>
+				<div class="content ani fadeInB" data-delay="0.3s"><img src="{% static 'calendar_app/images/reserve2.png' %}"><span>STEP2</span>업체를 선택하세요.</div>
+				<div class="content ani fadeInB" data-delay="0.6s"><img src="{% static 'calendar_app/images/reserve3.png' %}"><span>STEP3</span>시간을 선택하세요.</div>
+				<div class="content ani fadeInB" data-delay="0.9s"><img src="{% static 'calendar_app/images/reserve4.png' %}"><span>STEP4</span>다음버튼을 눌러서 예약자 정보를 입력하시고 예약하기 버튼을 눌러주세요.</div>
+			</div>
+		</div>
+  </section> -->
+  
+  <section class="reservation">
+    <div class="reserve-wrap">
+      <div class="rs-head" id="pg1">
+        <div class="rs-point">
+          <h1 class="rs-title">예약하기</h1>
+          <div class="rec"></div>
+        </div>
+        <div class="rs-color">
+          <p> </p>
+        </div>
+      </div>
+      <div class="rs-body">
+        <!-- <div class="rs-tabs">
+          <div class="tabs">
+            <ul class="active">
+              <li><a href="main1.html#pg1">업체예약</a></li>
+            </ul>
+            <ul>
+              <li><a href="main2.html#pg2">예약조회</a></li>
+            </ul>
+            <ul>
+              <li><a href="">상세정보</a></li>
+            </ul>
+            <ul>
+              <li><a href="">tab</a></li>
+            </ul>
+            <ul>
+              <li><a href="">tab</a></li>
+            </ul>
+            <ul>
+              <li><a href="">tab</a></li>
+            </ul>
+          </div>
+        </div> -->
+          <!-- 각 페이지의 컨텐츠 영역 -->
+          {% block container %}
+          {% endblock %}
+      </div>
+    </div>
+  </section>
+
+
+  </section>
+  
+  <!-- footer 영역 -->
+    {% include "footer.html" %}
+  </section>
+  
+  {% include "js/sujung_base_js.html" %}
+</body>
+</html>

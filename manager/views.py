@@ -30,6 +30,11 @@ ADMIN_USERS = { "admin" : True,}
 def store_list(request):
     return render(request, "manager/manager_index.html")
 
+def production_current_user(request):
+    current_user = request.user
+    if not current_user.is_authenticated:
+        return JsonResponse([], safe=False)
+
 class ManagerStoreList(LoginRequiredMixin, ListView, LoginView, FormView):
     model = rsv.Store
     template_name = "manager/manager_index.html"
@@ -177,7 +182,6 @@ class ChatRoom(View):
     def get(self, request):
         # 인증된 사용자인지 확인
         current_user = request.user
-        print("유저타입",type(current_user))
         if not current_user.is_authenticated:
             return JsonResponse([], safe=False)
 
@@ -251,6 +255,24 @@ class EnterChatRoom(View):
         }
 
         return JsonResponse(response, safe=False)
+
+class Reservation_Details(View):
+    def get(self, request, id=None):
+        production_current_user(request)
+        if id:
+            rsv_model = get_object_or_404(rsv.Reservation_user.objects.defer("pwhash"), id=id)
+            rsv_dict = model_to_dict(rsv_model)
+            rsv_dict.pop("pwhash", None)
+        else:
+            user_id = request.user.id
+            print(user_id)
+            rsv_model = rsv.Reservation_user.objects.defer("pwhash").filter(store_id__owner_id=user_id, reservation_check=False)
+            print("Reservation_Details 엘스", rsv_model)
+            rsv_dict = [model_to_dict(r) for r in rsv_model]
+            for r in rsv_dict:
+                r.pop("pwhash", None)
+        return JsonResponse(rsv_dict, safe=False)
+
     
     # def get_context_data(self, **kwargs):
     #     context = {}

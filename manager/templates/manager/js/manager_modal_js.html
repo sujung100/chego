@@ -1,0 +1,86 @@
+<script>
+  // Notification.requestPermission().then(function (permission) {
+  //   console.log('Permission:', permission);
+  // });
+  // new Notification("Hello, world!",{
+  //   body : "This is a notification."
+  // });
+  ntfIcon = document.querySelector(".notification-icon:nth-of-type(2)");
+  modal = document.querySelector("#open-modal");
+  function clickReserVaTion() {
+    ntfIcon.addEventListener("click", function () {
+      console.log("클릭 이벤트 되냐");
+      // window.location.hash = "open-modal";
+      modal.style.display = "flex";
+    });
+    window.addEventListener("click", function(){
+      if(event.target == modal){
+        modal.style.display = "none";
+      }
+    })
+
+  }
+  clickReserVaTion();
+
+  async function pageStart() {
+    let rsvFetch = await fetch("api/reservation_false/");
+    let rsvDetailsData = await rsvFetch.json();
+    console.log("페이지스타트", rsvDetailsData);
+    // for(let detailsData in rsvDetailsData ){
+    //   rsvNotification(detailsData);
+    // }
+    rsvNotification(rsvDetailsData);
+  }
+
+  async function reserVationDetails(data) {
+    console.log("모달 스크립트");
+    let reservationId = data.content;
+    let rsvFetch = await fetch(`api/reservation_id/${reservationId}`);
+    // console.log(rsvFetch);
+    let rsvdata = await rsvFetch.json();
+    console.log(rsvdata);
+    rsvNotification(rsvdata);
+  }
+
+  async function rsvNotification(rsvdata) {
+
+    // console.log("노티피레져베이션");
+    const reservation_card = document.querySelector("#reservation-info");
+    // console.log("rsvdata", rsvdata);
+    if (Array.isArray(rsvdata)) {  
+      console.log("배열"); 
+        for (let i = 0; i < rsvdata.length; i++) {
+        let rsvInfo = rsvdata[i];
+        let card = document.createElement("div");
+        card.classList.add("card");
+        // console.log(rsvInfo);
+        for (let key in rsvInfo) {
+          // console.log(key);
+          let cardP = document.createElement("p");
+          cardP.textContent = `${key} : ${rsvInfo[key]}`;
+          card.appendChild(cardP);
+        }
+        reservation_card.appendChild(card);
+      }
+    }
+    else {
+      console.log("객체");
+      for (let key in rsvdata) {
+        // console.log("키", key);
+        let card = document.createElement("div");
+        card.classList.add("card");
+        let cardP = document.createElement("p");
+        cardP.textContent = `${key} : ${rsvdata[key]}`;
+        card.appendChild(cardP);
+        reservation_card.appendChild(card);
+      }
+    }
+  }
+
+  function msg_count_hidden(element) {
+    element.style.visibility = "hidden";
+  }
+  function msg_count_visible(element) {
+    element.style.visibility = "visible";
+  }
+</script>

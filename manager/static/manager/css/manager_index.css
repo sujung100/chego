@@ -671,11 +671,19 @@ svg {
   background: #ecf0f1;
 }
 
-.content2 .con2_nav .notification-icon i {
+.content2 .con2_nav .notification-icon:nth-of-type(1) i {
   background-image:linear-gradient(300deg, #acccea, #6495ed);
   background-clip: text;
   /* -webkit-background-clip: text; */
   -webkit-text-fill-color: transparent;
+}
+
+.content2 .con2_nav .notification-icon:nth-of-type(2) i {
+  background-image:linear-gradient(300deg, #fff9ab, #00b8ff);
+  background-clip: text;
+  /* -webkit-background-clip: text; */
+  -webkit-text-fill-color: transparent;
+  cursor: pointer;
 }
 
 .content2 .con2_nav .notification-icon .num-count{

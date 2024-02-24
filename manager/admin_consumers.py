@@ -113,7 +113,9 @@ class AdminChatConsumer(AsyncWebsocketConsumer):
 
 
     async def connect(self):
+        print("어드민커넥트실행")
         self.room_name = self.scope['url_route']['kwargs']['room_name']
+        
         self.room_group_name = f"chat_{self.room_name}"
         await self.channel_layer.group_add(
             self.room_group_name,
@@ -122,7 +124,8 @@ class AdminChatConsumer(AsyncWebsocketConsumer):
         global connected_count
         connected_count += 1
         await self.accept()
-        print(f'Current connections: {connected_count}')
+        # print(f'Current connections: {connected_count}')
+        print(f"어드민컨수머 : {self.room_group_name}")
 
 
 
@@ -137,10 +140,7 @@ class AdminChatConsumer(AsyncWebsocketConsumer):
             print(f'Current connections: {connected_count}')
         else:
             print("디스커넥트에서 못찾음.")
-        # # Leave room group
-        # await self.channel_layer.group_discard(
-        #     self.room_group_name, self.channel_name
-        # )
+      
 
     # Receive message from WebSocket
     async def receive(self, text_data):
@@ -150,25 +150,17 @@ class AdminChatConsumer(AsyncWebsocketConsumer):
         key_command = data.get("command")
         key_message_id = data.get("message_id")
 
-        # if key_command == ""
-
+       
         if key_command == "mark_as_read":
             # if key_message_id is not None:
             if key_message_id :
                 await self.mark_as_read(key_message_id)
         
-        # await self.send(text_data=json.dumps({
-        #     "message" : "읽었다.",
-        # }))
+        
         elif key_command == "new_message":
             # if key_command in self.commands:
             await self.commands[key_command](data)
-            # self.send(text_data=json.dumps({
-            #     "message" : "메세지 왔다.",
-            # }))
-            # else:
-            #     print(f"Unknown command: {key_command}")
-        
+            
         elif key_command == "real_time_new_message":
             await self.mark_as_read(key_message_id)
 
@@ -189,12 +181,9 @@ class AdminChatConsumer(AsyncWebsocketConsumer):
                 self.room_group_name, {"type": "chat.message", "message": message}
             )
         else:
-            # Handle error: 'room_group_name' is not defined
+            
             print("'room_group_name' is not defined")
-        # # Send message to room group
-        # await self.channel_layer.group_send(
-        #     self.room_group_name, {"type": "chat.message", "message": message}
-        # )
+        
 
     async def send_message(self, message):
         await self.send(text_data=json.dumps(message))
@@ -211,3 +200,15 @@ class AdminChatConsumer(AsyncWebsocketConsumer):
         #     "message" : message,
         #     "notification" : notification,
         # }))
+    
+    async def notification_message(self, event):
+        if self.should_handle_message():
+            message = event["notification_message"]
+            await self.send(text_data=json.dumps(message))
+        else:
+            print("노티피 엘스")
+
+    def should_handle_message(self):
+        class_names = ["ManagerConsumer"]
+        self_class = self.__class__
+        return any(self_class == globals().get(class_name) for class_name in class_names)

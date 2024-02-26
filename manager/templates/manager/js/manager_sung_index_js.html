@@ -1,0 +1,529 @@
+{% include "manager/js/reconnecting-websocket.html" %}
+<script>
+  let nc = null;
+  window.addEventListener("DOMContentLoaded", () => {
+    nc = new NotificationCenter();
+  });
+
+  document.addEventListener('DOMContentLoaded', function () {
+
+    // 초기 상태 설정
+    updateStyles(c2, c3, c1);
+
+
+
+    if (store_name.length >= 1) {
+      updateElement("c1", store_name[0], store_id[0]);
+    }
+
+    if (store_name.length >= 2) {
+      updateElement("c2", store_name[1], store_id[1]);
+    }
+
+    if (store_name.length >= 3) {
+      updateElement("c3", store_name[2], store_id[2]);
+    }
+    // Click events
+
+    if (c1) c1.addEventListener('click', handleElementClick);
+    if (c2) c2.addEventListener('click', handleElementClick);
+    if (c3) c3.addEventListener('click', handleElementClick);
+  });
+
+  class NotificationCenter {
+    constructor(storeId) {
+      this.items = [];
+      this.itemsToKill = [];
+      this.storeManager = new StoreManager(storeId); // Create an instance of StoreManager
+      this.currentMessageIndex = 0;
+      this.killTimeout = null;
+
+      // this.spawnNotes(3);
+    }
+
+    async init() {
+      // console.log(this.messages);
+
+      await this.storeManager.handleClick();
+      if (this.messages && Array.isArray(this.messages)) {
+        this.spawnNotes(3);
+      }
+    }
+    spawnNote() {
+      console.log('Current state of messages:', this.messages);
+
+      if (!this.messages || !Array.isArray(this.messages)) return;
+
+      const id = this.random(0, 2 ** 32, true).toString(16);
+      // console.log(id);
+      const message = this.messages[this.currentMessageIndex];
+      const note = new Notification({
+        id: `note-${id}`,
+        icon: message.icon,
+        title: message.title,
+        subtitle: message.subtitle,
+        actions: message.actions
+      });
+      // console.log(note);
+      const transY = 1 * this.items.length;
+
+      note.el.style.transform = `translateY(${transY}%)`;
+      // note.el.addEventListener("click", this.killNote.bind(this, note.id));
+      // this.items.push(note);
+      note.el.addEventListener("click", () => {
+        nc.killNote(note.id);
+        nc.spawnNotes();
+      });
+
+      nc.items.push(note);
+
+      // Increment the current message index for the next call
+      if (this.currentMessageIndex > 0) {
+        --this.currentMessageIndex;
+      }else {
+        this.currentMessageIndex = this.messages.length -1;
+      }
+    }
+    spawnNotes(amount) {
+      let count = typeof amount === "number" ? amount : this.random(1, 5, true);
+
+      while (count--)
+        this.spawnNote();
+    }
+    killNote(id, e) {
+      const note = this.items.find(item => item.id === id);
+      const tar = e.target;
+
+      if (note && tar.getAttribute("data-dismiss") === id) {
+        note.el.classList.add("notification--out");
+        this.itemsToKill.push(note);
+
+        clearTimeout(this.killTimeout);
+
+        this.killTimeout = setTimeout(() => {
+          this.itemsToKill.forEach(itemToKill => {
+            document.body.removeChild(itemToKill.el);
+
+            const left = this.items.filter(item => item.id !== itemToKill.id);
+            this.items = [...left];
+          });
+
+          this.itemsToKill = [];
+
+          if (!this.items.length)
+            this.spawnNotes();
+          else
+            this.spawnNotes(this.random(0, 1, true));
+
+          // this.shiftNotes();
+        }, note.killTime);
+      }
+    }
+    shiftNotes() {
+      this.items.forEach((item, i) => {
+        const transY = 100 * i;
+        // item.el.style.transform = `translateY(${transY}%)`;
+      });
+    }
+    random(min, max, round = false) {
+      const percent = crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32;
+      const relativeValue = (max - min) * percent;
+
+      return min + (round === true ? Math.round(relativeValue) : +relativeValue.toFixed(2));
+    }
+
+    clearNotes() {
+      const parent = document.getElementById("svg_noti");
+      this.items.forEach(note => {
+        parent.removeChild(note.el);
+      });
+      this.items = [];
+    }
+  }
+
+  class Notification {
+    constructor(args) {
+      this.args = args;
+      this.el = null;
+      this.id = null;
+      this.killTime = 300;
+      this.init(args);
+    }
+    init(args) {
+      const { id, icon, title, subtitle, actions } = args;
+      const block = "notification";
+      const parent = document.getElementById("svg_noti");
+      const xmlnsSVG = "http://www.w3.org/2000/svg";
+      const xmlnsUse = "http://www.w3.org/1999/xlink";
+
+      const note = this.newEl("div");
+      note.id = id;
+      note.className = block;
+      parent.insertBefore(note, parent.lastElementChild);
+
+      const box = this.newEl("div");
+      box.className = `${block}__box`;
+      note.appendChild(box);
+
+      const content = this.newEl("div");
+      content.className = `${block}__content`;
+      box.appendChild(content);
+
+      const _icon = this.newEl("div");
+      _icon.className = `${block}__icon`;
+      content.appendChild(_icon);
+
+      const iconSVG = this.newEl("svg", xmlnsSVG);
+      iconSVG.setAttribute("class", `${block}__icon-svg`);
+      iconSVG.setAttribute("role", "img");
+      iconSVG.setAttribute("aria-label", icon);
+      iconSVG.setAttribute("width", "32px");
+      iconSVG.setAttribute("height", "32px");
+      _icon.appendChild(iconSVG);
+
+      const iconUse = this.newEl("use", xmlnsSVG);
+      iconUse.setAttributeNS(xmlnsUse, "href", `#${icon}`);
+      iconSVG.appendChild(iconUse);
+
+      const text = this.newEl("div");
+      text.className = `${block}__text`;
+      content.appendChild(text);
+
+      const _title = this.newEl("div");
+      _title.className = `${block}__text-title`;
+      _title.textContent = title;
+      text.appendChild(_title);
+
+      if (subtitle) {
+        const _subtitle = this.newEl("div");
+        _subtitle.className = `${block}__text-subtitle`;
+        _subtitle.textContent = subtitle;
+        text.appendChild(_subtitle);
+      }
+
+      const btns = this.newEl("div");
+      btns.className = `${block}__btns`;
+      box.appendChild(btns);
+
+      actions.forEach(action => {
+        const btn = this.newEl("button");
+        btn.className = `${block}__btn`;
+        btn.type = "button";
+        btn.setAttribute("data-dismiss", id);
+
+        const btnText = this.newEl("span");
+        btnText.className = `${block}__btn-text`;
+        btnText.textContent = action;
+
+        btn.appendChild(btnText);
+        btns.appendChild(btn);
+      });
+
+      this.el = note;
+      this.id = note.id;
+    }
+    newEl(elName, NSValue) {
+      if (NSValue)
+        return document.createElementNS(NSValue, elName);
+      else
+        return document.createElement(elName);
+    }
+  }
+
+  async function fetchStoreData(storeId) {
+    if (!storeId) {
+      console.warn('storeId is not defined. Skipping fetch.');
+      return [];
+    }
+
+    try {
+      const response = await fetch(`api/store-times/?store_id=${storeId}`);
+      const data = await response.json();
+
+      let dataResult = data[0].map((item) => {
+        return [item.user_name, item.user_phone, item.reservation_date, item.user_time];
+      });
+
+      return dataResult.map(element => ({
+        icon: "up",
+        title: "새로운 예약",
+        subtitle: element,
+        actions: ["확인"]
+      }));
+
+    } catch (error) {
+      console.error('Error:', error);
+
+      // Return an empty array in case of error
+      return [];
+    }
+  }
+
+  class StoreManager {
+    constructor(storeId = null) {
+      this.storeId = storeId;
+      this.storeData = null;
+      // Add other properties if needed
+    }
+
+    async handleClick(inputStoreId) {
+      this.storeId = inputStoreId;
+      let newData = await fetchStoreData(this.storeId);
+
+      console.log(newData);
+
+      if (nc) { // Check if the NotificationCenter instance exists
+        nc.messages = newData;
+        nc.currentMessageIndex = nc.messages.length - 1;
+        nc.clearNotes(); // Remove existing notifications
+        // nc.spawnNotes(3); 
+        // console.log("이건 nc", nc);
+        setTimeout(() => {
+          nc.spawnNotes(3);
+        }, 0);
+      }
+    }
+
+  }
+
+  function handleElementClick() {
+    const currentTransform = this.style.transform;
+
+    if (currentTransform === `translate(${translateX}, ${translateY1}) ${scale_value1} ${rotate_value1}`) {
+      changeSlides(true);
+    }
+
+    if (currentTransform === `translate(${translateX}, ${translateY2}) ${scale_value1} ${rotate_value2}`) {
+      changeSlides(false);
+    }
+
+    let clickedStoreId = this.querySelector("[class$='_storeId']").textContent;
+
+    // let myStoreManager = new StoreManager(clickedStoreId);
+    // myStoreManager.handleClick(clickedStoreId);
+    if (clickedStoreId) {
+      if (nc && nc.storeManager) { // Check if the NotificationCenter instance and its storeManager property exist
+        nc.storeManager.handleClick(clickedStoreId);
+        // nc.spawnNotes(3);
+      }
+    } else {
+      console.log("없어");
+      pass;
+    }
+  }
+
+  let myPlus = document.getElementById("plus");
+  let selectTime = document.getElementById("select_time");
+  let box = document.getElementById("plus_box");
+  let num = 2
+
+
+
+
+  // 만약 최대 zIndex 값을 가진 요소가 있다면 recent_f 함수를 적용합니다.
+
+  function validateTime(timeInput) {
+    let minValue = timeInput.getAttribute('min');
+    let value = timeInput.value;
+
+    // value = roundToNearestHalfHour(value);
+    // timeInput.value = value;
+    if (minValue && value < minValue) {
+      // Show an alert if the input value is less than the min value
+      alert("시간은 이전 시간 이후로 설정해 주세요.");
+      // Set the input value to the minimum value
+      timeInput.value = minValue;
+    }
+  }
+
+  myPlus.addEventListener("click", function () {
+    let newPlus = document.createElement("button");
+    let newMinus = document.createElement("button");
+    let newLine1 = document.createElement("br");
+
+    let newInput = document.createElement("input");
+    let prevInput = document.getElementById("select_time" + (num - 1));
+
+    // console.log(prevInput.value)
+    newInput.type = "time";
+    newInput.min = prevInput.value;
+    // newInput.step = "1800";
+    newInput.name = "select_time[]";
+    newInput.id = "select_time" + num;
+
+    newInput.onchange = function () {
+      validateTime(newInput);
+    };
+
+    newPlus.type = "button";
+    newPlus.textContent = "추가";
+    newPlus.id = "plus" + num;
+
+    newPlus.addEventListener("click", myPlus.click.bind(myPlus));
+
+    newMinus.type = "button";
+    newMinus.textContent = "삭제";
+    newMinus.id = "minus" + num;
+
+    newMinus.addEventListener("click", function () {
+      const idNum = this.id.replace("minus", "");
+
+      const plusToRemove = document.getElementById("plus" + idNum);
+      const minusToRemove = document.getElementById("minus" + idNum);
+      const newInputRemove = document.getElementById("select_time" + idNum);
+
+      newInputRemove.remove();
+      // plusToRemove.remove();
+      minusToRemove.remove();
+      newLine1.remove();
+    });
+
+    box.appendChild(newInput);
+    // box.appendChild(newPlus);
+    box.appendChild(newMinus);
+    box.appendChild(newLine1);
+
+    num += 1
+  });
+
+  // document.querySelectorAll('.store_in').forEach(function (div) {
+  //   div.addEventListener('click', function () {
+  //     location.href = div.dataset.url;
+  //   });
+  // });
+
+
+  const store_json = JSON.parse('{{ store_json | escapejs | safe }}');
+  const store_name = [];
+  // console.log(store_json);
+  // console.log("제이슨 잘 넘어오냐", store_json);
+  for (let i = 0; i < store_json.length; i++) {
+    const json_name = store_json[i]["store_name"];
+    store_name.push(json_name);
+  }
+
+  const store_id = store_json.map(function (item) { return item.id });
+  // console.log(store_id);
+  // console.log(typeof (store_id));
+  // console.log(store_name);
+
+  const idsString = JSON.stringify(store_id);
+  // console.log(idsString);
+  // console.log(typeof (idsString));
+
+  let flag = 0;
+
+  let c1 = document.querySelector('.c1');
+  let c2 = document.querySelector('.c2');
+  let c3 = document.querySelector('.c3');
+
+
+
+  const translateX = '-20px';
+  const translateY1 = '50px';
+  const translateY2 = '-50px';
+  const scale_value1 = "scale(0.9)";
+  const rotate_value1 = "rotate(5deg)";
+  const rotate_value2 = "rotate(-5deg)";
+
+
+  function updateStyles(up, down, center) {
+
+    if (up && down && center) {
+      up.style.transform = `translate(${translateX}, ${translateY2}) ${scale_value1} ${rotate_value2}`;
+      up.style.zIndex = 1;
+      up.style.opacity = 0.5;
+
+      down.style.transform = `translate(${translateX}, ${translateY1}) ${scale_value1} ${rotate_value1}`;
+      down.style.zIndex = 1;
+      down.style.opacity = 0.5;
+
+      center.style.transform = 'translate(0, 0) scale(1)';
+      center.style.zIndex = 2;
+      center.style.opacity = '1';
+    }
+  }
+
+  async function changeSlides(isNext) {
+    return new Promise(resolve => {
+      if (isNext) {
+        if (flag === 0) {
+          updateStyles(c1, c2, c3);
+          flag = 1;
+        } else if (flag === 1) {
+          updateStyles(c3, c1, c2);
+          flag = 2;
+        } else if (flag === 2) {
+          updateStyles(c2, c3, c1);
+          flag = 0;
+        }
+      } else {
+        if (flag === 0) {
+          updateStyles(c2, c3, c1);
+          flag = 1;
+        } else if (flag === 1) {
+          updateStyles(c3, c1, c2);
+          flag = 2;
+        } else if (flag === 2) {
+          updateStyles(c1, c2, c3);
+          flag = 0;
+        }
+      }
+      setTimeout(resolve, 0);
+    });
+  }
+
+
+
+  function updateElement(elementClassName, storeName, storeId) {
+
+    let element = document.querySelector("." + elementClassName);
+    while (element.firstChild) {
+      element.removeChild(element.firstChild);
+    }
+    // console.log(storeId);
+
+    let storeidBox = document.createElement("div");
+    storeidBox.className = elementClassName + "_storeId";
+
+    let newStoreBox = document.createElement("div");
+    newStoreBox.className = elementClassName + "_store_box1";
+
+    let newStoreBox2 = document.createElement("div");
+    newStoreBox2.className = elementClassName + "_store_box2";
+
+    let newStoreName = document.createElement("div");
+    newStoreName.className = "store_name";
+    newStoreName.textContent = storeName;
+
+    let newStoreIn = document.createElement('div');
+    newStoreIn.className = 'store_in';
+    // newStoreIn.dataset.url = storeId;
+
+    let inputButton = document.createElement('input');
+    inputButton.type = 'button';
+    inputButton.value = '들어가기';
+
+
+    element.appendChild(storeidBox);
+    storeidBox.innerText = storeId;
+    storeidBox.style.display = "none";
+
+    element.appendChild(newStoreBox);
+    element.appendChild(newStoreBox2);
+
+    newStoreBox.appendChild(newStoreName);
+    newStoreBox.appendChild(newStoreIn);
+
+    newStoreIn.appendChild(inputButton);
+
+    element.classList.add('flex_column');
+    element.style.border = 'none';
+
+    newStoreIn.addEventListener('click', function () {
+      location.href = `/manager/${storeId}/`; // Django URL pattern
+    });
+  }
+
+
+</script>

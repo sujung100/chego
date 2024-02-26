@@ -41,19 +41,12 @@ class Manager(models.Model):
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
-    if created and not hasattr(instance, 'manager'):
+    if created:
         Manager.objects.create(user=instance)
-    # if created:
-    #     Manager.objects.get_or_create(user=instance)
 
 # @receiver(post_save, sender=User)
 # def save_user_profile(sender, instance, **kwargs):
 #     instance.manager.save()
-        
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    if hasattr(instance, 'manager'):
-        instance.manager.save()
 
 
 class Reservation_user(models.Model):
@@ -67,7 +60,6 @@ class Reservation_user(models.Model):
     # password = models.CharField(validators=[RegexValidator(r'^[0-9]*$', '숫자만 입력해주세요.', 'invalid'),], max_length=4, null=True)
     visitor_num = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(99)], null=True)
     pwhash = models.CharField(max_length=200, null=True)
-    reservation_check = models.BooleanField(default=False)
     # retry_count = models.IntegerField(default=5)
 
 

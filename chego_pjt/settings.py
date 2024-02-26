@@ -32,6 +32,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "channels",
+    "daphne",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'calendar_app',
     'manager',
+    # "rest_framework",
 ]
 
 MIDDLEWARE = [
@@ -135,3 +138,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # 로그인 후 이동할 url설정
 LOGIN_REDIRECT_URL = '/manager'
 LOGOUT_REDIRECT_URL = '/manager'
+
+
+ASGI_APPLICATION = 'chego_pjt.asgi.application'
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+        "MIDDLEWEAR" : [
+            "channels.middleware.AuthMiddlewareStack"
+        ],
+    },
+}

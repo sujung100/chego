@@ -179,7 +179,7 @@ def write(request):
 
 
 
-# 기본 예약조회
+
 class ManagerStoreUpdateView(LoginRequiredMixin, FormView):
     template_name = 'manager/manager_operate.html'
     form_class = ManagerUpdateForm
@@ -239,8 +239,6 @@ class ManagerStoreUpdateView(LoginRequiredMixin, FormView):
         context['page_obj'] = page_obj
         context['kw'] = kw
 
-        print("전체 콘텍스트 출력: ", context)
-
         return context
 
     def form_valid(self, form):
@@ -283,7 +281,6 @@ class Update(LoginRequiredMixin, UpdateView):
 
     # 권한설정
     def dispatch(self, request, *args, **kwargs):
-        print("? 되냐")
         self.manager = get_object_or_404(Manager, pk=kwargs['pk'])
         self.store = get_object_or_404(Store, pk=kwargs['store_id'])
         
@@ -295,7 +292,6 @@ class Update(LoginRequiredMixin, UpdateView):
 
 
     def get_context_data(self, **kwargs):
-        print("여긴 되냐")
         context = super().get_context_data(**kwargs)
 
         # URL에서 store_id값 가져오기

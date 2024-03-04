@@ -168,8 +168,8 @@
     if (socket.url === chatSocket.url) {
       handleChatSocket(data);
     } else if (data.type === "notification") {
-      handleUserSocket(data);
       console.log("타입 비교");
+      handleUserSocket(data);
       // console.log(socket.url);
       // console.log(managerSocket.url);
 

@@ -1,0 +1,245 @@
+@import url('https://fonts.googleapis.com/css?family=Questrial&display=swap');
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+  font-size:62.5%;
+	font: inherit;
+	vertical-align: baseline;
+}
+
+ol, ul{
+  list-style: none;
+}
+
+
+
+
+
+
+
+#wrap {
+  width: 100%;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 4fr 2fr;
+  grid-template-rows: auto;
+  /* position: relative; */
+}
+
+body {
+  background-image: url("../img/uplecz.jpg");
+}
+
+.box1 {
+  /* background-color: #000; */
+  display:flex;
+  justify-content: end;
+}
+
+.box1 .content1 {
+  display: flex;
+  background-color: rgba(255, 255, 255, 0.2);
+  width: 90%;
+  height: 80%;
+  align-self: center;
+  border-radius: 2%;
+}
+
+.box1 .content1 .cont_box1 {
+  width:50%;
+  height:100%;
+  border: 5px solid lightcoral;
+  align-self: center;
+  display:flex;
+  /* align-items: center; */
+  
+}
+
+.box1 .content1 .cont_box2 {
+  width:50%;
+  height:100%;
+  border:5px solid lightgreen;
+  align-self: center;
+}
+
+/* 달력 시작 */
+
+.Calendar {
+  width:100%;
+  height:70%;
+  text-align: center;
+  border-collapse: separate;
+  border-spacing: 15px 0;
+}
+
+
+.Calendar thead {
+  width:100%;
+  height:20%;
+}
+
+.Calendar>tbody>tr>td {
+  width: 14.28%; /* 테이블의 총 너비를 7로 나눈 결과로 각 요일의 너비를 동일하게 설정합니다. */
+  height:auto; /* 높이를 본래 설정대로 유지하거나 필요한 경우 적절한 높이 값으로 설정합니다. */
+  box-sizing: border-box; /* 패딩 및 경계선이 요소의 크기에 포함되도록 box-sizing을 설정합니다. */
+}
+
+.Calendar>thead>tr:first-child>td {
+  font-family: 'Questrial', sans-serif;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.Calendar>thead>tr:last-child>td {
+  font-family: 'Questrial', sans-serif;
+  font-weight: 600; 
+}
+
+
+
+.Calendar>tbody>tr>td>p {
+  margin:0 auto;
+  /* border:2px solid lightsalmon; */
+  font-family: 'Montserrat', sans-serif;
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+  transition-duration: .2s;
+  line-height: 300%;
+  /* margin: 5%; */
+  display: block;
+  text-align: center;
+}        
+.Calendar>tbody>tr>td>div.rsv_check {
+  color:green;
+  font-size:0.8rem;
+  font-weight: bold;
+}        
+
+.pastDay {
+  /* width:50%; */
+  /* height:15%; */
+  color: lightgray;
+}
+
+.today {
+  background-color: #F5D042;            
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.futureDay {
+  background-color: #FFFFFF;
+  cursor: pointer;
+}
+.futureDay:hover{
+  background:#eee;
+}
+
+.futureDay.choiceDay,
+.today.choiceDay {
+  background: #0A174E;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* 달력 끝 */
+
+.box2 {
+  /* background-color: brown; */
+  display:flex;
+  /* justify-content: end; */
+}
+
+.box2 .content2 {
+  
+  backdrop-filter: blur(10px);
+  position:relative;
+  /* top:50%; */
+  width: 80%;
+  height: 80%;
+  align-self: center; 
+  justify-content: center;
+  align-items: center;
+  border-radius: 3%;
+}
+
+.content2 .con2_nav {
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* justify-self: center; */
+  width: 90%;
+  height: 10%;
+  /* border:2px solid wheat; */
+
+}
+
+.content2 .con2_nav .nav_button1 {
+  width: 15%;
+  height: 50%;
+  /* border: 0; */
+  /* border-radius: 50%; */
+  /* background-color: rgba(255, 255, 255, 0.2); */
+}
+
+.content2 .con2_nav .nav_button1 img {
+  margin: 0 auto;
+  width: 100%;
+  height: 100%;
+}
+
+
+/* .content2 .con2_nav .nav_button2 {
+  width: 8%;
+  height: 50%;
+  border: 0;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.content2 .con2_nav .nav_button2 img {
+  margin: 0 auto;
+  width: 80%;
+  height: 50%;
+} */
+
+
+.content2 .con2_manager1 {
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  height: 20%;
+  /* border:3px solid chocolate; */
+}
+
+.con2_manager1 .profile_img {
+  width: 30%;
+  height: 80%;
+}
+
+@media screen and (max-width:6000px){
+  body{
+    width:100%;
+  }
+}

@@ -1,0 +1,227 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'manager/css/manager_store_detail.css' %}?after">
+  <title>가게 상세페이지</title>
+</head>
+
+<body>
+  <div id="wrap">
+    <div class="box1">
+      <div class="content1">
+        {% if request.user.is_authenticated %}
+          <div class="cont_box1">
+            <div class="cont">
+              <div class="buttons">
+                <button class="up-bt">수정</button>
+                <button class="del-bt">삭제</button>
+              </div>
+              <div class="section1">
+                <div id="store">
+                  <!-- 템플릿태그 일단 주석 -->
+                  <!-- <form action=" url 'mng_update' pk=manager.pk store_id=store.pk " method="get"> -->
+                  <form action="{% url 'store_detail' store_id=store.pk %}" method="get">
+                    <div class="store_item1">
+                      <!-- 주석<label for="search_kw">예약일 예시&#41; 2024-01-01 / 2024-01 / 2024</label> -->
+                      <div class="align_inputs">
+                        <input type="text" id="search_name" name="name" value="{{ request.GET.name|default:'' }}" placeholder="이름" autocomplete="off" class="search-input">
+                        <input type="text" id="search_phone" name="phone" value="{{ request.GET.phone|default:'' }}" placeholder="전화번호" autocomplete="off" class="search-input">
+                        <input type="text" id="search_kw" name="kw" value="{{ kw|default_if_none:'' }}" placeholder="예약일" autocomplete="off" class="search-input">
+                      </div>
+                      <div class="align_boxes">
+                        <input type="checkbox" id="checkbox_name" data-input-id="search_name">
+                        <label for="checkbox_name">이름</label>
+                        <input type="checkbox" id="checkbox_phone" data-input-id="search_phone">
+                        <label for="checkbox_phone">전화번호</label>
+                        <input type="checkbox" id="checkbox_kw" data-input-id="search_kw">
+                        <label for="checkbox_kw">예약일</label>
+                      </div>
+                      <button type="submit" id="btn_search">검색</button>
+                    </div>
+                  </form>
+                  <div class="store_item2">
+                    <div class="head-user">
+                      <p>이름</p>
+                      <p>전화번호</p>
+                      <p>예약일</p>
+                      <p>예약 시간</p>
+                    </div>
+                    <hr>
+                    {% for rsv in page_obj %}
+                    <div class="user-info">
+                        <p>이름: {{ rsv.user_name }}</p>
+                        <p>전화번호: {{ rsv.user_phone }}</p>
+                        <p>예약일: {{ rsv.reservation_date }}</p>
+                        <p>예약 시간: {{ rsv.user_time }}</p>
+                    </div>
+                    <hr>
+                    {% endfor %}
+                  </div>
+                  <!-- 페이지네이션 -->
+                  <div class="pagination">
+                    <span class="step-links">
+                        {% if page_obj.has_previous %}
+                          <a href="?page=1&name={{ request.GET.name|default:'' }}&phone={{ request.GET.phone|default:'' }}&kw={{ request.GET.kw|default:'' }}">&laquo; 처음</a>
+                          <a href="?page={{ page_obj.previous_page_number }}&name={{ request.GET.name|default:'' }}&phone={{ request.GET.phone|default:'' }}&kw={{ request.GET.kw|default:'' }}">이전</a>
+                        {% else %}
+                          <span class="disabled">&laquo; 처음</span>
+                          <span class="disabled">이전</span>
+                        {% endif %}
+                
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                              <a href="?page={{ num }}&name={{ request.GET.name|default:'' }}&phone={{ request.GET.phone|default:'' }}&kw={{ request.GET.kw|default:'' }}" class="active">{{ num }}</a>
+                            {% else %}
+                              <a href="?page={{ num }}&name={{ request.GET.name|default:'' }}&phone={{ request.GET.phone|default:'' }}&kw={{ request.GET.kw|default:'' }}">{{ num }}</a>
+                            {% endif %}
+                        {% endfor %}
+                
+                        {% if page_obj.has_next %}
+                          <a href="?page={{ page_obj.next_page_number }}&name={{ request.GET.name|default:'' }}&phone={{ request.GET.phone|default:'' }}&kw={{ request.GET.kw|default:'' }}">다음</a>
+                          <a href="?page={{ page_obj.paginator.num_pages }}&name={{ request.GET.name|default:'' }}&phone={{ request.GET.phone|default:'' }}&kw={{ request.GET.kw|default:'' }}">마지막 &raquo;</a>
+                        {% else %}
+                          <span class="disabled">다음</span>
+                          <span class="disabled">마지막 &raquo;</span>
+                        {% endif %}
+                    </span>
+                  </div>
+                  <!-- 주석 페이지네이션 끝  -->
+                  <div class="store_item3"></div>
+  
+                </div>
+                <div class="store_test"></div>
+              </div>
+            </div>
+            <a href="/manager/">
+              <button class="rsv_test" type="button">홈홈홈</button>
+            </a>
+          </div>
+
+        <!-- 달력 -->
+        <div class="cont_box2">
+
+          <table class="Calendar">
+            <thead>
+              <tr>
+                <td onClick="prevCalendar();" style="cursor:pointer;">&#60;</td>
+                <td colspan="5">
+                  <span id="calYear"></span>년
+                  <span id="calMonth"></span>월
+                </td>
+                <td onClick="nextCalendar();" style="cursor:pointer;">&#62;</td>
+              </tr>
+              <tr>
+                <td>일</td>
+                <td>월</td>
+                <td>화</td>
+                <td>수</td>
+                <td>목</td>
+                <td>금</td>
+                <td>토</td>
+              </tr>
+            </thead>
+
+            <tbody>
+            </tbody>
+          </table>
+
+      </div>
+      {% else %}
+
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="box2">
+    <div class="content2">
+      {% if request.user.is_authenticated %}
+      <div class="con2_nav">
+        <button class="nav_button1" type="button">
+          <!-- <img src="../../static/manager/img/right-arrow (1).png" alt="접기"> -->
+          <img src="{% static 'manager/img/right-arrow (1).png' %}" alt="접기">
+        </button>
+
+
+        <button id="nav_button2" class="nav_button2" type="button">
+          <!-- <img src="../../static/manager/img/turn-off (1).png" alt="로그아웃"> -->
+          <img src="{% static 'manager/img/turn-off (1).png' %}" alt="로그아웃">
+        </button>
+
+      </div>
+      <div class="con2_manager1">
+        <!-- <img class="profile_img" src="../../static/manager/img/user.png" alt="이미지"> -->
+        <img class="profile_img" src="{% static 'manager/img/user.png' %}" alt="이미지">
+        <span>{{ request.user.username }}</span>
+      </div>
+      <a href="/manager/logout">
+        <button class="logout_test" type="button">로그아웃</button>
+      </a>
+
+
+      {% else %}
+      <form class="login_form" method="POST">
+        {% csrf_token %}
+
+        <div class="form_box1">
+          <!-- <label for="manager_id">Username:</label> -->
+          <input type="text" class="form-control" id="manager_id" name="username"
+            value="{{ form.username.value|default:'' }}" placeholder="USERNAME" required />
+          {{ form.username.errors }}
+          <!-- <div class="test_after1"></div> -->
+          <!-- <div class="test_after1"></div> -->
+        </div>
+
+
+        <div class="form_box2">
+          <!-- <label for="manager_pwd">Password:</label> -->
+          <input type="password" class="form-control" id="manager_pwd" name="password"
+            value="{{ form.password.value|default:'' }}" placeholder="PASSWORD" required />
+          {{ form.password.errors }}
+        </div>
+
+        <div class="form_box3">
+          <!-- <span>Login</span> -->
+          <input type="submit" value="Login">
+        </div>
+        <!-- <div>
+            <button type="submit" value="Login" class="btn btn-primary">Login</button>
+          </div> -->
+      </form>
+
+      <!-- <a href="/manager/login">
+          <button class="login_test" type="button">로그인</button>
+        </a>
+        <a href="/manager/signup">
+          <button class="signup_test" type="button">회원가입</button>
+        </a> -->
+      {% endif %}
+    </div>
+  </div>
+
+  </div>
+</body>
+
+</html>
+
+<script>
+  document.getElementById('nav_button2').addEventListener('click', function () {
+    location.href = '/manager/logout';
+  });
+
+  // const userDates1 = JSON.parse('{{ user_dates_json | escapejs | safe }}');
+  // console.log("유저 데이터 찍히냐?", userDates1);
+  
+  // let userDates = userDates1.map(function(date){
+  //   let parts = date.split("-");
+  //   return parts;
+  // });
+  // console.log("분리 되냐?", userDates);
+</script>
+
+{% include "manager/js/manager_operate_js.html" %} 
+{% include "manager/js/manager_store_detail_js.html" %}
+<!--  include "manager/js/manager_update_form_js.html"  -->

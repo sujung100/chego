@@ -13,8 +13,8 @@
       // window.location.hash = "open-modal";
       modal.style.display = "flex";
     });
-    window.addEventListener("click", function(){
-      if(event.target == modal){
+    window.addEventListener("click", function () {
+      if (event.target == modal) {
         modal.style.display = "none";
       }
     })
@@ -47,9 +47,9 @@
     // console.log("노티피레져베이션");
     const reservation_card = document.querySelector("#reservation-info");
     // console.log("rsvdata", rsvdata);
-    if (Array.isArray(rsvdata)) {  
-      console.log("배열"); 
-        for (let i = 0; i < rsvdata.length; i++) {
+    if (Array.isArray(rsvdata)) {
+      console.log("배열");
+      for (let i = 0; i < rsvdata.length; i++) {
         let rsvInfo = rsvdata[i];
         let card = document.createElement("div");
         card.classList.add("card");
@@ -66,14 +66,14 @@
     else {
       console.log("객체");
       for (let key in rsvdata) {
-        // console.log("키", key);
         let card = document.createElement("div");
         card.classList.add("card");
+        // console.log("키", key);
         let cardP = document.createElement("p");
         cardP.textContent = `${key} : ${rsvdata[key]}`;
         card.appendChild(cardP);
-        reservation_card.appendChild(card);
       }
+      reservation_card.appendChild(card);
     }
   }
 

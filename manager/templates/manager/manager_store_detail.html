@@ -17,8 +17,8 @@
           <div class="cont_box1">
             <div class="cont">
               <div class="buttons">
-                <button class="up-bt">수정</button>
-                <button class="del-bt">삭제</button>
+                <!-- <button class="up-bt">수정</button> -->
+                <button class="del-bt">예약삭제</button>
               </div>
               <div class="section1">
                 <div id="store">
@@ -57,6 +57,7 @@
                         <p>전화번호: {{ rsv.user_phone }}</p>
                         <p>예약일: {{ rsv.reservation_date }}</p>
                         <p>예약 시간: {{ rsv.user_time }}</p>
+                        <input type="checkbox" name="del-rsv" value="삭제">
                     </div>
                     <hr>
                     {% endfor %}

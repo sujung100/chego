@@ -1,0 +1,91 @@
+{% include "manager/js/reconnecting-websocket.html" %}
+
+<script>
+  let userName = "{{ username|escapejs }}";
+  // console.log(userName);
+  const loc = window.location;
+  // console.log(loc);
+  // const loc = "127.0.0.1:8000/manager/";
+  const loc2 = "/manager/sung/admin_chat2"; 
+  // const loc3 = 
+  let weStart = "ws://";
+  if (loc.protocol === "https:") {
+    weStart = "wss://"
+  }
+  let manager_detail_webSockets = {}
+
+  async function accessAllChannels() {
+
+    let endpoints = [
+      { name: "chat", url: weStart + loc.host + loc2 + userName + "/" },
+      { name: "manager_detail", url: weStart + loc.host + loc.pathname + userName },
+    ];
+    Notification.requestPermission().then(function (permission) {
+      console.log('Permission:', permission);
+    });
+    
+    for (let ept of endpoints) {
+      // if (manager_webSockets[chat]) {
+      //   continue;
+      // }
+      let webSocket = new ReconnectingWebSocket(ept.url);
+      manager_detail_webSockets[ept.name] = webSocket;
+      // console.log(ept.name);
+
+      webSocket.onopen = function (e) {
+        console.log(webSocket.url);
+        console.log('Web socket opened successfully');
+      };
+      // webSocket.onmessage = function(e){
+      //   console.log(ept.name);
+      //   handleOnMessage(webSocket,e);
+
+      // };
+      webSocket.onmessage = function (e) {
+        data = JSON.parse(e.data);
+        console.log(data);
+        if (data.message_type == 'reservation_details') {
+          var reservations = data.data;
+          console.log("reservations", reservations);
+          var storeItem2 = document.querySelector('.store_item2');
+        
+          for (var i = 0; i < reservations.length; i++) {
+              var newDiv = document.createElement('div');
+              
+              // 새로운 div 요소의 내용을 설정합니다.
+              // 예를 들어, reservations의 각 요소가 user_name, user_phone 등의 키를 가진 객체라면 아래와 같이 설정할 수 있습니다.
+              newDiv.innerHTML = '이름: ' + (reservations[i].user_name || 'N/A') + '<br>' +
+                                '전화번호: ' + (reservations[i].user_phone || 'N/A') + '<br>' +
+                                '예약일: ' + (reservations[i].reservation_date || 'N/A') + '<br>' +
+                                '예약 시간: ' + (reservations[i].user_time || 'N/A') + '<br>' +
+                                '방문 인원: ' + (reservations[i].visitor_num || 'N/A') + '<hr>'
+                                // ... (다른 필드들도 이와 같이 설정)
+              newDiv.setAttribute("class", "rsv");
+              // 새로운 div 요소를 store_item2의 자식 요소로 추가합니다.
+              storeItem2.appendChild(newDiv);
+          }
+        }
+      }
+      // webSocket.addEventListener("message", function (e) {
+      //   handleOnMessage(webSocket, e);
+      // });
+      webSocket.onclose = function (e) {
+        console.error('Socket closed unexpectedly');
+      };
+    }
+
+  }
+  accessAllChannels();
+  
+  let detailSocket = manager_detail_webSockets["manager_detail"];
+  
+  // function selectedDate(){
+  //   if (detailSocket.readyState === WebSocket.OPEN){
+  //     detailSocket.send(JSON.stringify({
+  //       "command" : "selected_date",
+  //       "select_date" : selected_date.value,
+  //     }));
+  //   }
+  // }
+  // selectedDate();
+</script>

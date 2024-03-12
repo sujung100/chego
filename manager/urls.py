@@ -38,8 +38,8 @@ urlpatterns = [
 
 # 비동기
   path("sung/api/store-times/", sungwoo_views.StoreTimesView.as_view(), name='store_times'),
-  # 이거
-  path('sung/api/schedules/<int:pk>/', sungwoo_views.Schedules.as_view(), name='schedules'),
+  # fetch말고 웹소켓으로 예약정보 가져옴 -이제필요없음
+  # path('sung/api/schedules/<int:pk>/', sungwoo_views.Schedules.as_view(), name='schedules'),
   path("sung/api/reservation_false/", sungwoo_views.Reservation_Details.as_view(), name="reservation_details"),
   path("sung/api/reservation_id/<int:id>/", sungwoo_views.Reservation_Details.as_view(), name="reservation_id"),
   path("sung/admin_chat2/api/chat-room/user_info/", sungwoo_views.UserInfo.as_view(), name="user_info"),

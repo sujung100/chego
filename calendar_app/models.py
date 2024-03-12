@@ -69,6 +69,10 @@ class Reservation_user(models.Model):
     pwhash = models.CharField(max_length=200, null=True)
     reservation_check = models.BooleanField(default=False)
     # retry_count = models.IntegerField(default=5)
+    
+    @classmethod
+    def get_reservation_by_date(cls, date):
+        return cls.objects.filter(reservation_date=date)
 
 
 class Login_try(models.Model):

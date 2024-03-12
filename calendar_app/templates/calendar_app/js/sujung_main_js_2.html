@@ -1,0 +1,97 @@
+{% include "calendar_app/js/reconnecting-websocket.html" %}
+
+<script>
+    // 웹소켓 연결
+    var wsStart = 'ws://';
+    if (window.location.protocol == 'https:') {
+        wsStart = 'wss://';
+    }
+    var endpoint = wsStart + window.location.host + '/calendar_app/pre_choice/';
+    var socket = new WebSocket(endpoint);
+
+    socket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+        console.log("서버로부터의 메시지:", data);
+        if (data.exists) {
+            alert('예약이 이미 존재합니다.');
+            window.location.reload();
+        } else {
+            // 예약 가능 처리
+        }
+    }
+
+    socket.onopen = function (e) {
+        console.log("연결 성립:", e);
+        // 예약 확인을 위한 메시지 송신
+        // const sendBt = document.querySelector(".send-bt");
+        // const parents = document.querySelectorAll(".store-table");
+        // for (parent of parents) {
+        //     parent.addEventListener('click', function (event) {
+        //         sendBt.addEventListener("click", function (event) {
+
+        //             const clickedParent = document.querySelector(".store-table .selected");
+        //             const clickedchild1 = clickedParent.querySelector(".st-id");
+        //             const clickedchild2 = clickedParent.querySelector(".greeen");
+        //             var storeId = clickedchild1.getAttribute('data-crm');
+        //             var reservationTime = clickedchild2.getAttribute('data-time');
+        //             console.log("1", event.target); // 이벤트 발생 대상 확인
+        //             console.log("2", storeId.getAttribute('data-crm')); // storeId 값 확인
+        //             console.log("3", reservationTime.getAttribute('data-time'));
+
+        //             var data = {
+        //                 storeId: storeId,
+        //                 reservationTime: reservationTime
+        //             };
+        //             console.log("데이터", data);
+        //             socket.send(JSON.stringify(data));
+        //         });
+        //     });
+        // }
+
+       
+        // // 이벤트리스너1
+        // document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.st-time button').forEach(button => {
+                console.log("이벤트리스너1");
+                // 이벤트리스너2
+                button.addEventListener('click', function(event) {
+                    // 클릭된 버튼으로부터 가장 가까운 .store-table 요소 찾기
+                    const clickedStoreTable = event.target.closest('.store-table');
+                    
+                    // .store-table 내의 .st-id 요소 찾기
+                    const clickedchild1 = clickedStoreTable.querySelector('.st-id');
+                    
+                    // 필요한 작업 수행, 예: stIdElement의 데이터 사용
+                    // console.log(clickedchild1.dataset.crm); // 예시 출력
+                    
+                    console.log("이벤트리스너2");
+                    var storeId = clickedchild1.getAttribute('data-crm');
+                    // const clickedchild2 = clickedStoreTable.querySelector(".greeen");
+                    var reservationTime = event.target.getAttribute('data-time');
+                    console.log("1", event.target); // 이벤트 발생 대상 확인
+                    console.log("2", storeId);
+                    console.log("3", reservationTime);
+                    const sendBt = document.querySelector(".send-bt");
+
+                    // 이벤트리스너3
+                    sendBt.addEventListener("click", function (event) {
+                        console.log("이벤트리스너3");
+                        var data = {
+                            storeId: storeId,
+                            reservationTime: reservationTime
+                        };
+                        console.log("데이터", data);
+                        socket.send(JSON.stringify(data));
+                    });
+                });
+            });
+        // });
+
+    };
+
+    // 에러 처리
+    socket.onerror = function (e) {
+        console.log("에러 발생:", e);
+    }
+
+</script>

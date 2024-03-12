@@ -238,6 +238,7 @@ class Idx_list(TemplateView):
         # context['store_data'] = store_data
         context['store_data_json'] = json.dumps(store_data, cls=DjangoJSONEncoder)
         # print(store_data)
+        print("콘텍스트 출력", context)
         return context
     
     def post(self, request, *args, **kwargs):
@@ -277,6 +278,64 @@ class Idx_list(TemplateView):
             return HttpResponseRedirect(reverse('Idx_list'))
 
         return self.get(request, *args, **kwargs)
+    
+
+# fetch로 선택한 스토어, 시간값 가져오기1
+# class FetchCheckRsv(View):
+#     def get(self, request, *args, **kwargs):
+#         # 요청에서 JSON 데이터를 파싱합니다.
+#         data = json.loads(request.body.decode('utf-8'))
+#         # storeName = data.get('storeName')
+#         storeId = data.get('storeId')
+#         reservationTime = data.get('reservationTime')
+#         print("storeName", storeId)
+#         print("reservationTime", reservationTime)
+
+#         # 예약 존재 여부를 확인하는 로직을 여기에 구현합니다.
+#         # 예를 들어, 데이터베이스를 조회하여 예약 정보를 확인합니다.
+
+#         store_list = models.Store.objects.all()
+#         for store in store_list:
+#             sto_time = models.Store_times.objects.filter(store_id=store.pk)
+#             for dates in sto_time:
+#                         dates_info  = models.Reservation_user.objects.filter(
+#                         Q(store_id=storeId) &
+#                         Q(user_time=reservationTime)
+#                         )
+
+
+#         # 예약이 존재한다면
+#         # if # 예약 존재 조건:
+#         if dates_info:
+#             return JsonResponse({'exists': True})
+#         else:
+#             return JsonResponse({'exists': False})
+    
+
+# fetch로 선택한 스토어, 시간값 가져오기2 -> fetch X, 웹소켓으로 변경예정 03.12
+# class FetchCheckRsv(View):
+#     def post(self, request, *args, **kwargs):
+#         # 요청에서 JSON 데이터를 파싱합니다.
+#         try:
+#             data = json.loads(request.body.decode('utf-8'))
+#             storeId = data.get('storeId')
+#             reservationTime = data.get('reservationTime')
+
+#             # 예약 존재 여부를 확인합니다.
+#             dates_info = models.Reservation_user.objects.filter(
+#                 Q(store_id=storeId) &
+#                 Q(user_time=reservationTime)
+#             ).exists()
+
+#             # 예약이 존재한다면 True, 그렇지 않다면 False를 반환합니다.
+#             return JsonResponse({'exists': dates_info})
+#         except json.JSONDecodeError:
+#             return JsonResponse({'error': 'Invalid JSON'}, status=400)
+#         except Exception as e:
+#             # 실제 환경에서는 보다 구체적인 예외 처리가 필요할 수 있습니다.
+#             return JsonResponse({'error': str(e)}, status=500)
+
+
 
 
 # 예약확인
@@ -563,8 +622,11 @@ class InputUserNameView(CommonLogicMixin, View):
 
                     if check_pw:
                         request.session['pw_checked'] = True
+                        print("체크해보기block_count", block_count)
+                        print("체크해보기retry_login", retry_login)
                         # 추가추가 01.29 block_count랑 retry_login가져오기...
-                        if not block_count >= self.MAX_BLOCK_COUNT and retry_login == 0:
+                        # if not block_count >= self.MAX_BLOCK_COUNT and not retry_login == 0:
+                        if block_count < self.MAX_BLOCK_COUNT and retry_login != 0:
                             context = {
                             'booking': booking_lists,
                             'pw_checked': request.session['pw_checked'],

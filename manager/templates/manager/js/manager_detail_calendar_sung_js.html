@@ -1,28 +1,20 @@
-{% include "manager/js/manager_detail_sung_js.html" %}
+{% include "manager/js/manager_detail_js.html" %}
 <script>
-  // 달력 js
+  window.onload = function () { buildCalendar(); }    // 웹 페이지가 로드되면 buildCalendar 실행
 
-  window.onload = function () { 
-    buildCalendar(); // 웹 페이지가 로드되면 buildCalendar 실행
-    // fetchReservation(); // fetch로 예약정보 불러오기
-
-  }    
   let nowMonth = new Date();  // 현재 달을 페이지를 로드한 날의 달로 초기화
   let today = new Date();     // 페이지를 로드한 날짜를 저장
   today.setHours(0, 0, 0, 0);    // 비교 편의를 위해 today의 시간을 초기화
-
   // 달력 생성 : 해당 달에 맞춰 테이블을 만들고, 날짜를 채워 넣는다.
   const now_year = document.querySelector("#calYear");
   const now_month = document.querySelector("#calMonth");
-
-  const store_item2 = document.querySelector(".store_item2");
-  console.log("store_item2", store_item2);
-
   let selected_date = document.querySelector("#selected_date");
-  function buildCalendar() {
 
+
+  function buildCalendar() {
+    
     const userDates = JSON.parse('{{ user_dates_json | escapejs | safe }}');
-    console.log("유저 데이터 찍히냐?", userDates);
+    // console.log("유저 데이터 찍히냐?", userDates);
 
     let userDates1 = userDates.map(function (date) {
       let parts = date.split("-");
@@ -34,12 +26,9 @@
     let lastDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, 0);  // 이번달 마지막날
 
     let tbody_Calendar = document.querySelector(".Calendar > tbody");
-    // document.getElementById("calYear").innerText = nowMonth.getFullYear();             // 연도 숫자 갱신
-    // document.getElementById("calMonth").innerText = leftPad(nowMonth.getMonth() + 1);  // 월 숫자 갱신
     
     now_year.textContent = nowMonth.getFullYear();             // 연도 숫자 갱신
     now_month.textContent = leftPad(nowMonth.getMonth() + 1);  // 월 숫자 갱신
-
 
     // console.log(document.getElementById("calYear").innerText);
     // console.log(document.getElementById("calMonth").innerText);
@@ -61,12 +50,6 @@
 
       let newDIV = document.createElement("p");
       newDIV.innerHTML = leftPad(nowDay.getDate());        // 추가한 열에 날짜 입력
-
-      // 추가 03.04
-      newDIV.onclick = function () { 
-        choiceDate(this); 
-        clickedDate(this); 
-      };
 
       // console.log(newDIV.innerText);
 
@@ -119,65 +102,17 @@
     }
   }
 
-  
-  
-  // // 수정 03.03 => 삭제 03.07 fetch말고 웹소켓으로 가져오는걸로 수정
-  // let reservationsData = null;
-  // // 비동기 -> json으로 보낸 데이터 가져오기
-  // async function fetchReservation() {
-  //       let storeId = "{{ store_id }}";
-  //       // const response = await fetch(`sung/api/schedules/${storeId}/`);  
-  //       const baseUrl = window.location.origin;
-  //       const response = await fetch(`${baseUrl}/manager/sung/api/schedules/${storeId}/`);
-  //       // const jsongogo = await response.json();
-  //       // console.log("제이슨", jsongogo);
-  //       // reservationsData = await response.json();
-  //       if (response.ok) {
-  //         // reservationsData = await response.json();
-  //         const data = await response.json();
-  //         // console.log("데이터찍어봐", data);
-  //         // reservationsData = data.results;  // 배열을 할당
-  //         reservationsData = data;
-  //         // console.log("reservationsData전역변수값", reservationsData);
-  //         // fetchReservation 함수가 완료되면 clickedDate 함수를 다시 호출
-  //         // (비동기 함수 실행 -> 비동기 함수가 데이터를 다 가져오기전에 clickedDate가 실행되어 undefined가 찍히는 문제를 해결하기위함)
-  //         // clickedDate();
-  //       } else {
-  //         // 에러출력
-  //         console.error('Server response:', response.statusText);
-  //       }
-  //     }
-
-  // // 날짜 선택
-  // function choiceDate(newDIV) {
-  //   console.log("1실행되나");
-  //   if (document.getElementsByClassName("choiceDay")[0]) {                              // 기존에 선택한 날짜가 있으면
-  //     document.getElementsByClassName("choiceDay")[0].classList.remove("choiceDay");  // 해당 날짜의 "choiceDay" class 제거
-  //   }
-  //   newDIV.classList.add("choiceDay");           // 선택된 날짜에 choiceDay class 추가
-  //   clickedDate(newDIV);
-
-  // }
-
-  
   // 날짜 선택
   function choiceDate(newDIV) {
     if (document.getElementsByClassName("choiceDay")[0]) {                              // 기존에 선택한 날짜가 있으면
       document.getElementsByClassName("choiceDay")[0].classList.remove("choiceDay");  // 해당 날짜의 "choiceDay" class 제거
     }
     newDIV.classList.add("choiceDay");           // 선택된 날짜에 "choiceDay" class 추가
-        
-    // 달력 날짜 클릭했을때, 기존 조회된 데이터 지워지도록
-    // console.log("store_item2", store_item2);
-    while(store_item2.firstChild){
-      store_item2.removeChild(store_item2.firstChild);
-    }
-    
     // selected_date.value = [now_year.textContent, now_month.textContent, newDIV.textContent];
-    selected_date_list = [now_year.textContent, now_month.textContent, newDIV.textContent];
-    // console.log(selected_date);
-    
 
+    selected_date_list = [now_year.textContent, now_month.textContent, newDIV.textContent];
+    console.log(selected_date);
+    
     if (detailSocket.readyState === WebSocket.OPEN){
       detailSocket.send(JSON.stringify({
         "command" : "selected_date",
@@ -185,32 +120,6 @@
       }));
     }
   }
-
-  // click => 삭제 03.07 fetch말고 웹소켓으로 가져오는걸로 수정
-  // function clickedDate(newDIV) {
-  //     // 수정 03.03
-  //     // if (!newDIV) {
-  //     //   console.log("날짜미클릭");
-  //     //   return;
-  //     // }
-  //     console.log("2실행되나");
-  //     // console.log("전역", reservationsData);  //- 나중삭제하기
-  //     // newDIV.addEventListener("click", function () {
-  //       if (reservationsData) {
-  //         const selectedYear = nowMonth.getFullYear().toString();
-  //         const selectedMonth = leftPad(nowMonth.getMonth() + 1);
-  //         const selectedDay = newDIV.innerText;
-  //         const selectedDate = `${selectedYear}-${selectedMonth}-${selectedDay}`;
-
-  //         const matchedReservations = reservationsData.filter(reservation => reservation.reservation_date === selectedDate);
-  //         console.log("최종", selectedDate);
-  //         console.log("해당예약출력", matchedReservations);
-  //       } else {
-  //         console.log("reservationsData없음");
-  //       }
-  //     // });
-  //   }
-  
 
   // 이전달 버튼 클릭
   function prevCalendar() {
@@ -244,7 +153,4 @@
       (date === dateString) ? ++rsv_count : rsv_count,
       0);
   }
-  
-
-      
 </script>

@@ -379,7 +379,12 @@
     const infoDisplay = document.getElementById('info-display');
     const backClick = document.getElementById('back-btn');
 
-    function toggleTabs() {
+    const sendBt = document.querySelector(".send-bt");
+    sendBt.addEventListener("click", function(event) {
+        toggleTabs(event);
+        // fetchSelect(event.target);
+    })
+    function toggleTabs(event) {
         if (infoDisplay.style.display === 'none') {
             dateDisplay.style.transition = 'opacity 500ms ease';
             dateDisplay.style.opacity = '0';
@@ -398,6 +403,42 @@
             }, 200);
         }
     }
+
+
+    // 비동기로 누른 스토어값, 시간값 가져오기 -> 웹소켓으로 변경 03.12
+    // async function fetchSelect(target) {
+    //     // var storeName = this.closest('.store-table').querySelector('.st-name').textContent.trim();
+    //     var storeId = target.getAttribute('data-crm');
+    //     var reservationTime = target.getAttribute('data-time');
+
+    //     // 서버에 보낼 데이터 준비
+    //     var data = {
+    //         // storeName: storeName,
+    //         storeId: storeId,
+    //         reservationTime: reservationTime
+    //     };
+
+        
+    //     const response = await fetch('pre_choice/', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             // 필요한 경우 추가 헤더를 설정
+    //         },
+    //         body: JSON.stringify(data) // 서버에 보낼 데이터
+    //         });
+    //     const jsongogo = await response.json();
+    //     console.log("제이슨", jsongogo);
+        
+    //     // var data_send = JSON.stringify(data)
+    //     if (jsongogo.exists) {
+    //         alert('예약이 이미 존재합니다.');
+    //         window.location.reload();
+    //     } else {
+            
+    //     }
+    // }
+
 
     // 뒤로버튼 클릭시, 예약탭 -> 달력 전환
     backClick.addEventListener('click', function () {

@@ -161,6 +161,10 @@ body {
 
 /* 달력 끝 */
 
+.content1 .store_item2 .rsv {
+  /* margin-bottom: 2rem; */
+}
+
 .box2 {
   /* background-color: brown; */
   display:flex;

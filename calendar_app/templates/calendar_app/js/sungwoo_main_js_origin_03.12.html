@@ -1,0 +1,65 @@
+{% include "manager/js/reconnecting-websocket.html" %}
+<script>
+  const loc = window.location;
+  let weStart = "ws://";
+  if (loc.protocol === "https:") {
+    weStart = "wss://"
+  }
+  let url = weStart + loc.host + loc.pathname + loc.search;
+
+  let user_webSockets = {};
+  const selectedStore = document.querySelector("#selected_store2");
+  const userPhoneNumber = document.querySelector("#detail_user_phone");
+
+  function connectWebSocket(selectedStoreDataCRM) {
+    let endpoint = weStart + loc.host + loc.pathname + loc.search + selectedStoreDataCRM + "/";
+    let userSocket = new ReconnectingWebSocket(endpoint);
+    user_webSockets["user"] = userSocket;
+
+    userSocket.onopen = function (e) {
+      console.log(endpoint);
+      console.log('Chat socket opened successfully' + selectedStoreDataCRM);
+
+      // userSocket.send(JSON.stringify({
+      //   store_id : selectedStore.value,
+      //   user_phone : userPhoneNumber.value,
+      // }));
+
+      // closeWebSocket();
+    };
+  }
+  const reservationButton = document.querySelector(".booking");
+  function nextClick() {
+    const nextButton = document.querySelector("#next-button");
+    
+     
+    nextButton.addEventListener("click", function () {
+      let selectedStoreDataCRM = nextButton.dataset.crm;
+      // let selectedStoreDataCRM = reservationButton.dataset.crm;
+      console.log("클릭", selectedStoreDataCRM);
+      console.log(selectedStore.value);
+      connectWebSocket(selectedStoreDataCRM);
+      
+    });
+  }
+
+  function reserVaTion(){
+    fetch("",{
+      method : "POST",
+      headers : {
+        "Content-Type" : "application/json",
+        "X-CSRFToken": getCookie("csrftoken"),
+      },
+      body : JSON.stringify({room_name : reservationButton.dataset.crm})
+    });
+  }
+  // reservationButton.addEventListener("mousedown", reserVaTion);
+
+  function closeWebSocket() {
+    if (user_webSockets["user"]) {
+      user_webSockets["user"].close();
+      console.log("웹소켓 연결이 종료되었습니다.");
+    }
+  }
+  // nextClick();
+</script>

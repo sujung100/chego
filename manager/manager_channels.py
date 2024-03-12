@@ -6,12 +6,10 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth import get_user_model
 from channels.db import database_sync_to_async
 from django.contrib.sessions.models import Session
-
-from django.core.exceptions import ObjectDoesNotExist
 from asgiref.sync import sync_to_async
 
 from . import models
-from calendar_app import models as md
+from reservation import models as rsv
 
 @database_sync_to_async
 def change_session_data(session_key, data):
@@ -97,61 +95,22 @@ class ManagerConsumer(AsyncWebsocketConsumer):
             self.room_group_name, self.channel_name
         )
 
-
     async def receive(self, text_data):
         data = json.loads(text_data)
         # print("매니져 리시브 찍히나", data)
         # self.commands[data["command"]](self, data)
         key_command = data.get("command")
+        rsv_id = data.get("rsv_id")
         if key_command == "new_message":
             await self.commands[key_command](data)
+        elif key_command == "RSV_mark_as_read":
+            await self.mark_as_read(rsv_id)
         elif key_command == "selected_date":
-            selected_date_list = data.get("select_date")  # 웹소켓에서 받아온 날짜 정보
-            await self.get_reservation_dates(selected_date_list)
-            
+            print(data);
 
-    
-
-
-    async def get_reservation_dates(self, selected_date_list):
-        selected_date = '-'.join(selected_date_list)  # 리스트를 문자열로 변환
-
-        # 별도의 동기 함수 생성
-        def fetch_reservations(selected_date):
-            reservations = md.Reservation_user.objects.filter(reservation_date=selected_date)
-            reservation_details = []
-
-            for reservation in reservations:
-                detail = {
-                    'user_name': reservation.user_name,
-                    'user_phone': reservation.user_phone,
-                    'store_id': reservation.store_id.id,  # ForeignKey 필드라서 .id를 사용하여 실제 id 값을 가져옵니다.
-                    'reservation_date': reservation.reservation_date,
-                    'user_time': reservation.user_time,
-                    'visitor_num': reservation.visitor_num
-                }
-                reservation_details.append(detail)
-
-            return reservation_details
-
-        try:
-            # 선택된 날짜와 일치하는 예약 정보 가져오기
-            async_func = sync_to_async(fetch_reservations)
-            reservation_details = await async_func(selected_date)
-
-            print("reservation_details", reservation_details)
-            # return reservation_details
-            
-             # 결과를 클라이언트에게 전송
-            await self.send(text_data=json.dumps({
-                'message_type': 'reservation_details',
-                'data': reservation_details
-            }))
-
-        except ObjectDoesNotExist:
-            # 예약 정보가 없을 경우
-            pass
-
+    async def mark_as_read(self, rsvuser_id):
+        rsv_read = await sync_to_async(rsv.Reservation_user.objects.get, thread_sensitive=True)(id=rsvuser_id)
+        await sync_to_async(rsv_read.rsv_check, thread_sensitive=True)()
 
     async def send_chat_messages(self, message):
         await self.channel_layer.group_send(

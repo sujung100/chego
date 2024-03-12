@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from calendar_app import models as rsv
+from reservation import models as rsv
 
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -14,26 +14,15 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import model_to_dict
 from django.views.generic.edit import FormView
 from django.http import HttpResponseRedirect
+from django.core import serializers
 
 from django.http import JsonResponse, QueryDict, HttpRequest
 from django.views import View
 from django.core.paginator import Paginator
-from django.core import serializers
-from collections import defaultdict
 from django.utils.safestring import mark_safe
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.db.models import Q
 from . import models
-
-from datetime import datetime
-
-
-# 예약조회 - 검색기능 - 전화번호 조회시 기호제거
-from django.db.models import F, Func, Value, CharField
-from django.db.models.functions import Replace
-
-from django.http import HttpResponseForbidden
 
 
 ADMIN_USERS = { "admin" : True,}
@@ -49,7 +38,7 @@ def production_current_user(request):
 
 class ManagerStoreList(LoginRequiredMixin, ListView, LoginView, FormView):
     model = rsv.Store
-    template_name = "manager/manager_sung_index.html"
+    template_name = "manager/manager_index.html"
     form_class = AuthenticationForm
     success_url = reverse_lazy("index")
     login_url = reverse_lazy("login")
@@ -268,281 +257,35 @@ class EnterChatRoom(View):
 
         return JsonResponse(response, safe=False)
 
-
-# fetch - 변경안해도될듯
 class Reservation_Details(View):
+    # def rsv_check(self, user_id):
+    #     queryset = rsv.Reservation_user.objects.filter(store_id__owner_id=user_id)
+    #     return serializers.serialize("python", queryset, fields=("reservation_check"))
+
+    def rsv_check(self, user_id):
+        queryset = rsv.Reservation_user.objects.filter(store_id__owner_id=user_id)
+        serialized_data = serializers.serialize("python", queryset, fields=("reservation_check"))
+        return len(serialized_data)
+
     def get(self, request, id=None):
+        user_id = request.user.id
         production_current_user(request)
         if id:
             rsv_model = get_object_or_404(rsv.Reservation_user.objects.defer("pwhash"), id=id)
             rsv_dict = model_to_dict(rsv_model)
             rsv_dict.pop("pwhash", None)
+            rsv_dict["rsv_check"] = self.rsv_check(user_id)
+            print("이프", rsv_dict)
         else:
-            user_id = request.user.id
-            print(user_id)
+            # print(user_id)
             rsv_model = rsv.Reservation_user.objects.defer("pwhash").filter(store_id__owner_id=user_id, reservation_check=False)
             print("Reservation_Details 엘스", rsv_model)
             rsv_dict = [model_to_dict(r) for r in rsv_model]
             for r in rsv_dict:
                 r.pop("pwhash", None)
+                r["rsv_check"] = self.rsv_check(user_id)
+            print("엘스", rsv_dict)
         return JsonResponse(rsv_dict, safe=False)
-    
-
-# fetch2 - 해당날짜 예약정보 fetch로 json으로 보내기 - > 보내고 프론트에서 불러오기
-# class Schedules(View):
-#     def get(self, request, date=None):
-#         current_user = request.user
-
-#         production_current_user(request)
-#         if current_user.is_authenticated:
-
-#         if date:
-#             rsv_model = get_object_or_404(rsv.Reservation_user.objects.defer("pwhash"), id=date)
-#             rsv_dict = model_to_dict(rsv_model)
-#             rsv_dict.pop("pwhash", None)
-#             print("rsv딕트", rsv_dict)
-#         else:
-#             user_id = request.user.id
-#             print(user_id)
-#             rsv_model = rsv.Reservation_user.objects.defer("pwhash").filter(store_id__owner_id=user_id, reservation_check=False)
-#             print("Reservation_Details 엘스", rsv_model)
-#             rsv_dict = [model_to_dict(r) for r in rsv_model]
-#             for r in rsv_dict:
-#                 r.pop("pwhash", None)
-#         return JsonResponse(rsv_dict, safe=False)
-    
-# 03.07 예약정보 fetch로 가져오지않고 웹소켓으로 가져오도록 수정
-# class Schedules(View):
-    
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['store_id'] = self.kwargs.get('store_id')  # store_id를 컨텍스트 변수로 추가
-#         return context
-    
-#     # 03.04 수정전
-#     # def get(self, request, *args, **kwargs):
-#     #     current_user = request.user
-#     #     production_current_user(request)
-#     #     if current_user.is_authenticated:
-#     #         data = defaultdict(list)
-#     #         store_id = self.kwargs.get('pk')
-#     #         reservations = rsv.Reservation_user.objects.filter(store_id=store_id).order_by('reservation_date')
-#     #         for reservation in reservations:
-#     #             data[store_id].append({
-#     #                 'id': reservation.id,
-#     #                 'user_name': reservation.user_name,
-#     #                 'user_phone': reservation.user_phone,
-#     #                 'reservation_date': reservation.reservation_date,
-#     #                 'user_time': reservation.user_time,
-#     #                 'date': reservation.date,
-#     #                 'visitor_num': reservation.visitor_num,
-#     #             })
-#     #     return JsonResponse(data, safe=False)
-
-#     # 수정 03.04
-#     def get(self, request, *args, **kwargs):
-#         current_user = request.user
-#         production_current_user(request)
-#         if current_user.is_authenticated:
-#             data = []
-#             store_id = self.kwargs.get('pk')
-#             reservations = rsv.Reservation_user.objects.filter(store_id=store_id).order_by('reservation_date')
-#             for reservation in reservations:
-#                 data.append({
-#                     # 'id': reservation.id,
-#                     'user_name': reservation.user_name,
-#                     'user_phone': reservation.user_phone,
-#                     'reservation_date': reservation.reservation_date,
-#                     'user_time': reservation.user_time,
-#                     # 'date': reservation.date,
-#                     'visitor_num': reservation.visitor_num,
-#                 })
-#         return JsonResponse(data, safe=False)
-    
-
-
-
-    
-# 기존- 변경해야할부분 시작
-    # 달력
-# def detail_list(request, store_id):
-#     store = get_object_or_404(rsv.Store, id=store_id)
-#     store_time = rsv.Store_times.objects.filter(store_id=store_id)
-#     user_time = rsv.Reservation_user.objects.filter(store_id=store_id)
-
-#     user_dates = []
-#     dates_list = [date.reservation_date for date in user_time]
-#     print(dates_list)
-#     user_dates.append({
-#         "user_dates" : dates_list
-#     })
-#     context = {"user_dates_json" : json.dumps(dates_list, cls=DjangoJSONEncoder)}
-
-
-#     return render(request, "manager/manager_store_detail.html", context)
-
-# 기존- 변경해야할부분 끝
-
-# 통합 - 달력 + 예약조회페이지
-class Total_Reservation_Check(TemplateView):
-    template_name = 'manager/manager_store_detail.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        store_id = self.kwargs['store_id']
-        store = get_object_or_404(rsv.Store, id=store_id)
-        if self.request.user.id != store.owner_id:
-            return HttpResponseForbidden("접근권한이 없습니다.")
-        return super().dispatch(request, *args, **kwargs)
-    
-
-    def get_context_data(self, **kwargs):
-        store_id = self.kwargs['store_id']
-        store = get_object_or_404(rsv.Store, id=store_id)
-        manager = rsv.Manager.objects.get(user=self.request.user)
-        context = super().get_context_data(**kwargs)
-
-        context['manager'] = manager
-        context['store'] = store
-
-        # if self.request.user.id != store.owner_id :
-        #     return HttpResponseForbidden("접근권한이 없습니다.")
-        
-        # context = super(Total_Reservation_Check, self).get_context_data(**kwargs)
-        # context['form'] = ManagerUpdateForm(instance=self.manager)
-        # context['form_store'] = StoreUpdateForm(instance=self.store)
-
-
-        name = self.request.GET.get('name')
-        phone = self.request.GET.get('phone')
-        kw = self.request.GET.get('kw')
-        
-        date_filter = Q()
-        if kw:
-            try:
-                datetime.strptime(kw, '%Y-%m-%d')
-                date_filter = Q(reservation_date__icontains=kw)
-            except ValueError:
-                try:
-                    datetime.strptime(kw, '%Y-%m')
-                    date_filter = Q(reservation_date__icontains=kw)
-                except ValueError:
-                    date_filter = Q(reservation_date__startswith=kw)
-                    
-        phone_without_hyphen = phone.replace("-", "") if phone else None
-
-        reservations = rsv.Reservation_user.objects.annotate(
-            user_phone_without_hyphen=Replace('user_phone', Value('-'), Value(''), output_field=CharField())
-        ).filter(
-            Q(user_name__icontains=name) if name else Q(),
-            Q(user_phone_without_hyphen__icontains=phone_without_hyphen) if phone else Q(),
-            date_filter if kw else Q(),
-            store_id=store
-        ).distinct()
-
-        paginator = Paginator(reservations, 10)
-        page_number = self.request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-
-        context['page_obj'] = page_obj
-        context['kw'] = kw
-
-        # 달력
-        store_time = rsv.Store_times.objects.filter(store_id=store_id)
-        user_time = rsv.Reservation_user.objects.filter(store_id=store_id)
-
-        user_dates = []
-        dates_list = [date.reservation_date for date in user_time]
-        print(dates_list)
-        user_dates.append({
-            "user_dates" : dates_list
-        })
-        context["user_dates_json"] = json.dumps(dates_list, cls=DjangoJSONEncoder)
-
-        print("전체 콘텍스트 출력: ", context)
-
-        return context
-    
-
-
-# 수정 시작
-# class ManagerStoreUpdateView(LoginRequiredMixin, FormView):
-#     template_name = 'manager/manager_operate.html'
-#     form_class = ManagerUpdateForm
-#     store_form_class = StoreUpdateForm
-
-#     # 권한설정
-#     # def dispatch(self, request, *args, **kwargs):
-#     #     self.manager = get_object_or_404(Manager, pk=kwargs['pk'])
-#     #     self.store = get_object_or_404(Store, pk=kwargs['store_id'])
-        
-#     #     # 조건3개
-#     #     if request.user.is_authenticated and request.user == self.manager.user and self.manager.user == self.store.owner:
-#     #         return super(ManagerStoreUpdateView, self).dispatch(request, *args, **kwargs)
-#     #     else:
-#     #         raise PermissionDenied
-
-
-#     def get_context_data(self, **kwargs):
-#         context = super(ManagerStoreUpdateView, self).get_context_data(**kwargs)
-#         context['form'] = ManagerUpdateForm(instance=self.manager)
-#         context['form_store'] = StoreUpdateForm(instance=self.store)
-#         context['manager'] = self.manager
-#         context['store'] = self.store
-
-
-#         name = self.request.GET.get('name')
-#         phone = self.request.GET.get('phone')
-#         kw = self.request.GET.get('kw')
-        
-#         date_filter = Q()
-#         if kw:
-#             try:
-#                 datetime.strptime(kw, '%Y-%m-%d')
-#                 date_filter = Q(reservation_date__icontains=kw)
-#             except ValueError:
-#                 try:
-#                     datetime.strptime(kw, '%Y-%m')
-#                     date_filter = Q(reservation_date__icontains=kw)
-#                 except ValueError:
-#                     date_filter = Q(reservation_date__startswith=kw)
-                    
-#         phone_without_hyphen = phone.replace("-", "") if phone else None
-
-#         reservations = Reservation_user.objects.annotate(
-#             user_phone_without_hyphen=Replace('user_phone', Value('-'), Value(''), output_field=CharField())
-#         ).filter(
-#             Q(user_name__icontains=name) if name else Q(),
-#             Q(user_phone_without_hyphen__icontains=phone_without_hyphen) if phone else Q(),
-#             date_filter if kw else Q(),
-#             store_id=self.store
-#         ).distinct()
-
-#         paginator = Paginator(reservations, 10)
-#         page_number = self.request.GET.get('page')
-#         page_obj = paginator.get_page(page_number)
-
-#         context['page_obj'] = page_obj
-#         context['kw'] = kw
-
-#         return context
-
-#     def form_valid(self, form):
-#         manager_form = form
-#         store_form = self.store_form_class(self.request.POST, instance=self.store)
-
-#         if manager_form.is_valid() and store_form.is_valid():
-#             manager_form.save()
-#             store_form.save()
-#             return HttpResponseRedirect(reverse('success_page'))
-#         else:
-#             return self.form_invalid(form)
-
-#     def form_invalid(self, form):
-#         context = super(ManagerStoreUpdateView, self).get_context_data()
-#         context['form'] = form
-#         context['form_store'] = self.store_form_class(self.request.POST, instance=self.store)
-#         return self.render_to_response(context)
-# 수정 끝
 
     
     # def get_context_data(self, **kwargs):
@@ -582,6 +325,42 @@ class Total_Reservation_Check(TemplateView):
 #         context['manager'] = self.get_queryset()
 #         return context
 
+# 03.06
+class DetailListView(View):
+    template_name = "manager/manager_store_detail.html"
+
+    def get(self, request, store_id, *args, **kwargs):
+        store = get_object_or_404(rsv.Store, id=store_id)
+        store_time = rsv.Store_times.objects.filter(store_id=store_id)
+        user_time = rsv.Reservation_user.objects.filter(store_id=store_id)
+
+        user_dates = []
+        dates_list = [date.reservation_date for date in user_time]
+        # print(dates_list)
+        user_dates.append({
+            "user_dates" : dates_list
+        })
+        context = {"user_dates_json" : json.dumps(dates_list, cls=DjangoJSONEncoder)}
+        current_user = request.user
+        context["username"] = current_user.username if current_user.is_authenticated else None
+
+        return render(request, self.template_name, context)
+
+def detail_list(request, store_id):
+    store = get_object_or_404(rsv.Store, id=store_id)
+    store_time = rsv.Store_times.objects.filter(store_id=store_id)
+    user_time = rsv.Reservation_user.objects.filter(store_id=store_id)
+
+    user_dates = []
+    dates_list = [date.reservation_date for date in user_time]
+    print(dates_list)
+    user_dates.append({
+        "user_dates" : dates_list
+    })
+    context = {"user_dates_json" : json.dumps(dates_list, cls=DjangoJSONEncoder)}
+
+
+    return render(request, "manager/manager_store_detail.html", context)
     
 class UserSignUpView(CreateView):
     form_class = UserCreationForm

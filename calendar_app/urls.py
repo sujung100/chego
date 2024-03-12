@@ -22,6 +22,7 @@ urlpatterns = [
   # 비동기 url 생성
   # path('detail_view/pass/', views.FetchView.as_view(), name='fetch_view'),
   path('input_user_pw/pass/', views.FetchView.as_view(), name='fetch_view'),
+  # path('pre_choice/', views.FetchCheckRsv.as_view(), name='pre_choice'),
 
 
 

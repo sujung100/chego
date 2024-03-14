@@ -6,7 +6,7 @@
     if (window.location.protocol == 'https:') {
         wsStart = 'wss://';
     }
-    var endpoint = wsStart + window.location.host + '/calendar_app/pre_choice/';
+    var endpoint = wsStart + window.location.host + '/calendar_app/';
     var socket = new WebSocket(endpoint);
 
     socket.onmessage = function (e) {
@@ -68,21 +68,41 @@
                     var storeId = clickedchild1.getAttribute('data-crm');
                     // const clickedchild2 = clickedStoreTable.querySelector(".greeen");
                     var reservationTime = event.target.getAttribute('data-time');
+                    var date = document.querySelector("#detail_user_date").value
                     console.log("1", event.target); // 이벤트 발생 대상 확인
                     console.log("2", storeId);
                     console.log("3", reservationTime);
+                    console.log("4", date);
                     const sendBt = document.querySelector(".send-bt");
+                    // const submitBt = document.querySelector(".booking"); -- 예약하기버튼
+                    // var dateVal = date
 
                     // 이벤트리스너3
                     sendBt.addEventListener("click", function (event) {
                         console.log("이벤트리스너3");
                         var data = {
                             storeId: storeId,
+                            date: date,
                             reservationTime: reservationTime
                         };
                         console.log("데이터", data);
                         socket.send(JSON.stringify(data));
+                        // alert("새로고침테스트");
+                        
                     });
+                    // 이벤트리스너4
+                    // submitBt.addEventListener("click", function (event) {
+                    //     console.log("이벤트리스너4");
+                    //     var data = {
+                    //         storeId: storeId,
+                    //         date: date,
+                    //         reservationTime: reservationTime
+                    //     };
+                    //     console.log("데이터최종전송", data);
+                    //     socket.send(JSON.stringify(data));
+                    //     // alert("새로고침테스트");
+                        
+                    // });
                 });
             });
         // });

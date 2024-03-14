@@ -492,5 +492,25 @@
     });
 
 
+    // alert 메세지띄우기
+    async function fetchSendMessage() {
+            const baseUrl = window.location.origin;
+            const response = await fetch(`${baseUrl}/send_msg/`);
+            if (response.ok) {
+                const data = await response.json();
+                if (data.error) {
+                    alert(data.error);  // 에러 메시지가 있는 경우
+                } else if (data.success) {
+                    alert(data.success);  // 성공 메시지가 있는 경우
+                    window.location.href = data.redirect_url;
+                }
+            } else {
+                // 에러출력
+                console.error('Server response:', response.statusText);
+            }
+        }
+    fetchSendMessage();
+
+
 </script>
 {% endautoescape %}

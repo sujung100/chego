@@ -1,4 +1,3 @@
-
 import bcrypt
 
 from django.shortcuts import render, redirect
@@ -16,6 +15,9 @@ from django.forms.models import model_to_dict
 from django.contrib import messages
 from datetime import datetime, timedelta
 from django.forms.models import model_to_dict
+
+from channels.layers import get_channel_layer
+
 
 # 이름변경
 class First_list(ListView):
@@ -40,7 +42,7 @@ class First_list(ListView):
 
         context['store_times_dict'] = store_times_dict
         return context
-    
+
 
 def write(request):
     if request.method == 'POST':
@@ -170,7 +172,7 @@ class Test_list(TemplateView):
 class Idx_list(TemplateView):
     # template_name = "calendar_app/main.html"
     template_name = "calendar_app/sujung_main.html"
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         store_list = models.Store.objects.all()
@@ -192,9 +194,9 @@ class Idx_list(TemplateView):
             store_list = [store]
         else:
             store_list = store_list
-        
+
         store_data = []
-        
+
         for store in store_list:
             sto_time = models.Store_times.objects.filter(store_id=store.pk)
             print(store)
@@ -204,7 +206,6 @@ class Idx_list(TemplateView):
                 Q(store_id=store) &
                 Q(user_time=dates.reservation_time) 
                 )
-                
 
                 hour_disabled_dates = {}
 
@@ -222,7 +223,6 @@ class Idx_list(TemplateView):
                     'hour_disabled_dates': hour_disabled_dates, # current_hour_reservations를 제거
                 })
 
-                
                 user_dates = [info.reservation_date for info in dates_info]
                 store_dates.append({
                 'user_date': user_dates,
@@ -238,47 +238,114 @@ class Idx_list(TemplateView):
         # context['store_data'] = store_data
         context['store_data_json'] = json.dumps(store_data, cls=DjangoJSONEncoder)
         # print(store_data)
-        print("콘텍스트 출력", context)
         return context
-    
+
+    # def dispatch(self, request, *args, **kwargs):
+    #     if request.method == 'POST':
+    #         key = request.POST
+    #         print("키", key)
+    #     return super().dispatch(request, *args, **kwargs)
+
+    # 수정전
+    # def post(self, request, *args, **kwargs):
+    #     if request.method == 'POST':
+    #         print("POST함수", request.POST)
+    #         store_id = request.POST["selected_store2"]
+    #         sto = get_object_or_404(models.Store, pk=store_id)
+
+    #         rst_user = models.Reservation_user()
+    #         rst_user.user_name = request.POST["detail_user_name"]
+    #         rst_user.user_phone = request.POST["detail_user_phone"]
+    #         rst_user.reservation_date = request.POST["detail_user_date"]
+    #         rst_user.user_time = request.POST["detail_user_time"]
+    #         rst_user.visitor_num = int(request.POST["v_num"])
+    #         rst_user.store_id = sto
+
+    #         # 그냥 입력받은 password
+    #         password = request.POST["password"]
+
+    #         # 암호화
+    #         salt = bcrypt.gensalt()
+    #         to_byte_pw = password.encode('utf-8')
+    #         salted_pw = bcrypt.hashpw(to_byte_pw, salt)
+    #         to_str_pw = salted_pw.decode('utf-8')
+    #         rst_user.pwhash = to_str_pw
+
+    #         try:
+    #             rst_user.full_clean()  # 모델의 유효성 검사 수행
+    #             rst_user.save()
+    #         except ValidationError as e:
+    #             # 유효성 검사 실패 시 에러
+    #             error_message = str(e)
+    #             return HttpResponse(error_message, status=400)
+
+    #         # POST 처리 완료 시 리디렉션
+    #         return HttpResponseRedirect(reverse('Idx_list'))
+
+    #     return self.get(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):
         if request.method == 'POST':
-            store_id = request.POST["selected_store2"]
-            sto = get_object_or_404(models.Store, pk=store_id)
+            print("POST함수", request.POST)
 
             rst_user = models.Reservation_user()
-            rst_user.user_name = request.POST["detail_user_name"]
-            rst_user.user_phone = request.POST["detail_user_phone"]
-            rst_user.reservation_date = request.POST["detail_user_date"]
-            rst_user.user_time = request.POST["detail_user_time"]
-            rst_user.visitor_num = int(request.POST["v_num"])
-            rst_user.store_id = sto
 
-            # 그냥 입력받은 password
-            password = request.POST["password"]
+            store = request.POST["selected_store2"]
+            name = request.POST["detail_user_name"]
+            phone = request.POST["detail_user_phone"]
+            date = request.POST["detail_user_date"]
+            time = request.POST["detail_user_time"]
+            v_num = request.POST["v_num"]
 
+            if models.Reservation_user.objects.filter(
+                Q(store_id=store) & 
+                Q(reservation_date=date) & 
+                Q(user_time=time) 
+                ).exists():
+                return JsonResponse({
+                    'error': '예약이 이미 존재합니다. 다른 시간을 선택해주세요.',
+                    'redirect_url': reverse('Idx_list')
+                    }, status=400)
 
-            # 암호화
-            salt = bcrypt.gensalt()
-            to_byte_pw = password.encode('utf-8')
-            salted_pw = bcrypt.hashpw(to_byte_pw, salt)
-            to_str_pw = salted_pw.decode('utf-8')
-            rst_user.pwhash = to_str_pw
+            else:
+                sto = get_object_or_404(models.Store, pk=store)
 
+                rst_user.user_name = name
+                rst_user.user_phone = phone
+                rst_user.reservation_date = date
+                rst_user.user_time = time
+                rst_user.visitor_num = int(v_num)
+                rst_user.store_id = sto
 
-            try:
-                rst_user.full_clean()  # 모델의 유효성 검사 수행
-                rst_user.save()
-            except ValidationError as e:
-                # 유효성 검사 실패 시 에러
-                error_message = str(e)
-                return HttpResponse(error_message, status=400)
+                # 그냥 입력받은 password
+                password = request.POST["password"]
+
+                # 암호화
+                salt = bcrypt.gensalt()
+                to_byte_pw = password.encode('utf-8')
+                salted_pw = bcrypt.hashpw(to_byte_pw, salt)
+                to_str_pw = salted_pw.decode('utf-8')
+                rst_user.pwhash = to_str_pw
+
+                try:
+                    rst_user.full_clean()  # 모델의 유효성 검사 수행
+                    rst_user.save()
+                except ValidationError as e:
+                    # 유효성 검사 실패 -> 에러출력
+                    error_message = str(e)
+                    return HttpResponse(error_message, status=400)
+
+                return JsonResponse({
+                        "success": "성공적으로 생성되었습니다.",
+                        "redirect_url": reverse("Idx_list"),
+                    }
+                )
 
             # POST 처리 완료 시 리디렉션
-            return HttpResponseRedirect(reverse('Idx_list'))
+        # return HttpResponseRedirect(reverse('Idx_list'))
 
-        return self.get(request, *args, **kwargs)
-    
+        # return self.get(request, *args, **kwargs)
+
 
 # fetch로 선택한 스토어, 시간값 가져오기1
 # class FetchCheckRsv(View):
@@ -310,7 +377,7 @@ class Idx_list(TemplateView):
 #             return JsonResponse({'exists': True})
 #         else:
 #             return JsonResponse({'exists': False})
-    
+
 
 # fetch로 선택한 스토어, 시간값 가져오기2 -> fetch X, 웹소켓으로 변경예정 03.12
 # class FetchCheckRsv(View):
@@ -336,8 +403,6 @@ class Idx_list(TemplateView):
 #             return JsonResponse({'error': str(e)}, status=500)
 
 
-
-
 # 예약확인
 class FindReservationView(View):
     template_name = 'calendar_app/find_reservation.html'
@@ -360,7 +425,6 @@ class FindReservationView(View):
         url = reverse('input_user_pw')
         # url = reverse('input_user_pw') + '#anchor2'
         return HttpResponseRedirect(url)
-    
 
 
 # 공통코드 빼기
@@ -559,7 +623,6 @@ class CommonLogicMixin:
         return context, login_infos
 
 
-
 # 본인확인(수정2)
 class InputUserNameView(CommonLogicMixin, View):
 
@@ -703,7 +766,6 @@ class InputUserNameView(CommonLogicMixin, View):
                 # url = reverse('reservation_deleted_view') + '#anchor4'
                 # return HttpResponseRedirect(url)
                 # return JsonResponse(context, safe=False)
-
 
 
 # 수정1

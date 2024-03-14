@@ -10,6 +10,7 @@ from django.db.models import Q
 
 from . import models
 import traceback
+from asgiref.sync import sync_to_async
 
 # @database_sync_to_async
 # def change_session_data(session_key, data):
@@ -91,28 +92,42 @@ import traceback
 
 class CheckingRsvConsumer(AsyncWebsocketConsumer):
     async def connect(self):
+        # print("채널명", self.channel_name)
+                
+        self.room_group_name = "index"
+        await self.channel_layer.group_add(
+                    self.room_group_name, self.channel_name
+                )
         await self.accept()
+
 
     async def disconnect(self, close_code):
         pass
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
+        print("text_data_json", text_data_json)
         storeId = text_data_json['storeId']
+        date = text_data_json['date']
         reservationTime = text_data_json['reservationTime']
 
-        # 예약 확인 로직
-        dates_info = await self.check_reservation(storeId, reservationTime)
 
+        # 예약 확인 로직
+        dates_info = await self.check_reservation(storeId, date, reservationTime)
+        print("dates_info", dates_info)
         # 클라이언트에게 응답 송신
         await self.send(text_data=json.dumps({
             'exists': dates_info
         }))
 
-    async def check_reservation(self, storeId, reservationTime):
-        # 예약 확인 로직 구현 (동기 ORM 호출을 비동기로 처리하기 위해 sync_to_async 사용)
-        from asgiref.sync import sync_to_async
-        dates_info = await sync_to_async(models.Reservation_user.objects.filter)(
-            Q(store_id=storeId) & Q(user_time=reservationTime)
-        ).exists()
+
+    async def check_reservation(self, storeId, date, reservationTime):
+
+        # filter 메소드를 비동기적으로 실행
+        queryset_async = sync_to_async(models.Reservation_user.objects.filter, thread_sensitive=True)
+        queryset = await queryset_async(Q(store_id=storeId) & Q(reservation_date=date) & Q(user_time=reservationTime))
+        
+        # exists 메소드를 비동기적으로 실행
+        exists_async = sync_to_async(queryset.exists, thread_sensitive=True)
+        dates_info = await exists_async()
         return dates_info

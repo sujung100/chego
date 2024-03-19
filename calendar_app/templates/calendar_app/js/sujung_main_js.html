@@ -4,7 +4,7 @@
     let availableCompanyDates;
     let totalDisableTimes;
 
-    window.onload = function () { 
+    window.onload = function () {
         buildCalendar();
     }    // 웹 페이지가 로드되면 buildCalendar 실행
 
@@ -235,7 +235,7 @@
             let hasGreen = Array.from(timeItems).some(
                 (item) => item.classList.contains('green')
             );
-            
+
 
             if (hasGreen) {
                 nextButton.style.display = 'block';
@@ -297,7 +297,7 @@
         function updateDisabledTimes(storeId, selectedDate) {
             let companyDates = findStoreDates(storeId);
             // console.log(companyDates);
-            
+
             let disableTimes = [];
 
             for (let i = 0; i < companyDates.length; i++) {
@@ -317,7 +317,7 @@
                 const buttonTime = timeButtons[i].getAttribute("data-time");
                 if (disableTimes.includes(buttonTime)) {
                     timeButtons[i].disabled = true;
-                     // 비활성버튼 css스타일 주기
+                    // 비활성버튼 css스타일 주기
                     timeButtons[i].classList.add('disabled-time');
                     // console.log("가나다");
                 } else {
@@ -380,7 +380,7 @@
     const backClick = document.getElementById('back-btn');
 
     const sendBt = document.querySelector(".send-bt");
-    sendBt.addEventListener("click", function(event) {
+    sendBt.addEventListener("click", function (event) {
         toggleTabs(event);
         // fetchSelect(event.target);
     })
@@ -418,7 +418,7 @@
     //         reservationTime: reservationTime
     //     };
 
-        
+
     //     const response = await fetch('pre_choice/', {
     //         method: 'POST',
     //         headers: {
@@ -429,13 +429,13 @@
     //         });
     //     const jsongogo = await response.json();
     //     console.log("제이슨", jsongogo);
-        
+
     //     // var data_send = JSON.stringify(data)
     //     if (jsongogo.exists) {
     //         alert('예약이 이미 존재합니다.');
     //         window.location.reload();
     //     } else {
-            
+
     //     }
     // }
 
@@ -443,19 +443,19 @@
     // 뒤로버튼 클릭시, 예약탭 -> 달력 전환
     backClick.addEventListener('click', function () {
         setTimeout(() => {
-                infoDisplay.style.display = 'none';
+            infoDisplay.style.display = 'none';
 
-                dateDisplay.style.transition = 'opacity 500ms ease';
-                dateDisplay.style.opacity = '0';
-                dateDisplay.style.display = 'block';
+            dateDisplay.style.transition = 'opacity 500ms ease';
+            dateDisplay.style.opacity = '0';
+            dateDisplay.style.display = 'block';
 
-                setTimeout(() => {
-                    dateDisplay.style.opacity = '1';
-                }, 100);
-            }, 200);
+            setTimeout(() => {
+                dateDisplay.style.opacity = '1';
+            }, 100);
+        }, 200);
     });
-    
-    
+
+
     // 모달
     const checkInputs = document.querySelectorAll(".check-input");
     const modal = document.querySelector("#modal");
@@ -465,12 +465,13 @@
     // 모달 띄우기전, input에 값 들어갔나 확인
     function areAllInputsFilled(inputs) {
         return Array.from(inputs).every((input) => input.value.trim() !== "");
-        }
+    }
 
     // 버튼 클릭시 모달 띄우기
     book.onclick = function () {
         if (areAllInputsFilled(checkInputs)) {
             modal.style.display = "block";
+            // fetchSendMessage();
         } else {
             // 모든 input 값이 채워지지 않은 경우 처리
             alert("모든 입력란을 작성해주세요.");
@@ -482,6 +483,160 @@
         modal.style.display = "none";
     };
 
+    // async function fetchSendForm(formData) {
+    //     // console.log("")
+    //     console.log("폼데이타", formData)
+    //     console.log("제이슨폼데이타", JSON.parse(formData));
+    //     const baseUrl = window.location.origin;
+    //     const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+    //     // const response = await fetch(`${baseUrl}/send_msg/`, {
+    //     const response = await fetch("send_msg/", {
+    //         method: 'POST',
+    //         // credentials: 'include', // 쿠키/인증 정보를 같은 출처 요청에 포함
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             'X-CSRFToken': csrfToken
+    //         },
+    //         body: formData,
+    //     });
+
+    //     // if (response.ok) {
+    //     //     const data = await response.json();
+    //     //     // console.log("폼데이터", data)
+    //     // } else {
+    //     //     // 에러출력
+    //     //     console.error('Server response:', response.statusText);
+    //     // }
+    // }
+
+    // 수정중 03.19
+    // formdata를 body에 바로 보내지말고, json으로 변환해서 보냄
+    async function fetchSendForm(formData) {
+        // FormData 객체를 일반 객체로 변환
+        const formObject = {};
+        for (let [key, value] of formData.entries()) {
+            formObject[key] = value;
+        }
+
+        // 일반 객체를 JSON 문자열로 변환
+        const json = JSON.stringify(formObject);
+
+        const baseUrl = window.location.origin;
+        const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+        // const response = await fetch("send_msg/", {
+        // const baseUrl = window.location.origin;
+        const response = await fetch(`${baseUrl}/send_msg/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', // 서버가 JSON을 기대한다고 가정
+                'X-CSRFToken': csrfToken
+            },
+            body: json, // JSON 문자열로 변환된 데이터를 body에 설정
+        });
+
+        // 응답 처리...
+    }
+
+
+    // formdata를 body에 바로 보내지말고, json으로 변환해서 보냄
+
+
+    // async function fetchSendForm(formData) {
+     
+    //     const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+    //     const response = await fetch("send_msg/", {
+    //     // const baseUrl = window.location.origin;
+    //     // const response = await fetch(`${baseUrl}/send_msg/`, {
+    //         method: 'POST',
+    //         // headers: {
+    //         //     'Content-Type': 'application/json', // 서버가 JSON을 기대한다고 가정
+    //         //     'X-CSRFToken': csrfToken
+    //         // },
+    //         body: formData, // JSON 문자열로 변환된 데이터를 body에 설정
+    //     });
+
+    //     // 응답 처리...
+    // }
+
+
+    // submit버튼누르면, 비동기로 데이터보내기
+    // 여기는 비동기 함수 두개 실행시킬 함수로 빼기..
+    document.getElementById('form1').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        // FormData 객체를 사용하여 폼 데이터 준비
+        let formData = new FormData(this);
+        // 콘솔 출력- 나중 지우기
+        console.log("formData", formData.entries());
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
+
+
+
+
+        // Fetch API를 사용하여 AJAX POST 요청 실행
+        // fetch('send_msg/', {
+        //     method: 'POST',
+        //     body: formData
+        // })
+        // .then(response => response.json()) // 응답을 JSON으로 변환
+        // .then(data => console.log(data)) // 콘솔에 결과 출력
+        // .catch(error => console.error('Error:', error)); // 오류 처리
+        fetchSendForm(formData);
+    });
+
+    // document.addEventListener('DOMContentLoaded', function () {
+    // });
+
+
+    // fetch post요청
+    // async function fetchSendForm() {
+    //         // const baseUrl = window.location.origin;
+    //         // const response = await fetch(`${baseUrl}/send_msg/`);
+    //         const response = await fetch("send_msg/", {
+    //             method: 'POST',
+    //             // headers: {
+    //             //     'Content-Type': 'application/json',
+    //             //     // CSRF 토큰 추가 필요
+    //             // },
+    //             body: formData,
+    //         });
+
+    //         if (response.ok) {
+    //             const data = await response.json();
+    //             console.log("데이터", data)
+    //         } else {
+    //             // 에러출력
+    //             console.error('Server response:', response.statusText);
+    //         }
+    //     }
+
+
+    // // fetch get요청
+    // // alert 메세지띄우기
+    // async function fetchSendMessage() {
+    //         const baseUrl = window.location.origin;
+    //         const response = await fetch(`${baseUrl}/send_msg/`);
+    //         // const response = await fetch("send_msg/");
+    //         if (response.ok) {
+    //             const data = await response.json();
+    //             console.log("찍어라", data);
+    //             if (data.error) {
+    //                 alert(data.error);  // 에러 메시지가 있는 경우
+    //             } else if (data.success) {
+    //                 alert(data.success);  // 성공 메시지가 있는 경우
+    //                 window.location.href = data.redirect_url;
+    //             }
+    //         } else {
+    //             // 에러출력
+    //             console.error('Server response:', response.statusText);
+    //         }
+    //     }
+
+
 
     // 예약시 전화번호 입력칸에 자동 대쉬
     document.querySelector('#detail_user_phone').addEventListener('keyup', function () {
@@ -491,25 +646,6 @@
             .replace(/-*$/g, '');
     });
 
-
-    // alert 메세지띄우기
-    async function fetchSendMessage() {
-            const baseUrl = window.location.origin;
-            const response = await fetch(`${baseUrl}/send_msg/`);
-            if (response.ok) {
-                const data = await response.json();
-                if (data.error) {
-                    alert(data.error);  // 에러 메시지가 있는 경우
-                } else if (data.success) {
-                    alert(data.success);  // 성공 메시지가 있는 경우
-                    window.location.href = data.redirect_url;
-                }
-            } else {
-                // 에러출력
-                console.error('Server response:', response.statusText);
-            }
-        }
-    fetchSendMessage();
 
 
 </script>

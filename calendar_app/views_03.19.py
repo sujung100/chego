@@ -240,9 +240,115 @@ class Idx_list(TemplateView):
         # print(store_data)
         return context
 
+    # def dispatch(self, request, *args, **kwargs):
+    #     if request.method == 'POST':
+    #         key = request.POST
+    #         print("키", key)
+    #     return super().dispatch(request, *args, **kwargs)
+
+    # 수정전
+    # def post(self, request, *args, **kwargs):
+    #     if request.method == 'POST':
+    #         print("POST함수", request.POST)
+    #         store_id = request.POST["selected_store2"]
+    #         sto = get_object_or_404(models.Store, pk=store_id)
+
+    #         rst_user = models.Reservation_user()
+    #         rst_user.user_name = request.POST["detail_user_name"]
+    #         rst_user.user_phone = request.POST["detail_user_phone"]
+    #         rst_user.reservation_date = request.POST["detail_user_date"]
+    #         rst_user.user_time = request.POST["detail_user_time"]
+    #         rst_user.visitor_num = int(request.POST["v_num"])
+    #         rst_user.store_id = sto
+
+    #         # 그냥 입력받은 password
+    #         password = request.POST["password"]
+
+    #         # 암호화
+    #         salt = bcrypt.gensalt()
+    #         to_byte_pw = password.encode('utf-8')
+    #         salted_pw = bcrypt.hashpw(to_byte_pw, salt)
+    #         to_str_pw = salted_pw.decode('utf-8')
+    #         rst_user.pwhash = to_str_pw
+
+    #         try:
+    #             rst_user.full_clean()  # 모델의 유효성 검사 수행
+    #             rst_user.save()
+    #         except ValidationError as e:
+    #             # 유효성 검사 실패 시 에러
+    #             error_message = str(e)
+    #             return HttpResponse(error_message, status=400)
+
+    #         # POST 처리 완료 시 리디렉션
+    #         return HttpResponseRedirect(reverse('Idx_list'))
+
+    #     return self.get(request, *args, **kwargs)
+
+# 03.15
+    # def post(self, request, *args, **kwargs):
+    #     # if request.method == 'POST':
+    #         print("POST함수", request.POST)
+
+    #         rst_user = models.Reservation_user()
+
+    #         store = request.POST["selected_store2"]
+    #         name = request.POST["detail_user_name"]
+    #         phone = request.POST["detail_user_phone"]
+    #         date = request.POST["detail_user_date"]
+    #         time = request.POST["detail_user_time"]
+    #         v_num = request.POST["v_num"]
+
+    #         if models.Reservation_user.objects.filter(
+    #             Q(store_id=store) & 
+    #             Q(reservation_date=date) & 
+    #             Q(user_time=time) 
+    #             ).exists():
+    #             return JsonResponse({
+    #                 'error': '예약이 이미 존재합니다. 다른 시간을 선택해주세요.',
+    #                 'redirect_url': reverse('Idx_list')
+    #                 }, status=400)
+            
+    #             # return HttpResponseRedirect(reverse('Idx_list'))
+
+    #         else:
+    #             sto = get_object_or_404(models.Store, pk=store)
+
+    #             rst_user.user_name = name
+    #             rst_user.user_phone = phone
+    #             rst_user.reservation_date = date
+    #             rst_user.user_time = time
+    #             rst_user.visitor_num = int(v_num)
+    #             rst_user.store_id = sto
+
+    #             # 그냥 입력받은 password
+    #             password = request.POST["password"]
+
+    #             # 암호화
+    #             salt = bcrypt.gensalt()
+    #             to_byte_pw = password.encode('utf-8')
+    #             salted_pw = bcrypt.hashpw(to_byte_pw, salt)
+    #             to_str_pw = salted_pw.decode('utf-8')
+    #             rst_user.pwhash = to_str_pw
+
+    #             try:
+    #                 rst_user.full_clean()  # 모델의 유효성 검사 수행
+    #                 rst_user.save()
+    #                 # return JsonResponse([], safe=False)
+    #                 return JsonResponse({
+    #                 'success': '성공적으로 예약이 완료되었습니다.',
+    #                 'redirect_url': reverse('Idx_list')
+    #                 }, status=400)
+    #                 # return HttpResponseRedirect(reverse('Idx_list'))
+
+    #             except ValidationError as e:
+    #                 # 유효성 검사 실패 -> 에러출력
+    #                 print("유효성 검사 실패")
+    #                 error_message = str(e)
+    #                 return HttpResponse(error_message, status=400)
+
 
     def post(self, request, *args, **kwargs):
-        # if request.method == 'POST':
+        if request.method == 'POST':
             if not request.body:  # request.body가 비어있는지 확인
                 return JsonResponse({'error': '데이터가 전송되지 않았습니다.'}, status=400)
             # data = json.loads(request.body)
@@ -327,166 +433,6 @@ class Idx_list(TemplateView):
         # return HttpResponseRedirect(reverse('Idx_list'))
 
         # return self.get(request, *args, **kwargs)
-
-class FetchTest(View):
-    template_name = "calendar_app/sujung_main.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        store_list = models.Store.objects.all()
-        context['store_list'] = store_list
-
-        store_times_dict = {}
-        for store in store_list:
-            store_times = models.Store_times.objects.filter(store_id=store.pk)
-            store_times_dict[store.pk] = store_times
-        context['store_times_dict'] = store_times_dict
-
-        pk = self.kwargs.get('pk')
-        if pk:
-            store = get_object_or_404(models.Store, pk=pk)
-        else:
-            store = None
-
-        if store:
-            store_list = [store]
-        else:
-            store_list = store_list
-
-        store_data = []
-
-        for store in store_list:
-            sto_time = models.Store_times.objects.filter(store_id=store.pk)
-            print(store)
-            store_dates = []
-            for dates in sto_time:
-                dates_info  = models.Reservation_user.objects.filter(
-                Q(store_id=store) &
-                Q(user_time=dates.reservation_time) 
-                )
-
-                hour_disabled_dates = {}
-
-                for res in dates_info:
-                    user_date = res.reservation_date
-                    user_time = res.user_time
-
-                    # 일부 예약이 이미 비활성 시간에 추가된 경우 해당 시간을 추가하고, 그렇지 않은 경우 새로운 항목 생성
-                    if user_date in hour_disabled_dates:
-                        hour_disabled_dates[user_date].append(user_time)
-                    else:
-                        hour_disabled_dates[user_date] = [user_time]
-
-                store_dates.append({
-                    'hour_disabled_dates': hour_disabled_dates, # current_hour_reservations를 제거
-                })
-
-                user_dates = [info.reservation_date for info in dates_info]
-                store_dates.append({
-                'user_date': user_dates,
-                'disable_time': json.dumps([info.user_time for info in dates_info ])
-                })
-                # print(store_dates)
-            store_data.append({
-                'store_id': store.pk,
-                'sto_time': list(sto_time.values()),
-                'store_dates_json': json.dumps(store_dates, cls=DjangoJSONEncoder),
-            })
-
-        # context['store_data'] = store_data
-        context['store_data_json'] = json.dumps(store_data, cls=DjangoJSONEncoder)
-        # print(store_data)
-        return context
-
-
-    def post(self, request, *args, **kwargs):
-        # FormData를 사용하는 경우
-        template_name = "calendar_app/sujung_main.html"
-        if request.content_type == "multipart/form-data":
-            data = request.POST
-            files = request.FILES
-            print("폼 데이터: ", data)
-            print("파일 데이터: ", files)
-            context = {'test': '폼 데이터 전송 완료'}
-            
-            # return JsonResponse({'test': '폼 데이터 전송 완료'}, status=200)
-            # return HttpResponse(template_name.render(context, request))
-            return render(request, template_name, context)
-        
-        # JSON 데이터를 사용하는 경우
-        try:
-            data = json.loads(request.body)
-            print("JSON 데이터: ", data)
-
-            rst_user = models.Reservation_user()
-
-            store = data.get("selected_store2")
-            name = data.get("detail_user_name")
-            phone = data.get("detail_user_phone")
-            date = data.get("detail_user_date")
-            time = data.get("detail_user_time")
-            v_num = data.get("v_num")
-
-
-            if models.Reservation_user.objects.filter(
-                Q(store_id=store) & 
-                Q(reservation_date=date) & 
-                Q(user_time=time) 
-                ).exists():
-                # return JsonResponse({
-                #     'error': '예약이 이미 존재합니다. 다른 시간을 선택해주세요.',
-                #     'redirect_url': reverse('Idx_list')
-                #     }, status=400)
-                context = {'error': '예약이 이미 존재합니다. 다른 시간을 선택해주세요.'}
-                return render(request, template_name, context)
-            
-                # return HttpResponseRedirect(reverse('Idx_list'))
-
-            else:
-                sto = get_object_or_404(models.Store, pk=store)
-
-                rst_user.user_name = name
-                rst_user.user_phone = phone
-                rst_user.reservation_date = date
-                rst_user.user_time = time
-                rst_user.visitor_num = int(v_num)
-                rst_user.store_id = sto
-
-                # 그냥 입력받은 password
-                password = data.get("password")
-                # password = request.POST["password"]
-
-                # 암호화
-                salt = bcrypt.gensalt()
-                to_byte_pw = password.encode('utf-8')
-                salted_pw = bcrypt.hashpw(to_byte_pw, salt)
-                to_str_pw = salted_pw.decode('utf-8')
-                rst_user.pwhash = to_str_pw
-
-                try:
-                    rst_user.full_clean()  # 모델의 유효성 검사 수행
-                    rst_user.save()
-                    # return JsonResponse([], safe=False)
-                    # return JsonResponse({
-                    # 'success': '성공적으로 예약이 완료되었습니다.',
-                    # 'redirect_url': reverse('Idx_list')
-                    # }, status=400)
-                    context = {'success': '성공적으로 예약이 완료되었습니다.'}
-                    return render(request, template_name, context)
-                    # return HttpResponseRedirect(reverse('Idx_list'))
-                # except json.JSONDecodeError:
-                #     return JsonResponse({'error': '유효하지 않은 JSON 형식입니다.'}, status=400)
-    
-                except ValidationError as e:
-                    # 유효성 검사 실패 -> 에러출력
-                    print("유효성 검사 실패")
-                    error_message = str(e)
-                    return HttpResponse(error_message, status=400)
-                
-        except json.JSONDecodeError as e:
-            # return JsonResponse({'error': '유효하지 않은 JSON 형식입니다.'}, status=400)
-            context = {'error': '유효하지 않은 JSON 형식입니다.'}
-            return render(request, template_name, context)
 
 
 # fetch로 선택한 스토어, 시간값 가져오기1

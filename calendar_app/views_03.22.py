@@ -64,6 +64,9 @@ def write(request):
     
     return render(request, 'calendar_app/write.html')
 
+# from django.shortcuts import render
+
+# # Create your views here.
 
 # def list_up(request):
 #     return render(request, "main1.html")
@@ -265,7 +268,24 @@ class Idx_list(TemplateView):
     
 
     def post(self, request, *args, **kwargs):
+        # FormData를 사용하는 경우
         template_name = "calendar_app/sujung_main.html"
+        if request.content_type == "multipart/form-data":
+            data = request.POST
+            files = request.FILES
+            print("폼 데이터: ", data)
+            print("파일 데이터: ", files)
+
+            # context = {'test': '폼 데이터 전송 완료'}
+            
+            return JsonResponse({'test': '폼 데이터 전송 완료'}, safe=False)
+            # return HttpResponse(template_name.render(context, request))
+            
+            # return render(request, template_name, context)
+
+            # 세션으로 보내기
+            # request.session['send_msg'] = {'success': '성공적으로 예약이 완료되었습니다.', 'error': None}
+            # return HttpResponseRedirect(reverse('Idx_list'))
         
         # JSON 데이터를 사용하는 경우
         try:
@@ -288,10 +308,18 @@ class Idx_list(TemplateView):
                 Q(user_time=time) 
                 ).exists():
                 return JsonResponse({
-                    'message': '예약이 이미 존재합니다. 다른 시간을 선택해주세요.',
+                    'error': '예약이 이미 존재합니다. 다른 시간을 선택해주세요.',
                     'redirect_url': reverse('Idx_list')
                     }, safe=False)
 
+                # context = {'error': '예약이 이미 존재합니다. 다른 시간을 선택해주세요.'}
+                # return render(request, template_name, context)
+            
+                # return HttpResponseRedirect(reverse('Idx_list'))
+
+                # 세션으로 보내기
+                # request.session['send_msg'] = {'success': None, 'error': '예약이 이미 존재합니다. 다른 시간을 선택해주세요.'}
+                # return HttpResponseRedirect(reverse('Idx_list'))
 
             else:
                 sto = get_object_or_404(models.Store, pk=store)
@@ -319,10 +347,20 @@ class Idx_list(TemplateView):
                     rst_user.save()
                     # return JsonResponse([], safe=False)
                     return JsonResponse({
-                    'message': '성공적으로 예약이 완료되었습니다.',
+                    'success': '성공적으로 예약이 완료되었습니다.',
                     'redirect_url': reverse('Idx_list')
                     }, safe=False)
 
+                    # context = {'success': '성공적으로 예약이 완료되었습니다.'}
+                    # return render(request, template_name, context)
+                
+                    # return HttpResponseRedirect(reverse('Idx_list'))
+                # except json.JSONDecodeError:
+                #     return JsonResponse({'error': '유효하지 않은 JSON 형식입니다.'}, status=400)
+                    # 세션으로 보내기
+                    # request.session['send_msg'] = {'success': '성공적으로 예약이 완료되었습니다.', 'error': None}
+                    # return HttpResponseRedirect(reverse('Idx_list'))
+    
                 except ValidationError as e:
                     # 유효성 검사 실패 -> 에러출력
                     print("유효성 검사 실패")
@@ -330,9 +368,70 @@ class Idx_list(TemplateView):
                     return HttpResponse(error_message, status=400)
                 
         except json.JSONDecodeError as e:
-            return JsonResponse({'message': '유효하지 않은 JSON 형식입니다.'}, safe=False)
+            return JsonResponse({'error': '유효하지 않은 JSON 형식입니다.'}, safe=False)
+            # context = {'error': '유효하지 않은 JSON 형식입니다.'}
+            # return render(request, template_name, context)
+
+            # # 세션으로 보내기
+            # request.session['send_msg'] = {'success': None, 'error': '유효하지 않은 JSON 형식입니다.'}
+            # return HttpResponseRedirect(reverse('Idx_list'))
+    
 
 
+# fetch로 선택한 스토어, 시간값 가져오기1
+# class FetchCheckRsv(View):
+#     def get(self, request, *args, **kwargs):
+#         # 요청에서 JSON 데이터를 파싱합니다.
+#         data = json.loads(request.body.decode('utf-8'))
+#         # storeName = data.get('storeName')
+#         storeId = data.get('storeId')
+#         reservationTime = data.get('reservationTime')
+#         print("storeName", storeId)
+#         print("reservationTime", reservationTime)
+
+#         # 예약 존재 여부를 확인하는 로직을 여기에 구현합니다.
+#         # 예를 들어, 데이터베이스를 조회하여 예약 정보를 확인합니다.
+
+#         store_list = models.Store.objects.all()
+#         for store in store_list:
+#             sto_time = models.Store_times.objects.filter(store_id=store.pk)
+#             for dates in sto_time:
+#                         dates_info  = models.Reservation_user.objects.filter(
+#                         Q(store_id=storeId) &
+#                         Q(user_time=reservationTime)
+#                         )
+
+
+#         # 예약이 존재한다면
+#         # if # 예약 존재 조건:
+#         if dates_info:
+#             return JsonResponse({'exists': True})
+#         else:
+#             return JsonResponse({'exists': False})
+
+
+# fetch로 선택한 스토어, 시간값 가져오기2 -> fetch X, 웹소켓으로 변경예정 03.12
+# class FetchCheckRsv(View):
+#     def post(self, request, *args, **kwargs):
+#         # 요청에서 JSON 데이터를 파싱합니다.
+#         try:
+#             data = json.loads(request.body.decode('utf-8'))
+#             storeId = data.get('storeId')
+#             reservationTime = data.get('reservationTime')
+
+#             # 예약 존재 여부를 확인합니다.
+#             dates_info = models.Reservation_user.objects.filter(
+#                 Q(store_id=storeId) &
+#                 Q(user_time=reservationTime)
+#             ).exists()
+
+#             # 예약이 존재한다면 True, 그렇지 않다면 False를 반환합니다.
+#             return JsonResponse({'exists': dates_info})
+#         except json.JSONDecodeError:
+#             return JsonResponse({'error': 'Invalid JSON'}, status=400)
+#         except Exception as e:
+#             # 실제 환경에서는 보다 구체적인 예외 처리가 필요할 수 있습니다.
+#             return JsonResponse({'error': str(e)}, status=500)
 
 
 # 예약확인

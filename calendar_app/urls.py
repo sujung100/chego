@@ -23,8 +23,8 @@ urlpatterns = [
   # path('detail_view/pass/', views.FetchView.as_view(), name='fetch_view'),
   path('input_user_pw/pass/', views.FetchView.as_view(), name='fetch_view'),
   # path('pre_choice/', views.FetchCheckRsv.as_view(), name='pre_choice'),
-  # path('send_msg/', views.Idx_list.as_view(), name='send_msg'),
-  path('send_msg/', views.FetchTest.as_view(), name='send_msg'),
+  path('send_msg/', views.Idx_list.as_view(), name='send_msg'),
+  # path('send_msg/', views.FetchTest.as_view(), name='send_msg'),
 
 
 

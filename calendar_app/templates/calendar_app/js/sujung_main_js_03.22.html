@@ -306,10 +306,13 @@
                 }
             }
 
+            // Remove duplicates from disableTimes
             disableTimes = [...new Set(disableTimes)];
 
+            // Select the time buttons using the storeId and selectedDate
             const timeButtons = document.querySelectorAll(`.time-item-${storeId}, .time-item-${selectedDate}`);
 
+            // Loop through timeButtons and disable or enable them based on disableTimes
             for (let i = 0; i < timeButtons.length; i++) {
                 const buttonTime = timeButtons[i].getAttribute("data-time");
                 if (disableTimes.includes(buttonTime)) {
@@ -402,6 +405,40 @@
     }
 
 
+    // 비동기로 누른 스토어값, 시간값 가져오기 -> 웹소켓으로 변경 03.12
+    // async function fetchSelect(target) {
+    //     // var storeName = this.closest('.store-table').querySelector('.st-name').textContent.trim();
+    //     var storeId = target.getAttribute('data-crm');
+    //     var reservationTime = target.getAttribute('data-time');
+
+    //     // 서버에 보낼 데이터 준비
+    //     var data = {
+    //         // storeName: storeName,
+    //         storeId: storeId,
+    //         reservationTime: reservationTime
+    //     };
+
+
+    //     const response = await fetch('pre_choice/', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             // 필요한 경우 추가 헤더를 설정
+    //         },
+    //         body: JSON.stringify(data) // 서버에 보낼 데이터
+    //         });
+    //     const jsongogo = await response.json();
+    //     console.log("제이슨", jsongogo);
+
+    //     // var data_send = JSON.stringify(data)
+    //     if (jsongogo.exists) {
+    //         alert('예약이 이미 존재합니다.');
+    //         window.location.reload();
+    //     } else {
+
+    //     }
+    // }
+
 
     // 뒤로버튼 클릭시, 예약탭 -> 달력 전환
     backClick.addEventListener('click', function () {
@@ -419,33 +456,68 @@
     });
 
 
-    // // 모달
-    // const checkInputs = document.querySelectorAll(".check-input");
-    // const modal = document.querySelector("#modal");
-    // const book = document.querySelector(".booking");
-    // const closeModal = document.getElementsByClassName("close")[0];
+    // 모달
+    const checkInputs = document.querySelectorAll(".check-input");
+    const modal = document.querySelector("#modal");
+    const book = document.querySelector(".booking");
+    const closeModal = document.getElementsByClassName("close")[0];
 
-    // // 모달 띄우기전, input에 값 들어갔나 확인
-    // function areAllInputsFilled(inputs) {
-    //     return Array.from(inputs).every((input) => input.value.trim() !== "");
-    // }
+    // 모달 띄우기전, input에 값 들어갔나 확인
+    function areAllInputsFilled(inputs) {
+        return Array.from(inputs).every((input) => input.value.trim() !== "");
+    }
 
-
-    // book.addEventListener("click", function() {
+    // 버튼 클릭시 모달 띄우기
+    // book.onclick = function () {
     //     if (areAllInputsFilled(checkInputs)) {
     //         modal.style.display = "block";
-    //         // fetchSendMessage();
+    //         fetchSendMessage();
     //     } else {
     //         // 모든 input 값이 채워지지 않은 경우 처리
     //         alert("모든 입력란을 작성해주세요.");
     //     }
-    // })
-
-    // // X버튼으로 모달 닫기
-    // closeModal.onclick = function () {
-    //     modal.style.display = "none";
     // };
 
+    book.addEventListener("click", function() {
+        if (areAllInputsFilled(checkInputs)) {
+            modal.style.display = "block";
+            fetchSendMessage();
+        } else {
+            // 모든 input 값이 채워지지 않은 경우 처리
+            alert("모든 입력란을 작성해주세요.");
+        }
+    })
+
+    // X버튼으로 모달 닫기
+    closeModal.onclick = function () {
+        modal.style.display = "none";
+    };
+
+    // async function fetchSendForm(formData) {
+    //     // console.log("")
+    //     console.log("폼데이타", formData)
+    //     console.log("제이슨폼데이타", JSON.parse(formData));
+    //     const baseUrl = window.location.origin;
+    //     const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+    //     // const response = await fetch(`${baseUrl}/send_msg/`, {
+    //     const response = await fetch("send_msg/", {
+    //         method: 'POST',
+    //         // credentials: 'include', // 쿠키/인증 정보를 같은 출처 요청에 포함
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             'X-CSRFToken': csrfToken
+    //         },
+    //         body: formData,
+    //     });
+
+    //     // if (response.ok) {
+    //     //     const data = await response.json();
+    //     //     // console.log("폼데이터", data)
+    //     // } else {
+    //     //     // 에러출력
+    //     //     console.error('Server response:', response.statusText);
+    //     // }
+    // }
 
     // 수정중 03.19
     // formdata를 body에 바로 보내지말고, json으로 변환해서 보냄
@@ -465,30 +537,38 @@
         // const response = await fetch("send_msg/", {
         // const baseUrl = window.location.origin;
         const response = await fetch(`${baseUrl}/send_msg/`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrfToken
-                    },
-                    body: json,
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('서버 오류');
-                        }
-                        console.log("response", response);
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log("data", data);
-                        alert(data.message);
-                        window.location.href = "";
-                    })
-                    .catch(error => {
-                        console.log(error);
-                        console.log("실패실패실패");
-                    })
-                }
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', // 서버가 JSON을 기대한다고 가정
+                'X-CSRFToken': csrfToken
+            },
+            body: json, // JSON 문자열로 변환된 데이터를 body에 설정
+        });
+
+        // 응답 처리...
+    }
+
+
+    // formdata를 body에 바로 보내지말고, json으로 변환해서 보냄
+
+
+    // async function fetchSendForm(formData) {
+     
+    //     const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+    //     const response = await fetch("send_msg/", {
+    //     // const baseUrl = window.location.origin;
+    //     // const response = await fetch(`${baseUrl}/send_msg/`, {
+    //         method: 'POST',
+    //         // headers: {
+    //         //     'Content-Type': 'application/json', // 서버가 JSON을 기대한다고 가정
+    //         //     'X-CSRFToken': csrfToken
+    //         // },
+    //         body: formData, // JSON 문자열로 변환된 데이터를 body에 설정
+    //     });
+
+    //     // 응답 처리...
+    // }
 
 
     // submit버튼누르면, 비동기로 데이터보내기
@@ -503,34 +583,82 @@
         for (let [key, value] of formData.entries()) {
             console.log(`${key}: ${value}`);
         }
+
+
+
+
+        // Fetch API를 사용하여 AJAX POST 요청 실행
+        // fetch('send_msg/', {
+        //     method: 'POST',
+        //     body: formData
+        // })
+        // .then(response => response.json()) // 응답을 JSON으로 변환
+        // .then(data => console.log(data)) // 콘솔에 결과 출력
+        // .catch(error => console.error('Error:', error)); // 오류 처리
         fetchSendForm(formData);
     });
 
-    // fetch get요청
-    // alert 메세지띄우기
-    // async function fetchSendMessage() {
-    //         const baseUrl = window.location.origin;
-    //         const response = await fetch(`${baseUrl}/send_msg/`, {
-    //         method: 'POST',
-    //         // headers: {
-    //         //     'Content-Type': 'application/json',
-    //         //     'X-CSRFToken': csrfToken
-    //         // },
-    //         body: data,
+    // document.addEventListener('DOMContentLoaded', function () {
+    // });
+
+
+    // fetch post요청
+    // async function fetchSendForm() {
+    //         // const baseUrl = window.location.origin;
+    //         // const response = await fetch(`${baseUrl}/send_msg/`);
+    //         const response = await fetch("send_msg/", {
+    //             method: 'POST',
+    //             // headers: {
+    //             //     'Content-Type': 'application/json',
+    //             //     // CSRF 토큰 추가 필요
+    //             // },
+    //             body: formData,
     //         });
+
     //         if (response.ok) {
     //             const data = await response.json();
-    //             if (data.error) {
-    //                 alert(data.error);
-    //             }
-    //             else if (data.success) {
-    //                 alert(data.success);
-    //             }
+    //             console.log("데이터", data)
     //         } else {
     //             // 에러출력
     //             console.error('Server response:', response.statusText);
     //         }
     //     }
+
+
+    // // fetch get요청
+    // // alert 메세지띄우기
+    async function fetchSendMessage() {
+            const baseUrl = window.location.origin;
+            const response = await fetch(`${baseUrl}/send_msg/`, {
+                // headers: {
+                //     // 임의의 사용자 정의 헤더 추가 - 서버 식별용
+                //     'X-Custom-Type': 'identify'
+                // }
+            });
+            // const response = await fetch("send_msg/");
+            if (response.ok) {
+                const data = await response.json();
+                // console.log("찍어라", data);
+                // let error  = " error|escapejs ";
+                // let success = " success|escapejs ";
+                // console.log("찍어", context);
+                if (data.error) {
+                    alert(data.error);
+                }
+                else if (data.success) {
+                    alert(data.success);
+                }
+                // if (data.error) {
+                //     alert(data.error);  // 에러 메시지가 있는 경우
+                // } else if (data.success) {
+                //     alert(data.success);  // 성공 메시지가 있는 경우
+                //     window.location.href = data.redirect_url;
+                // }
+            } else {
+                // 에러출력
+                console.error('Server response:', response.statusText);
+            }
+        }
 
 
 

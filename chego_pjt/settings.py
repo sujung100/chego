@@ -27,7 +27,8 @@ SECRET_KEY = 'django-insecure-vw3n9k#if&ib9jm&!8tl8qi@u^q7&rs6)nxo%0&33ajgp9*82l
 DEBUG = True
 
 # 배포시
-ALLOWED_HOSTS = ["port-0-chego-2aat2clujm1mbr.sel5.cloudtype.app", "127.0.0.1"]
+# ALLOWED_HOSTS = ["port-0-chego-2aat2clujm1mbr.sel5.cloudtype.app", "127.0.0.1"]
+ALLOWED_HOSTS = ["port-0-docker-2aat2clujm1mbr.sel5.cloudtype.app", "127.0.0.1"]
 # ALLOWED_HOSTS = []
 
 CSRF_TRUSTED_ORIGINS = ["https://*.cloudtype.app"]

@@ -91,7 +91,7 @@ WSGI_APPLICATION = 'chego_pjt.wsgi.application'
 #     }
 # }
 
-# 로컬 mariaDB테스트
+# # 배포 mariaDB테스트
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql', # mysqlclient librarly 설치

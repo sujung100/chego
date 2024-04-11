@@ -39,14 +39,14 @@ CSRF_TRUSTED_ORIGINS = ["https://*.cloudtype.app"]
 INSTALLED_APPS = [
     "channels",
     "daphne",
+    'calendar_app',
+    'manager',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'calendar_app',
-    'manager',
     # "rest_framework",
 ]
 

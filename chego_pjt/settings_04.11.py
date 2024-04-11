@@ -27,11 +27,12 @@ SECRET_KEY = 'django-insecure-vw3n9k#if&ib9jm&!8tl8qi@u^q7&rs6)nxo%0&33ajgp9*82l
 DEBUG = True
 
 # 배포시
-# ALLOWED_HOSTS = ["port-0-chego-2aat2clujm1mbr.sel5.cloudtype.app"]
-# ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ["port-0-chego-2aat2clujm1mbr.sel5.cloudtype.app", "127.0.0.1"]
 ALLOWED_HOSTS = ["port-0-docker-2aat2clujm1mbr.sel5.cloudtype.app", "127.0.0.1"]
+# ALLOWED_HOSTS = []
 
 CSRF_TRUSTED_ORIGINS = ["https://*.cloudtype.app"]
+
 
 # Application definition
 
@@ -83,13 +84,37 @@ WSGI_APPLICATION = 'chego_pjt.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# 기존
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+# 로컬 mariaDB테스트
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql', # mysqlclient librarly 설치
+#         'NAME': 'chego_db',
+#         'USER': 'root',
+#         'PASSWORD': '920914', # mariaDB 설치 시 입력한 root 비밀번호 입력
+#         'HOST': 'localhost',
+#         'PORT': '3307'
+#     }
+# }
+
+# 배포 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql', # mysqlclient librarly 설치
+        'NAME': 'chego_db',
+        'USER': 'root',
+        'PASSWORD': '920914', # mariaDB 설치 시 입력한 root 비밀번호 입력
+        'HOST': 'mariadb',
+        'PORT': '3306'
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

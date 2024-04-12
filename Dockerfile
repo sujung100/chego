@@ -60,7 +60,7 @@ FROM cloudtype/python:3.11
 RUN apt-get update -y
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get install -y gcc default-libmysqlclient-dev pkg-config libc6-dev linux-headers-generic\
+    && apt-get install -y gcc default-libmysqlclient-dev pkg-config libc6-dev linux-headers-generic sudo\
     && rm -rf /var/lib/apt/lists/*
 
 # 도커설치

@@ -59,7 +59,7 @@ FROM cloudtype/python:3.11
 RUN apt-get update -y
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get install -y gcc default-libmysqlclient-dev pkg-config musl-dev linux-headers mariadb-dev \
+    && apt-get install -y gcc musl-dev linux-headers mariadb-dev \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /chego

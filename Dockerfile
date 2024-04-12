@@ -71,13 +71,18 @@ ENV PYTHONUNBUFFERED=1
 COPY ./requirements.txt* ./
 # RUN pip install gunicorn
 RUN pip install -r requirements.txt
+RUN groupadd -r python && useradd -r -g python python
 
 EXPOSE 8000
 
 COPY --chown=python:python ./ ./
 # RUN chown -f python:python /chego && rm -rf .git*
 RUN chown -f python:python /chego
-RUN groupadd -r python && useradd -r -g python python
+
+
+# entrypoint.sh 스크립트 추가
+COPY entrypoint.sh chego/entrypoint.sh
+ENTRYPOINT ["/chego/entrypoint.sh"]
 
 USER python
 

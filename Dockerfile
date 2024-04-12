@@ -54,7 +54,8 @@
 # 변경 --------------------------------------------------------
 
 
-FROM cloudtype/python:3.11
+# FROM cloudtype/python:3.11
+FROM python:3.10-alpine
 
 # RUN apt-get update -y
 # RUN apt-get update \

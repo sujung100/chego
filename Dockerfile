@@ -75,7 +75,9 @@ RUN pip install -r requirements.txt
 EXPOSE 8000
 
 COPY --chown=python:python ./ ./
-RUN chown -f python:python /chego && rm -rf .git*
+# RUN chown -f python:python /chego && rm -rf .git*
+RUN chown -f python:python /chego
+RUN groupadd -r python && useradd -r -g python python
 
 USER python
 

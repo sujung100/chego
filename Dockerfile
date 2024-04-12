@@ -69,7 +69,7 @@ RUN apt-get update \
 #     && rm -rf /var/lib/apt/lists/*
 # RUN apk add --no-cache gcc musl-dev linux-headers mariadb-dev
 
-WORKDIR /
+WORKDIR /chego
 
 ENV DJANGO_SETTINGS_MODULE=chego_pjt.settings
 ENV PYTHONDONTWRITEBYTECODE=1

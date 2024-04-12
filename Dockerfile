@@ -65,8 +65,10 @@ RUN apk add --no-cache gcc musl-dev linux-headers mariadb-dev
 
 WORKDIR /chego
 
-ENV PYTHONDONTWRITEBYTECODE=1
+ENV DJANGO_SETTINGS_MODULE=chego_pjt.settings
+# ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
+ENV DJANGO_ASGI_MODULE=chego_pjt.asgi:application  
 
 COPY ./requirements.txt* ./
 # RUN pip install gunicorn

@@ -89,8 +89,8 @@ RUN chown -f python:python /chego
 
 
 # entrypoint.sh 스크립트 추가
-COPY entrypoint.sh chego/entrypoint.sh
-ENTRYPOINT ["/chego/entrypoint.sh"]
+# COPY entrypoint.sh chego/entrypoint.sh
+# ENTRYPOINT ["/chego/entrypoint.sh"]
 
 USER python
 

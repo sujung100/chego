@@ -54,20 +54,25 @@
 # 변경 --------------------------------------------------------
 
 
-# FROM cloudtype/python:3.11
-FROM python:3.10-alpine
+FROM cloudtype/python:3.11
+# FROM python:3.10-alpine
 
+RUN apt-get update -y
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install -y gcc default-libmysqlclient-dev pkg-config \
+    && rm -rf /var/lib/apt/lists/*
 # RUN apt-get update -y
 # RUN apt-get update \
 #     && apt-get upgrade -y \
 #     && apt-get install -y gcc musl-dev linux-headers mariadb-dev \
 #     && rm -rf /var/lib/apt/lists/*
-RUN apk add --no-cache gcc musl-dev linux-headers mariadb-dev
+# RUN apk add --no-cache gcc musl-dev linux-headers mariadb-dev
 
 WORKDIR /chego
 
 ENV DJANGO_SETTINGS_MODULE=chego_pjt.settings
-# ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV DJANGO_ASGI_MODULE=chego_pjt.asgi:application  
 

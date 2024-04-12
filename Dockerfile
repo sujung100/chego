@@ -79,7 +79,7 @@ ENV DJANGO_ASGI_MODULE=chego_pjt.asgi:application
 COPY ./requirements.txt* ./
 # RUN pip install gunicorn
 RUN pip install -r requirements.txt
-RUN groupadd -r python && useradd -r -g python python
+# RUN groupadd -r python && useradd -r -g python python
 
 EXPOSE 8000
 

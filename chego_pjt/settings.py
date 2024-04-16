@@ -28,7 +28,8 @@ DEBUG = True
 
 # 배포시
 # ALLOWED_HOSTS = ["port-0-chego-2aat2clujm1mbr.sel5.cloudtype.app", "127.0.0.1"]
-ALLOWED_HOSTS = ["port-0-docker-2aat2clujm1mbr.sel5.cloudtype.app", "127.0.0.1"]
+# ALLOWED_HOSTS = ["port-0-docker-2aat2clujm1mbr.sel5.cloudtype.app", "127.0.0.1"]
+ALLOWED_HOSTS = ["port-0-chego-2aat2clujm1mbr.sel5.cloudtype.app", "127.0.0.1"]
 # ALLOWED_HOSTS = []
 
 CSRF_TRUSTED_ORIGINS = ["https://*.cloudtype.app"]

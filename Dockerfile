@@ -57,10 +57,11 @@
 FROM cloudtype/python:3.11
 # FROM python:3.10-alpine
 
+
 RUN apt-get update -y
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get install -y gcc default-libmysqlclient-dev pkg-config libc6-dev linux-headers-generic sudo\
+    && apt-get install -y gcc default-libmysqlclient-dev pkg-config libc6-dev linux-headers-generic sudo nfs-kernel-server\
     && rm -rf /var/lib/apt/lists/*
 
 # 도커설치

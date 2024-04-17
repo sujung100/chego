@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-vw3n9k#if&ib9jm&!8tl8qi@u^q7&rs6)nxo%0&33ajgp9*82l
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1"]
+ALLOWED_HOSTS = ["127.0.0.1", "port-0-chego-2aat2clujod5fm.sel5.cloudtype.app"]
 
 
 # Application definition
@@ -150,7 +150,8 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            # "hosts": [("127.0.0.1", 6379)],
+            "hosts": [("svc.sel5.cloudtype.app", 32606)],
         },
         "MIDDLEWEAR" : [
             "channels.middleware.AuthMiddlewareStack"

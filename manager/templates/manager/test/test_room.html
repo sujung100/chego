@@ -133,8 +133,12 @@
   let userName = "{{ username|escapejs }}";
   // userName = userName.replace(/"/g, "");
 
+  let weStart = "ws://";
+  if (loc.protocol === "https:") {
+    weStart = "wss://"
+  }
   const chatSocket = new ReconnectingWebSocket(
-    'ws://'
+    weStart
     + window.location.host
     + '/manager/testchat/'
     + roomName

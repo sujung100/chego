@@ -1193,7 +1193,7 @@ td {
   text-align: center;
 }
 
-.pastDay {
+.pastDay, .disableDay {
   color: #343434;
 }
 
@@ -1221,7 +1221,9 @@ td {
   /* font-weight: 600; */
   cursor: pointer;
 }
+/* 달력 다크 모드 시작 */
 
+/* 달력 다크 모드 끝 */
 .date-container {
   position: relative;
 }

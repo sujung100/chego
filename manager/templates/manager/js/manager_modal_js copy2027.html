@@ -5,16 +5,13 @@
   // new Notification("Hello, world!",{
   //   body : "This is a notification."
   // });
-
   ntfIcon = document.querySelector(".notification-icon:nth-of-type(2)");
-  ntfIcon_count = document.querySelector(".notification-icon:nth-of-type(2) > .num-count");
   modal = document.querySelector("#open-modal");
   function clickReserVaTion() {
     ntfIcon.addEventListener("click", function () {
       console.log("클릭 이벤트 되냐");
       // window.location.hash = "open-modal";
       modal.style.display = "flex";
-      ntfIcon_count.style.display = "none";
     });
     window.addEventListener("click", function () {
       if (event.target == modal) {
@@ -25,32 +22,25 @@
   }
   clickReserVaTion();
 
-  async function pageStart(socket) {
+  async function pageStart() {
     let rsvFetch = await fetch("api/reservation_false/");
     let rsvDetailsData = await rsvFetch.json();
-    // console.table("콘솔태이블", rsvDetailsData);
     console.log("페이지스타트", rsvDetailsData);
-    console.log("페이지스타트", rsvDetailsData.length);
-    if (rsvDetailsData.length !== 0) {
-      ntfIcon_count.style.display = "flex";
-      ntfIcon_count.textContent = rsvDetailsData.length
-    }
-    rsvNotification(socket, rsvDetailsData);
+    // for(let detailsData in rsvDetailsData ){
+    //   rsvNotification(detailsData);
+    // }
+    rsvNotification(rsvDetailsData);
   }
 
-  async function reserVationDetails(socket, data) {
+  async function reserVationDetails(data) {
     console.log("모달 스크립트");
     let reservationId = data.content;
     console.log("reserVationDetails", reservationId);
     let rsvFetch = await fetch(`api/reservation_id/${reservationId}`);
     // console.log(rsvFetch);
     let rsvdata = await rsvFetch.json();
-    console.log(rsvdata);
-    if (rsvdata.rsv_check !== 0) {
-      ntfIcon_count.style.display = "flex";
-      ntfIcon_count.textContent = rsvdata.rsv_check
-    }
-    rsvNotification(socket, rsvdata);
+    // console.log(rsvdata);
+    rsvNotification(rsvdata);
   }
 
   // async function rsvNotification(rsvdata) {
@@ -76,66 +66,55 @@
 
 
   // }
-
-  async function rsvNotification(socket, rsvdata) {
+  async function rsvNotification(rsvdata) {
 
     // console.log("노티피레져베이션");
     const reservation_card = document.querySelector("#reservation-info");
-
     // console.log("rsvdata", rsvdata);
     if (Array.isArray(rsvdata)) {
-      console.log("배열", rsvdata);
+      console.log("배열");
       for (let i = 0; i < rsvdata.length; i++) {
         let rsvInfo = rsvdata[i];
         let card = document.createElement("div");
         card.classList.add("card");
-        card.dataset.rid = rsvInfo.id;
         // console.log(rsvInfo);
-        console.log("배열로 생성되냐");
+        card.dataset.rid = rsvInfo.id;
         for (let key in rsvInfo) {
-
+          // console.log(key);
           let cardP = document.createElement("p");
           cardP.textContent = `${key} : ${rsvInfo[key]}`;
           card.appendChild(cardP);
         }
         reservation_card.appendChild(card);
-        card.addEventListener("click", function () {
-          rsvIsRead1(socket, rsvInfo.id);
-          this.remove();
+        card.addEventListener("click", function(){
+          pass;
+          // rsvIsRead1(socket, rsvInfo.id);
         });
       }
     }
     else {
-      console.log("객체", rsvdata);
-
-
+      console.log("객체");
       let card = document.createElement("div");
       card.classList.add("card");
       card.dataset.rid = rsvdata.id;
       for (let key in rsvdata) {
-
         // console.log("키", key);
         let cardP = document.createElement("p");
         cardP.textContent = `${key} : ${rsvdata[key]}`;
         card.appendChild(cardP);
       }
       reservation_card.appendChild(card);
-      card.addEventListener("click", function () {
-        rsvIsRead1(socket, rsvdata.id);
-        this.remove();
+      card.addEventListener("click", function(){
+        pass;
       });
     }
   }
 
-  async function rsvNotiCount() {
-    pass;
+  function msg_count_hidden(element) {
+    element.style.visibility = "hidden";
   }
-
-  function rsv_count_none(element) {
-    element.style.display = "none";
-  }
-  function rsv_count_flex(element) {
-    element.style.display = "flex";
+  function msg_count_visible(element) {
+    element.style.visibility = "visible";
   }
 
 
@@ -143,7 +122,7 @@
   function rsvIsRead1(socket, data) {
     if (socket.readyState === WebSocket.OPEN) {
       socket.send(JSON.stringify({
-        "command": "RSV_mark_as_read",
+        "command": "mark_as_read",
         "rsv_id": data,
       }));
 

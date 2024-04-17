@@ -1,8 +1,8 @@
 {% include "manager/test/reconnecting-websocket.html" %}
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    pageStart();
-  });
+  // document.addEventListener("DOMContentLoaded", function () {
+  //   pageStart();
+  // });
   // const roomName = JSON.parse(document.getElementById('room-name').textContent);
   let room_name_source = {}
   let userName = "{{ username|escapejs }}";
@@ -33,13 +33,22 @@
   // let chatSocket;
 
   async function accessAllChannels() {
-    // await 
+
     let endpoints = [
       { name: "chat", url: weStart + loc2 + userName + "/" },
       { name: "user", url: weStart + loc3 + userName + "/" },
       { name: "manager", url: weStart + loc.host + loc.pathname + loc.search },
     ];
-
+    Notification.requestPermission().then(function (permission) {
+      console.log('Permission:', permission);
+    });
+    // if (Notification.permission === 'granted') {
+    //   console.log("예약API실행되니");
+    //   new Notification("새로운 예약이 추가 되었습니다.", {
+    //     body: "예약 내용을 확인해주세요."
+    //   });
+    // }
+    // console.log("어디서 찍히냐 Notification.permission",Notification.permission);
     for (let ept of endpoints) {
       // if (manager_webSockets[chat]) {
       //   continue;
@@ -64,10 +73,16 @@
         console.error('Socket closed unexpectedly');
       };
     }
+    document.addEventListener("DOMContentLoaded", function () {
+      // console.log(manager_webSockets);
+      pageStart(manager_webSockets.manager);
+    });
   }
   accessAllChannels();
   // console.log(reserVationDetails());
   // pageStart();
+  let notificationPermission = Notification.permission;
+  // console.log("dddddd", notificationPermission);
 
 
 
@@ -158,6 +173,7 @@
   }
 
   async function handleOnMessage(socket, e) {
+    modalContent = document.querySelector(".modal-content");
     const data = await JSON.parse(e.data);
     console.log("데이터", data);
     // reserVationDetails(data);
@@ -168,11 +184,23 @@
     if (socket.url === chatSocket.url) {
       handleChatSocket(data);
     } else if (data.type === "notification") {
-      handleUserSocket(data);
       console.log("타입 비교");
-      // console.log(socket.url);
-      // console.log(managerSocket.url);
-
+      // handleUserSocket(data);
+      reserVationDetails(socket, data);
+      // pageStart(socket);
+      // (async function () {
+      //   await pageStart(socket);
+      // })();
+      // console.log("여기서는 왜 안 찍혀", Notification.permission);
+      if (notificationPermission === 'granted') {
+        console.log("예약API실행되니");
+        let noti1 = new Notification("새로운 예약이 추가 되었습니다.", {
+          body: "예약 내용을 확인해주세요."
+        });
+        setTimeout(() => {
+          noti1.close();
+        }, 2000);
+      }
     }
   }
 

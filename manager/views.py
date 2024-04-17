@@ -14,6 +14,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import model_to_dict
 from django.views.generic.edit import FormView
 from django.http import HttpResponseRedirect
+from django.core import serializers
 
 from django.http import JsonResponse, QueryDict, HttpRequest
 from django.views import View
@@ -22,6 +23,13 @@ from django.utils.safestring import mark_safe
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from . import models
+from django.db.models import Q, Value, CharField
+from django.db.models.functions import Replace
+from datetime import datetime
+from django.views import View
+from django.http import HttpResponseForbidden, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 
 ADMIN_USERS = { "admin" : True,}
@@ -257,20 +265,33 @@ class EnterChatRoom(View):
         return JsonResponse(response, safe=False)
 
 class Reservation_Details(View):
+    # def rsv_check(self, user_id):
+    #     queryset = rsv.Reservation_user.objects.filter(store_id__owner_id=user_id)
+    #     return serializers.serialize("python", queryset, fields=("reservation_check"))
+
+    def rsv_check(self, user_id):
+        queryset = rsv.Reservation_user.objects.filter(store_id__owner_id=user_id)
+        serialized_data = serializers.serialize("python", queryset, fields=("reservation_check"))
+        return len(serialized_data)
+
     def get(self, request, id=None):
+        user_id = request.user.id
         production_current_user(request)
         if id:
             rsv_model = get_object_or_404(rsv.Reservation_user.objects.defer("pwhash"), id=id)
             rsv_dict = model_to_dict(rsv_model)
             rsv_dict.pop("pwhash", None)
+            rsv_dict["rsv_check"] = self.rsv_check(user_id)
+            print("이프", rsv_dict)
         else:
-            user_id = request.user.id
-            print(user_id)
+            # print(user_id)
             rsv_model = rsv.Reservation_user.objects.defer("pwhash").filter(store_id__owner_id=user_id, reservation_check=False)
             print("Reservation_Details 엘스", rsv_model)
             rsv_dict = [model_to_dict(r) for r in rsv_model]
             for r in rsv_dict:
                 r.pop("pwhash", None)
+                r["rsv_check"] = self.rsv_check(user_id)
+            print("엘스", rsv_dict)
         return JsonResponse(rsv_dict, safe=False)
 
     
@@ -310,6 +331,253 @@ class Reservation_Details(View):
 #         context = super().get_context_data(**kwargs)
 #         context['manager'] = self.get_queryset()
 #         return context
+
+class DetailListView2(View):
+    template_name = "manager/manager_store_detail.html"
+
+    def get(self, request, store_id, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        return render(request, self.template_name, context)
+
+    def get_context_data(self, **kwargs):
+        store_id = self.kwargs['store_id']
+        store = get_object_or_404(rsv.Store, id=store_id)
+        manager = rsv.Manager.objects.get(user=self.request.user)
+
+        context = {}
+        context['manager'] = manager
+        context['store'] = store
+
+        name = self.request.GET.get('name')
+        phone = self.request.GET.get('phone')
+        kw = self.request.GET.get('kw')
+
+        date_filter = Q()
+        if kw:
+            try:
+                datetime.strptime(kw, '%Y-%m-%d')
+                date_filter = Q(reservation_date__icontains=kw)
+            except ValueError:
+                try:
+                    datetime.strptime(kw, '%Y-%m')
+                    date_filter = Q(reservation_date__icontains=kw)
+                except ValueError:
+                    date_filter = Q(reservation_date__startswith=kw)
+
+        phone_without_hyphen = phone.replace("-", "") if phone else None
+
+        reservations = rsv.Reservation_user.objects.annotate(
+            user_phone_without_hyphen=Replace('user_phone', Value('-'), Value(''), output_field=CharField())
+        ).filter(
+            Q(user_name__icontains=name) if name else Q(),
+            Q(user_phone_without_hyphen__icontains=phone_without_hyphen) if phone else Q(),
+            date_filter if kw else Q(),
+            store_id=store
+        ).distinct()
+
+        paginator = Paginator(reservations, 10)
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        context['page_obj'] = page_obj
+        context['kw'] = kw
+
+        store_time = rsv.Store_times.objects.filter(store_id=store_id)
+        user_time = rsv.Reservation_user.objects.filter(store_id=store_id)
+
+        user_dates = []
+        dates_list = [date.reservation_date for date in user_time]
+        user_dates.append({
+            "user_dates" : dates_list
+        })
+        context["user_dates_json"] = json.dumps(dates_list, cls=DjangoJSONEncoder)
+        context["username"] = self.request.user.username if self.request.user.is_authenticated else None
+
+        return context
+
+class IntegratedDetailView(View):
+    template_name = "manager/manager_store_detail.html"
+    
+    def setup_variables(self, request, store_id):
+        try:
+            self.store = get_object_or_404(rsv.Store, id=store_id)
+            self.store_time = rsv.Store_times.objects.filter(store_id=store_id)
+            self.user_time = rsv.Reservation_user.objects.filter(store_id=store_id)
+            self.manager = rsv.Manager.objects.get(user=request.user) if request.user.is_authenticated else None
+        except rsv.Manager.DoesNotExist:
+            # Manager 객체가 존재하지 않는 경우의 처리
+            # 예: 새 Manager 객체 생성 또는 사용자에게 오류 메시지 반환
+            return HttpResponse('Manager 객체가 존재하지 않습니다.', status=404)
+    def get(self, request, store_id, *args, **kwargs):
+        self.setup_variables(request, store_id)
+        context = self.get_context_data(store_id=store_id, **kwargs)
+        # template_name = self.get_template_name(request)
+        return render(request, self.template_name, context)
+    
+    def post(self, request, store_id, *args, **kwargs):
+        self.setup_variables(store_id)
+        if not request.user.is_authenticated or request.user.id != self.store.owner_id:
+            return JsonResponse({"message": "접근 권한이 없습니다."}, status=403)
+        # POST 요청 처리 로직 (DetailListView의 POST 처리 로직을 여기에 포함시킵니다.)
+        try:
+            data = json.loads(request.body)
+            self.store.start_rsv_possible = data.get("activate_date_start")
+            self.store.end_rsv_possible = data.get("activate_date_end")
+            self.store.full_clean()
+            self.store.save()
+        except json.JSONDecodeError:
+            return JsonResponse({"message": "유효하지 않은 JSON 형식입니다."}, status=400)
+        except ValidationError as e:
+            # 유효성 검사 실패 시 에러
+            error_message = str(e)
+            return HttpResponse(error_message, status=400)
+
+
+        return JsonResponse({"message": "성공적으로 처리되었습니다."}, status=200)
+    
+    def get_context_data(self, **kwargs):
+        store_id = self.kwargs['store_id']
+        store = get_object_or_404(rsv.Store, id=store_id)
+        try:
+            manager = rsv.Manager.objects.get(user=self.request.user)
+        except rsv.Manager.DoesNotExist:
+            manager = None    
+        context = {}
+        # DetailListView2의 get_context_data 로직을 여기에 통합합니다.
+        # 필요한 경우, DetailListView의 로직도 여기에 포함시킬 수 있습니다.
+        context['manager'] = manager
+        context['store'] = store
+
+        name = self.request.GET.get('name')
+        phone = self.request.GET.get('phone')
+        kw = self.request.GET.get('kw')
+
+        date_filter = Q()
+        if kw:
+            try:
+                datetime.strptime(kw, '%Y-%m-%d')
+                date_filter = Q(reservation_date__icontains=kw)
+            except ValueError:
+                try:
+                    datetime.strptime(kw, '%Y-%m')
+                    date_filter = Q(reservation_date__icontains=kw)
+                except ValueError:
+                    date_filter = Q(reservation_date__startswith=kw)
+
+        phone_without_hyphen = phone.replace("-", "") if phone else None
+
+        reservations = rsv.Reservation_user.objects.annotate(
+            user_phone_without_hyphen=Replace('user_phone', Value('-'), Value(''), output_field=CharField())
+        ).filter(
+            Q(user_name__icontains=name) if name else Q(),
+            Q(user_phone_without_hyphen__icontains=phone_without_hyphen) if phone else Q(),
+            date_filter if kw else Q(),
+            store_id=store
+        ).distinct()
+
+        paginator = Paginator(reservations, 10)
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        context['page_obj'] = page_obj
+        context['kw'] = kw
+
+        store_time = rsv.Store_times.objects.filter(store_id=store_id)
+        user_time = rsv.Reservation_user.objects.filter(store_id=store_id)
+
+        user_dates = []
+        dates_list = [date.reservation_date for date in user_time]
+        user_dates.append({
+            "user_dates" : dates_list
+        })
+        context["user_dates_json"] = json.dumps(dates_list, cls=DjangoJSONEncoder)
+        context["username"] = self.request.user.username if self.request.user.is_authenticated else None
+        return context
+        
+@method_decorator(csrf_exempt, name="dispatch")
+class DetailListView(View):
+    template_name = "manager/manager_store_detailcopy0306.html"
+    # template_name = "manager/manager_store_detail.html"
+    def setup_variables(self, store_id):
+        # 공통으로 사용되는 변수들을 설정합니다.
+        if not hasattr(self, 'store'):
+            self.store = get_object_or_404(rsv.Store, id=store_id)
+        if not hasattr(self, 'store_time'):
+            self.store_time = rsv.Store_times.objects.filter(store_id=store_id)
+        if not hasattr(self, 'user_time'):
+            self.user_time = rsv.Reservation_user.objects.filter(store_id=store_id)
+
+    def get(self, request, store_id, *args, **kwargs):
+        self.setup_variables(store_id)
+
+        if not request.user.is_authenticated or request.user.id != self.store.owner_id:
+            return HttpResponseForbidden("접근 권한이 없습니다.")
+        
+        dates_list = [date.reservation_date for date in self.user_time]
+        
+        context = {
+            "user_dates_json": json.dumps(dates_list, cls=DjangoJSONEncoder),
+            "username": request.user.username
+        }
+
+        return render(request, self.template_name, context)
+    
+    def post(self, request, store_id, *args, **kwargs):
+        self.setup_variables(store_id)
+
+        if not request.user.is_authenticated or request.user.id != self.store.owner_id:
+            return JsonResponse({"message": "접근 권한이 없습니다."}, status=403)
+
+        try:
+            data = json.loads(request.body)
+            self.store.start_rsv_possible = data.get("activate_date_start")
+            self.store.end_rsv_possible = data.get("activate_date_end")
+            self.store.full_clean()
+            self.store.save()
+        except json.JSONDecodeError:
+            return JsonResponse({"message": "유효하지 않은 JSON 형식입니다."}, status=400)
+        except ValidationError as e:
+            # 유효성 검사 실패 시 에러
+            error_message = str(e)
+            return HttpResponse(error_message, status=400)
+
+
+        return JsonResponse({"message": "성공적으로 처리되었습니다."}, status=200)
+
+# @method_decorator(csrf_exempt, name="dispatch")
+# class DetailListView(View):
+#     template_name = "manager/manager_store_detailcopy0306.html"
+
+#     def get(self, request, store_id, *args, **kwargs):
+#         store = get_object_or_404(rsv.Store, id=store_id)
+#         store_time = rsv.Store_times.objects.filter(store_id=store_id)
+#         user_time = rsv.Reservation_user.objects.filter(store_id=store_id)
+
+#         if request.user.id != store.owner_id:
+#             return HttpResponseForbidden("접근 권한이 없습니다.")
+            
+#         user_dates = []
+#         dates_list = [date.reservation_date for date in user_time]
+#         # print(dates_list)
+#         user_dates.append({
+#             "user_dates" : dates_list
+#         })
+#         context = {"user_dates_json" : json.dumps(dates_list, cls=DjangoJSONEncoder)}
+#         current_user = request.user
+#         context["username"] = current_user.username if current_user.is_authenticated else None
+
+#         return render(request, self.template_name, context)
+        
+#     def post(self, request, store_id, *args, **kwargs):
+#         data = json.loads(request.body)
+#         start_date = data.get('activate_date_start')
+#         end_date = data.get('activate_date_end')
+        
+#         # 데이터 처리 로직 (예시)
+#         # 예를 들어, 받은 날짜로 무언가를 활성화하는 로직을 추가할 수 있습니다.
+        
+#         # 처리 후 클라이언트에 응답 반환
+#         return JsonResponse({"message": "성공적으로 처리되었습니다."}, status=200)
 
 def detail_list(request, store_id):
     store = get_object_or_404(rsv.Store, id=store_id)
@@ -394,6 +662,7 @@ def write(request):
 
 def test_chat(request):
     return render(request, "manager/test/test_chat.html")
+    # return render(request, "manager/test/test_chat_copy.html")
 
 @login_required
 def test_room(request, room_name):
@@ -402,13 +671,14 @@ def test_room(request, room_name):
         "username" : request.user.username,
     }
     return render(request, "manager/test/test_room.html", context)
+    # return render(request, "manager/test/test_room22.html", context)
 
 def admin_chat(request):
     context = {
         "username" : request.user.username,
     }
-    return render(request, "manager/test/admin_chat.html", context)
-    # return render(request, "manager/admin_chat2.html", context)
+    # return render(request, "manager/test/admin_chat.html", context)
+    return render(request, "manager/admin_chat2.html", context)
 
 def admin_chat2(request):
     context = {

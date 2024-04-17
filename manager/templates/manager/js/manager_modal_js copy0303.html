@@ -5,7 +5,6 @@
   // new Notification("Hello, world!",{
   //   body : "This is a notification."
   // });
-
   ntfIcon = document.querySelector(".notification-icon:nth-of-type(2)");
   ntfIcon_count = document.querySelector(".notification-icon:nth-of-type(2) > .num-count");
   modal = document.querySelector("#open-modal");
@@ -28,7 +27,6 @@
   async function pageStart(socket) {
     let rsvFetch = await fetch("api/reservation_false/");
     let rsvDetailsData = await rsvFetch.json();
-    // console.table("콘솔태이블", rsvDetailsData);
     console.log("페이지스타트", rsvDetailsData);
     console.log("페이지스타트", rsvDetailsData.length);
     if (rsvDetailsData.length !== 0) {
@@ -46,86 +44,56 @@
     // console.log(rsvFetch);
     let rsvdata = await rsvFetch.json();
     console.log(rsvdata);
-    if (rsvdata.rsv_check !== 0) {
-      ntfIcon_count.style.display = "flex";
-      ntfIcon_count.textContent = rsvdata.rsv_check
-    }
-    rsvNotification(socket, rsvdata);
+
+    // rsvNotification(socket, rsvdata);
   }
 
-  // async function rsvNotification(rsvdata) {
-
-  //   console.log("노티피레져베이션");
-  //   const reservation_card = document.querySelector("#reservation-info");
-  //   // console.log("rsvdata", rsvdata);
-
-
-  //   for (let i = 0; i < rsvdata.length; i++) {
-  //     let rsvInfo = rsvdata[i];
-  //     let card = document.createElement("div");
-  //     card.classList.add("card");
-  //     console.log("포문1", rsvInfo);
-  //     for (let key in rsvInfo) {
-  //       console.log("포문2", key);
-  //       let cardP = document.createElement("p");
-  //       cardP.textContent = `${key} : ${rsvInfo[key]}`;
-  //       card.appendChild(cardP);
-  //     }
-  //     reservation_card.appendChild(card);
-  //   }
 
 
   // }
-
   async function rsvNotification(socket, rsvdata) {
 
     // console.log("노티피레져베이션");
     const reservation_card = document.querySelector("#reservation-info");
 
+    function isRidDuplicated(rid) {
+      const cards = reservation_card.querySelectorAll('.card');
+      console.log("cards", cards);
+      for (let card of cards) {
+        if (card.dataset.rid === rid) return true;
+      }
+      return false;
+    }
+
     // console.log("rsvdata", rsvdata);
-    if (Array.isArray(rsvdata)) {
-      console.log("배열", rsvdata);
-      for (let i = 0; i < rsvdata.length; i++) {
-        let rsvInfo = rsvdata[i];
+
+    console.log("배열", rsvdata);
+    for (let i = 0; i < rsvdata.length; i++) {
+      let rsvInfo = rsvdata[i];
+      reservation_card.innerHTML = reservation_card.innerHTML;
+      if (!isRidDuplicated(rsvInfo.id)) {
+
         let card = document.createElement("div");
         card.classList.add("card");
         card.dataset.rid = rsvInfo.id;
         // console.log(rsvInfo);
         console.log("배열로 생성되냐");
-        for (let key in rsvInfo) {
 
+        for (let key in rsvInfo) {
           let cardP = document.createElement("p");
           cardP.textContent = `${key} : ${rsvInfo[key]}`;
           card.appendChild(cardP);
         }
-        reservation_card.appendChild(card);
+
         card.addEventListener("click", function () {
           rsvIsRead1(socket, rsvInfo.id);
           this.remove();
         });
+        reservation_card.appendChild(card);
       }
-    }
-    else {
-      console.log("객체", rsvdata);
-
-
-      let card = document.createElement("div");
-      card.classList.add("card");
-      card.dataset.rid = rsvdata.id;
-      for (let key in rsvdata) {
-
-        // console.log("키", key);
-        let cardP = document.createElement("p");
-        cardP.textContent = `${key} : ${rsvdata[key]}`;
-        card.appendChild(cardP);
-      }
-      reservation_card.appendChild(card);
-      card.addEventListener("click", function () {
-        rsvIsRead1(socket, rsvdata.id);
-        this.remove();
-      });
     }
   }
+
 
   async function rsvNotiCount() {
     pass;

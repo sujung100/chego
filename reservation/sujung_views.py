@@ -88,6 +88,8 @@ class Idx_list(TemplateView):
             store_data.append({
                 'store_id': store.pk,
                 'sto_time': list(sto_time.values()),
+                'activate_date_start': store.start_rsv_possible,  # 활성 시작 날짜 추가
+                'activate_date_end': store.end_rsv_possible,  # 활성 종료 날짜 추가
                 'store_dates_json': json.dumps(store_dates, cls=DjangoJSONEncoder),
             })
 
@@ -100,6 +102,15 @@ class Idx_list(TemplateView):
         if request.method == 'POST':
             store_id = request.POST["selected_store2"]
             sto = get_object_or_404(models.Store, pk=store_id)
+            reservation_date = request.POST["detail_user_date"]
+            user_time = request.POST["detail_user_time"]
+
+            existing_reservation = models.Reservation_user.objects.filter(
+            store_id=sto, reservation_date=reservation_date, user_time=user_time
+            ).exists()
+            print("request.method", request.POST)
+            if existing_reservation:
+                return JsonResponse({"error": "이미 해당 시간에 예약이 존재합니다."}, safe=False)
 
             rst_user = models.Reservation_user()
             rst_user.user_name = request.POST["detail_user_name"]
@@ -124,6 +135,7 @@ class Idx_list(TemplateView):
             # data = json.loads(request.body)
 
             try:
+                # print("트라이까지 오긴하냐트라이까지 오긴하냐트라이까지 오긴하냐트라이까지 오긴하냐")
                 rst_user.full_clean()  # 모델의 유효성 검사 수행
                 rst_user.save()
 
@@ -148,6 +160,19 @@ class Idx_list(TemplateView):
 
         return self.get(request, *args, **kwargs)
 
+
+class Store_calendar(View):
+    def get(self, request, store_id):
+        try:
+            store = models.Store.objects.get(id=store_id)
+            response_data = {
+                "store_id" : store.id,
+                "start_rsv_possible": store.start_rsv_possible,
+                "end_rsv_possible": store.end_rsv_possible,
+            }
+            return JsonResponse(response_data, safe=False)  
+        except models.Store.DoesNotExist:
+            return JsonResponse({'error': 'Store not found'}, status=404)
 
 # 예약확인
 

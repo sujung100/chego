@@ -1,0 +1,184 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'manager/css/manager_store_detail.css' %}">
+  <title>가게 상세페이지</title>
+</head>
+
+<body>
+  <div id="wrap">
+    <div class="box1">
+      <div class="content1">
+        {% if request.user.is_authenticated %}
+        <div class="cont_box1">
+
+          <a href="/manager/">
+            <button class="rsv_test" type="button">홈홈홈</button>
+          </a>
+
+        </div>
+
+        <div class="cont_box2">
+
+          <table class="Calendar">
+            <thead>
+              <tr>
+                <td onClick="prevCalendar();" style="cursor:pointer;">&#60;</td>
+                <td colspan="5">
+                  <span id="calYear"></span>년
+                  <span id="calMonth"></span>월
+                </td>
+                <td onClick="nextCalendar();" style="cursor:pointer;">&#62;</td>
+              </tr>
+              <tr>
+                <td>일</td>
+                <td>월</td>
+                <td>화</td>
+                <td>수</td>
+                <td>목</td>
+                <td>금</td>
+                <td>토</td>
+              </tr>
+            </thead>
+
+            <tbody>
+            </tbody>
+          </table>
+          <input type="hidden" id="selected_date" name="selected_date">
+          <div class="mid">
+
+            <div class="rsv_start_end">
+              <input type="radio" name="rsv_start_end" id="rsv_start_end_yes" checked>
+              <input type="radio" name="rsv_start_end" id="rsv_start_end_no">
+              <div class="switch">
+                <label for="rsv_start_end_yes">시작</label>
+                <label for="rsv_start_end_no">종료</label>
+                <span></span>
+              </div>
+            </div>
+
+            <label class="rocker">
+              <input type="checkbox" checked>
+              <span class="switch-left">On</span>
+              <span class="switch-right">Off</span>
+            </label>
+
+          </div>
+          <!-- <label for="disable_date_start">시작날짜</label> -->
+          <!-- <input type="date" name="disable_date_start" id="disable_date_start"> -->
+          <span id="disable_date_start"></span>
+          <!-- <br> -->
+          <!-- <label for="disable_date_end">종료날짜</label> -->
+          <!-- <input type="date" name="disable_date_end" id="disable_date_end"> -->
+          <span id="disable_date_end"></span>
+          <input type="button" id="rsv_activate" value="예약 활성화">
+        </div>
+        {% else %}
+
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="box2">
+      <div class="content2">
+        {% if request.user.is_authenticated %}
+        <div class="con2_nav">
+          <button class="nav_button1" type="button">
+            <img src="../../static/manager/img/right-arrow (1).png" alt="접기">
+          </button>
+
+
+          <button id="nav_button2" class="nav_button2" type="button">
+            <img src="../../static/manager/img/turn-off (1).png" alt="로그아웃">
+          </button>
+
+        </div>
+        <div class="con2_manager1">
+          <img class="profile_img" src="../../static/manager/img/user.png" alt="이미지">
+          <span>{{ request.user.username }}</span>
+        </div>
+        <a href="/manager/logout">
+          <button class="logout_test" type="button">로그아웃</button>
+        </a>
+
+
+        {% else %}
+        <form class="login_form" method="POST">
+          {% csrf_token %}
+
+          <div class="form_box1">
+            <!-- <label for="manager_id">Username:</label> -->
+            <input type="text" class="form-control" id="manager_id" name="username"
+              value="{{ form.username.value|default:'' }}" placeholder="USERNAME" required />
+            {{ form.username.errors }}
+            <!-- <div class="test_after1"></div> -->
+            <!-- <div class="test_after1"></div> -->
+          </div>
+
+
+          <div class="form_box2">
+            <!-- <label for="manager_pwd">Password:</label> -->
+            <input type="password" class="form-control" id="manager_pwd" name="password"
+              value="{{ form.password.value|default:'' }}" placeholder="PASSWORD" required />
+            {{ form.password.errors }}
+          </div>
+
+          <div class="form_box3">
+            <!-- <span>Login</span> -->
+            <input type="submit" value="Login">
+          </div>
+          <!-- <div>
+            <button type="submit" value="Login" class="btn btn-primary">Login</button>
+          </div> -->
+        </form>
+
+        <!-- <a href="/manager/login">
+          <button class="login_test" type="button">로그인</button>
+        </a>
+        <a href="/manager/signup">
+          <button class="signup_test" type="button">회원가입</button>
+        </a> -->
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+</body>
+
+</html>
+
+<script>
+  document.getElementById('nav_button2').addEventListener('click', function () {
+    location.href = '/manager/logout';
+  });
+
+  // const userDates1 = JSON.parse('{{ user_dates_json | escapejs | safe }}');
+  // console.log("유저 데이터 찍히냐?", userDates1);
+
+  // let userDates = userDates1.map(function(date){
+  //   let parts = date.split("-");
+  //   return parts;
+  // });
+  // console.log("분리 되냐?", userDates);
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        // 쿠키 이름이 인자로 전달된 이름과 같은지 확인합니다.
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+</script>
+
+{% include "manager/js/manager_detail_calendar_js.html" %}

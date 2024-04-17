@@ -12,7 +12,10 @@ urlpatterns = [
   path("signup/done",views.UserCreateDoneTV.as_view(),name="signup_done"),
   # path("",views.write, name="write"),
   # path('<int:pk>/',views.detail, name='detail'),
-  path('<int:store_id>/', views.detail_list, name='store_detail'),
+  # path('<int:store_id>/', views.detail_list, name='store_detail'),
+  path('<int:store_id>/', views.DetailListView.as_view(), name='store_detail'),
+  # path('<int:store_id>/', views.DetailListView2.as_view(), name='store_detail'),
+  # path('<int:store_id>/', views.IntegratedDetailView.as_view(), name='store_detail'),
 
   # chat 테스트
   path("testchat/", views.test_chat, name="test_chat"),
@@ -32,4 +35,5 @@ urlpatterns = [
   path("admin_chat2/api/chat-room/user_info/", views.UserInfo.as_view(), name="user_info"),
   path("api/reservation_id/<int:id>/", views.Reservation_Details.as_view(), name="reservation_id"),
   path("api/reservation_false/", views.Reservation_Details.as_view(), name="reservation_details"),
+  path("<int:store_id>/api/activate_post/", views.DetailListView.as_view(), name="activate_post"),
 ]

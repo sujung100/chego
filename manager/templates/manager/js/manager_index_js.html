@@ -57,7 +57,7 @@
       const id = this.random(0, 2 ** 32, true).toString(16);
       // console.log(id);
       const message = this.messages[this.currentMessageIndex];
-      const note = new Notification({
+      const note = new managerNotification({
         id: `note-${id}`,
         icon: message.icon,
         title: message.title,
@@ -141,7 +141,7 @@
     }
   }
 
-  class Notification {
+  class managerNotification {
     constructor(args) {
       this.args = args;
       this.el = null;

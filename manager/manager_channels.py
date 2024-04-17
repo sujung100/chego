@@ -6,8 +6,10 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth import get_user_model
 from channels.db import database_sync_to_async
 from django.contrib.sessions.models import Session
+from asgiref.sync import sync_to_async
 
 from . import models
+from reservation import models as rsv
 
 @database_sync_to_async
 def change_session_data(session_key, data):
@@ -95,8 +97,20 @@ class ManagerConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         data = json.loads(text_data)
-        print("매니져 리시브 찍히나", data)
-        self.commands[data["command"]](self, data)
+        # print("매니져 리시브 찍히나", data)
+        # self.commands[data["command"]](self, data)
+        key_command = data.get("command")
+        rsv_id = data.get("rsv_id")
+        if key_command == "new_message":
+            await self.commands[key_command](data)
+        elif key_command == "RSV_mark_as_read":
+            await self.mark_as_read(rsv_id)
+        elif key_command == "selected_date":
+            print(data);
+
+    async def mark_as_read(self, rsvuser_id):
+        rsv_read = await sync_to_async(rsv.Reservation_user.objects.get, thread_sensitive=True)(id=rsvuser_id)
+        await sync_to_async(rsv_read.rsv_check, thread_sensitive=True)()
 
     async def send_chat_messages(self, message):
         await self.channel_layer.group_send(

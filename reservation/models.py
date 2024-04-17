@@ -17,6 +17,9 @@ class Store(models.Model):
     
     cdate = models.DateTimeField(auto_now_add = True)
     mdate = models.DateTimeField(auto_now = True)
+    start_rsv_possible = models.DateField(null=True, blank=True)
+    end_rsv_possible = models.DateField(null=True, blank=True)
+    
     
 
 
@@ -61,6 +64,10 @@ class Reservation_user(models.Model):
     visitor_num = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(99)], null=True)
     pwhash = models.CharField(max_length=200, null=True)
     reservation_check = models.BooleanField(default=False)
+
+    def rsv_check(self):
+        self.reservation_check = True
+        self.save()
 
 class Store_times(models.Model):
     store_id = models.ForeignKey(Store, on_delete=models.CASCADE, db_column="store_id")

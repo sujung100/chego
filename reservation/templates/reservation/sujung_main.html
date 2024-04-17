@@ -40,12 +40,12 @@
       <table class="Calendar">
         <thead>
           <tr>
-            <td onClick="prevCalendar();" style="cursor:pointer;">&#60;</td>
+            <td class="prevCalendar" style="cursor:pointer;">&#60;</td>
             <td colspan="5">
               <span id="calYear"></span>년
               <span id="calMonth"></span>월
             </td>
-            <td onClick="nextCalendar();" style="cursor:pointer;">&#62;</td>
+            <td class="nextCalendar" style="cursor:pointer;">&#62;</td>
           </tr>
           <tr>
             <td>일</td>
@@ -72,7 +72,7 @@
       <div id="back-btn">&lt;뒤로</div>
       <h1>예약자 정보</h1>
       <div class="user-input">
-        <form action="" method="post">{% csrf_token %}
+        <form action="" method="post" id="rsv_post">{% csrf_token %}
           <span id="selected_store" style="display: none;"></span>
           <input type="hidden" name="selected_store2" id="selected_store2"></input><br>
           <input type="hidden" name="channel_name" id="channel_name"></input><br>
@@ -145,15 +145,14 @@
         </div>
       </div>
       {% endfor %}
-      <p>STEP1. 달력의 날짜를 선택하세요.</p>
+      <!-- <p>STEP1. 달력의 날짜를 선택하세요.</p>
       <p>STEP2. 업체를 선택하세요.</p>
       <p>STEP3. 시간을 선택하세요.</p>
       <p>STEP4. 다음 버튼을 눌러주세요.</p>
-      <p>STEP5. 예약자 정보를 입력하시고 예약하기 버튼을 눌러주세요.</p>
+      <p>STEP5. 예약자 정보를 입력하시고 예약하기 버튼을 눌러주세요.</p> -->
     </div>
   </div>
 
 
   {% include "reservation/js/sujung_main_js.html" %}
-  {% include "reservation/js/sungwoo_main_js.html" %}
 {% endblock %}

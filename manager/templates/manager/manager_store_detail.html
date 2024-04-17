@@ -15,12 +15,94 @@
       <div class="content1">
         {% if request.user.is_authenticated %}
         <div class="cont_box1">
+          <div class="cont">
+            <div class="buttons">
+              <!-- <button class="up-bt">수정</button> -->
+              <button class="del-bt">예약삭제</button>
+            </div>
+            <div class="section1">
+              <div id="store">
+                <!-- 템플릿태그 일단 주석 -->
+                <!-- <form action=" url 'mng_update' pk=manager.pk store_id=store.pk " method="get"> -->
+                <form action="{% url 'store_detail' store_id=store.pk %}" method="get">
+                  <div class="store_item1">
+                    <!-- 주석<label for="search_kw">예약일 예시&#41; 2024-01-01 / 2024-01 / 2024</label> -->
+                    <div class="align_inputs">
+                      <input type="text" id="search_name" name="name" value="{{ request.GET.name|default:'' }}" placeholder="이름" autocomplete="off" class="search-input">
+                      <input type="text" id="search_phone" name="phone" value="{{ request.GET.phone|default:'' }}" placeholder="전화번호" autocomplete="off" class="search-input">
+                      <input type="text" id="search_kw" name="kw" value="{{ kw|default_if_none:'' }}" placeholder="예약일" autocomplete="off" class="search-input">
+                    </div>
+                    <div class="align_boxes">
+                      <input type="checkbox" id="checkbox_name" data-input-id="search_name">
+                      <label for="checkbox_name">이름</label>
+                      <input type="checkbox" id="checkbox_phone" data-input-id="search_phone">
+                      <label for="checkbox_phone">전화번호</label>
+                      <input type="checkbox" id="checkbox_kw" data-input-id="search_kw">
+                      <label for="checkbox_kw">예약일</label>
+                    </div>
+                    <button type="submit" id="btn_search">검색</button>
+                  </div>
+                </form>
+                <div class="store_item2">
+                  <div class="head-user">
+                    <p>이름</p>
+                    <p>전화번호</p>
+                    <p>예약일</p>
+                    <p>예약 시간</p>
+                  </div>
+                  <hr>
+                  {% for rsv in page_obj %}
+                  <div class="user-info">
+                      <p>이름: {{ rsv.user_name }}</p>
+                      <p>전화번호: {{ rsv.user_phone }}</p>
+                      <p>예약일: {{ rsv.reservation_date }}</p>
+                      <p>예약 시간: {{ rsv.user_time }}</p>
+                      <input type="checkbox" name="del-rsv" value="삭제">
+                  </div>
+                  <hr>
+                  {% endfor %}
+                </div>
+                <!-- 페이지네이션 -->
+                <div class="pagination">
+                  <span class="step-links">
+                      {% if page_obj.has_previous %}
+                        <a href="?page=1&name={{ request.GET.name|default:'' }}&phone={{ request.GET.phone|default:'' }}&kw={{ request.GET.kw|default:'' }}">&laquo; 처음</a>
+                        <a href="?page={{ page_obj.previous_page_number }}&name={{ request.GET.name|default:'' }}&phone={{ request.GET.phone|default:'' }}&kw={{ request.GET.kw|default:'' }}">이전</a>
+                      {% else %}
+                        <span class="disabled">&laquo; 처음</span>
+                        <span class="disabled">이전</span>
+                      {% endif %}
+              
+                      {% for num in page_obj.paginator.page_range %}
+                          {% if page_obj.number == num %}
+                            <a href="?page={{ num }}&name={{ request.GET.name|default:'' }}&phone={{ request.GET.phone|default:'' }}&kw={{ request.GET.kw|default:'' }}" class="active">{{ num }}</a>
+                          {% else %}
+                            <a href="?page={{ num }}&name={{ request.GET.name|default:'' }}&phone={{ request.GET.phone|default:'' }}&kw={{ request.GET.kw|default:'' }}">{{ num }}</a>
+                          {% endif %}
+                      {% endfor %}
+              
+                      {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}&name={{ request.GET.name|default:'' }}&phone={{ request.GET.phone|default:'' }}&kw={{ request.GET.kw|default:'' }}">다음</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}&name={{ request.GET.name|default:'' }}&phone={{ request.GET.phone|default:'' }}&kw={{ request.GET.kw|default:'' }}">마지막 &raquo;</a>
+                      {% else %}
+                        <span class="disabled">다음</span>
+                        <span class="disabled">마지막 &raquo;</span>
+                      {% endif %}
+                  </span>
+                </div>
+                <!-- 주석 페이지네이션 끝  -->
+                <div class="store_item3"></div>
 
+              </div>
+              <div class="store_test"></div>
+            </div>
+          </div>
           <a href="/manager/">
             <button class="rsv_test" type="button">홈홈홈</button>
           </a>
 
         </div>
+
         <div class="cont_box2">
 
           <table class="Calendar">
@@ -47,7 +129,7 @@
             <tbody>
             </tbody>
           </table>
-
+          <input type="hidden" id="selected_date" name="selected_date">
       </div>
       {% else %}
 
@@ -138,4 +220,4 @@
   // console.log("분리 되냐?", userDates);
 </script>
 
-{% include "manager/js/manager_store_detail_js.html" %}
+{% include "manager/js/manager_detail_calendar_js.html" %}

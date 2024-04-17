@@ -28,7 +28,7 @@
       // closeWebSocket();
     };
   }
-  const reservationButton = document.querySelector(".booking");
+  // const reservationButton = document.querySelector(".booking");
   function nextClick() {
     const nextButton = document.querySelector("#next-button");
     
@@ -62,4 +62,34 @@
     }
   }
   // nextClick();
+  async function rsv_exists(){
+    const rsv_form = document.querySelector("#rsv_post");
+    rsv_form.addEventListener("submit", function(submit){
+      submit.preventDefault();
+
+      let formData = new FormData(this);
+      fetch("", {
+        method: "POST",
+        body: formData,
+      })
+      .then(response => {
+        if (!response.ok){
+          throw new Error('서버 오류');
+        }
+        console.log("response", response);
+        return response.json();
+      })
+      .then(data => {
+        console.log("data", data);
+        alert("예약이 불가능합니다.");
+        window.location.href = "";
+      })
+      .catch(error => {
+        console.log(error);
+        console.log("실패실패실패");
+      })
+    })
+  }
+  rsv_exists();
+  
 </script>

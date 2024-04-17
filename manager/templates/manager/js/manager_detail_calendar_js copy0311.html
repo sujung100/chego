@@ -1,15 +1,20 @@
+{% include "manager/js/manager_detail_js.html" %}
 <script>
   window.onload = function () { buildCalendar(); }    // 웹 페이지가 로드되면 buildCalendar 실행
 
   let nowMonth = new Date();  // 현재 달을 페이지를 로드한 날의 달로 초기화
   let today = new Date();     // 페이지를 로드한 날짜를 저장
   today.setHours(0, 0, 0, 0);    // 비교 편의를 위해 today의 시간을 초기화
-
   // 달력 생성 : 해당 달에 맞춰 테이블을 만들고, 날짜를 채워 넣는다.
+  const now_year = document.querySelector("#calYear");
+  const now_month = document.querySelector("#calMonth");
+  let selected_date = document.querySelector("#selected_date");
+  let disable_checkbox = document.querySelector(".rocker > input");
+  console.log(disable_checkbox.checked);
   function buildCalendar() {
 
     const userDates = JSON.parse('{{ user_dates_json | escapejs | safe }}');
-    console.log("유저 데이터 찍히냐?", userDates);
+    // console.log("유저 데이터 찍히냐?", userDates);
 
     let userDates1 = userDates.map(function (date) {
       let parts = date.split("-");
@@ -21,11 +26,12 @@
     let lastDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, 0);  // 이번달 마지막날
 
     let tbody_Calendar = document.querySelector(".Calendar > tbody");
-    document.getElementById("calYear").innerText = nowMonth.getFullYear();             // 연도 숫자 갱신
-    document.getElementById("calMonth").innerText = leftPad(nowMonth.getMonth() + 1);  // 월 숫자 갱신
 
-    console.log(document.getElementById("calYear").innerText);
-    console.log(document.getElementById("calMonth").innerText);
+    now_year.textContent = nowMonth.getFullYear();             // 연도 숫자 갱신
+    now_month.textContent = leftPad(nowMonth.getMonth() + 1);  // 월 숫자 갱신
+
+    // console.log(document.getElementById("calYear").innerText);
+    // console.log(document.getElementById("calMonth").innerText);
 
     while (tbody_Calendar.rows.length > 0) {                        // 이전 출력결과가 남아있는 경우 초기화
       tbody_Calendar.deleteRow(tbody_Calendar.rows.length - 1);
@@ -64,6 +70,10 @@
       //   nowColumn.style.paddingRight = "10px";
       // }
 
+      if(!disable_checkbox.checked){
+        console.log("false일때 적용 되냐");
+        newDIV.classList.add("unchecked");
+      }
       nowColumn.appendChild(newDIV);
 
       let newDIV2 = document.createElement("div");
@@ -94,6 +104,7 @@
         newDIV.onclick = function () { choiceDate(this); }
       }
     }
+    console.log(disable_checkbox.checked);
   }
 
   // 날짜 선택
@@ -102,6 +113,15 @@
       document.getElementsByClassName("choiceDay")[0].classList.remove("choiceDay");  // 해당 날짜의 "choiceDay" class 제거
     }
     newDIV.classList.add("choiceDay");           // 선택된 날짜에 "choiceDay" class 추가
+    selected_date.value = [now_year.textContent, now_month.textContent, newDIV.textContent];
+    console.log(selected_date);
+
+    if (detailSocket.readyState === WebSocket.OPEN) {
+      detailSocket.send(JSON.stringify({
+        "command": "selected_date",
+        "select_date": selected_date.value,
+      }));
+    }
   }
 
   // 이전달 버튼 클릭
@@ -135,5 +155,29 @@
     return datesArray.reduce((rsv_count, date) =>
       (date === dateString) ? ++rsv_count : rsv_count,
       0);
+  }
+
+
+
+  disable_checkbox.addEventListener('change', function () {
+    disableMode();
+  });
+
+  async function disableMode() {
+    let unchecked_elements = document.querySelectorAll(".pastDay, .today, .futureDay");
+    if (!disable_checkbox.checked) {
+      console.log('Checkbox is not checked');
+      console.log("disableMode 실행");
+      unchecked_elements.forEach(function (element) {
+        // console.log(element);
+        element.classList.add("unchecked");
+      });
+    }
+    else {
+      console.log('Checkbox is checked');
+      unchecked_elements.forEach(function (element) {
+        element.classList.remove("unchecked");
+      });
+    }
   }
 </script>

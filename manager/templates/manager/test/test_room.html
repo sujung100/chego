@@ -132,14 +132,15 @@
   // console.log("잘 찍히냐?", roomName);
   let userName = "{{ username|escapejs }}";
   // userName = userName.replace(/"/g, "");
-
+  const loc = window.location;
+  console.log("window.location", loc);
   let weStart = "ws://";
   if (loc.protocol === "https:") {
     weStart = "wss://"
   }
   const chatSocket = new ReconnectingWebSocket(
     weStart
-    + window.location.host
+    + loc.host
     + '/manager/testchat/'
     + roomName
     + '/'

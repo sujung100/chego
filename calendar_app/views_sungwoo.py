@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
-from reservation import models
+from calendar_app import models
 
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
@@ -12,7 +12,7 @@ from django.urls import reverse
 
 # class Idx_list(ListView):
 #     model = models.Store
-#     template_name = "reservation/main4.html"
+#     template_name = "calendar_app/main4.html"
 
 #     def get_context_data(self, **kwargs):
 #         context = super().get_context_data(**kwargs)
@@ -61,7 +61,7 @@ from django.urls import reverse
     #     context['store_dates_json'] = json.dumps(store_dates, cls=DjangoJSONEncoder)
     #     return context
 class Idx_list(TemplateView):
-    template_name = "reservation/main4.html"
+    template_name = "calendar_app/main4.html"
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -154,4 +154,4 @@ class Idx_list(TemplateView):
 
 
 def Idx(request):
-    return render(request,"reservation/index.html")
+    return render(request,"calendar_app/index.html")

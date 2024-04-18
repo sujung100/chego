@@ -25,7 +25,7 @@ from django.utils.decorators import method_decorator
 # 메인
 @method_decorator(csrf_exempt, name='dispatch')
 class Idx_list(TemplateView):
-    template_name = "reservation/sujung_main.html"
+    template_name = "calendar_app/sujung_main.html"
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

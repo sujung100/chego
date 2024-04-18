@@ -9,7 +9,7 @@ from django.contrib.sessions.models import Session
 from asgiref.sync import sync_to_async
 
 from . import models
-from reservation import models as rsv
+from calendar_app import models as rsv
 
 @database_sync_to_async
 def change_session_data(session_key, data):

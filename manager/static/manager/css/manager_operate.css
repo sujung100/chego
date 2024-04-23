@@ -134,13 +134,13 @@ ol, ul{
   padding-top: 3.5rem;
 }
 
-.content1 .store_item2 .head-user {
+.content1 .store_item2 .head_user {
   display: flex;
   margin: 0.5rem 0;
   justify-content: space-around;
 }
 
-.content1 .store_item2 .head-user p {
+.content1 .store_item2 .head_user p {
   padding-right: 2rem;
   margin-left: 2rem;
   font-size: 0.75rem;

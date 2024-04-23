@@ -118,14 +118,16 @@ class ManagerConsumer(AsyncWebsocketConsumer):
 
         # 별도의 동기 함수 생성
         def fetch_reservations(selected_date):
-            reservations = md.Reservation_user.objects.filter(reservation_date=selected_date)
+            user = self.scope["user"]
+            print("유저", user.id)
+            reservations = md.Reservation_user.objects.filter(reservation_date=selected_date, store_id__owner_id=user.id)
             reservation_details = []
 
             for reservation in reservations:
                 detail = {
                     'user_name': reservation.user_name,
                     'user_phone': reservation.user_phone,
-                    'store_id': reservation.store_id.id,  # ForeignKey 필드라서 .id를 사용하여 실제 id 값을 가져옵니다.
+                    'store_id': reservation.store_id.id, # ForeignKey 필드라서 .id를 사용하여 실제 id 값을 가져옴
                     'reservation_date': reservation.reservation_date,
                     'user_time': reservation.user_time,
                     'visitor_num': reservation.visitor_num

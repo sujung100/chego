@@ -26,6 +26,9 @@ urlpatterns = [
   path('operate/<int:pk>_<int:store_id>/', views. ManagerStoreUpdateView.as_view(), name='mng_update'),
   path('update/<int:pk>_<int:store_id>/', views. Update.as_view(), name='update'),
 
+  path('sung/operate/<int:pk>_<int:store_id>/', sungwoo_views. ManagerStoreUpdateView.as_view(), name='mng_update'),
+  path('sung/update/<int:pk>_<int:store_id>/', sungwoo_views. Update.as_view(), name='update'),
+
 # 성우님
   path("sung/",sungwoo_views.ManagerStoreList.as_view(), name="sungwoo"),
   path("sung/admin_chat2/", sungwoo_views.AdminChat2.as_view(), name="admin_chat2"),

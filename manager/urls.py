@@ -46,7 +46,8 @@ urlpatterns = [
   # fetch말고 웹소켓으로 예약정보 가져옴 -이제필요없음
   # path('sung/api/schedules/<int:pk>/', sungwoo_views.Schedules.as_view(), name='schedules'),
   path("sung/api/reservation_false/", sungwoo_views.Reservation_Details.as_view(), name="reservation_details"),
-  path("sung/api/reservation_id/<int:id>/", sungwoo_views.Reservation_Details.as_view(), name="reservation_id"),
+  # path("sung/api/reservation_id/<int:id>/", sungwoo_views.Reservation_Details.as_view(), name="reservation_id"),
+  path("sung/api/reservation_id/<int:rsv_id>/", sungwoo_views.Reservation_Details.as_view(), name="reservation_id"),
   path("sung/admin_chat2/api/chat-room/user_info/", sungwoo_views.UserInfo.as_view(), name="user_info"),
   path("sung/admin_chat2/api/chat-room/", sungwoo_views.ChatRoom.as_view(), name="chat_room2"),
   path("sung/admin_chat2/api/chat-room/<str:chatroom_name>/messages/", sungwoo_views.EnterChatRoom.as_view(), name="enter_chatroom2"),

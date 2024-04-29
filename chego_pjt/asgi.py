@@ -24,7 +24,8 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'chego_pjt.settings')
 # application = get_asgi_application()
 
 
-websocket_urlpatterns = calendar_app.routing.websocket_urlpatterns + manager.routing.websocket_urlpatterns
+# websocket_urlpatterns = calendar_app.routing.websocket_urlpatterns + manager.routing.websocket_urlpatterns
+websocket_urlpatterns = manager.routing.websocket_urlpatterns + calendar_app.routing.websocket_urlpatterns
 # websocket_urlpatterns = manager.routing.websocket_urlpatterns
 
 application = ProtocolTypeRouter({

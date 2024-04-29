@@ -57,14 +57,17 @@
           // }
 
           if (existingMsg) {
-              existingMsg.remove();
+            existingMsg.remove();
           }
+          if (existingMsg == null && reservations.length > 0) {
+  
+            var newMsg = document.createElement('span');
+            newMsg.setAttribute("class", "visible");
+            newMsg.innerHTML = '선택한 날짜의 예약내역'
+          
+            attach.insertBefore(newMsg, attach.firstChild)
 
-          var newMsg = document.createElement('span');
-          newMsg.setAttribute("class", "visible");
-          newMsg.innerHTML = '선택한 날짜의 예약내역'
-        
-          attach.insertBefore(newMsg, attach.firstChild)
+          }
 
           
 

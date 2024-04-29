@@ -271,23 +271,40 @@ class EnterChatRoom(View):
         return JsonResponse(response, safe=False)
 
 
-# fetch - 변경안해도될듯
+
 class Reservation_Details(View):
-    def get(self, request, id=None):
+    # def rsv_check(self, user_id):
+    #     queryset = rsv.Reservation_user.objects.filter(store_id__owner_id=user_id)
+    #     return serializers.serialize("python", queryset, fields=("reservation_check"))
+
+    def rsv_check(self, user_id):
+        queryset = rsv.Reservation_user.objects.filter(store_id__owner_id=user_id,  reservation_check=False)
+        serialized_data = serializers.serialize("python", queryset, fields=("reservation_check"))
+        return len(serialized_data)
+
+    def get(self, request, rsv_id=None):
+        user_id = request.user.id
         production_current_user(request)
-        if id:
-            rsv_model = get_object_or_404(rsv.Reservation_user.objects.defer("pwhash"), id=id)
+        if rsv_id:
+            # rsv_model = get_object_or_404(rsv.Reservation_user.objects.defer("pwhash"), id=rsv_id)
+            rsv_model = get_object_or_404(rsv.Reservation_user, id=rsv_id)
             rsv_dict = model_to_dict(rsv_model)
             rsv_dict.pop("pwhash", None)
+            rsv_dict["rsv_check"] = self.rsv_check(user_id)
+            print("이프", rsv_dict)
+            return JsonResponse(rsv_dict)
+            
         else:
-            user_id = request.user.id
-            print(user_id)
+            # print(user_id)
             rsv_model = rsv.Reservation_user.objects.defer("pwhash").filter(store_id__owner_id=user_id, reservation_check=False)
             print("Reservation_Details 엘스", rsv_model)
             rsv_dict = [model_to_dict(r) for r in rsv_model]
             for r in rsv_dict:
                 r.pop("pwhash", None)
-        return JsonResponse(rsv_dict, safe=False)
+                r["rsv_check"] = self.rsv_check(user_id)
+            print("엘스", rsv_dict)
+            return JsonResponse(rsv_dict, safe=False)
+
     
 
 # fetch2 - 해당날짜 예약정보 fetch로 json으로 보내기 - > 보내고 프론트에서 불러오기

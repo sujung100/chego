@@ -70,6 +70,10 @@ class Reservation_user(models.Model):
     reservation_check = models.BooleanField(default=False)
     # retry_count = models.IntegerField(default=5)
     
+    def rsv_check(self):
+        self.reservation_check = True
+        self.save()
+        
     @classmethod
     def get_reservation_by_date(cls, date):
         return cls.objects.filter(reservation_date=date)

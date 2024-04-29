@@ -103,14 +103,20 @@ class ManagerConsumer(AsyncWebsocketConsumer):
         # print("매니져 리시브 찍히나", data)
         # self.commands[data["command"]](self, data)
         key_command = data.get("command")
+        rsv_id = data.get("rsv_id")
         if key_command == "new_message":
             await self.commands[key_command](data)
+        elif key_command == "RSV_mark_as_read":
+            await self.mark_as_read(rsv_id)
         elif key_command == "selected_date":
             selected_date_list = data.get("select_date")  # 웹소켓에서 받아온 날짜 정보
             store_id = data.get("store_id")  # 웹소켓에서 받아온 스토어 정보
             await self.get_reservation_dates(selected_date_list, store_id)
             
 
+    async def mark_as_read(self, rsvuser_id):
+        rsv_read = await sync_to_async(md.Reservation_user.objects.get, thread_sensitive=True)(id=rsvuser_id)
+        await sync_to_async(rsv_read.rsv_check, thread_sensitive=True)()
     
 
 

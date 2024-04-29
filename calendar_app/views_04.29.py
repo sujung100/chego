@@ -265,72 +265,89 @@ class Idx_list(TemplateView):
     #         return render(request, template_name)
     
 
-    
     def post(self, request, *args, **kwargs):
-        if request.method == 'POST':
+        template_name = "calendar_app/sujung_main.html"
+        
+        # JSON 데이터를 사용하는 경우
+        try:
             data = json.loads(request.body)
-
-            store_id = data.get("selected_store2")
-            reservation_date = data.get("detail_user_date")
-            user_time = data.get("detail_user_time")
-            sto = get_object_or_404(models.Store, pk=store_id)
-
-            existing_reservation = models.Reservation_user.objects.filter(
-            store_id=sto, reservation_date=reservation_date, user_time=user_time
-            ).exists()
-            print("request.method", request.POST)
-            if existing_reservation:
-                return JsonResponse({"error": "이미 해당 시간에 예약이 존재합니다."}, safe=False)
+            print("JSON 데이터: ", data)
 
             rst_user = models.Reservation_user()
-            # rst_user.user_name = request.POST["detail_user_name"]
-            rst_user.user_name = data.get("detail_user_name")
-            rst_user.user_phone = data.get("detail_user_phone")
-            rst_user.reservation_date = data.get("detail_user_date")
-            rst_user.user_time = data.get("detail_user_time")
-            rst_user.visitor_num = int(data.get("v_num"))
-            rst_user.store_id = sto
 
-            # 그냥 입력받은 password
-            password = data.get("password")
+            store = data.get("selected_store2")
+            name = data.get("detail_user_name")
+            phone = data.get("detail_user_phone")
+            date = data.get("detail_user_date")
+            time = data.get("detail_user_time")
+            v_num = data.get("v_num")
+            room_name = data.get("channel_name")
 
 
-            # 암호화
-            salt = bcrypt.gensalt()
-            to_byte_pw = password.encode('utf-8')
-            salted_pw = bcrypt.hashpw(to_byte_pw, salt)
-            to_str_pw = salted_pw.decode('utf-8')
-            rst_user.pwhash = to_str_pw
+            if models.Reservation_user.objects.filter(
+                Q(store_id=store) & 
+                Q(reservation_date=date) & 
+                Q(user_time=time) 
+                ).exists():
+                return JsonResponse({
+                    'message': '예약이 이미 존재합니다. 다른 시간을 선택해주세요.',
+                    'redirect_url': reverse('Idx_list')
+                    }, safe=False)
 
-            # print("포스트 바디",request.body)
-            # data = json.loads(request.body)
 
-            try:
-                # print("트라이까지 오긴하냐트라이까지 오긴하냐트라이까지 오긴하냐트라이까지 오긴하냐")
-                rst_user.full_clean()  # 모델의 유효성 검사 수행
-                rst_user.save()
+            else:
+                sto = get_object_or_404(models.Store, pk=store)
 
-                reservation_id = rst_user.id
-                channel_layer = get_channel_layer()
-                room_name = data.get("channel_name")
-                room_group_name = f"chat_{room_name}"
-                print("뷰 room_group_name", room_group_name)
-                async_to_sync(channel_layer.group_send)(
-                    room_group_name,
-                    {
-                        "type" : "notification.message",
-                        "notification_message" : reservation_id,
-                    }
-                )
-            except ValidationError as e:
-                # 유효성 검사 실패 시 에러
-                error_message = str(e)
-                return HttpResponse(error_message, status=400)
+                rst_user.user_name = name
+                rst_user.user_phone = phone
+                rst_user.reservation_date = date
+                rst_user.user_time = time
+                rst_user.visitor_num = int(v_num)
+                rst_user.store_id = sto
 
-            # POST 처리 완료 시 리디렉션
-            return HttpResponseRedirect(reverse('Idx_list'))
+                # 그냥 입력받은 password
+                password = data.get("password")
+                # password = request.POST["password"]
 
-        return self.get(request, *args, **kwargs)
+                # 암호화
+                salt = bcrypt.gensalt()
+                to_byte_pw = password.encode('utf-8')
+                salted_pw = bcrypt.hashpw(to_byte_pw, salt)
+                to_str_pw = salted_pw.decode('utf-8')
+                rst_user.pwhash = to_str_pw
+
+                try:
+                    rst_user.full_clean()  # 모델의 유효성 검사 수행
+                    rst_user.save()
+                    reservation_id = rst_user.id
+                    channel_layer = get_channel_layer()
+                    # room_name = request.POST["channel_name"]
+                    
+                    print("room_name", room_name)
+                    room_group_name = f"chat{room_name}"
+                    # print("뷰 room_group_name", room_group_name)
+                    async_to_sync(channel_layer.group_send)(
+                        room_group_name,
+                        {
+                            "type" : "notification.message",
+                            "notification_message" : reservation_id,
+                        }
+                    )
+
+                    # return JsonResponse([], safe=False)
+                    return JsonResponse({
+                    'message': '성공적으로 예약이 완료되었습니다.',
+                    'redirect_url': reverse('Idx_list')
+                    }, safe=False)
+
+                except ValidationError as e:
+                    # 유효성 검사 실패 -> 에러출력
+                    print("유효성 검사 실패")
+                    error_message = str(e)
+                    return HttpResponse(error_message, status=400)
+                
+        except json.JSONDecodeError as e:
+            return JsonResponse({'message': '유효하지 않은 JSON 형식입니다.'}, safe=False)
 
 
 

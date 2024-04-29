@@ -1,4 +1,4 @@
-{% include "manager/js/manager_detail_sung_js.html" %}
+
 <script>
   // 달력 js
 
@@ -16,7 +16,21 @@
   const now_month = document.querySelector("#calMonth");
 
   const store_item2 = document.querySelector(".store_item2");
+  const clicked_rsv = document.querySelector(".clicked_rsv");
   console.log("store_item2", store_item2);
+
+  // url에서 store id값 잘라오면 안되는 이유 = 1) 배포시에 문제.. 2)페이지네이션 쿼리
+  // const location111 = window.location;
+  // console.log("록", location111);
+  // const yeah = location111.pathname.toString()
+  // console.log("예", yeah);
+  // const yeah2 = yeah.split('/').reverse()[0]
+  // console.log("이거", yeah2);
+  let store_id = "{{ store.pk }}"
+  console.log("store_id", store_id);
+
+
+
 
   let selected_date = document.querySelector("#selected_date");
   function buildCalendar() {
@@ -169,8 +183,8 @@
         
     // 달력 날짜 클릭했을때, 기존 조회된 데이터 지워지도록
     // console.log("store_item2", store_item2);
-    while(store_item2.firstChild){
-      store_item2.removeChild(store_item2.firstChild);
+    while(clicked_rsv.firstChild){
+      clicked_rsv.removeChild(clicked_rsv.firstChild);
     }
     
     // selected_date.value = [now_year.textContent, now_month.textContent, newDIV.textContent];
@@ -182,6 +196,7 @@
       detailSocket.send(JSON.stringify({
         "command" : "selected_date",
         "select_date" : selected_date_list,
+        "store_id" : store_id
       }));
     }
   }

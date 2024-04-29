@@ -445,7 +445,7 @@ class Total_Reservation_Check(TemplateView):
             store_id=store
         ).distinct()
 
-        paginator = Paginator(reservations, 3)
+        paginator = Paginator(reservations, 5)
         page_number = self.request.GET.get('page')
         page_obj = paginator.get_page(page_number)
 
@@ -798,13 +798,52 @@ class ManagerStoreUpdateView(LoginRequiredMixin, FormView):
 
 
 
+class Test123(LoginRequiredMixin, UpdateView):
+    model = rsv.Store
+    form_class = UpdateForm
+    template_name = 'manager/manager_update_form.html'
 
-# 수정중
+    def get_object(self, queryset=None):
+        # self.kwargs에서 'store_id' 값을 가져와서 객체 조회
+        store_id = self.kwargs.get('store_id')
+        return get_object_or_404(rsv.Store, pk=store_id)
+    
+
+# pk값 하나떼버림..임시
+class Update2(LoginRequiredMixin, UpdateView):
+    model = rsv.Store
+    form_class = UpdateForm
+    template_name = 'manager/manager_update_form.html'
+
+    def get_object(self, queryset=None):
+        # URL에서 store_id를 사용하여 Store 객체를 찾습니다.
+        store_id = self.kwargs.get('store_id')
+        return get_object_or_404(rsv.Store, id=store_id)
+
+    def dispatch(self, request, *args, **kwargs):
+        self.store = self.get_object()
+        
+        # 현재 로그인한 사용자가 Store의 owner와 일치하는지 확인
+        if request.user.is_authenticated and request.user == self.store.owner:
+            return super(Update2, self).dispatch(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # URL에서 store_id값 가져오기
+        requested_store_id = self.kwargs.get('store_id')
+        context['requested_store_id'] = requested_store_id
+
+        return context
+
+# 수정중..update2보고서 pk값 떼서 수정하기
 class Update(LoginRequiredMixin, UpdateView):
     model = rsv.Store
     form_class = UpdateForm
     template_name = 'manager/manager_update_form.html'
-    print("야 되냐")
+    # print("야 되냐")
 
     # 임시...테스트용 form_vaild검증 없이 그냥 post요청 들어오면 update_data함수 실행되도록함..
     # def post(self, request, *args, **kwargs):
@@ -819,14 +858,16 @@ class Update(LoginRequiredMixin, UpdateView):
 
     # 권한설정
     def dispatch(self, request, *args, **kwargs):
-        print("? 되냐")
+        # print("? 되냐")
         self.manager = get_object_or_404(rsv.Manager, pk=kwargs['pk'])
         self.store = get_object_or_404(rsv.Store, pk=kwargs['store_id'])
         
         # 조건3개
         if request.user.is_authenticated and request.user == self.manager.user and self.manager.user == self.store.owner:
+            print("여긴가1")
             return super(Update, self).dispatch(request, *args, **kwargs)
         else:
+            print("여긴가2")
             raise PermissionDenied
 
 
@@ -841,7 +882,9 @@ class Update(LoginRequiredMixin, UpdateView):
 
         # 해당 store_id를 가진 Store 객체 찾기
         # Store테이블의 id값찾기 (url에서 가져온 store_id값과 일치하는)
+        # store = get_object_or_404(rsv.Store, pk=requested_store_id)
         store = get_object_or_404(rsv.Store, pk=requested_store_id)
+        print("여긴가3")
 
         if store:
             context['store'] = store

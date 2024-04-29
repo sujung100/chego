@@ -47,8 +47,27 @@
         if (data.message_type == 'reservation_details') {
           var reservations = data.data;
           console.log("reservations", reservations);
-          var storeItem2 = document.querySelector('.store_item2');
+          // console.log("reservations길이", reservations.length);
+          var clickedRsv = document.querySelector('.clicked_rsv');
+          var attach = document.querySelector('.store_item3');
+
+          var existingMsg = document.querySelector('.visible');
+          // if (existingMsg || reservations.length === 0) {
+          //     existingMsg.remove();
+          // }
+
+          if (existingMsg) {
+              existingMsg.remove();
+          }
+
+          var newMsg = document.createElement('span');
+          newMsg.setAttribute("class", "visible");
+          newMsg.innerHTML = '선택한 날짜의 예약내역'
         
+          attach.insertBefore(newMsg, attach.firstChild)
+
+          
+
           for (var i = 0; i < reservations.length; i++) {
               var newDiv = document.createElement('div');
               
@@ -58,11 +77,11 @@
                                 '전화번호: ' + (reservations[i].user_phone || 'N/A') + '<br>' +
                                 '예약일: ' + (reservations[i].reservation_date || 'N/A') + '<br>' +
                                 '예약 시간: ' + (reservations[i].user_time || 'N/A') + '<br>' +
-                                '방문 인원: ' + (reservations[i].visitor_num || 'N/A') + '<hr>'
+                                '방문 인원: ' + (reservations[i].visitor_num || 'N/A')
                                 // ... (다른 필드들도 이와 같이 설정)
               newDiv.setAttribute("class", "rsv");
               // 새로운 div 요소를 store_item2의 자식 요소로 추가합니다.
-              storeItem2.appendChild(newDiv);
+              clickedRsv.appendChild(newDiv);
           }
         }
       }

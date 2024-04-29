@@ -107,20 +107,21 @@ class ManagerConsumer(AsyncWebsocketConsumer):
             await self.commands[key_command](data)
         elif key_command == "selected_date":
             selected_date_list = data.get("select_date")  # 웹소켓에서 받아온 날짜 정보
-            await self.get_reservation_dates(selected_date_list)
+            store_id = data.get("store_id")  # 웹소켓에서 받아온 스토어 정보
+            await self.get_reservation_dates(selected_date_list, store_id)
             
 
     
 
 
-    async def get_reservation_dates(self, selected_date_list):
+    async def get_reservation_dates(self, selected_date_list, store_id):
         selected_date = '-'.join(selected_date_list)  # 리스트를 문자열로 변환
 
         # 별도의 동기 함수 생성
         def fetch_reservations(selected_date):
             user = self.scope["user"]
             print("유저", user.id)
-            reservations = md.Reservation_user.objects.filter(reservation_date=selected_date, store_id__owner_id=user.id)
+            reservations = md.Reservation_user.objects.filter(reservation_date=selected_date, store_id__owner_id=user.id, store_id=store_id)
             reservation_details = []
 
             for reservation in reservations:

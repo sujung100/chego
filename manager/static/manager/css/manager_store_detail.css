@@ -86,6 +86,7 @@ body {
 
 .box1 .content1 .cont_box1 .buttons {
   display: flex;
+  justify-content: space-between;
 }
 
 .box1 .content1 .cont_box2 {
@@ -97,7 +98,8 @@ body {
   border-radius: 0 2% 2% 0;
 }
 
-/* 달력 시작 */
+/*************** 달력 시작 ***************/
+
 
 .Calendar {
   width:100%;
@@ -105,7 +107,8 @@ body {
   text-align: center;
   border-collapse: separate;
   border-spacing: 15px 0;
-  padding: 2rem;
+  table-layout:fixed;
+  padding: 1rem;
 }
 
 
@@ -139,17 +142,20 @@ body {
   font-family: 'Montserrat', sans-serif;
   width: 100%;
   height: auto;
-  border-radius: 50%;
+  border-radius: 1rem;
   transition-duration: .2s;
-  line-height: 300%;
+  line-height: 150%;
+  padding: 0.2rem;
   /* margin: 5%; */
   display: block;
   text-align: center;
 }        
 .Calendar>tbody>tr>td>div.rsv_check {
+  width: 100%;
   color:green;
   font-size:0.8rem;
   font-weight: bold;
+  padding: 0.2rem;
 }        
 
 .pastDay {
@@ -181,7 +187,7 @@ body {
   cursor: pointer;
 }
 
-/* 달력 끝 */
+/*************** 달력 끝 ***************/
 
 #store form {
   margin: 2rem 0;
@@ -227,8 +233,8 @@ body {
 
 .content1 .head_user {
   /* height: 200px; */
-  display: flex;
-  justify-content: space-between;
+  /* display: flex; */
+  /* justify-content: space-between; */
 }
 
 .content1 .head_user .category{
@@ -236,7 +242,7 @@ body {
   text-align: center; */
   display: flex;
   justify-content: space-between;
-  width: 70%;
+  width: 100%;
   /* border: 1px solid red; */
 
 }
@@ -256,9 +262,10 @@ body {
 .content1 .head_user .side {
   /* line-height: 200px;
   text-align: center; */
-  width: 30%;
+  width: 100%;
   display: flex;
   justify-content: flex-end;
+  margin-bottom: 1rem;
   /* border: 1px solid blue; */
 }
 
@@ -283,6 +290,46 @@ body {
   background-color: #333;
 }
 
+.content1 .store_item2 .user-info {
+  display: flex;
+  justify-content: space-between;
+}
+
+.content1 .store_item3 {
+  /* display: flex; */
+  width: 100%;
+}
+
+.content1 .store_item3 .clicked_rsv {
+  display: flex;
+  /* width: 100%; */
+  /* padding: 20px; */
+  overflow: scroll;
+  /* color: #112031; */
+  /* background: #F0D9FF; */
+  /* border: 1px solid #000; */
+   /* 가로 스크롤 */
+  overflow: auto;
+  white-space: nowrap;
+}
+
+
+/* 횡스크롤 안보이게 */
+.content1 .store_item3 .clicked_rsv::-webkit-scrollbar{
+  display: none; 
+}
+
+.content1 .store_item3 .clicked_rsv div {
+  /* border: 1px solid #000; */
+  margin: 1rem 1rem 1rem 0;
+  padding: 1rem;
+  border-radius: 1.8rem;
+  font-size: 0.8rem;
+  color: #000;
+  /* background-color: #888; */
+  box-shadow: 0 0 3px 3px rgba(0,0,0,.05);
+}
+
 
 .box2 {
   /* background-color: brown; */
@@ -303,7 +350,7 @@ body {
   align-items: center;
   border-radius: 3%;
   display: flex;
-  margin-bottom: 6rem;
+  margin-bottom: 5rem;
 }
 
 .content2 .con2_nav {

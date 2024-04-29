@@ -86,12 +86,12 @@ WSGI_APPLICATION = 'chego_pjt.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 # 기존
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 # 로컬 mariaDB테스트
 # DATABASES = {
@@ -105,17 +105,17 @@ DATABASES = {
 #     }
 # }
 
-# # 배포 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql', # mysqlclient librarly 설치
-#         'NAME': 'chego_db',
-#         'USER': 'root',
-#         'PASSWORD': '920914', # mariaDB 설치 시 입력한 root 비밀번호 입력
-#         'HOST': 'mariadb',
-#         'PORT': '3306'
-#     }
-# }
+# 배포 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql', # mysqlclient librarly 설치
+        'NAME': 'chego_db',
+        'USER': 'root',
+        'PASSWORD': '920914', # mariaDB 설치 시 입력한 root 비밀번호 입력
+        'HOST': 'mariadb',
+        'PORT': '3306'
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -175,8 +175,8 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
-            # "hosts": [("svc.sel5.cloudtype.app", 6379)],
+            # "hosts": [("127.0.0.1", 6379)],
+            "hosts": [("svc.sel5.cloudtype.app", 6379)],
             # "hosts": [("svc.sel5.cloudtype.app", 30001)],
         },
         "MIDDLEWARE" : [

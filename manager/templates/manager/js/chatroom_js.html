@@ -24,7 +24,7 @@
   // console.log(loc);
   // const loc2 = "127.0.0.1:8000/manager/sung/admin_chat2/";
   // const loc3 = "127.0.0.1:8000/calendar_app/";
-  const loc2 = "port-0-chego-2aat2clujod5fm.sel5.cloudtype.app/manager/sung/admin_chat2/";
+  // const loc2 = "port-0-chego-2aat2clujod5fm.sel5.cloudtype.app/manager/sung/admin_chat2/";
   // const loc3 = "port-0-chego-2aat2clujod5fm.sel5.cloudtype.app/calendar_app/";
   let weStart = "ws://";
   if (loc.protocol === "https:") {
@@ -37,7 +37,8 @@
   async function accessAllChannels() {
 
     let endpoints = [
-      { name: "chat", url: weStart + loc2 + userName + "/" },
+      // { name: "chat", url: weStart + loc2 + userName + "/" },
+      { name: "chat", url: weStart + loc.host + loc.pathname + loc.search + "sung/admin_chat2/" + userName + "/" },
       // { name: "user", url: weStart + loc3 + userName + "/" },
       { name: "manager", url: weStart + loc.host + loc.pathname + loc.search },
     ];

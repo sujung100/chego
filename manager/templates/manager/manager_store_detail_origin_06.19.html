@@ -15,7 +15,7 @@
     <div class="box1">
       <div class="content1">
         {% if request.user.is_authenticated %}
-          <div class="cont_box1">
+          <div class="cont_box1 container">
             <div class="cont">
               <div class="buttons">
                 <!-- <button class="up-bt">수정</button> -->
@@ -25,13 +25,13 @@
                   <button class="rsv_test" type="button">홈홈홈</button>
                 </a>
               </div>
-              <div class="section1 container">
+              <div class="section1">
                 <div id="store" class="top">
                   <!-- 템플릿태그 일단 주석 -->
                   <!-- <form action=" url 'mng_update' pk=manager.pk store_id=store.pk " method="get"> -->
                   <form action="{% url 'store_detail' store_id=store.pk %}" method="get">
                     <div class="store_item1">
-                       <!-- 주석<label for="search_kw">예약일 예시&#41; 2024-01-01 / 2024-01 / 2024</label>  -->
+                      <!-- 주석<label for="search_kw">예약일 예시&#41; 2024-01-01 / 2024-01 / 2024</label> -->
                       <div class="align_boxes">
                         <input type="checkbox" id="checkbox_name" data-input-id="search_name">
                         <label for="checkbox_name">이름</label>
@@ -59,9 +59,9 @@
                         <span>예약일</span>
                         <span>예약 시간</span>
                       </div>
-                      <!-- 주석 <div class="side">
+                      <!-- <div class="side">
                         <button class="del-bt">예약삭제</button>
-                      </div> 주석 -->
+                      </div> -->
                     </div>
                     <hr>
                     {% for rsv in page_obj %}
@@ -74,7 +74,7 @@
                     <hr>
                     {% endfor %}
                     </div>
-                     <!-- 페이지네이션  -->
+                    <!-- 페이지네이션 -->
                     <div class="pagination">
                     <span class="step-links">
                         {% if page_obj.has_previous %}

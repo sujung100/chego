@@ -175,9 +175,10 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            # "hosts": [("127.0.0.1", 6379)],
+            "hosts": [("127.0.0.1", 6379)],
             # "hosts": [("svc.sel5.cloudtype.app", 6379)],
-            "hosts": [("svc.sel5.cloudtype.app", 30001)],
+            # 레디스
+            # "hosts": [("svc.sel5.cloudtype.app", 30001)],
         },
         "MIDDLEWARE" : [
             "channels.middleware.AuthMiddlewareStack"

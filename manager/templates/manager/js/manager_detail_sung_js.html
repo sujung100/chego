@@ -60,31 +60,50 @@
             existingMsg.remove();
           }
           if (existingMsg == null && reservations.length > 0) {
-  
             var newMsg = document.createElement('span');
+            for (var i = 0; i < reservations.length; i++) {
+              let clickedDate = reservations[i].reservation_date;
+              let dArray = clickedDate.split('-');
+
+              // newMsg.innerHTML = '선택한 날짜의 예약내역';
+              newMsg.innerHTML = "선택한 " + dArray[0] + "년 " + dArray[1] + "월 " + dArray[2] + "일의 예약내역";
+            }
             newMsg.setAttribute("class", "visible");
-            newMsg.innerHTML = '선택한 날짜의 예약내역'
-          
-            attach.insertBefore(newMsg, attach.firstChild)
+            
+            attach.insertBefore(newMsg, attach.firstChild);
 
           }
 
           
 
           for (var i = 0; i < reservations.length; i++) {
+              var divWrap = document.createElement('div');
+              var outLine = document.createElement('div');
               var newDiv = document.createElement('div');
+              var boldTxt = document.createElement('div');
+              divWrap.setAttribute("class", "divwrap");
+              outLine.setAttribute("class", "outline");
+              outLine.innerHTML = ([i+1]);
               
-              // 새로운 div 요소의 내용을 설정합니다.
-              // 예를 들어, reservations의 각 요소가 user_name, user_phone 등의 키를 가진 객체라면 아래와 같이 설정할 수 있습니다.
-              newDiv.innerHTML = '이름: ' + (reservations[i].user_name || 'N/A') + '<br>' +
+              boldTxt.setAttribute("class", "boldtxt");
+              boldTxt.innerHTML = '이름: ' + (reservations[i].user_name || 'N/A');
+              boldTxt.style.fontWeight = "bold";
+              boldTxt.style.fontSize = "0.8rem";
+
+
+              newDiv.innerHTML = '<br>' +
                                 '전화번호: ' + (reservations[i].user_phone || 'N/A') + '<br>' +
                                 '예약일: ' + (reservations[i].reservation_date || 'N/A') + '<br>' +
                                 '예약 시간: ' + (reservations[i].user_time || 'N/A') + '<br>' +
                                 '방문 인원: ' + (reservations[i].visitor_num || 'N/A')
-                                // ... (다른 필드들도 이와 같이 설정)
               newDiv.setAttribute("class", "rsv");
-              // 새로운 div 요소를 store_item2의 자식 요소로 추가합니다.
-              clickedRsv.appendChild(newDiv);
+
+
+              clickedRsv.appendChild(divWrap);
+              divWrap.appendChild(outLine);
+              outLine.after(newDiv);
+              newDiv.insertBefore(boldTxt, newDiv.firstChild);
+              // clickedRsv.appendChild(newDiv);
           }
         }
       }

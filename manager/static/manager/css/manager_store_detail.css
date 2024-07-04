@@ -100,18 +100,18 @@ body {
 
 
 
-/* 드래그 영역 */
 .container {
   /* display: flex; */
 
-  /* 영역 구분을 위해 선을 설정 */
-  border: 1px solid red;
+  /* border: 1px solid red; */
   /* height: 38rem; */
   width: 100%;
 }
 
 .resizer[data-direction="vertical"] {
-  border: 3px solid blue;
+  margin: 16px 0 8px 0;
+  border: 0.5px solid #ccc;
+  background-image: linear-gradient(270deg, #bbb, #555, #666, #fff, #888);
   cursor: ns-resize;
   height: 2px;
   /* height: 100%; */
@@ -125,8 +125,7 @@ body {
   flex: 1;
   height: 30rem;
 
-   /* 중앙 정렬 및 하위 요소 배치를 column 식으로 내려가듯이 배치 */
-  align-items: center;
+  /* align-items: center; */
   display: flex;
   flex-direction: column;
   /* justify-content: center; */
@@ -134,7 +133,7 @@ body {
 }
 
 .top {
-  /* 초기 높이값 지정 */
+  /* 초기 높이값 */
   /* height: 30rem; */
   width: 100%;
 
@@ -176,7 +175,10 @@ body {
   /* justify-content: center; */
 }
 .store_item3 .clicked_rsv .rsv {
-  background-color: #fff;
+  background-color: #ddd;
+}
+.store_item3 .clicked_rsv .outline {
+  background-color: #ddd;
 }
 
 
@@ -413,17 +415,135 @@ body {
   /* display: none;  */
 }
 
-.content1 .store_item3 .clicked_rsv div {
-  margin: 1rem 1rem 1rem 0;
-  padding: 1rem;
-  border-radius: 1.8rem;
-  font-size: 0.8rem;
+.content1 .store_item3 .clicked_rsv .divwrap {
+  /* border: 1px solid blue; */
+  /* margin: 1rem 1rem 1rem 0; */
+  /* padding: 1rem; */
   color: #000;
-  box-shadow: 0 0 3px 3px rgba(0,0,0,.05);
-  /* 스크롤바 */
   display: inline-block;
   white-space: normal;
+}
 
+/* hover시 스타일변경 */
+.content1 .content .store_item3 .clicked_rsv .divwrap:hover > .outline {
+  background-color: #555;
+  border: 1px solid #555;
+  color: #fff;
+}
+
+.content1 .store_item3 .clicked_rsv .divwrap:hover > .rsv {
+  background-color: #555;
+  color: #fff;
+}
+
+/* hover시 형제들 이동 */
+.content1 .store_item3 .clicked_rsv .divwrap:hover {
+  transform: translate(10%, -5%);
+}
+
+.content1 .store_item3 .clicked_rsv .divwrap:hover ~ .divwrap {
+  transform: translateX(10%);
+}
+
+.content1 .store_item3 .clicked_rsv .divwrap:hover:first-child ~ .divwrap {
+  transform: translateX(18%);
+}
+
+/* 가로 */
+.content1 .store_item3 .clicked_rsv .divwrap:hover::before {
+  content: '';
+  background-color: #888;
+  width: 9%;
+  height: 84%;
+  position: absolute;
+  top: 10%;
+  left: -9%;
+  opacity: 0.5;
+  transform: skew(0, -45deg);
+  z-index: -1;
+}
+
+.content1 .store_item3 .clicked_rsv .divwrap:first-child:hover::before {
+  left: 99.5%;
+  transform: skew(0, 45deg);
+  /* z-index: -1; */
+}
+
+/* 세로 */
+.content1 .store_item3 .clicked_rsv .divwrap:hover::after {
+  content: '';
+  background-color: #333;
+  width: 100%;
+  height: 7%;
+  position: absolute;
+  top: 90%;
+  left: -3%;
+  opacity: 0.5;
+  transform: skew(-45deg, 0);
+  z-index: -1;
+}
+
+.content1 .store_item3 .clicked_rsv .divwrap:first-child:hover::after {
+  width: 90%;
+  height: 11%;
+  top: 85%;
+  left: 9%;
+  transform: skew(45deg, 0);
+  z-index: -1;
+}
+
+.content1 .store_item3 .clicked_rsv .divwrap:last-child:hover::after {
+  width: 90%;
+  height: 11%;
+  top: 85%;
+  left: 1%;
+  z-index: -1;
+}
+
+.content1 .store_item3 .clicked_rsv .outline {
+  margin: 1rem 0 0 0;
+  padding: 0.5rem 0 0 0.5rem;
+  /* border: 1px solid red; */
+  border-top: 2px solid #ccc;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  color: #000;
+  box-shadow: 0 0 3px 3px rgba(0,0,0,.05);
+  height: 30px;
+
+}
+
+
+.content1 .store_item3 .clicked_rsv .divwrap:first-child .outline {
+  border-top: 2px solid #ccc;
+  border-left: 2px solid #ccc;
+}
+
+.content1 .store_item3 .clicked_rsv .divwrap:last-child .outline {
+  border-top: 2px solid #ccc;
+  border-right: 2px solid #ccc;
+}
+
+
+.content1 .store_item3 .clicked_rsv .rsv {
+  margin: 0 0 1rem 0;
+  padding: 0.5rem 0.5rem 2rem 0.5rem;
+  /* border-radius: 0 0 1.8rem 1.8rem; */
+  font-size: 0.7rem;
+  color: #000;
+  border-bottom: 1px solid #ccc;
+  /* box-shadow: 0 0 3px 3px rgba(0,0,0,.05); */
+
+}
+
+.content1 .store_item3 .clicked_rsv .divwrap:first-child .rsv {
+  border-radius: 0 0 0 1rem;
+  border-bottom: 1px solid #ccc;
+}
+
+.content1 .store_item3 .clicked_rsv .divwrap:last-child .rsv {
+  border-radius: 0 0 1rem 0;
+  border-bottom: 1px solid #ccc;
 }
 
 

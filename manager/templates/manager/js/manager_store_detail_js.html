@@ -353,5 +353,14 @@ function resizable(ele) {
   document.querySelectorAll(".resizer").forEach(function (ele) {
     resizable(ele);
   });
+
+  // 미니북 클릭 이벤트
+  const pageFlipElement = document.getElementById('page-flip');
+  let isPageFlipped = false;
+  pageFlipElement.addEventListener('click', () => {
+      isPageFlipped = !isPageFlipped;
+      pageFlipElement.classList.toggle('page-flipped', isPageFlipped);
+  });
+
       
 </script>

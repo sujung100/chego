@@ -268,7 +268,7 @@ body {
   display: flex;
   justify-content: flex-end;
   /* margin: 0 0 0 7.3rem; */
-  margin: 0 0 0 5.9rem;
+  margin: 0 0 0 5.7rem;
 }
 
 #page-flip {
@@ -308,20 +308,17 @@ body {
   /* -webkit-transform-origin: 285px 0; */
   -webkit-transform-origin: 85.5px 0;
   -webkit-transform: translate(-85.5px, 0) rotate(0deg);
-  /* -webkit-transform: translate(-285px, 0) rotate(0deg); */
-  /* -webkit-box-shadow: 0 0 3.42px rgba(0, 0, 0, .5); */
-  /* -webkit-box-shadow: 0 0 5.8px rgba(0, 0, 0, .5); */
-  -webkit-box-shadow: 0 0 1.74px rgba(0, 0, 0, .5);
+  -webkit-box-shadow: 0 0 3.42px rgba(0, 0, 0, .5);
   /* 4프로 */
 
 }
 
 
 #p0 > div > div {
-  width: 3px;
   /* width: 10px; */
-  height: 116.4px;
   /* height: 388px; */
+  width: 2.8px;
+  height: 116.4px;
   float: right;
   /* background: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, .25)), to(rgba(0,0,0,0))); */
   background: -webkit-gradient(linear, right top, left top, from(rgba(0, 0, 0, .25)), to(rgba(0,0,0,0)));
@@ -329,14 +326,11 @@ body {
 
 
 #spacing {
-  width: 4.5px;
+  width: 4px;
   height: 116.4px;
-  /* width: 15px;
-  height: 388px; */
   position: absolute;
   z-index: 0;
   -webkit-transform-origin: 85.5px 0;
-  /* -webkit-transform-origin: 285px 0; */
   -webkit-transform: translate(0, 0) rotate(0deg);
   background-color: #aaa;
 }
@@ -356,9 +350,8 @@ r3
   position: absolute;
   z-index: 2;
   /* -webkit-transform-origin: 1315px 500px; */
-  /* -webkit-transform: translate(-1030px, -500px) rotate(-32deg); */
-  -webkit-transform-origin: 394.5px 150px;
-  -webkit-transform: translate(-309px, -150px) rotate(-32deg);
+  -webkit-transform-origin: 376px 143px;
+  -webkit-transform: translate(-376px, -143px) rotate(-32deg);
   -webkit-transition-property: -webkit-transform, -webkit-transform-origin;
   -webkit-transition-duration: 1s;
 }
@@ -366,16 +359,17 @@ r3
 #p1 {
   /* width: 1285px;
   height: 1388px; */
-  width: 385.5px;
-  height: 416.4px;
+  width: 368px;
+  height: 404px;
   overflow: hidden;
 }
 
 #p1 > div {
   /* -webkit-transform-origin: 275px 0; */
-  -webkit-transform-origin: 82.5px 0;
+  -webkit-transform-origin: 82px 0;
+  /* 여기까지 수정 08.27 */
   /* -webkit-transform: translate(1040px, 500px) rotate(32deg); */
-  -webkit-transform: translate(312px, 150px) rotate(32deg);
+  -webkit-transform: translate(728px, 320px) rotate(32deg);
   -webkit-transition-property: -webkit-transform, -webkit-transform-origin;
   -webkit-transition-duration: 1s;
   /* width: 285px;
@@ -386,14 +380,14 @@ r3
   background-image: url(https://cssdeck.com/uploads/media/items/8/87WOlJH.jpg);
 }
 
-
 #p1 > div > div {
   /* width: 10px;
   height: 388px; */
-  width: 3px;
+  width: 2.8px;
   height: 116.4px;
   background: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, .25)), to(rgba(0,0,0,0)));
 }
+
 
 #p2 > div {
   /* width: 285px;
@@ -401,7 +395,7 @@ r3
   width: 85.5px;
   height: 116.4px;
   /* -webkit-box-shadow: 0 0 11px rgba(0, 0, 0, .5); */
-  -webkit-box-shadow: 0 0 3.3px rgba(0, 0, 0, .5);
+  -webkit-box-shadow: 0 0 3.42px rgba(0, 0, 0, .5);
   position: absolute;
   z-index: 1;
   /* 2pg */
@@ -409,25 +403,25 @@ r3
   -webkit-transform-origin: 0 0;
   /* -webkit-transform: translate(10px, 0) rotate(0deg); */
   -webkit-transform: translate(3px, 0) rotate(0deg);
-  /* -webkit-box-shadow: 0 0 11px rgba(0, 0, 0, .5); */
 }
 
+
 #r3 {
-  /* -webkit-transform-origin: 1305px 490px;
-  -webkit-transform: translate(-1030px, -490px) rotate(-32deg); */
-  -webkit-transform-origin: 391.5px 147px;
-  -webkit-transform: translate(-309px, -147px) rotate(-32deg);
+  /* -webkit-transform-origin: 1305px 490px; */
+  -webkit-transform-origin: 913.5px 343px;
+  -webkit-transform: translate(-721px, -343px) rotate(-32deg);
   -webkit-transition-property: -webkit-transform, -webkit-transform-origin;
   -webkit-transition-duration: 1s;
   position: absolute;
   z-index: 2;
 }
 
+
 #s3 {
-  /* -webkit-transform-origin: 60px 500px;
-  -webkit-transform: translate(225px, -500px) rotate(-32deg) translate(22px, 0); */
-  -webkit-transform-origin: 18px 150px;
-  -webkit-transform: translate(67.5px, -150px) rotate(-32deg) translate(6.6px, 0);
+  /* -webkit-transform-origin: 60px 500px; */
+  -webkit-transform-origin: 42px 350px;
+  /* -webkit-transform: translate(225px, -500px) rotate(-32deg) translate(22px, 0); */
+  -webkit-transform: translate(157.5px, -350px) rotate(-32deg) translate(15.4px, 0);
   -webkit-transition-property: -webkit-transform, -webkit-transform-origin;
   -webkit-transition-duration: 1s;
   position: absolute;
@@ -439,11 +433,12 @@ r3
   -webkit-transform: translate(-40px, -500px) rotate(0deg) translate(40px, 0);
 } */
 
+
 #sp3 {
   /* width: 25px;
   height: 1000px; */
-  width: 7.5px;
-  height: 300px;
+  width: 17.5px;
+  height: 700px;
   background: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, .25)), to(rgba(0,0,0,0)));
   -webkit-transition-property: width;
   -webkit-transition-duration: 1s;
@@ -451,6 +446,9 @@ r3
 }
 
 /* #page-flip:active #sp3 { width: 11px } */
+
+
+/* 여기까지 수정 09.04 */
 
 .s {
   /* width: 285px;
@@ -466,20 +464,19 @@ r3
 }
 
 #s2 {
-  /* -webkit-transform-origin: 45px 500px;
-  -webkit-transform: translate(230px, -500px) rotate(-32deg); */
-  -webkit-transform-origin: 13.5px 150px;
-  -webkit-transform: translate(69px, -150px) rotate(-32deg);
+  /* -webkit-transform-origin: 45px 500px; */
+  -webkit-transform-origin: 31.5px 350px;
+  -webkit-transform: translate(161px, -350px) rotate(-32deg);
   -webkit-transition-property: -webkit-transform, -webkit-transform-origin;
   -webkit-transition-duration: 1s;
   position: absolute;
 }
 
 #sp2 {
-  /* width: 15px;
-  height: 1000px; */
-  width: 4.5px;
-  height: 300px;
+  /* width: 15px; */
+  /* height: 1000px; */
+  width: 10.5px;
+  height: 700px;
   background: -webkit-gradient(linear, right top, left top, from(rgba(0, 0, 0, .18)), to(rgba(0,0,0,0)));
   overflow: hidden;
 }
@@ -499,19 +496,19 @@ r3
 #p3 {
   /* width: 1285px;
   height: 1388px; */
-  width: 385.5px;
-  height: 416.4px;
+  width: 899px;
+  height: 971.6px;
   overflow: hidden;
 }
 
 #p3 > div {
   -webkit-transform-origin: 0 0;
   /* -webkit-transform: translate(1250px, 500px) rotate(-32deg); */
-  -webkit-transform: translate(375px, 150px) rotate(-32deg);
+  -webkit-transform: translate(875px, 350px) rotate(-32deg);
   -webkit-transition-property: -webkit-transform, -webkit-transform-origin;
   -webkit-transition-duration: 1s;
   /* -webkit-box-shadow: 0 0 11px rgba(0, 0, 0, .5); */
-  -webkit-box-shadow: 0 0 3.3px rgba(0, 0, 0, .5);
+  -webkit-box-shadow: 0 0 3.42px rgba(0, 0, 0, .5);
   /* width: 285px;
   height: 388px; */
   width: 85.5px;
@@ -525,65 +522,54 @@ r3
 #p3 > div > div {
   /* width: 10px;
   height: 500px; */
-  width: 3px;
+  width: 2.8px;
   height: 150px;
   float: right;
   background: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, 0)), to(rgba(0,0,0,.20)));
 }
+/* 여기까지 했는데 수정해야함 09.04 */
 
 /* 활성 */
 
 
 #page-flip.page-flipped #r1 {
-  /* -webkit-transform-origin: 1570px 500px;
-  -webkit-transform: translate(-1285px, -500px) rotate(0deg); */
-  -webkit-transform-origin: 471px 150px;
-  -webkit-transform: translate(-385.5px, -150px) rotate(0deg);
+  -webkit-transform-origin: 1570px 500px;
+  -webkit-transform: translate(-1285px, -500px) rotate(0deg);
 }
 
 #page-flip.page-flipped #p1 > div {
-  /* -webkit-transform-origin: 275px 0;
-  -webkit-transform: translate(1295px, 500px) rotate(0deg); */
-  -webkit-transform-origin: 82.5px 0;
-  -webkit-transform: translate(388.5px, 150px) rotate(0deg);
+  -webkit-transform-origin: 275px 0;
+  -webkit-transform: translate(1295px, 500px) rotate(0deg);
 }
 
 #page-flip.page-flipped #r3 {
-  /* -webkit-transform-origin: 1570px 500px;
-  -webkit-transform: translate(-1285px, -500px) rotate(0deg); */
-  -webkit-transform-origin: 471px 150px;
-  -webkit-transform: translate(-385.5px, -150px) rotate(0deg);
+  -webkit-transform-origin: 1570px 500px;
+  -webkit-transform: translate(-1285px, -500px) rotate(0deg);
 }
 
 #page-flip.page-flipped #p3 > div {
   -webkit-transform-origin: 0 0;
-  /* -webkit-transform: translate(1000px, 500px) rotate(0deg); */
-  -webkit-transform: translate(300px, 150px) rotate(0deg);
+  -webkit-transform: translate(1000px, 500px) rotate(0deg);
 }
 
 /* 그라데이션 */
 
 #page-flip.page-flipped #s3 {
-/* -webkit-transform-origin: 325px 500px;
--webkit-transform: translate(-40px, -500px) rotate(0deg) translate(40px, 0); */
--webkit-transform-origin: 97.5px 150px;
--webkit-transform: translate(-12px, -150px) rotate(0deg) translate(12px, 0);
+-webkit-transform-origin: 325px 500px;
+-webkit-transform: translate(-40px, -500px) rotate(0deg) translate(40px, 0);
 /* -webkit-transition-duration: 5s;
 -webkit-animation-delay: 5s; */
 }
 
 #page-flip.page-flipped #sp3 { 
-/* width: 11px; */
-width: 3.3px;
+width: 11px;
 /* -webkit-transition-duration: 5s;
 -webkit-animation-delay: 5s; */
 }
 
 #page-flip.page-flipped #s2 {
-/* -webkit-transform-origin: 300px 500px;
--webkit-transform: translate(-15px, -500px) rotate(0deg); */
--webkit-transform-origin: 90px 150px;
--webkit-transform: translate(-4.5px, -150px) rotate(0deg);
+-webkit-transform-origin: 300px 500px;
+-webkit-transform: translate(-15px, -500px) rotate(0deg);
 /* -webkit-transition-duration: 5s;
 -webkit-animation-delay: 5s; */
 }
@@ -602,24 +588,19 @@ opacity: 0;
 } */
 /*  */
 
-/* a태그 효과 */
 a {
   display: block;
   position: absolute;
-  /* margin: -20000px 0 0 0;
-  padding: 1px; */
-  margin: -6000px 0 0 0;
-  padding: 0.3px;
+  margin: -20000px 0 0 0;
+  padding: 1px;
   z-index: 3;
   -webkit-transition-property: margin;
   -webkit-transition-duration: 0.01s;
 }
 
 #coke {
-  /* width: 253px;
-  height: 158px; */
-  width: 75.9px;
-  height: 47.4px;
+  width: 253px;
+  height: 158px;
 }
 
 a:active {
@@ -629,24 +610,19 @@ a:active {
 
 #page-flip:active #coke {
   -webkit-transition-delay: .8s;
-  /* margin: 33px 0 0 14px; */
-  margin: 9.9px 0 0 4.2px;
+  margin: 33px 0 0 14px;
 }
 
 #meninas {
-  /* width: 253px;
-  height: 167px; */
-  width: 75.9px;
-  height: 50.1px;
+  width: 253px;
+  height: 167px;
 }
 
 #page-flip:active #meninas {
   -webkit-transition-delay: .8s;
-  /* margin: 203px 0 0 14px; */
-  margin: 60.9px 0 0 4.2px;
+  margin: 203px 0 0 14px;
 }
 
-/* 여기까지 수정 09.10 */
 
 /*************** 달력 시작 ***************/
 

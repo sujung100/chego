@@ -1,49 +1,14 @@
 
 <script>
 
-  let resizer; 
+let resizer; 
   // 달력 js
-  let clickedInputs = [];
 
   window.onload = function () { 
     buildCalendar(); // 웹 페이지가 로드되면 buildCalendar 실행
     // fetchReservation(); // fetch로 예약정보 불러오기
 
-		const checkboxes = document.querySelectorAll('.align_boxes input[type="checkbox"]');
-    
-		checkboxes.forEach(checkbox => {
-      checkbox.checked = true;  // 모든 체크박스 체크
-      var inputId = checkbox.getAttribute('data-input-id');
-      var input = document.getElementById(inputId);
-
-      // clickedInputs 배열에 추가
-      if (!clickedInputs.includes(inputId)) {
-          clickedInputs.push(inputId);
-      }
-
-      input.addEventListener('focus', function() {
-				var label = this.nextElementSibling;  // 검색 input의 label 선택
-				label.style.top = '-20px';
-				label.style.left = '0';
-				label.style.color = '#03e9f4';
-				label.style.fontSize = '12px';
-			});
-
-			input.addEventListener('blur', function () {
-				var label = this.nextElementSibling;  // 검색 input의 label 선택
-				if (!this.value) {
-					label.style.top = '0';
-					label.style.left = '0';
-					label.style.color = '#bbb';
-					label.style.fontSize = '16px';
-				}
-			});
-
-      // input.focus();
-		});
-  }
-
-
+  }    
   let nowMonth = new Date();  // 현재 달을 페이지를 로드한 날의 달로 초기화
   let today = new Date();     // 페이지를 로드한 날짜를 저장
   today.setHours(0, 0, 0, 0);    // 비교 편의를 위해 today의 시간을 초기화
@@ -389,7 +354,6 @@ function resizable(ele) {
     resizable(ele);
   });
 
-
   // 미니북 클릭 이벤트
   const pageFlipElement = document.getElementById('page-flip');
   let isPageFlipped = false;
@@ -398,65 +362,5 @@ function resizable(ele) {
       pageFlipElement.classList.toggle('page-flipped', isPageFlipped);
   });
 
-
-  // 예약 검색 check박스, input 이벤트
-  // var clickedInputs = [];
-
-	function toggleInput(id, checked) {
-		var input = document.getElementById(id);
-    var label2 = document.querySelector(`label[for='${id}']`)
-		if (checked) {
-			if (!clickedInputs.includes(id)) {
-				clickedInputs.push(id);
-			}
-			
-			input.removeAttribute('disabled');
-			input.style.display = '';  // display 값을 초기 상태로 되돌림
-      label2.style.display = ''; 
-      
-			input.focus();
-      // console.log("clickedInputs찍어", clickedInputs);
-
-		} else {
-			input.setAttribute('disabled', 'disabled');
-			input.style.display = 'none';  // display: none; 적용
-			input.style.right = '';
-      label2.style.display = 'none'; 
-			var index = clickedInputs.indexOf(id);
-			if (index !== -1) {
-				clickedInputs.splice(index, 1);
-			}
-		}
-	}
-
-	// 체크박스 클릭 시 toggleInput 함수 호출
-	document.querySelectorAll('.align_boxes input[type="checkbox"]').forEach(function (checkbox) {
-		checkbox.addEventListener('click', function () {
-      if (checkbox.closest('.align_boxes')) {
-        toggleInput(checkbox.getAttribute('data-input-id'), checkbox.checked);
-
-        // enabledSiblingCount 계산
-        var enabledSiblingCount = 0;
-        var siblings = Array.from(checkbox.parentNode.children);
-        siblings.forEach(function (sibling) {
-          if (!sibling.disabled && sibling.tagName === 'INPUT' && sibling.type === 'checkbox' && sibling.checked) {
-            enabledSiblingCount++;
-          }
-        });
-
-        // 체크박스 클릭에 따른 조정
-        if (enabledSiblingCount === 3) {
-          document.getElementById(clickedInputs[0]).style.right = '20rem';
-          document.getElementById(clickedInputs[1]).style.right = '12rem';
-          document.getElementById(clickedInputs[2]).style.right = '4rem';
-        } else if (enabledSiblingCount === 2) {
-          document.getElementById(clickedInputs[0]).style.right = '12rem';
-          document.getElementById(clickedInputs[1]).style.right = '4rem';
-        } else if (enabledSiblingCount === 1) {
-          document.getElementById(clickedInputs[0]).style.right = '4rem';
-        }
-      }
-		});
-	});
       
 </script>

@@ -1,27 +1,99 @@
 <script>
 	
-	var clickedInputs = [];
+	// manager_store_detail.html에 include 삭제
+	// manager_operate.html에 아직 include 되어있음(이제 사용하지않는 페이지?)
 
+	var clickedInputs = [];
+	// 온로드가 다른 js파일에서 우선적으로 사용되어, 적용되지않았음
 	window.onload = function() {
-		// 페이지 로드 시 모든 체크박스를 disabled 상태로 설정하고 display: none; 적용
-		document.querySelectorAll('input[type="checkbox"]').forEach(function (checkbox) {
-			var inputId = checkbox.getAttribute('data-input-id');
-			var input = document.getElementById(inputId);
-			input.setAttribute('disabled', 'disabled');
-			input.style.display = 'none';
+		
+		console.log("로딩은 되냐");
+		const checkboxes = document.querySelectorAll('.align_boxes input[type="checkbox"]');
+		console.log("체크박스들", checkboxes);
+
+		checkboxes.forEach(checkbox => {
+			checkbox.checked = true;  // 모든 체크박스 체크
 		});
 	};
 
+	
+	// window.onload = function() {
+	// 	document.querySelectorAll('input[type="checkbox"]').forEach(function (checkbox) {
+	// 		var inputId = checkbox.getAttribute('data-input-id');
+	// 		var input = document.getElementById(inputId);
+	// 		console.log("인풋임", input);
+	// 		console.log("체크박스임", checkbox);
+
+	// 		// 페이지 로드 시 모든 체크박스를 disabled 상태로 설정하고 display: none; 적용
+	// 		// 빼봄
+	// 		// input.setAttribute('disabled', 'disabled');
+	// 		// input.style.display = 'none';
+
+	// 		// 그냥
+	// 		// input.setAttribute('checked', 'checked');
+	// 		checkbox.checked = true;
+	// 		// toggleInput(checkbox.getAttribute('data-input-id'), checkbox.checked);
+	// 		// input.focus();
+
+	// 		// input 클릭 이벤트 추가 09.29
+	// 		// input.addEventListener('focus', function() {
+	// 		// 	// var label = this.previousElementSibling;  // label 요소 선택
+	// 		// 	var label = this.nextElementSibling;  // label 요소 선택
+	// 		// 	label.style.top = '-20px';
+	// 		// 	label.style.left = '0';
+	// 		// 	label.style.color = '#03e9f4';
+	// 		// 	label.style.fontSize = '12px';
+	// 		// });
+
+	// 		// input.addEventListener('blur', function () {
+	// 		// 	// var label = this.previousElementSibling;  // label 요소 선택
+	// 		// 	var label = this.nextElementSibling;  // label 요소 선택
+	// 		// 	if (!this.value) {
+	// 		// 		label.style.top = '0';
+	// 		// 		label.style.left = '0';
+	// 		// 		label.style.color = '#bbb';
+	// 		// 		label.style.fontSize = '16px';
+	// 		// 	}
+	// 		// });
+	// 		// 수정 09.29
+
+	// 	});
+	// };
+
 	function toggleInput(id, checked) {
 		var input = document.getElementById(id);
+		console.log("인풋찍어봐", input)
+		input.addEventListener('focus', function() {
+			// var label = this.previousElementSibling;  // label 요소 선택
+			var label = this.nextElementSibling;  // label 요소 선택
+			label.style.top = '-20px';
+			label.style.left = '0';
+			label.style.color = '#03e9f4';
+			label.style.fontSize = '12px';
+		});
+
+		input.addEventListener('blur', function () {
+			// var label = this.previousElementSibling;  // label 요소 선택
+			var label = this.nextElementSibling;  // label 요소 선택
+			if (!this.value) {
+				label.style.top = '0';
+				label.style.left = '0';
+				label.style.color = '#bbb';
+				label.style.fontSize = '16px';
+			}
+		});
 
 		if (checked) {
 			if (!clickedInputs.includes(id)) {
 				clickedInputs.push(id);
 			}
+			
 
 			input.removeAttribute('disabled');
 			input.style.display = '';  // display 값을 초기 상태로 되돌림
+			// 수정 09.29
+			input.focus();
+			// input.blur();
 		} else {
 			input.setAttribute('disabled', 'disabled');
 			input.style.display = 'none';  // display: none; 적용

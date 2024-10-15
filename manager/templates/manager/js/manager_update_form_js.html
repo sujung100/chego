@@ -429,12 +429,14 @@
 	
 	// 저장하기 버튼 클릭시 submit
 	document.getElementById('save_button').addEventListener('click', function () {
-		let allButtons = Array.from(document.querySelectorAll("#attach_btns button"));
-		let sortedButtons = allButtons.sort((a, b) => a.textContent.localeCompare(b.textContent));
-		let buttonValues = sortedButtons.map(button => button.textContent);
+		if (confirm("저장하시겠습니까?")) {
+			let allButtons = Array.from(document.querySelectorAll("#attach_btns button"));
+			let sortedButtons = allButtons.sort((a, b) => a.textContent.localeCompare(b.textContent));
+			let buttonValues = sortedButtons.map(button => button.textContent);
 
-		document.getElementById('buttonValues').value = JSON.stringify(buttonValues);
-		document.getElementById('myForm').submit();
+			document.getElementById('buttonValues').value = JSON.stringify(buttonValues);
+			document.getElementById('myForm').submit();
+		}
 	});
 
 

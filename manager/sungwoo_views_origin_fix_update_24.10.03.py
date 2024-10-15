@@ -28,7 +28,7 @@ from . import models
 
 from datetime import datetime
 
-from .forms import ManagerUpdateForm, StoreUpdateForm, UpdateForm, TotalReservationForm
+from .forms import ManagerUpdateForm, StoreUpdateForm, UpdateForm
 
 
 # 예약조회 - 검색기능 - 전화번호 조회시 기호제거
@@ -265,25 +265,20 @@ class Reservation_Details(View):
 
 
 # 통합 - 달력 + 예약조회페이지
-# class Total_Reservation_Check(TemplateView):
-class Total_Reservation_Check(LoginRequiredMixin, UpdateView):
-    model = rsv.Store
-    form_class = TotalReservationForm
+class Total_Reservation_Check(TemplateView):
     template_name = 'manager/manager_store_detail.html'
 
     def dispatch(self, request, *args, **kwargs):
-        # store_id = self.kwargs['store_id']
-        store_id = self.kwargs['pk']
-        store = get_object_or_404(rsv.Store, pk=store_id)
+        store_id = self.kwargs['store_id']
+        store = get_object_or_404(rsv.Store, id=store_id)
         if self.request.user.id != store.owner_id:
             return HttpResponseForbidden("접근권한이 없습니다.")
         return super().dispatch(request, *args, **kwargs)
     
 
     def get_context_data(self, **kwargs):
-        # store_id = self.kwargs['store_id']
-        store_id = self.kwargs['pk']
-        store = get_object_or_404(rsv.Store, pk=store_id)
+        store_id = self.kwargs['store_id']
+        store = get_object_or_404(rsv.Store, id=store_id)
         print("스토어찍어봐라", store.id)
         manager = rsv.Manager.objects.get(user=self.request.user)
         print("매니저찍어봐라", manager.id)
@@ -351,43 +346,6 @@ class Total_Reservation_Check(LoginRequiredMixin, UpdateView):
         print("전체 콘텍스트 출력: ", context)
 
         return context
-    
-
-    def post(self, request, *args, **kwargs):
-        # URL에서 pk값 가져오기
-        requested_store_id = self.kwargs.get('pk')
-
-        # Store테이블의 id값을 가진 객체찾기 (url에서 가져온 store_id값과 일치하는)
-        store = get_object_or_404(rsv.Store, pk=requested_store_id)
-        
-        if store:
-            # Store의 owner(User 객체)와 연결된 Manager 찾기
-            # manager_of_the_store = rsv.Manager.objects.filter(user=store.owner).first()
-            # Store의 pk값과 Reservation_user의 store_id값과 일치하는 예약목록 가져오기
-            # rsv_objects = rsv.Reservation_user.objects.filter(store_id=store.pk)
-
-            # HttpResponseRedirect를 위한 전달인자
-            # pk_value = manager_of_the_store.pk
-            # store_id_value = requested_store_id
-
-            # post요청
-            if request.method == 'POST':
-                 # 전달받은 rsv_ids를 리스트로 변환
-                rsv_ids = request.POST.getlist('rsv_ids')
-                print("Requested rsv_ids찍어봐라:", rsv_ids)
-
-                # rsv_ids를 정수형으로 변환
-                rsv_ids = [int(id) for id in rsv_ids]
-
-                # 해당 ID를 가진 예약 삭제
-                rsv.Reservation_user.objects.filter(id__in=rsv_ids, store_id=store.pk).delete()
-
-                # 성공 후 리다이렉트
-                return redirect('store_detail', pk=store.pk)
-                
-
-
-        return self.get(request, *args, **kwargs)
     
 
     
@@ -509,6 +467,8 @@ class AdminChat2(ListView):
             context["messages"] = messages
         return context
     
+     
+
 
 
 # 기본 예약조회
@@ -605,43 +565,12 @@ class Test123(LoginRequiredMixin, UpdateView):
         return get_object_or_404(rsv.Store, pk=store_id)
     
 
-# 임시(현재 사용x)
-# class Update2(LoginRequiredMixin, UpdateView):
-#     model = rsv.Store
-#     form_class = UpdateForm
-#     template_name = 'manager/manager_update_form.html'
-
-#     def get_object(self, queryset=None):
-#         # URL에서 store_id를 사용하여 Store 객체 찾기
-#         store_id = self.kwargs.get('store_id')
-#         return get_object_or_404(rsv.Store, id=store_id)
-
-#     def dispatch(self, request, *args, **kwargs):
-#         self.store = self.get_object()
-        
-#         # 현재 로그인한 사용자가 Store의 owner와 일치하는지 확인
-#         if request.user.is_authenticated and request.user == self.store.owner:
-#             return super(Update2, self).dispatch(request, *args, **kwargs)
-#         else:
-#             raise PermissionDenied
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-        
-#         # URL에서 store_id값 가져오기
-#         requested_store_id = self.kwargs.get('store_id')
-#         context['requested_store_id'] = requested_store_id
-
-#         return context
-
-
-# 수정완 - pk하나로 변경
-class Update(LoginRequiredMixin, UpdateView):
+# pk값 하나떼버림..임시
+class Update2(LoginRequiredMixin, UpdateView):
     model = rsv.Store
     form_class = UpdateForm
     template_name = 'manager/manager_update_form.html'
-    # print("야 되냐")
-    
+
     def get_object(self, queryset=None):
         # URL에서 store_id를 사용하여 Store 객체 찾기
         store_id = self.kwargs.get('store_id')
@@ -652,9 +581,65 @@ class Update(LoginRequiredMixin, UpdateView):
         
         # 현재 로그인한 사용자가 Store의 owner와 일치하는지 확인
         if request.user.is_authenticated and request.user == self.store.owner:
+            return super(Update2, self).dispatch(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # URL에서 store_id값 가져오기
+        requested_store_id = self.kwargs.get('store_id')
+        context['requested_store_id'] = requested_store_id
+
+        return context
+
+# 수정중..update2보고서 pk값 떼서 수정하기
+class Update(LoginRequiredMixin, UpdateView):
+    model = rsv.Store
+    form_class = UpdateForm
+    template_name = 'manager/manager_update_form.html'
+    # print("야 되냐")
+
+    # 임시...테스트용 form_vaild검증 없이 그냥 post요청 들어오면 update_data함수 실행되도록함..
+    # def post(self, request, *args, **kwargs):
+    #     self.update_data(request, **kwargs)  # update_data 함수 호출
+    #     return super().post(request, *args, **kwargs)  # 원래 post 함수 호출
+    
+    # 얘도 임시...나중 수정하기
+    # def get_object(self, queryset=None):
+    #     requested_store_id = self.kwargs.get('store_id')
+    #     return get_object_or_404(rsv.Store, pk=requested_store_id)
+    
+    def get_object(self, queryset=None):
+        # URL에서 store_id를 사용하여 Store 객체 찾기
+        store_id = self.kwargs.get('store_id')
+        return get_object_or_404(rsv.Store, id=store_id)
+
+    # 권한설정
+    # def dispatch(self, request, *args, **kwargs):
+    #     # print("? 되냐")
+    #     self.manager = get_object_or_404(rsv.Manager, pk=kwargs['pk'])
+    #     self.store = get_object_or_404(rsv.Store, pk=kwargs['store_id'])
+        
+    #     # 조건3개
+    #     if request.user.is_authenticated and request.user == self.manager.user and self.manager.user == self.store.owner:
+    #         print("여긴가1")
+    #         return super(Update, self).dispatch(request, *args, **kwargs)
+    #     else:
+    #         print("여긴가2")
+    #         raise PermissionDenied
+
+    
+    def dispatch(self, request, *args, **kwargs):
+        self.store = self.get_object()
+        
+        # 현재 로그인한 사용자가 Store의 owner와 일치하는지 확인
+        if request.user.is_authenticated and request.user == self.store.owner:
             return super(Update, self).dispatch(request, *args, **kwargs)
         else:
             raise PermissionDenied
+
 
     def get_context_data(self, **kwargs):
         print("여긴 되냐")
@@ -687,6 +672,7 @@ class Update(LoginRequiredMixin, UpdateView):
             # print("찍어보자3", sto_time_objects)
             # print("찍어보자3-1", sto_time_objects.values)
             
+            
             sto_time_values_list  = {
                 'store_id': store.pk,
                 'sto_time': list(sto_time_objects.values()),
@@ -695,6 +681,7 @@ class Update(LoginRequiredMixin, UpdateView):
             print()
             # print("찍어보자4 ", sto_time_values_list)
             print()
+
 
             # 예약 정보 가져오기
             # Reservation_user
@@ -738,7 +725,10 @@ class Update(LoginRequiredMixin, UpdateView):
         # print("콘텍스트", context)
         return context
 
-    # post요청 -> 수정
+
+
+
+    # update함수 만들기
     def post(self, request, *args, **kwargs):
 
         # URL에서 store_id값 가져오기

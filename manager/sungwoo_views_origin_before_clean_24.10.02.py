@@ -28,7 +28,7 @@ from . import models
 
 from datetime import datetime
 
-from .forms import ManagerUpdateForm, StoreUpdateForm, UpdateForm, TotalReservationForm
+from .forms import ManagerUpdateForm, StoreUpdateForm, UpdateForm
 
 
 # 예약조회 - 검색기능 - 전화번호 조회시 기호제거
@@ -40,7 +40,7 @@ from django.http import HttpResponseForbidden
 
 ADMIN_USERS = { "admin" : True,}
 
-
+# Create your views here.
 def store_list(request):
     return render(request, "manager/manager_index.html")
 
@@ -74,8 +74,10 @@ class ManagerStoreList(LoginRequiredMixin, ListView, LoginView, FormView):
 
         context['manager'] = self.get_queryset()
         # print(context['manager'])
+         # QuerySet to list of dicts.
         manager_list_dicts = [model_to_dict(manager) for manager in self.get_queryset()]
         
+        # List of dicts to JSON string.
         context['store_json'] = json.dumps(manager_list_dicts, cls=DjangoJSONEncoder)
 
         if current_user.is_authenticated:
@@ -112,7 +114,31 @@ class ManagerStoreList(LoginRequiredMixin, ListView, LoginView, FormView):
 
         return self.get(request, *args, **kwargs)
     
- 
+  
+# class StoreTimesView(View):
+#     def get(self, request: HttpRequest):
+#         current_user = request.user
+
+#         if current_user.is_authenticated:
+#             # Get the stores owned by the user
+#             stores = rsv.Store.objects.filter(owner=current_user, store_name__isnull=False)[:3]
+
+#             # Get the 'store_id' query parameter from the GET request
+#             query_dict = QueryDict(request.META['QUERY_STRING'])
+#             requested_store_id = query_dict.get('store_id', None)
+
+#             # Get the store times for each store
+#             data = []
+#             for store in stores:
+#                 if requested_store_id is not None and str(store.id) != requested_store_id:
+#                     continue
+                
+#                 rsv_users = rsv.Reservation_user.objects.filter(store_id=store)
+#                 data.append([model_to_dict(rsv_user) for rsv_user in rsv_users])
+
+#             return JsonResponse(data, safe=False)
+#         else:
+#             return JsonResponse([], safe=False)
 
 class StoreTimesView(View):
     def get(self, request):
@@ -136,6 +162,23 @@ class StoreTimesView(View):
         else:
             return JsonResponse([], safe=False)
 
+
+# class ChatRoom(View):
+#     def get(self, request, chatroom, *args, **kwargs):
+#         try:
+#             messages = Message.all_messages(chatroom)
+#             result = []
+#             for message in messages:
+#                 result.append({
+#                     'id': str(message.id),
+#                     'author': message.author.username,
+#                     'recipient': message.recipient.username,
+#                     'content': message.content,
+#                     'timestamp': message.timestamp.strftime("%Y-%m-%d %H:%M"),
+#                 })
+#             return JsonResponse(result, safe=False)
+#         except Message.DoesNotExist:
+#             return JsonResponse({'error': 'Chatroom not found'}, status=404)
 
 class UserInfo(View):
     def get(self, request):
@@ -262,28 +305,118 @@ class Reservation_Details(View):
             print("엘스", rsv_dict)
             return JsonResponse(rsv_dict, safe=False)
 
+    
 
+# fetch2 - 해당날짜 예약정보 fetch로 json으로 보내기 - > 보내고 프론트에서 불러오기
+# class Schedules(View):
+#     def get(self, request, date=None):
+#         current_user = request.user
+
+#         production_current_user(request)
+#         if current_user.is_authenticated:
+
+#         if date:
+#             rsv_model = get_object_or_404(rsv.Reservation_user.objects.defer("pwhash"), id=date)
+#             rsv_dict = model_to_dict(rsv_model)
+#             rsv_dict.pop("pwhash", None)
+#             print("rsv딕트", rsv_dict)
+#         else:
+#             user_id = request.user.id
+#             print(user_id)
+#             rsv_model = rsv.Reservation_user.objects.defer("pwhash").filter(store_id__owner_id=user_id, reservation_check=False)
+#             print("Reservation_Details 엘스", rsv_model)
+#             rsv_dict = [model_to_dict(r) for r in rsv_model]
+#             for r in rsv_dict:
+#                 r.pop("pwhash", None)
+#         return JsonResponse(rsv_dict, safe=False)
+    
+# 03.07 예약정보 fetch로 가져오지않고 웹소켓으로 가져오도록 수정
+# class Schedules(View):
+    
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['store_id'] = self.kwargs.get('store_id')  # store_id를 컨텍스트 변수로 추가
+#         return context
+    
+#     # 03.04 수정전
+#     # def get(self, request, *args, **kwargs):
+#     #     current_user = request.user
+#     #     production_current_user(request)
+#     #     if current_user.is_authenticated:
+#     #         data = defaultdict(list)
+#     #         store_id = self.kwargs.get('pk')
+#     #         reservations = rsv.Reservation_user.objects.filter(store_id=store_id).order_by('reservation_date')
+#     #         for reservation in reservations:
+#     #             data[store_id].append({
+#     #                 'id': reservation.id,
+#     #                 'user_name': reservation.user_name,
+#     #                 'user_phone': reservation.user_phone,
+#     #                 'reservation_date': reservation.reservation_date,
+#     #                 'user_time': reservation.user_time,
+#     #                 'date': reservation.date,
+#     #                 'visitor_num': reservation.visitor_num,
+#     #             })
+#     #     return JsonResponse(data, safe=False)
+
+#     # 수정 03.04
+#     def get(self, request, *args, **kwargs):
+#         current_user = request.user
+#         production_current_user(request)
+#         if current_user.is_authenticated:
+#             data = []
+#             store_id = self.kwargs.get('pk')
+#             reservations = rsv.Reservation_user.objects.filter(store_id=store_id).order_by('reservation_date')
+#             for reservation in reservations:
+#                 data.append({
+#                     # 'id': reservation.id,
+#                     'user_name': reservation.user_name,
+#                     'user_phone': reservation.user_phone,
+#                     'reservation_date': reservation.reservation_date,
+#                     'user_time': reservation.user_time,
+#                     # 'date': reservation.date,
+#                     'visitor_num': reservation.visitor_num,
+#                 })
+#         return JsonResponse(data, safe=False)
+    
+
+
+
+    
+# 기존- 변경해야할부분 시작
+    # 달력
+# def detail_list(request, store_id):
+#     store = get_object_or_404(rsv.Store, id=store_id)
+#     store_time = rsv.Store_times.objects.filter(store_id=store_id)
+#     user_time = rsv.Reservation_user.objects.filter(store_id=store_id)
+
+#     user_dates = []
+#     dates_list = [date.reservation_date for date in user_time]
+#     print(dates_list)
+#     user_dates.append({
+#         "user_dates" : dates_list
+#     })
+#     context = {"user_dates_json" : json.dumps(dates_list, cls=DjangoJSONEncoder)}
+
+
+#     return render(request, "manager/manager_store_detail.html", context)
+
+# 기존- 변경해야할부분 끝
 
 # 통합 - 달력 + 예약조회페이지
-# class Total_Reservation_Check(TemplateView):
-class Total_Reservation_Check(LoginRequiredMixin, UpdateView):
-    model = rsv.Store
-    form_class = TotalReservationForm
+class Total_Reservation_Check(TemplateView):
     template_name = 'manager/manager_store_detail.html'
 
     def dispatch(self, request, *args, **kwargs):
-        # store_id = self.kwargs['store_id']
-        store_id = self.kwargs['pk']
-        store = get_object_or_404(rsv.Store, pk=store_id)
+        store_id = self.kwargs['store_id']
+        store = get_object_or_404(rsv.Store, id=store_id)
         if self.request.user.id != store.owner_id:
             return HttpResponseForbidden("접근권한이 없습니다.")
         return super().dispatch(request, *args, **kwargs)
     
 
     def get_context_data(self, **kwargs):
-        # store_id = self.kwargs['store_id']
-        store_id = self.kwargs['pk']
-        store = get_object_or_404(rsv.Store, pk=store_id)
+        store_id = self.kwargs['store_id']
+        store = get_object_or_404(rsv.Store, id=store_id)
         print("스토어찍어봐라", store.id)
         manager = rsv.Manager.objects.get(user=self.request.user)
         print("매니저찍어봐라", manager.id)
@@ -353,42 +486,124 @@ class Total_Reservation_Check(LoginRequiredMixin, UpdateView):
         return context
     
 
-    def post(self, request, *args, **kwargs):
-        # URL에서 pk값 가져오기
-        requested_store_id = self.kwargs.get('pk')
 
-        # Store테이블의 id값을 가진 객체찾기 (url에서 가져온 store_id값과 일치하는)
-        store = get_object_or_404(rsv.Store, pk=requested_store_id)
+# 수정 시작
+# class ManagerStoreUpdateView(LoginRequiredMixin, FormView):
+#     template_name = 'manager/manager_operate.html'
+#     form_class = ManagerUpdateForm
+#     store_form_class = StoreUpdateForm
+
+#     # 권한설정
+#     # def dispatch(self, request, *args, **kwargs):
+#     #     self.manager = get_object_or_404(Manager, pk=kwargs['pk'])
+#     #     self.store = get_object_or_404(Store, pk=kwargs['store_id'])
         
-        if store:
-            # Store의 owner(User 객체)와 연결된 Manager 찾기
-            # manager_of_the_store = rsv.Manager.objects.filter(user=store.owner).first()
-            # Store의 pk값과 Reservation_user의 store_id값과 일치하는 예약목록 가져오기
-            # rsv_objects = rsv.Reservation_user.objects.filter(store_id=store.pk)
-
-            # HttpResponseRedirect를 위한 전달인자
-            # pk_value = manager_of_the_store.pk
-            # store_id_value = requested_store_id
-
-            # post요청
-            if request.method == 'POST':
-                 # 전달받은 rsv_ids를 리스트로 변환
-                rsv_ids = request.POST.getlist('rsv_ids')
-                print("Requested rsv_ids찍어봐라:", rsv_ids)
-
-                # rsv_ids를 정수형으로 변환
-                rsv_ids = [int(id) for id in rsv_ids]
-
-                # 해당 ID를 가진 예약 삭제
-                rsv.Reservation_user.objects.filter(id__in=rsv_ids, store_id=store.pk).delete()
-
-                # 성공 후 리다이렉트
-                return redirect('store_detail', pk=store.pk)
-                
+#     #     # 조건3개
+#     #     if request.user.is_authenticated and request.user == self.manager.user and self.manager.user == self.store.owner:
+#     #         return super(ManagerStoreUpdateView, self).dispatch(request, *args, **kwargs)
+#     #     else:
+#     #         raise PermissionDenied
 
 
-        return self.get(request, *args, **kwargs)
+#     def get_context_data(self, **kwargs):
+#         context = super(ManagerStoreUpdateView, self).get_context_data(**kwargs)
+#         context['form'] = ManagerUpdateForm(instance=self.manager)
+#         context['form_store'] = StoreUpdateForm(instance=self.store)
+#         context['manager'] = self.manager
+#         context['store'] = self.store
+
+
+#         name = self.request.GET.get('name')
+#         phone = self.request.GET.get('phone')
+#         kw = self.request.GET.get('kw')
+        
+#         date_filter = Q()
+#         if kw:
+#             try:
+#                 datetime.strptime(kw, '%Y-%m-%d')
+#                 date_filter = Q(reservation_date__icontains=kw)
+#             except ValueError:
+#                 try:
+#                     datetime.strptime(kw, '%Y-%m')
+#                     date_filter = Q(reservation_date__icontains=kw)
+#                 except ValueError:
+#                     date_filter = Q(reservation_date__startswith=kw)
+                    
+#         phone_without_hyphen = phone.replace("-", "") if phone else None
+
+#         reservations = Reservation_user.objects.annotate(
+#             user_phone_without_hyphen=Replace('user_phone', Value('-'), Value(''), output_field=CharField())
+#         ).filter(
+#             Q(user_name__icontains=name) if name else Q(),
+#             Q(user_phone_without_hyphen__icontains=phone_without_hyphen) if phone else Q(),
+#             date_filter if kw else Q(),
+#             store_id=self.store
+#         ).distinct()
+
+#         paginator = Paginator(reservations, 10)
+#         page_number = self.request.GET.get('page')
+#         page_obj = paginator.get_page(page_number)
+
+#         context['page_obj'] = page_obj
+#         context['kw'] = kw
+
+#         return context
+
+#     def form_valid(self, form):
+#         manager_form = form
+#         store_form = self.store_form_class(self.request.POST, instance=self.store)
+
+#         if manager_form.is_valid() and store_form.is_valid():
+#             manager_form.save()
+#             store_form.save()
+#             return HttpResponseRedirect(reverse('success_page'))
+#         else:
+#             return self.form_invalid(form)
+
+#     def form_invalid(self, form):
+#         context = super(ManagerStoreUpdateView, self).get_context_data()
+#         context['form'] = form
+#         context['form_store'] = self.store_form_class(self.request.POST, instance=self.store)
+#         return self.render_to_response(context)
+# 수정 끝
+
     
+    # def get_context_data(self, **kwargs):
+    #     context = {}
+    #     current_user = self.request.user
+    #     context["username"] = current_user.username if current_user.is_authenticated else None
+    #     # for admin_user in ADMIN_USERS.keys():
+    #     #     context["adminusers"] = admin_user
+
+    #     context["adminusers"] = list(ADMIN_USERS.keys())
+
+    #     context['manager'] = self.get_queryset()
+
+    #     # QuerySet to list of dicts.
+    #     manager_list_dicts = [model_to_dict(manager) for manager in context['manager']]
+        
+    #     # List of dicts to JSON string.
+    #     context['store_json'] = json.dumps(manager_list_dicts, cls=DjangoJSONEncoder)
+    #     if current_user.is_authenticated:
+    #         rsvs = rsv.Reservation_user.objects.all().order_by("-reservation_date")
+    #         messages = self.get_messages(current_user.username)
+    #         context["rsvs"] = rsvs
+    #         context["messages"] = messages
+    #     return JsonResponse(context, safe=False)
+
+# class ManagerStoreList(LoginRequiredMixin, ListView):
+#     model = rsv.Store
+#     template_name = "manager/manager_index.html"
+
+#     def get_queryset(self):
+#         current_user = self.request.user
+#         manager = rsv.Store.objects.filter(owner=current_user)
+#         return manager
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['manager'] = self.get_queryset()
+#         return context
 
     
 class UserSignUpView(CreateView):
@@ -403,6 +618,7 @@ class UserSignUpView(CreateView):
 
     def form_valid(self, form):
         user = form.save(commit=False)
+        # 필요한 처리 수행
         user.save()
 
         # Create Manager instance
@@ -431,6 +647,7 @@ class UserLoginView(LoginView):
     form_class = AuthenticationForm
     template_name = "manager/manager_login.html"
     success_url = reverse_lazy("index")  
+    # 원하는 인덱스 페이지 이름을 사용하십시오.
 
 def write(request):
    
@@ -499,8 +716,10 @@ class AdminChat2(ListView):
 
         context['manager'] = self.get_queryset()
 
+        # QuerySet to list of dicts.
         manager_list_dicts = [model_to_dict(manager) for manager in context['manager']]
         
+        # List of dicts to JSON string.
         context['store_json'] = json.dumps(manager_list_dicts, cls=DjangoJSONEncoder)
         if current_user.is_authenticated:
             rsvs = rsv.Reservation_user.objects.all().order_by("-reservation_date")
@@ -509,6 +728,8 @@ class AdminChat2(ListView):
             context["messages"] = messages
         return context
     
+     
+
 
 
 # 기본 예약조회
@@ -605,45 +826,14 @@ class Test123(LoginRequiredMixin, UpdateView):
         return get_object_or_404(rsv.Store, pk=store_id)
     
 
-# 임시(현재 사용x)
-# class Update2(LoginRequiredMixin, UpdateView):
-#     model = rsv.Store
-#     form_class = UpdateForm
-#     template_name = 'manager/manager_update_form.html'
-
-#     def get_object(self, queryset=None):
-#         # URL에서 store_id를 사용하여 Store 객체 찾기
-#         store_id = self.kwargs.get('store_id')
-#         return get_object_or_404(rsv.Store, id=store_id)
-
-#     def dispatch(self, request, *args, **kwargs):
-#         self.store = self.get_object()
-        
-#         # 현재 로그인한 사용자가 Store의 owner와 일치하는지 확인
-#         if request.user.is_authenticated and request.user == self.store.owner:
-#             return super(Update2, self).dispatch(request, *args, **kwargs)
-#         else:
-#             raise PermissionDenied
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-        
-#         # URL에서 store_id값 가져오기
-#         requested_store_id = self.kwargs.get('store_id')
-#         context['requested_store_id'] = requested_store_id
-
-#         return context
-
-
-# 수정완 - pk하나로 변경
-class Update(LoginRequiredMixin, UpdateView):
+# pk값 하나떼버림..임시
+class Update2(LoginRequiredMixin, UpdateView):
     model = rsv.Store
     form_class = UpdateForm
     template_name = 'manager/manager_update_form.html'
-    # print("야 되냐")
-    
+
     def get_object(self, queryset=None):
-        # URL에서 store_id를 사용하여 Store 객체 찾기
+        # URL에서 store_id를 사용하여 Store 객체를 찾습니다.
         store_id = self.kwargs.get('store_id')
         return get_object_or_404(rsv.Store, id=store_id)
 
@@ -652,9 +842,51 @@ class Update(LoginRequiredMixin, UpdateView):
         
         # 현재 로그인한 사용자가 Store의 owner와 일치하는지 확인
         if request.user.is_authenticated and request.user == self.store.owner:
-            return super(Update, self).dispatch(request, *args, **kwargs)
+            return super(Update2, self).dispatch(request, *args, **kwargs)
         else:
             raise PermissionDenied
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # URL에서 store_id값 가져오기
+        requested_store_id = self.kwargs.get('store_id')
+        context['requested_store_id'] = requested_store_id
+
+        return context
+
+# 수정중..update2보고서 pk값 떼서 수정하기
+class Update(LoginRequiredMixin, UpdateView):
+    model = rsv.Store
+    form_class = UpdateForm
+    template_name = 'manager/manager_update_form.html'
+    # print("야 되냐")
+
+    # 임시...테스트용 form_vaild검증 없이 그냥 post요청 들어오면 update_data함수 실행되도록함..
+    # def post(self, request, *args, **kwargs):
+    #     self.update_data(request, **kwargs)  # update_data 함수 호출
+    #     return super().post(request, *args, **kwargs)  # 원래 post 함수 호출
+    
+    # 얘도 임시...나중 수정하기
+    # def get_object(self, queryset=None):
+    #     requested_store_id = self.kwargs.get('store_id')
+    #     return get_object_or_404(rsv.Store, pk=requested_store_id)
+
+
+    # 권한설정
+    def dispatch(self, request, *args, **kwargs):
+        # print("? 되냐")
+        self.manager = get_object_or_404(rsv.Manager, pk=kwargs['pk'])
+        self.store = get_object_or_404(rsv.Store, pk=kwargs['store_id'])
+        
+        # 조건3개
+        if request.user.is_authenticated and request.user == self.manager.user and self.manager.user == self.store.owner:
+            print("여긴가1")
+            return super(Update, self).dispatch(request, *args, **kwargs)
+        else:
+            print("여긴가2")
+            raise PermissionDenied
+
 
     def get_context_data(self, **kwargs):
         print("여긴 되냐")
@@ -687,6 +919,7 @@ class Update(LoginRequiredMixin, UpdateView):
             # print("찍어보자3", sto_time_objects)
             # print("찍어보자3-1", sto_time_objects.values)
             
+            
             sto_time_values_list  = {
                 'store_id': store.pk,
                 'sto_time': list(sto_time_objects.values()),
@@ -695,6 +928,7 @@ class Update(LoginRequiredMixin, UpdateView):
             print()
             # print("찍어보자4 ", sto_time_values_list)
             print()
+
 
             # 예약 정보 가져오기
             # Reservation_user
@@ -738,7 +972,10 @@ class Update(LoginRequiredMixin, UpdateView):
         # print("콘텍스트", context)
         return context
 
-    # post요청 -> 수정
+
+
+
+    # update함수 만들기
     def post(self, request, *args, **kwargs):
 
         # URL에서 store_id값 가져오기
@@ -896,8 +1133,7 @@ class Update(LoginRequiredMixin, UpdateView):
 
 
                 # POST 처리 완료 시 리디렉션
-                # return HttpResponseRedirect(reverse('update', kwargs={'pk': pk_value, 'store_id': store_id_value}))
-                return HttpResponseRedirect(reverse('update3', kwargs={'store_id': store_id_value}))
+                return HttpResponseRedirect(reverse('update', kwargs={'pk': pk_value, 'store_id': store_id_value}))
         
         return self.get(request, *args, **kwargs)
     

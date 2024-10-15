@@ -1,6 +1,41 @@
 
 <script>
 
+const checkboxes = document.querySelectorAll('input[type="checkbox"][name="del-rsv"]');
+const deleteButton = document.querySelector('.del-bt');
+let selected = []; // 선택된 체크박스 저장
+
+
+// (예약삭제) 체크박스 상태 변경 시
+checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+        if (checkbox.checked) {
+            // 중복 체크 방지
+            if (!selected.includes(checkbox)) {
+                selected.push(checkbox);
+            }
+        } else {
+            // 체크 해제된 경우 배열에서 제거
+            selected = selected.filter(item => item !== checkbox);
+        }
+        console.log('선택된 체크박스:', selected.map(cb => cb.value));
+    });
+});
+
+// (예약삭제) 삭제 버튼 클릭 시
+deleteButton.addEventListener('click', function() {
+    if (selected.length > 0) {
+        event.preventDefault();
+        submitSelected(selected); // 선택된 체크박스 배열을 인자로 전달
+    } else {
+        console.log('선택된 체크박스가 없습니다.');
+    }
+});
+
+
+
+
+
   let resizer; 
   // 달력 js
   let clickedInputs = [];
@@ -458,5 +493,27 @@ function resizable(ele) {
       }
 		});
 	});
+
+  // (예약삭제) 선택된 체크박스 배열을 인자로 전달받아 -> hidden으로 보냄 
+  function submitSelected(checkboxes) {
+      const form = document.getElementById('reservationForm');
+      const selectedIds = checkboxes.map(cb => cb.value)
+
+
+      // 새로운 hidden 입력 추가 - 선택한 input들의 아이디값들을 전달
+      selectedIds.forEach(id => {
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'rsv_ids';
+        hiddenInput.value = id;
+        form.appendChild(hiddenInput);
+      });
+      console.log(selectedIds);
+      // 폼 제출
+      form.submit();
+    
+  }
+
+    
       
 </script>

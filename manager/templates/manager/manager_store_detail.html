@@ -78,7 +78,7 @@
                   <!-- 템플릿태그 일단 주석 -->
                   <!-- <form action=" url 'mng_update' pk=manager.pk store_id=store.pk " method="get"> -->
                   <div class="search_wrap">
-                    <form action="{% url 'store_detail' store_id=store.pk %}" method="get">
+                    <form action="{% url 'store_detail' pk=store.pk %}" method="get">{% csrf_token %}
                       <div class="store_item1">
                         <!-- 주석<label for="search_kw">예약일 예시&#41; 2024-01-01 / 2024-01 / 2024</label>  -->
                         <div class="align_boxes">
@@ -123,7 +123,7 @@
                   <div class="store_item2">
                     <div class="head_user">
                       <div class="side">
-                        <button class="del-bt">예약삭제</button>
+                        <button type="button" class="del-bt">예약삭제</button>
                       </div>
                       <div class="category">
                         <span>이름</span>
@@ -136,13 +136,19 @@
                           </div> 주석 -->
                     </div>
                     <hr>
-                    {% for rsv in page_obj %}
-                    <div class="user-info">
-                      <p><input type="checkbox" name="del-rsv" value="삭제">이름: {{ rsv.user_name }}</p>
-                      <p>전화번호: {{ rsv.user_phone }}</p>
-                      <p>예약일: {{ rsv.reservation_date }}</p>
-                      <p>예약 시간: {{ rsv.user_time }}</p>
-                    </div>
+                    <form id="reservationForm" action="{% url 'store_detail' pk=store.pk %}" method="post">{% csrf_token %}
+                      {% for rsv in page_obj %}
+                      <div class="user-info">
+                        <!-- <p>아이디: {{ rsv.id }}</p> -->
+                        <p>
+                          <input type="checkbox" name="del-rsv" value="{{ rsv.id }}">이름: {{ rsv.user_name }}
+                          <input type="hidden" name="rsv_id" value="{{ rsv.id }}">
+                        </p>
+                        <p>전화번호: {{ rsv.user_phone }}</p>
+                        <p>예약일: {{ rsv.reservation_date }}</p>
+                        <p>예약 시간: {{ rsv.user_time }}</p>
+                      </div>
+                    </form>
                     <hr>
                     {% endfor %}
                   </div>

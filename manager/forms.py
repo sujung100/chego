@@ -35,6 +35,11 @@ class UpdateForm(forms.ModelForm):
         model = Store
         fields = ['id', 'store_name', 'address', 'owner']
 
+class TotalReservationForm(forms.ModelForm):
+    class Meta:
+        model = Store
+        fields = ['id', 'owner']
+
 # class ManagerUpdateForm(forms.ModelForm):
 #     class Meta:
 #         model = Store

@@ -137,102 +137,57 @@
                     </div>
                     <hr>
                     <form id="reservationForm" action="{% url 'store_detail' pk=store.pk %}" method="post">{% csrf_token %}
-                      {% if request.GET.name or request.GET.phone or request.GET.kw %}
-                        {% if 2nd_obj %}
-                          {% for rsv in 2nd_obj %}
-                          <div class="user-info">
-                            <p>
-                              <input type="checkbox" name="del-rsv" value="{{ rsv.id }}">이름: {{ rsv.user_name }}
-                              <input type="hidden" name="rsv_id" value="{{ rsv.id }}">
-                            </p>
-                            <p>전화번호: {{ rsv.user_phone }}</p>
-                            <p>예약일: {{ rsv.reservation_date }}</p>
-                            <p>예약 시간: {{ rsv.user_time }}</p>
-                          </div>
-                          <hr>
-                          {% endfor %}
-                        {% else %}
-                        <p>예약 정보가 없습니다.</p>
-                        {% endif %}
-
-                        {% else %}
-                        {% for rsv in 1st_obj %}
-                          <div class="user-info">
-                            <p>
-                              <input type="checkbox" name="del-rsv" value="{{ rsv.id }}">이름: {{ rsv.user_name }}
-                              <input type="hidden" name="rsv_id" value="{{ rsv.id }}">
-                            </p>
-                            <p>전화번호: {{ rsv.user_phone }}</p>
-                            <p>예약일: {{ rsv.reservation_date }}</p>
-                            <p>예약 시간: {{ rsv.user_time }}</p>
-                          </div>
-                          <hr>
-                        {% endfor %}
-                      {% endif %}
+                      {% for rsv in page_obj %}
+                      <div class="user-info">
+                        <!-- <p>아이디: {{ rsv.id }}</p> -->
+                        <p>
+                          <input type="checkbox" name="del-rsv" value="{{ rsv.id }}">이름: {{ rsv.user_name }}
+                          <input type="hidden" name="rsv_id" value="{{ rsv.id }}">
+                        </p>
+                        <p>전화번호: {{ rsv.user_phone }}</p>
+                        <p>예약일: {{ rsv.reservation_date }}</p>
+                        <p>예약 시간: {{ rsv.user_time }}</p>
+                      </div>
                     </form>
-
+                    <hr>
+                    {% endfor %}
                   </div>
-                  <!-- 페이지네이션1 (기본페이지 - 쿼리x)  -->
-                  <div class="pagination1">
+                  <!-- 페이지네이션  -->
+                  <div class="pagination">
                     <span class="step-links">
-                      {% if 1st_obj.has_previous %}
-                      <a href="?first_page=1">&laquo;처음</a>
-                      <a href="?first_page={{ 1st_obj.previous_page_number }}">이전</a>
+                      {% if page_obj.has_previous %}
+                      <a
+                        href="?page=1&name={{ request.GET.name|default:'' }}&phone={{ request.GET.phone|default:'' }}&kw={{ request.GET.kw|default:'' }}">&laquo;
+                        처음</a>
+                      <a
+                        href="?page={{ page_obj.previous_page_number }}&name={{ request.GET.name|default:'' }}&phone={{ request.GET.phone|default:'' }}&kw={{ request.GET.kw|default:'' }}">이전</a>
                       {% else %}
                       <span class="disabled">&laquo; 처음</span>
                       <span class="disabled">이전</span>
                       {% endif %}
-
-                      {% for num in 1st_obj.first_pgt.page_range %}
-                      {% if 1st_obj.number == num %}
-                      <a href="?first_page={{ num }}" class="active">{{ num }}</a>
+                      {% for num in page_obj.paginator.page_range %}
+                      {% if page_obj.number == num %}
+                      <a href="?page={{ num }}&name={{ request.GET.name|default:'' }}&phone={{ request.GET.phone|default:'' }}&kw={{ request.GET.kw|default:'' }}"
+                        class="active">{{ num }}</a>
                       {% else %}
-                      <a href="?first_page={{ num }}">{{num }}</a>
+                      <a
+                        href="?page={{ num }}&name={{ request.GET.name|default:'' }}&phone={{ request.GET.phone|default:'' }}&kw={{ request.GET.kw|default:'' }}">{{
+                        num }}</a>
                       {% endif %}
                       {% endfor %}
-
-                      {% if 1st_obj.has_next %}
-                      <a href="?first_page={{ 1st_obj.next_page_number }}">다음</a>
-                      <a href="?first_page={{ 1st_obj.first_pgt.num_pages }}">마지막&raquo;</a>
+                      {% if page_obj.has_next %}
+                      <a
+                        href="?page={{ page_obj.next_page_number }}&name={{ request.GET.name|default:'' }}&phone={{ request.GET.phone|default:'' }}&kw={{ request.GET.kw|default:'' }}">다음</a>
+                      <a
+                        href="?page={{ page_obj.paginator.num_pages }}&name={{ request.GET.name|default:'' }}&phone={{ request.GET.phone|default:'' }}&kw={{ request.GET.kw|default:'' }}">마지막
+                        &raquo;</a>
                       {% else %}
                       <span class="disabled">다음</span>
                       <span class="disabled">마지막 &raquo;</span>
                       {% endif %}
-
                     </span>
                   </div>
-                  <!--  페이지네이션1 끝  -->
-
-                  <!-- 페이지네이션2 (쿼리있는경우- 검색시)  -->
-                  <div class="pagination2">
-                    <span class="step-links">
-                      {% if 2nd_obj.has_previous %}
-                      <a href="?second_page=1&name={{ request.GET.name|default:'' }}&phone={{ request.GET.phone|default:'' }}&kw={{ request.GET.kw|default:'' }}">&laquo;처음</a>
-                      <a href="?second_page={{ 2nd_obj.previous_page_number }}&name={{ request.GET.name|default:'' }}&phone={{ request.GET.phone|default:'' }}&kw={{ request.GET.kw|default:'' }}">이전</a>
-                      {% else %}
-                      <span class="disabled">&laquo; 처음</span>
-                      <span class="disabled">이전</span>
-                      {% endif %}
-                      
-                      {% for num in 2nd_obj.second_pgt.page_range %}
-                      {% if 2nd_obj.number == num %}
-                      <a href="?second_page={{ num }}&name={{ request.GET.name|default:'' }}&phone={{ request.GET.phone|default:'' }}&kw={{ request.GET.kw|default:'' }}" class="active">{{ num }}</a>
-                      {% else %}
-                      <a href="?second_page={{ num }}&name={{ request.GET.name|default:'' }}&phone={{ request.GET.phone|default:'' }}&kw={{ request.GET.kw|default:'' }}">{{ num }}</a>
-                      {% endif %}
-                      {% endfor %}
-
-                      {% if 2nd_obj.has_next %}
-                      <a href="?second_page={{ 2nd_obj.next_page_number }}&name={{ request.GET.name|default:'' }}&phone={{ request.GET.phone|default:'' }}&kw={{ request.GET.kw|default:'' }}">다음</a>
-                      <a href="?second_page={{ 2nd_obj.second_pgt.num_pages }}&name={{ request.GET.name|default:'' }}&phone={{ request.GET.phone|default:'' }}&kw={{ request.GET.kw|default:'' }}">마지막&raquo;</a>
-                      {% else %}
-                      <span class="disabled">다음</span>
-                      <span class="disabled">마지막 &raquo;</span>
-                      {% endif %}
-
-                    </span>
-                  </div>
-                  <!-- 페이지네이션2 끝  -->
+                  <!-- 주석 페이지네이션 끝  -->
 
                 </div>
                 <!-- 드래그 영역 -->

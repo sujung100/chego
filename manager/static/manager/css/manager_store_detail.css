@@ -1175,7 +1175,12 @@ a:active {
   margin-right: 0.5rem;
 }
 
-.pagination {
+.pagination1 {
+  display: flex;
+  justify-content: center;
+}
+
+.pagination2 {
   display: flex;
   justify-content: center;
 }

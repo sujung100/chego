@@ -329,32 +329,12 @@ class Total_Reservation_Check(LoginRequiredMixin, UpdateView):
             store_id=store
         ).distinct()
 
-        # 10.15 수정전
-        # paginator = Paginator(reservations, 5)
-        # page_number = self.request.GET.get('page')
-        # page_obj = paginator.get_page(page_number)
+        paginator = Paginator(reservations, 5)
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
 
-        # context['page_obj'] = page_obj
-        # context['kw'] = kw
-
-
-        # 수정중
-        # 첫 번째 페이지네이션
-        first_pgt = Paginator(reservations, 5)
-        first_num = self.request.GET.get('first_page')
-        first_obj= first_pgt.get_page(first_num)
-
-        # 두 번째 페이지네이션
-        second_pgt = Paginator(reservations, 5)
-        second_num = self.request.GET.get('second_page')
-        print("페이지찍어봐", second_num)
-        second_obj = second_pgt.get_page(second_num)
-
-        context['1st_obj'] = first_obj
-        context['2nd_obj'] = second_obj
+        context['page_obj'] = page_obj
         context['kw'] = kw
-
-
 
         # 달력
         store_time = rsv.Store_times.objects.filter(store_id=store_id)

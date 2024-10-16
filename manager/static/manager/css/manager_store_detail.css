@@ -633,13 +633,13 @@ opacity: 0;
 
 /* a태그 효과 */
 a {
-  display: block;
-  position: absolute;
-  margin: -6000px 0 0 0;
-  padding: 0.3px;
-  z-index: 3;
-  -webkit-transition-property: margin;
-  -webkit-transition-duration: 0.01s;
+  /* display: block;
+  position: absolute; */
+  /* margin: -6000px 0 0 0; */
+  /* padding: 0.3px;
+  z-index: 3; */
+  /* -webkit-transition-property: margin;
+  -webkit-transition-duration: 0.01s; */
 }
 
 #coke {
@@ -1180,9 +1180,17 @@ a:active {
   justify-content: center;
 }
 
+.pagination1 a {
+  padding: 6px;
+}
+
 .pagination2 {
   display: flex;
   justify-content: center;
+}
+
+.pagination2 a {
+  padding: 6px;
 }
 
 @media screen and (max-width:6000px){

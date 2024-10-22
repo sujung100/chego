@@ -44,18 +44,16 @@ deleteButton.addEventListener('click', function() {
     buildCalendar(); // 웹 페이지가 로드되면 buildCalendar 실행
     // fetchReservation(); // fetch로 예약정보 불러오기
 
+    // align_boxes > checkbox의 검색옵션(이름, 전화번호, 날짜) 체크박스 선택시 효과
 		const checkboxes = document.querySelectorAll('.align_boxes input[type="checkbox"]');
-    
 		checkboxes.forEach(checkbox => {
       checkbox.checked = true;  // 모든 체크박스 체크
       var inputId = checkbox.getAttribute('data-input-id');
       var input = document.getElementById(inputId);
-
       // clickedInputs 배열에 추가
       if (!clickedInputs.includes(inputId)) {
           clickedInputs.push(inputId);
       }
-
       input.addEventListener('focus', function() {
 				var label = this.nextElementSibling;  // 검색 input의 label 선택
 				label.style.top = '-20px';
@@ -63,7 +61,6 @@ deleteButton.addEventListener('click', function() {
 				label.style.color = '#03e9f4';
 				label.style.fontSize = '12px';
 			});
-
 			input.addEventListener('blur', function () {
 				var label = this.nextElementSibling;  // 검색 input의 label 선택
 				if (!this.value) {
@@ -73,9 +70,9 @@ deleteButton.addEventListener('click', function() {
 					label.style.fontSize = '16px';
 				}
 			});
-
       // input.focus();
 		});
+
   }
 
 
@@ -514,6 +511,6 @@ function resizable(ele) {
     
   }
 
-    
+
       
 </script>

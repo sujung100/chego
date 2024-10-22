@@ -74,6 +74,7 @@ body {
 .content1 .cont_box1 {
   display: flex;
   justify-content: end;
+  padding: 2rem 0 0 0;
 }
 .inner_div1{
   /* width: 1100px;
@@ -91,13 +92,15 @@ body {
   height: 650px; */
   /* width: 96%;
   height: 95%; */
-  width: 96%;
+  /* width: 96%; */
+  width: calc(100% - 6rem);
   height: 90%;
   /* background-color: #C3ACD0; */
   /* background-color: #EADBC8; */
   background-color: #e0dede9e;
-  border-radius: 0 0 0 10px ;
-  padding: 0 0 1rem 1rem;
+  border-radius: 10px 0 0 10px ;
+  /* padding: 0 0 1rem 1rem; */
+  padding: 1rem 0 1rem 1rem;
   margin: 0 0 0 2rem;
 
 }
@@ -110,7 +113,7 @@ body {
   height: 95%;
   justify-content: center;
   /* padding: 2rem 0 0.2rem 1.5rem; */
-  padding: 2rem 0 0 1.5rem;
+  padding: 2rem 0 0 0;
   /* background-color: #F7EFE5; */
   /* background-color: #FEFAF6; */
   /* background-color: #F8F0DF; */
@@ -120,8 +123,22 @@ body {
   /* display: flex;
   flex-direction: column; */
 }
+
+/* 구글폰트 아이콘 전체설정 */
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 700,
+  'GRAD' 200,
+  'opsz' 40
+  ;
+  font-size: 20px;
+  font-weight: bold;
+}
+
 .cont {
-  width: 100%;
+  width: calc(100% - 4rem);
+  margin-left: 1.8rem;
 }
 /* .tab_menu {
   width: 4rem;
@@ -130,9 +147,41 @@ body {
 }
  */
 
+.cont_box1 .inner_div3 .left_bar {
+  /* position: absolute; */
+  /* top: 0;
+  left: 10px; */
+  width: 4rem;
+  height: calc(100% - 4rem);
+  /* border: 1px solid red; */
+  border-right: 2px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin-bottom: 2rem;
+}
+
+.cont_box1 .inner_div3 .left_bar .bar_icons {
+  margin-bottom: 4rem;
+}
+
+.cont_box1 .inner_div3 .left_bar .bar_icons:hover {
+  background-color: #F5D042;
+  padding: 4px;
+  border-radius: 16px;
+}
+
+.cont_box1 .inner_div3 .left_bar .bar_icons a {
+  text-decoration: none;
+  color: black;
+}
+
+
 /* 오른쪽 탭 */
 .content1 .cont_box2 {
   width: 100%;
+  padding: 2rem 0 0 0;
 }
 .inner_div4{
   width: 100%;
@@ -148,14 +197,16 @@ body {
 .content1 .cont_box2 .inner_div5{
   /* width: 90%;
   height: 95%; */
-  width: 89%;
+
+  /* width: 89%; */
+  width: calc(100% - 6rem);
   height: 90%;
   /* background-color: #e2d0eb; */
   /* background-color: #a7b7e6; */
   /* background-color: #fef2e2; */
   background-color: #edececbe;
-  border-radius: 0 0 10px 0;
-  padding: 0 1rem 1rem 0;
+  border-radius: 0 10px 10px 0;
+  padding: 1rem 1rem 1rem 0;
   margin: 0 2rem 0 0;
   /* border: 1px solid yellow; */
 }
@@ -819,15 +870,33 @@ a:active {
   background: transparent;
 }
 
+ /* 10.21 수정 */
 .align_inputs .input_box label {
   position: absolute;
   top:0;
   left: 0;
+  color: #bbb;
+  transition: .5s;
   padding: 10px 0;
   font-size: 16px;
-  color: #bbb;
   pointer-events: none;
-  transition: .5s;
+  
+}
+
+ /* 10.21 수정 */
+.align_inputs .input_box label.active {
+  /* position: absolute;
+  top:0;
+  left: 0; */
+  /* color: #bbb; */
+  /* padding: 10px 0;
+  font-size: 16px;
+  pointer-events: none; */
+  /* transition: .5s; */
+  top: -20px;
+  left: 0;
+  color: #03e9f4;
+  font-size: 12px;
 }
 /* 
 .align_inputs .input_box .search-input:focus ~ label, 
@@ -862,6 +931,16 @@ a:active {
   background-color: #333;
   margin: 0.4rem 0 0 0;
   width: 3rem;
+}
+
+.store_item1 .align_inputs .refresh_icon {
+  margin-top: 10px;
+  margin-left: 6px;
+}
+
+.store_item1 .align_inputs a {
+  text-decoration: none;
+  color: black;
 }
 
 
@@ -1197,4 +1276,24 @@ a:active {
   body{
     width:100%;
   }
+}
+
+/*노트북 & 태블릿 가로 : 1024px-1279px*/
+@media all and (min-width:1024px) and (max-width:1279px){
+  #all {display: none;}
+}
+
+/*태블릿 가로 : 769px-1023px*/
+@media all and (min-width:768px) and (max-width:1023px){
+  #all {display: none;}
+}
+
+/*모바일 가로 & 태블릿 세로 : 480px-767px*/
+@media all and (min-width:480px) and (max-width:767px){
+  #all {display: none;}
+}
+
+/*모바일 : -479px*/
+@media all and (max-width:479px){
+  #all {display: none;}
 }

@@ -6,6 +6,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{% static 'manager/css/manager_store_detail.css' %}?after">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
   <title>가게 상세페이지</title>
 </head>
 <body>
@@ -16,14 +17,19 @@
         <div class="cont_box1 inner_div2">
           <div class="cont_box1 inner_div3">
             <!-- <div class="tab_menu"></div> -->
+            <div class="left_bar">
+              <span class="material-symbols-outlined bar_icons"><a href="{% url 'sungwoo' %}">home</a></span>
+              <span class="material-symbols-outlined bar_icons"><a href="">more_time</a></span>
+              <span class="material-symbols-outlined bar_icons"><a href="{% url 'admin_chat2' %}">forum</a></span>
+            </div>
             <div class="cont">
               <div class="buttons">
                 <!-- <button class="up-bt">수정</button> -->
                 <!-- <button class="del-bt">예약삭제</button> -->
                 <div>예약조회 및 검색</div>
-                <a href="/manager/sung/">
+                <!-- <a href="/manager/sung/">
                   <button class="rsv_test" type="button">홈홈홈</button>
-                </a>
+                </a> -->
               </div>
               <div class="section1 container">
                 <!-- <div class="book_area1">
@@ -102,19 +108,23 @@
                           <div class="input_box">
                             <input type="text" id="search_name" name="name" value="{{ request.GET.name|default:'' }}"
                               autocomplete="off" class="search-input">
-                            <label for="search_name">이름</label>
+                              <!-- 10.21 수정 -->
+                            <label for="search_name" class="{{ css_class1 }}">이름</label>
                           </div>
                           <div class="input_box">
                             <input type="text" id="search_phone" name="phone" value="{{ request.GET.phone|default:'' }}"
                               autocomplete="off" class="search-input">
-                            <label for="search_phone">전화번호</label>
+                              <!-- 10.21 수정 -->
+                            <label for="search_phone" class="{{ css_class2 }}">전화번호</label>
                           </div>
                           <div class="input_box">
                             <input type="text" id="search_kw" name="kw" value="{{ kw|default_if_none:'' }}"
                               autocomplete="off" class="search-input">
-                            <label for="search_kw">예약일</label>
+                              <!-- 10.21 수정 -->
+                            <label for="search_kw" class="{{ css_class3 }}">예약일</label>
                           </div>
                           <button type="submit" id="btn_search">검색</button>
+                          <span class="material-symbols-outlined refresh_icon"><a href="{% url 'store_detail' pk=store.pk %}">replay</a></span>
                         </div>
                       </div>
                     </form>

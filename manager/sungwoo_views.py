@@ -370,6 +370,22 @@ class Total_Reservation_Check(LoginRequiredMixin, UpdateView):
 
         print("전체 콘텍스트 출력: ", context)
 
+
+        input1 = self.request.GET.get('name', '')
+        input2 = self.request.GET.get('phone', '')
+        input3 = self.request.GET.get('kw', '')
+
+        # 각 입력값에 따라 CSS 클래스를 설정
+        context['css_class1'] = 'active' if input1 else ''
+        context['css_class2'] = 'active' if input2 else ''
+        context['css_class3'] = 'active' if input3 else ''
+
+        context['input1'] = input1
+        context['input2'] = input2
+        context['input3'] = input3
+        context['request'] = self.request
+        
+
         return context
     
 
@@ -402,8 +418,19 @@ class Total_Reservation_Check(LoginRequiredMixin, UpdateView):
                 # 해당 ID를 가진 예약 삭제
                 rsv.Reservation_user.objects.filter(id__in=rsv_ids, store_id=store.pk).delete()
 
+                # POST 요청 시 입력값을 가져오기
+                input1 = request.POST.get('input1', '')
+                input2 = request.POST.get('input2', '')
+                input3 = request.POST.get('input3', '')
+
+                # 쿼리 매개변수로 입력값을 전달하여 리다이렉트
+                return redirect(f"{reverse('input_view')}?input1={input1}&input2={input2}&input3={input3}", pk=store.pk)
+
+                
+
+                # 10.21 수정
                 # 성공 후 리다이렉트
-                return redirect('store_detail', pk=store.pk)
+                # return redirect('store_detail', pk=store.pk)
                 
 
 

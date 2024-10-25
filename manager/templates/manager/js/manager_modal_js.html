@@ -39,18 +39,18 @@
   }
 
   async function reserVationDetails(socket, data) {
-    console.log("모달 스크립트");
+    // console.log("모달 스크립트");
     let reservationId = data.content;
-    console.log("reserVationDetails", reservationId);
+    // console.log("reserVationDetails", reservationId);
     let rsvFetch = await fetch(`api/reservation_id/${reservationId}`);
     // console.log(rsvFetch);
-    let rsvdata = await rsvFetch.json();
-    console.log(rsvdata);
-    if (rsvdata.rsv_check !== 0) {
+    let rsvdata2 = await rsvFetch.json();
+    // console.log(rsvdata);
+    if (rsvdata2.rsv_check !== 0) {
       ntfIcon_count.style.display = "flex";
-      ntfIcon_count.textContent = rsvdata.rsv_check
+      ntfIcon_count.textContent = rsvdata2.rsv_check
     }
-    rsvNotification(socket, rsvdata);
+    rsvNotification(socket, rsvdata2);
   }
 
   // async function rsvNotification(rsvdata) {
@@ -82,9 +82,10 @@
     // console.log("노티피레져베이션");
     const reservation_card = document.querySelector("#reservation-info");
 
-    // console.log("rsvdata", rsvdata);
+    // console.log("배열", rsvdata);
     if (Array.isArray(rsvdata)) {
       console.log("배열", rsvdata);
+      
       for (let i = 0; i < rsvdata.length; i++) {
         let rsvInfo = rsvdata[i];
         let card = document.createElement("div");

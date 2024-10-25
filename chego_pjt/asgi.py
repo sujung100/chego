@@ -13,8 +13,9 @@ import reservation.routing
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'chego_pjt.settings')
 
-websocket_urlpatterns = reservation.routing.websocket_urlpatterns + manager.routing.websocket_urlpatterns
-
+websocket_urlpatterns = reservation.routing.websocket_urlpatterns + manager.routing.websocket_urlpatterns  
+# websocket_urlpatterns = manager.routing.websocket_urlpatterns + reservation.routing.websocket_urlpatterns 
+# websocket_urlpatterns = manager.routing.websocket_urlpatterns 
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
     "websocket": AllowedHostsOriginValidator(

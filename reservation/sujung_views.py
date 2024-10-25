@@ -143,6 +143,7 @@ class Idx_list(TemplateView):
                 channel_layer = get_channel_layer()
                 room_name = request.POST["channel_name"]
                 room_group_name = f"chat_{room_name}"
+                print("뷰 room_group_name", room_group_name)
                 async_to_sync(channel_layer.group_send)(
                     room_group_name,
                     {

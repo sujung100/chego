@@ -40,7 +40,7 @@ class UserConsumer(AsyncWebsocketConsumer):
         )
         await self.accept()
         # self.send(json.dumps({"room_name": self.room_group_name}))
-        print(f"유저컨수머 : {self.room_group_name}")
+        # print(f"유저컨수머 : {self.room_group_name}")
 
 
     async def disconnect(self, close_code):
@@ -69,7 +69,7 @@ class UserConsumer(AsyncWebsocketConsumer):
             message = event["notification_message"]
             await self.send(text_data=message)
         else:
-            print("노티피 엘스")
+            print("유저채널 노티피 없음")
     
     def should_handle_message(self):
         class_names = ["ManagerConsumer"]

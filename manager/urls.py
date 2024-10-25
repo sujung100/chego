@@ -16,6 +16,8 @@ urlpatterns = [
   path('<int:store_id>/', views.DetailListView.as_view(), name='store_detail'),
   # path('<int:store_id>/', views.DetailListView2.as_view(), name='store_detail'),
   # path('<int:store_id>/', views.IntegratedDetailView.as_view(), name='store_detail'),
+  path("admin_home/", views.AdminPageHome.as_view(), name="admin_home"),
+  path("admin_cube/", views.AdminCube.as_view(), name="admin_cube"),
 
   # chat 테스트
   path("testchat/", views.test_chat, name="test_chat"),
@@ -33,7 +35,16 @@ urlpatterns = [
   path("admin_chat2/api/chat-room/<str:chatroom_name>/messages/", views.EnterChatRoom.as_view(), name="enter_chatroom2"),
   # path("admin_chat2/api/chat-room/<int:page_number>/", views.EnterChatRoom.as_view(), name="enter_chatroom2"),
   path("admin_chat2/api/chat-room/user_info/", views.UserInfo.as_view(), name="user_info"),
-  path("api/reservation_id/<int:id>/", views.Reservation_Details.as_view(), name="reservation_id"),
+  path("api/reservation_id/<int:rsv_id>/", views.Reservation_Details.as_view(), name="reservation_id"),
   path("api/reservation_false/", views.Reservation_Details.as_view(), name="reservation_details"),
   path("<int:store_id>/api/activate_post/", views.DetailListView.as_view(), name="activate_post"),
+
+
+  path("admin_home/api/chat-room/", views.ChatRoom.as_view(), name="admin_home_chat_room"),
+  path("admin_home/api/chat-room/<str:chatroom_name>/messages/", views.EnterChatRoom.as_view(), name="admin_home_enter_chatroom"),
+  path("admin_home/api/chat-room/user_info/", views.UserInfo.as_view(), name="admin_home_user_info"),
+
+  path("admin_cube/api/chat-room/", views.ChatRoom.as_view(), name="chat_cube_1"),
+  path("admin_cube/api/chat-room/<str:chatroom_name>/messages/", views.EnterChatRoom.as_view(), name="enter_chat_cube_1"),
+  path("admin_cube/api/chat-room/user_info/", views.UserInfo.as_view(), name="user_info_cube_1"),  
 ]

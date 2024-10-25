@@ -5,8 +5,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="{% static 'manager/css/admin_chat2.css' %}">
-  <title>TEST ADMIN CHAT2</title>
+  <link rel="stylesheet" href="{% static 'manager/css/admin_page/cube1/cube_1.css' %}">
+  <title>CUBE-1</title>
 </head>
 
 
@@ -14,18 +14,22 @@
   <div id="root">
     <div class="container">
       <div class="app">
-        <section class="section" id="navigation">
-          <nav class="nav">
+        <section id="navigation">
+          <!-- <nav class="nav"> -->
+            <div class="nav-box1">
+              <div class="nav1">회원목록</div>
+              <div class="nav2">채팅</div>
+            </div>
             
           </nav>
         </section>
 
-        <section class="section" id="chat-list">
+        <section id="chat-list">
           <div class="chat-list-header">
-            <div class="collapse-nav">
-              <h2 class="chats">Chats</h2>
+            <!-- <div class="collapse-nav">
+              <div class="chats">Chats</div>
               <span class="collapse-nav-items"><i class="fa-solid fa-ellipsis-vertical"></i></span>
-            </div>
+            </div> -->
             <input type="search" placeholder="search messages or user" class="search-input" />
           </div>
           <div class="chat-box">
@@ -37,16 +41,16 @@
 
 
 
-        <section class="section" id="chat-room">
+        <section id="chat-room">
           <div id="chat-msg-room">
 
             <div class="chat-room-header">
-              <div class="box-one" style="width: 60%">
+              <div class="box-one">
                 <span class="go-back-icon"><i class="fa-sharp fa-solid fa-arrow-left-long"></i></span>
                 <div class="profile-pic">
                   <img
                     src=""
-                    alt="contact picture" class="contact-pic small-contact-pic" />
+                    alt="" class="contact-pic small-contact-pic" />
                 </div>
                 <div class="description">
                   <span class="name"></span>
@@ -77,4 +81,4 @@
 
 </html>
 
-{% include "manager/js/admin_chat2_js.html" %}
+{% include "manager/js/admin_page/cube1/cube_1_js.html" %}

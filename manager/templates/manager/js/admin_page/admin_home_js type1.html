@@ -1,0 +1,72 @@
+<script>
+
+
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelector('.box-1').addEventListener('click', function () { mainBoxChange('.box1'); });
+    document.querySelector('.box-2').addEventListener('click', function () { mainBoxChange('.box2'); });
+    document.querySelector('.box-3').addEventListener('click', function () { mainBoxChange('.box3'); });
+
+  });
+  document.querySelector(".test1").addEventListener('click', function () {
+    let main = document.querySelector("main");
+    console.log("테스트원");
+    main.style.animationPlayState = 'running';
+  });
+
+  function mainBoxChange(selector) {
+    // document.querySelectorAll('.site-nav .menu-1 ul li').forEach((navBox, index) => {
+    //   navBox.addEventListener('click', function () {
+    //     const mainBoxes = document.querySelectorAll('main > div');
+    //     const main = document.querySelector('main');
+
+    //     // 클릭된 navBox의 인덱스를 기준으로 mainBox와 위치 교체
+    //     if (index < mainBoxes.length) {
+    //       const clickedMainBox = mainBoxes[index];
+    //       main.appendChild(clickedMainBox); // 클릭한 박스를 제일 뒤로 이동
+    //     }
+    //   });
+    // });
+
+
+    let box = document.querySelector(selector);
+    let main = box.parentNode;
+    main.insertBefore(box, main.firstChild);
+
+
+
+    // let box = document.querySelector(selector);
+    // let main = box.parentNode;
+
+    // // 박스를 부모 요소의 맨 앞으로 이동시키기 전에 트랜지션 효과를 위해 transform을 설정합니다.
+    // const currentIndex = Array.from(main.children).indexOf(box);
+    // const firstChild = main.firstChild;
+
+    // // 첫 번째 자식이 아닌 경우에만 이동합니다.
+    // if (firstChild !== box) {
+    //   box.style.transform = `translateY(-${currentIndex * 100}%)`; // 이동 애니메이션을 설정합니다.
+
+    //   // 트랜지션이 끝난 후 실제로 DOM에서 위치를 변경합니다.
+    //   setTimeout(() => {
+    //     box.style.transform = ''; // transform 속성을 초기화합니다.
+    //     main.insertBefore(box, main.firstChild);
+    //   }, 500); // 0.5초(transition 시간) 후에 실행됩니다.
+    // }
+
+    // 첫 번째 자식이 아닌 경우에만 이동합니다.
+  //   if (main.firstChild !== box) {
+  //     // 애니메이션 클래스를 추가합니다.
+  //     box.classList.add('move-to-top');
+
+  //     // 애니메이션이 끝난 후 DOM에서 위치를 변경합니다.
+  //     box.addEventListener('animationend', function () {
+  //       box.classList.remove('move-to-top'); // 애니메이션 클래스를 제거합니다.
+  //       main.insertBefore(box, main.firstChild); // 박스를 부모 요소의 맨 앞으로 이동시킵니다.
+  //       // 박스가 새로운 위치에서 다시 원래 위치로 돌아오지 않도록 transform을 재설정합니다.
+  //       box.style.transform = 'translateY(0)';
+  //     }, { once: true }); // 이벤트 리스너가 한 번만 실행되도록 설정합니다.
+  //   }
+  }
+
+
+  // mainBoxChange();
+</script>

@@ -45,6 +45,7 @@ class AdminChatConsumer(AsyncWebsocketConsumer):
 
     
     async def new_message(self,data):
+        print("어드민 뉴메세지")
         author = data["from"]
 
         author = author.strip('"')
@@ -125,7 +126,7 @@ class AdminChatConsumer(AsyncWebsocketConsumer):
         connected_count += 1
         await self.accept()
         # print(f'Current connections: {connected_count}')
-        print(f"어드민컨수머 : {self.room_group_name}")
+        # print(f"어드민컨수머 : {self.room_group_name}")
 
 
 
@@ -145,7 +146,7 @@ class AdminChatConsumer(AsyncWebsocketConsumer):
     # Receive message from WebSocket
     async def receive(self, text_data):
         data = json.loads(text_data)
-        print("리시브 데이터임", data)
+        print("어드민 리시브 데이터임", data)
 
         key_command = data.get("command")
         key_message_id = data.get("message_id")
@@ -159,7 +160,8 @@ class AdminChatConsumer(AsyncWebsocketConsumer):
         
         elif key_command == "new_message":
             # if key_command in self.commands:
-            await self.commands[key_command](data)
+            # await self.commands[key_command](data)
+            await self.commands["new_message"](data)
             
         elif key_command == "real_time_new_message":
             await self.mark_as_read(key_message_id)
@@ -206,7 +208,7 @@ class AdminChatConsumer(AsyncWebsocketConsumer):
             message = event["notification_message"]
             await self.send(text_data=json.dumps(message))
         else:
-            print("노티피 엘스")
+            print("어드민채널 노티피 없음")
 
     def should_handle_message(self):
         class_names = ["ManagerConsumer"]

@@ -1,0 +1,79 @@
+<script>
+  let $screens = document.querySelector('.screens'),
+    $pagination = document.querySelector('.pagination'),
+    $lastActiveScreen, $upcomingScreen,
+    timeout,
+    inTransition = false;
+
+  // Events
+  $pagination.addEventListener('click', onControlClick);
+
+
+  // Events callbacks
+  function onControlClick(e) {
+    if (!e.target.classList.contains('active')) {
+      const idx = [...e.target.parentNode.children].indexOf(e.target);
+      // console.log("인덱스", idx);
+      changeScreen(idx);
+    }
+  }
+
+
+  // Methods
+  function changeScreen(idx) {
+    if (inTransition) return
+
+    $upcomingScreen = $screens.querySelector(`.screen--${idx + 1}`)
+    $lastActiveScreen = $screens.querySelector(':scope > .active')
+
+    // both nodes must exist before continuing
+    if (!$upcomingScreen || !$lastActiveScreen) return
+
+    setPagination(idx)
+    // inTransition = true
+
+    $screens.setAttribute('data-screen', idx + 1);
+
+    $lastActiveScreen.classList.add('out')
+    $screens.classList.add('out')
+
+    $lastActiveScreen.addEventListener('transitionend', tEndLast)
+    $upcomingScreen.addEventListener('transitionend', tEndUpcoming)
+
+    // failsafe
+    clearTimeout(timeout)
+    timeout = setTimeout(() => {
+      inTransition = false
+    }, 3000)
+  }
+
+  function setPagination(idx) {
+    // cleanup any "active" button
+    $pagination.querySelectorAll('.active').forEach(node => node.classList.remove('active'))
+    // set active control button
+    $pagination.children[idx].classList.add('active')
+  }
+
+  function tEndLast(e) {
+    e.target.removeEventListener('transitionend', tEndLast)
+    // remove all other "active" classses
+    $lastActiveScreen.classList.remove('active', 'out')
+
+    $screens.classList.remove('out')
+    $screens.classList.add('in')
+
+    $upcomingScreen.classList.add('in') // removes "display:none"
+    // force repaint for above classes changes
+    document.body.scrollTop;
+    $upcomingScreen.classList.add('active')
+  }
+
+  function tEndUpcoming(e) {
+    e.target.removeEventListener('transitionend', tEndUpcoming)
+    e.target.classList.remove('in')
+    $screens.classList.remove('in')
+
+    document.body.scrollTop;
+    setTimeout(() => { inTransition = false })
+  }
+</script>

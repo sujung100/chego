@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'manager/css/admin_page/admin_cube.css' %}">
+  <title>ADMIN CUBE</title>
+</head>
+
+<body>
+  <div id="wrap">
+
+    <nav>
+      <div class="top-position nav-button">위</div>
+      <div class="bottom-position nav-button">아래</div>
+      <div class="right-position nav-button">오른쪽</div>
+      <div class="left-position nav-button">왼쪽</div>
+      <div class="front-position nav-button">앞</div>
+      <div class="back-position nav-button">뒤</div>
+    </nav>
+
+    <div class="canvas">
+      <div id="original" class="cube rotate-y">
+        <div class="side side--x side--forward">위</div>
+        <div id="cover" class="side side--x side--forward">커버위</div>
+        <div class="side side--x side--back side--under">커버아래</div>
+        <div id="cover" class="side side--x side--back side--under">커버아래</div>
+        <div class="side side--y side--forward">오른쪽</div>
+        <div id="cover" class="side side--y side--forward">커버오른쪽</div>
+        <div class="side side--y side--back">왼쪽</div>
+        <div id="cover" class="side side--y side--back">커버왼쪽</div>
+        <div class="side side--z side--forward">앞
+          {% include "manager/admin_page/cube1/cube_1.html" %}
+        </div>
+        <!-- <div id="cover" class="side side--z side--forward front-cover">커버앞
+          <div class="front-glow"></div>
+        </div> -->
+        <button id="button-cover" class="side side--z side--forward front-cover">버튼 커버앞
+          <div class="front-glow"></div>
+        </button>
+        <div class="side side--z side--back">뒤</div>
+        <div id="cover" class="side side--z side--back">커버뒤</div>
+        <!-- <div class="side side--x side--forward">위<div class="cover"></div></div>
+        <div class="side side--x side--back side--under">아래<div class="cover"></div></div>
+        <div class="side side--y side--forward">오른쪽<div class="cover"></div></div>
+        <div class="side side--y side--back">왼쪽<div class="cover"></div></div>
+        <div class="side side--z side--forward">앞<div class="cover"></div></div>
+        <div class="side side--z side--back">뒤<div class="cover"></div></div> -->
+      </div>
+    </div>
+
+
+  </div>
+</body>
+
+</html>
+
+
+{% include "manager/js/admin_page/admin_cube_js.html" %}

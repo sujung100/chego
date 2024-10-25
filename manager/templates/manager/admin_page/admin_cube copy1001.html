@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'manager/css/admin_page/admin_cube.css' %}">
+  <title>ADMIN CUBE</title>
+</head>
+<body>
+  <div id="wrap">
+    
+    <div class="cube-nav">
+      <div class="front-position">front</div>
+      <div class="left-position">left</div>
+      <div class="right-position">right</div>
+      <div class="top-position">top</div>
+      <div class="bottom-position">bottom</div>
+      <div class="back-position">back</div>
+    </div>
+
+    <div class="cube-container">
+
+      <div id="cube" class="initial-position rotate-y">
+        <div class="cube-face cube-1">
+          {% include "manager/admin_page/cube1/cube_1.html" %}
+          <div class="cover cover-1">
+            <span class="material-symbols-outlined">mail</span>
+          </div>
+        </div>
+        <div class="cube-face cube-2">
+          <!-- include "manager/admin_page/cube2/cube_2.html"  -->
+          <!-- <div class="cover"></div> -->
+        </div>
+        <div class="cube-face cube-3"><div class="cover"></div></div>
+        <div class="cube-face cube-4"><div class="cover"></div></div>
+        <div class="cube-face cube-5"><div class="cover"></div></div>
+        <div class="cube-face cube-6"><div class="cover"></div></div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>
+
+
+{% include "manager/js/admin_page/admin_cube_js.html" %}
+{% include "manager/js/admin_page/admin_cube_drag_js.html" %}

@@ -1,8 +1,10 @@
-{% include "manager/test/reconnecting-websocket.html" %}
+{% include "manager/js/admin_page/cube1/r-w_js.html" %}
 <script>
-  // window.addEventListener("DOMContentLoaded", function() {
-
-  // })
+  window.addEventListener("DOMContentLoaded", function() {
+    if (getComputedStyle(cube1Root).display === 'flex') {
+      accessAllChannels();
+    }
+  })
 
 
   let userName = "{{ username|escapejs }}";
@@ -19,6 +21,8 @@
   let my_webSockets = {};
   let my_webSockets2 = {};
   let chat_room_name2 = [];
+  const todayTime = new Date();
+  const cube1Root = document.querySelector("#root");
 
   async function accessAllChannels() {
     await fetchChatRooms();
@@ -62,7 +66,8 @@
     }
     // console.log(my_webSockets);
   }
-  accessAllChannels();
+  
+  // accessAllChannels();
 
 
 
@@ -118,20 +123,25 @@
       chat.dataset.crm = chatroom.chatroom;
       chat.className = "chat";
       let boxOne = document.createElement("div");
-      boxOne.className = "box-one";
+      boxOne.className = "box-room";
       let profilePic = document.createElement("div");
       profilePic.className = "profile-pic";
       let profilePicImg = document.createElement("img");
       profilePicImg.className = "contact-pic";
-      profilePicImg.alt = "contact picture";
-      profilePicImg.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      // profilePicImg.alt = "contact picture";
+      profilePicImg.alt = "";
+      // profilePicImg.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
       let profilePicSpan = document.createElement("span");
       profilePicSpan.className = "online";
       let descripTion = document.createElement("div");
-      descripTion.className = "description";
+      descripTion.className = "room-content";
+      let descriptionNameBox = document.createElement("div");
+      descriptionNameBox.className = "name-box";
       let descriptionName = document.createElement("span");
       descriptionName.className = "name";
       descriptionName.textContent = chatroom_sender[0][0];
+      let descripTionTextBox = document.createElement("div");
+      descripTionTextBox.className = "text-box";
       let descripTionText = document.createElement("span");
       descripTionText.className = "text";
       descripTionText.textContent = chatroom.recent_content;
@@ -139,7 +149,21 @@
       info.className = "info";
       let infoTime = document.createElement("span");
       infoTime.className = "time";
-      infoTime.textContent = chatroom.timestamp;
+      // let infoTimeDate = new Date(chatroom.timestamp.replace(" ", "T"));
+      let infoTimePart1 = chatroom.timestamp.split(" ")[0];
+      let infoTimePart2 = chatroom.timestamp.split(" ")[1];
+      let infoTimeDate = new Date(infoTimePart1);
+      todayTime.setHours(0, 0, 0, 0);
+      infoTimeDate.setHours(0, 0, 0, 0);
+      // console.log("infoTimePart1", infoTimePart1);
+      // console.log("infoTimePart2", infoTimePart2);
+      if (infoTimeDate < todayTime) {
+        infoTime.textContent = infoTimePart1;
+      } else {
+        infoTime.textContent = infoTimePart2;
+      }
+      let infoMsgCountBox = document.createElement("div");
+      infoMsgCountBox.className = "count";
       let infoMsgCount = document.createElement("span");
       infoMsgCount.className = "msg-count";
       if (chatroom.unread_messages !== 0) {
@@ -156,21 +180,25 @@
       profilePic.appendChild(profilePicImg);
       profilePic.appendChild(profilePicSpan);
       boxOne.appendChild(descripTion);
-      descripTion.appendChild(descriptionName);
-      descripTion.appendChild(descripTionText);
+      descripTion.appendChild(descriptionNameBox);
+      descripTion.appendChild(descripTionTextBox);
+      descriptionNameBox.appendChild(descriptionName);
+      descripTionTextBox.appendChild(descripTionText);
+      chat.appendChild(infoMsgCountBox);
+      infoMsgCountBox.appendChild(infoMsgCount);
       chat.appendChild(info);
       info.appendChild(infoTime);
-      info.appendChild(infoMsgCount);
+      // info.appendChild(infoMsgCount);
 
 
       chat.addEventListener('click', function () {  // 클릭 이벤트 리스너 추가
         // console.log();
 
-        const chatName = this.querySelector(".name").textContent;
-        const headerChatName = document.querySelector(".chat-room-header .box-one .description .name");
-        const headerChatImg = document.querySelector(".chat-room-header .box-one .profile-pic img");
+        const chatName = this.querySelector(".name-box > .name").textContent;
+        const headerChatName = document.querySelector(".chat-room-header .description .name");
+        // const headerChatImg = document.querySelector(".chat-room-header .box-room .profile-pic img");
         headerChatName.textContent = chatName;
-        headerChatImg.src = profilePicImg.src;
+        // headerChatImg.src = profilePicImg.src;
         let roomName = this.dataset.crm;
 
 
@@ -189,17 +217,20 @@
     if (chatSocket) {
       chatSocket.addEventListener('message', async function (e) {
 
-        
+
         const data = JSON.parse(e.data);
         // console.log("챗룸핸들러", data);
         let unReadMsg = data["message"].unread_count;
         // console.log("안읽메",unReadMsg);
         const chatroomElement = document.querySelector(`.chat-box > [data-crm="${chatroom}"]`);
         // console.log(chatroomElement);
-        
+
         if (chatroomElement) {
-          let infoMsgCount = chatroomElement.querySelector('.info .msg-count');
+          let infoMsgCount = chatroomElement.querySelector('.count .msg-count');
           console.log("이프 트루");
+          let infoTimePart1 = data["lates_message"].timestamp.split(" ")[0];
+          let infoTimePart2 = data["lates_message"].timestamp.split(" ")[1];
+          let infoTimeDate = new Date(infoTimePart1);
           if (unReadMsg !== 0) {
             // console.log("여기까지 오긴오니");
             msg_count_block(infoMsgCount);
@@ -207,10 +238,14 @@
           }
           // console.log("라스트메세지",data.lates_message);
           if (data.lates_message) {
-            const descripTionText = chatroomElement.querySelector('.description .text');
+            const descripTionText = chatroomElement.querySelector('.room-content .text');
             descripTionText.textContent = data.lates_message.content;
             const chatTime = chatroomElement.querySelector(".info .time");
-            chatTime.textContent = data.lates_message.timestamp;
+            if (infoTimeDate < todayTime) {
+              chatTime.textContent = infoTimePart1;
+            } else {
+              chatTime.textContent = infoTimePart2;
+            }
           }
           const parentElement = chatroomElement.parentElement;
           parentElement.insertBefore(chatroomElement, parentElement.firstChild);
@@ -221,20 +256,25 @@
           chat.dataset.crm = data["message"].chatroom;
           chat.className = "chat";
           let boxOne = document.createElement("div");
-          boxOne.className = "box-one";
+          boxOne.className = "box-room";
           let profilePic = document.createElement("div");
           profilePic.className = "profile-pic";
           let profilePicImg = document.createElement("img");
           profilePicImg.className = "contact-pic";
-          profilePicImg.alt = "contact picture";
-          profilePicImg.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+          // profilePicImg.alt = "contact picture";
+          profilePicImg.alt = "";
+          // profilePicImg.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
           let profilePicSpan = document.createElement("span");
           profilePicSpan.className = "online";
           let descripTion = document.createElement("div");
-          descripTion.className = "description";
+          descripTion.className = "room-content";
+          let descriptionNameBox = document.createElement("div");
+          descriptionNameBox.className = "name-box";
           let descriptionName = document.createElement("span");
           descriptionName.className = "name";
           descriptionName.textContent = data["message"].author;
+          let descripTionTextBox = document.createElement("div");
+          descripTionTextBox.className = "text-box";
           let descripTionText = document.createElement("span");
           descripTionText.className = "text";
           descripTionText.textContent = data["lates_message"].content;
@@ -242,7 +282,18 @@
           info.className = "info";
           let infoTime = document.createElement("span");
           infoTime.className = "time";
-          infoTime.textContent = data["lates_message"].timestamp;
+          // let infoTimePart1 = data["lates_message"].timestamp.split(" ")[0];
+          // let infoTimePart2 = data["lates_message"].timestamp.split(" ")[1];
+          // let infoTimeDate = new Date(infoTimePart1);
+          todayTime.setHours(0, 0, 0, 0);
+          infoTimeDate.setHours(0, 0, 0, 0);
+          if (infoTimeDate < todayTime) {
+            infoTime.textContent = infoTimePart1;
+          } else {
+            infoTime.textContent = infoTimePart2;
+          }
+          // console.log("data['lates_message'].timestamp", data["lates_message"].timestamp);
+          infoMsgCountBox.className = "count";
           let infoMsgCount = document.createElement("span");
           infoMsgCount.className = "msg-count";
           if (data["message"].unread_count !== 0) {
@@ -257,21 +308,25 @@
           profilePic.appendChild(profilePicImg);
           profilePic.appendChild(profilePicSpan);
           boxOne.appendChild(descripTion);
-          descripTion.appendChild(descriptionName);
-          descripTion.appendChild(descripTionText);
+          descripTion.appendChild(descriptionNameBox);
+          descripTion.appendChild(descripTionTextBox);
+          descriptionNameBox.appendChild(descriptionName);
+          descripTionTextBox.appendChild(descripTionText);
+          chat.appendChid(infoMsgCountBox);
+          infoMsgCountBox.appendChild(infoMsgCount);
           chat.appendChild(info);
           info.appendChild(infoTime);
-          info.appendChild(infoMsgCount);
+          // info.appendChild(infoMsgCount);
 
           const chatroomElement2 = document.querySelector(`.chat-box > [data-crm="${chatroom}"]`);
           const parentElement = chatroomElement2.parentElement;
           parentElement.insertBefore(chatroomElement2, parentElement.firstChild);
 
           chat.addEventListener('click', function () {  // 클릭 이벤트 리스너 추가
-            
+
             const chatName = this.querySelector(".name").textContent;
-            const headerChatName = document.querySelector(".chat-room-header .box-one .description .name");
-            const headerChatImg = document.querySelector(".chat-room-header .box-one .profile-pic img");
+            const headerChatName = document.querySelector(".chat-room-header .box-room .room-content .name");
+            const headerChatImg = document.querySelector(".chat-room-header .box-room .profile-pic img");
             headerChatName.textContent = chatName;
             headerChatImg.src = profilePicImg.src;
             let roomName = this.dataset.crm;
@@ -282,9 +337,9 @@
 
           });
         }
-        
+
       });
-      
+
     }
   }
 
@@ -308,14 +363,14 @@
 
     // previousChatRoom = currentChatRoom;
     // currentChatRoom = chatroom;
-    
+
     if (eventListeners[currentChatRoom]) {
       console.log("eventListeners", eventListeners);
       my_webSockets[currentChatRoom].removeEventListener("message", eventListeners[currentChatRoom]);
     }
 
     currentChatRoom = chatroom;
-    
+
     const messagesRoom = document.querySelector("#messages-room");
     messagesRoom.dataset.crm = chatroom;
     // console.log("정의됐어?", messagesRoom.dataset.crm);
@@ -327,11 +382,11 @@
       messagesRoom.removeEventListener("scroll", scrollEventHandler);
     }
 
-    
+
     let page_number = 1;
 
     async function loadMessages() {
-      
+
       const loadPoint = await fetch(`api/chat-room/${chatroom}/messages?page_number=${page_number}`);
       const loadPoint2 = await loadPoint.json();
       // console.log(loadPoint2);
@@ -369,16 +424,16 @@
 
         msgHeight += messageBox.offsetHeight;
         const chatroomElement = document.querySelector(`.chat-box > [data-crm="${chatroom}"]`);
-        const infoMsgCount = chatroomElement.querySelector(".info > .msg-count");
+        const infoMsgCount = chatroomElement.querySelector(".count > .msg-count");
         // console.log(infoMsgCount);
         if (infoMsgCount.style.display = "block" && infoMsgCount.textContent) {
           // console.log("로드메세지 조건");
           let intervalId = setInterval(() => {
-            
-              chatSocket.send(JSON.stringify({
-                "command": "mark_as_read",
-                "message_id": chat.id,
-              }));
+
+            chatSocket.send(JSON.stringify({
+              "command": "mark_as_read",
+              "message_id": chat.id,
+            }));
             // 04월 22일 주석처리
             // if (chatSocket.readyState === WebSocket.OPEN) {
             //   chatSocket.send(JSON.stringify({
@@ -386,8 +441,8 @@
             //     "message_id": chat.id,
             //   }));
 
-              clearInterval(intervalId);
-            
+            clearInterval(intervalId);
+
           }, 100);
 
         }
@@ -430,7 +485,7 @@
       // console.log("스크롤 아래 실행 됐니");
     }
 
-  
+
     const chatSocket = my_webSockets[currentChatRoom];
     // console.log("챗소켓",chatSocket);
 
@@ -497,7 +552,7 @@
       if (chatroomElement) {
         // console.log("chatroomElement", chatroomElement);
         if (chatroomCRM === receivedChatRoom && message && !document.hidden) {
-          console.log("온메세지 챗소켓",chatSocket);
+          console.log("온메세지 챗소켓", chatSocket);
           if (chatSocket.readyState === WebSocket.OPEN) {
             chatSocket.send(JSON.stringify({
               "command": "real_time_new_message",
@@ -510,7 +565,7 @@
 
     }
 
- 
+
 
     if (!chatSocket) {
       console.error('No WebSocket for chatroom: ' + chatroom);
@@ -570,7 +625,7 @@
 
   const searchInput = document.querySelector('.search-input');
   searchInput.addEventListener('input', () => searchContact(searchInput.value))
-  console.log("searchInput", searchInput.value);
+  // console.log("searchInput", searchInput.value);
   const chatRoom = document.getElementById('chat-room')
 
   const chats = document.querySelectorAll('.chat');
@@ -599,11 +654,11 @@
   }
   const chatList = document.getElementById('chat-list');
 
-  const collapsedNav = document.querySelector('.collapse-nav-items');
+  // const collapsedNav = document.querySelector('.collapse-nav-items');
   const setting = document.getElementById('setting');
   // const backToChatBtn = document.querySelector('.back-icon');
 
-  collapsedNav.addEventListener('click', showSetting)
+  // collapsedNav.addEventListener('click', showSetting)
 
   //function to toggle settings
   function showSetting() {

@@ -31,6 +31,7 @@ ul {
 body {
   /* background-image: linear-gradient(to bottom right, #7A7A7A, #565656); */
   background-image: url("../img/uplecz.jpg");
+  /* background-color: #3F2305; */
 } 
 
 #wrap {
@@ -506,7 +507,7 @@ svg {
   width: 80%;
   height: 80%;
   align-self: center; 
-  justify-content: center;
+  /* justify-content: center; */
   align-items: center;
   border-radius: 3%;
 }

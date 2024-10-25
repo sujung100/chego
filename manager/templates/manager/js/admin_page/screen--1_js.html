@@ -1,7 +1,8 @@
 {% include "manager/test/reconnecting-websocket.html" %}
 <script>
-  // window.addEventListener("DOMContentLoaded", function() {
-
+  // document.addEventListener("DOMContentLoaded", function() {
+  //   const searchInput = document.querySelector('.search-input');
+  //   searchInput.addEventListener('input', () => searchContact(searchInput.value))
   // })
 
 
@@ -24,12 +25,7 @@
     await fetchChatRooms();
     const response = await fetch("api/chat-room/user_info");
     const userInfo = await response.json();
-    // console.log(userInfo);
-    // const userNames = userInfo.user_names;
-    // let updateUserName = userNames.map(function(username){
-    //   return username + "." + userInfo.current_user;
-    // });
-    // console.log(updateUserName);
+    
     const chatrooms = document.querySelector(".chat-box");
     const chatrooms_data = Array.from(chatrooms.children);
 
@@ -55,10 +51,7 @@
         chatRoomHandler(name);
       };
 
-      // chatSocket.onmessage = function (e) {
-      //   let data = JSON.parse(e.data);
-      //   console.log("Message received on " + name + ": ", data);
-      // };
+      
     }
     // console.log(my_webSockets);
   }
@@ -302,12 +295,7 @@
     // console.log("엔터챗 시작");
     userHasScrolled = false;
 
-    // if (previousChatRoom && eventListeners[previousChatRoom]) {
-    //   my_webSockets[previousChatRoom].removeEventListener("message", eventListeners[previousChatRoom]);
-    // }
-
-    // previousChatRoom = currentChatRoom;
-    // currentChatRoom = chatroom;
+    
     
     if (eventListeners[currentChatRoom]) {
       console.log("eventListeners", eventListeners);
@@ -379,12 +367,7 @@
                 "command": "mark_as_read",
                 "message_id": chat.id,
               }));
-            // 04월 22일 주석처리
-            // if (chatSocket.readyState === WebSocket.OPEN) {
-            //   chatSocket.send(JSON.stringify({
-            //     "command": "mark_as_read",
-            //     "message_id": chat.id,
-            //   }));
+ 
 
               clearInterval(intervalId);
             
@@ -442,17 +425,11 @@
       // console.log(data);
       const message = data["message"];
       const receivedChatRoom = message.chatroom;
-      // console.log(receivedChatRoom);
-      // console.log(currentChatRoom);
       if (receivedChatRoom !== currentChatRoom) {
         return;
       }
-      // console.log("연결 잘 됐냐", chatSocket.url);
-      // console.log("엔터데이터", data);
       const author = message["author"];
       const message_id = message["id"];
-      // console.log(author);
-      // const messageRoom2 = document.createElement("div");
       const msgBox = document.createElement("div");
       const msgBoxPtag = document.createElement("p");
       const msgBoxSpan = document.createElement("span");
@@ -469,7 +446,6 @@
         msgBoxPtag.className = "contact msg";
         checkScreen(message_id, chatSocket);
       }
-      // document.querySelector('#chat-log').value += (data.message + '\n');
       messagesRoom.appendChild(msgBox);
       msgBox.appendChild(msgBoxPtag);
       msgBox.appendChild(msgBoxSpan);
@@ -477,12 +453,7 @@
 
       setTimeout(function () {
 
-        // console.log('scrollTop:', messagesRoom.scrollTop);
-        // console.log('scrollHeight:', messagesRoom.scrollHeight);
-        // console.log('clientHeight:', messagesRoom.clientHeight);
-        // 빡센 계산
-        // const isScrolledToBottom = Math.round(messagesRoom.scrollHeight) - Math.round(messagesRoom.clientHeight) <= Math.round(messagesRoom.scrollTop) + 1;
-        // 유연한 계산
+        
         const isScrolledToBottom = Math.abs((messagesRoom.scrollTop + messagesRoom.clientHeight) - messagesRoom.scrollHeight) < 5;
         console.log('isScrolledToBottom:', isScrolledToBottom);
         if (isScrolledToBottom) {
@@ -570,7 +541,6 @@
 
   const searchInput = document.querySelector('.search-input');
   searchInput.addEventListener('input', () => searchContact(searchInput.value))
-  console.log("searchInput", searchInput.value);
   const chatRoom = document.getElementById('chat-room')
 
   const chats = document.querySelectorAll('.chat');
@@ -588,10 +558,7 @@
   }
 
   const msgRoom3 = document.getElementById('messages-room');
-  // msgRoom3.scrollTop = msgRoom3.scrollHeight;
-  // document.addEventListener('load', scrollChatTo)
 
-  //automatic scrolling in the chat room
 
   function scrollChatTo() {
     msgRoom3.scrollTop = msgRoom3.scrollHeight;
@@ -612,7 +579,7 @@
     setting.classList.remove('hide');
   }
 
-  // backToChatBtn.addEventListener('click', goBackToChat)
+
 
   //function to go back to chat 
   function goBackToChat() {
@@ -623,12 +590,7 @@
 
   const goBackIcon = document.querySelector('.go-back-icon');
 
-  // a feature that should only occur at a particular width
-  // window.innerWidth < 1210 && chatBox.addEventListener('click', showChatRoom);
-  // window > 1210 && chatBox.removeEventListener('click', showChatRoom);
 
-  // window.innerWidth < 1210 && goBackIcon.addEventListener('click', showChatList);
-  // window.innerWidth > 1210 && goBackIcon.removeEventListener('click', showChatList)
 
   function showChatList() {
     document.body.style.backgroundColor = '#161a1d';
@@ -643,31 +605,7 @@
     setting.classList.add('hide');
     scrollChatTo()
   }
-  // a resize function to update & and reposition code incase the brower get resized
-  // window.addEventListener('resize', () => {
-  //   if (window.innerWidth > 1210) {
-  //     document.body.style.backgroundColor = '#161a1d';
-  //     chatBox.removeEventListener('click', showChatRoom)
-  //     // console.log('chat room can show')
-  //   } else {
-  //     document.body.style.backgroundColor = '#161a1d';
-  //     chatRoom.classList.add('hidden');
-  //     chatBox.addEventListener('click', showChatRoom)
-  //     goBackIcon.addEventListener('click', showChatList)
-  //     //console.log('chat room should not show')
-  //   }
 
-  //   if (window.innerWidth <= 650) {
-  //     chatList.classList.remove('hide');
-  //     collapsedNav.addEventListener('click', showSetting)
-  //     // console.log('setting can show')
-  //   } else {
-  //     setting.classList.add('hide');
-  //     chatList.classList.remove('hide')
-
-  //     // console.log('setting should not show')
-  //   }
-  // })
 
   function SendMessage() {
     const messageInputDom = document.querySelector('.chat-input-box .text-input');

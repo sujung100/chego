@@ -270,19 +270,22 @@ class Reservation_Details(View):
     #     return serializers.serialize("python", queryset, fields=("reservation_check"))
 
     def rsv_check(self, user_id):
-        queryset = rsv.Reservation_user.objects.filter(store_id__owner_id=user_id)
+        queryset = rsv.Reservation_user.objects.filter(store_id__owner_id=user_id,  reservation_check=False)
         serialized_data = serializers.serialize("python", queryset, fields=("reservation_check"))
         return len(serialized_data)
 
-    def get(self, request, id=None):
+    def get(self, request, rsv_id=None):
         user_id = request.user.id
         production_current_user(request)
-        if id:
-            rsv_model = get_object_or_404(rsv.Reservation_user.objects.defer("pwhash"), id=id)
+        if rsv_id:
+            # rsv_model = get_object_or_404(rsv.Reservation_user.objects.defer("pwhash"), id=rsv_id)
+            rsv_model = get_object_or_404(rsv.Reservation_user, id=rsv_id)
             rsv_dict = model_to_dict(rsv_model)
             rsv_dict.pop("pwhash", None)
             rsv_dict["rsv_check"] = self.rsv_check(user_id)
             print("이프", rsv_dict)
+            return JsonResponse(rsv_dict)
+            
         else:
             # print(user_id)
             rsv_model = rsv.Reservation_user.objects.defer("pwhash").filter(store_id__owner_id=user_id, reservation_check=False)
@@ -292,7 +295,7 @@ class Reservation_Details(View):
                 r.pop("pwhash", None)
                 r["rsv_check"] = self.rsv_check(user_id)
             print("엘스", rsv_dict)
-        return JsonResponse(rsv_dict, safe=False)
+            return JsonResponse(rsv_dict, safe=False)
 
     
     # def get_context_data(self, **kwargs):
@@ -677,8 +680,8 @@ def admin_chat(request):
     context = {
         "username" : request.user.username,
     }
-    # return render(request, "manager/test/admin_chat.html", context)
-    return render(request, "manager/admin_chat2.html", context)
+    return render(request, "manager/test/admin_chat.html", context)
+    # return render(request, "manager/admin_chat2.html", context)
 
 def admin_chat2(request):
     context = {
@@ -686,6 +689,49 @@ def admin_chat2(request):
     }
     # return render(request, "manager/test/admin_chat.html", context)
     return render(request, "manager/admin_chat2.html", context)
+
+# class AdminPageHome(View):
+#     template_name = "manager/admin_page/admin_home.html"
+#     def get(self, request, *args, **kwargs):
+#         return render(request, self.template_name)
+    
+class AdminPageHome(ListView):
+    model = models.Message
+    template_name = "manager/admin_page/admin_home.html"
+    def get_queryset(self):
+        # 원하는 쿼리셋을 반환하는 로직을 여기에 작성하세요.
+        return self.model.objects.all()
+
+    def get_messages(self, username):
+        # 원하는 메시지를 반환하는 로직을 여기에 작성하세요.
+        return models.Message.all_messages(username)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        current_user = self.request.user
+        context["username"] = current_user.username if current_user.is_authenticated else None
+        for admin_user in ADMIN_USERS.keys():
+            context["adminusers"] = admin_user
+
+        context['manager'] = self.get_queryset()
+
+        # QuerySet to list of dicts.
+        manager_list_dicts = [model_to_dict(manager) for manager in context['manager']]
+        
+        # List of dicts to JSON string.
+        context['store_json'] = json.dumps(manager_list_dicts, cls=DjangoJSONEncoder)
+        if current_user.is_authenticated:
+            rsvs = rsv.Reservation_user.objects.all().order_by("-reservation_date")
+            messages = self.get_messages(current_user.username)
+            context["rsvs"] = rsvs
+            context["messages"] = messages
+        return context
+
+    # def get(self, request, *args, **kwargs):
+    #     context = self.get_context_data(**kwargs)
+    #     return render(request, self.template_name, context)
+    
+
 
 class AdminChat2(ListView):
     model = models.Message
@@ -719,5 +765,37 @@ class AdminChat2(ListView):
             context["messages"] = messages
         return context
     
+class AdminCube(ListView):
+    model = models.Message
+    template_name = "manager/admin_page/admin_cube.html"
+    def get_queryset(self):
+        # 원하는 쿼리셋을 반환하는 로직을 여기에 작성하세요.
+        return self.model.objects.all()
+
+    def get_messages(self, username):
+        # 원하는 메시지를 반환하는 로직을 여기에 작성하세요.
+        return models.Message.all_messages(username)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        current_user = self.request.user
+        context["username"] = current_user.username if current_user.is_authenticated else None
+        for admin_user in ADMIN_USERS.keys():
+            context["adminusers"] = admin_user
+
+        context['manager'] = self.get_queryset()
+
+        # QuerySet to list of dicts.
+        manager_list_dicts = [model_to_dict(manager) for manager in context['manager']]
+        
+        # List of dicts to JSON string.
+        context['store_json'] = json.dumps(manager_list_dicts, cls=DjangoJSONEncoder)
+        if current_user.is_authenticated:
+            rsvs = rsv.Reservation_user.objects.all().order_by("-reservation_date")
+            messages = self.get_messages(current_user.username)
+            context["rsvs"] = rsvs
+            context["messages"] = messages
+        return context
+
      
 

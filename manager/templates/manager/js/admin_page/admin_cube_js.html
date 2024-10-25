@@ -1,0 +1,182 @@
+<script>
+
+  window.addEventListener("DOMContentLoaded", () => {
+    ExeCution();
+  });
+
+
+
+  const cubeButtons = document.querySelector("nav").querySelectorAll("div");
+  const cube = document.querySelector("#original");
+  let cubeClass = cube.classList[0];
+  const sides = document.querySelectorAll(".side");
+  const sides2 = document.querySelector(".side");
+  const sensitivity = 1; // 민감도 조정 값
+  // let sideBackZ = sides2.style.setProperty("--z", " ");
+
+  const CubePositions = {
+    'front-position': { rotateX: 0, rotateY: 0 },
+    'left-position': { rotateX: 90, rotateY: 0 },
+    'right-position': { rotateX: -90, rotateY: 0 },
+    'top-position': { rotateX: 0, rotateY: 90 },
+    'bottom-position': { rotateX: 0, rotateY: -90 },
+    'back-position': { rotateX: 180, rotateY: 0 },
+  };
+
+  function ExeCution() {
+    
+    cube.addEventListener('mousedown', activateDrag);
+    cube.addEventListener('mouseup', deactivateDrag);
+    for (let item of cubeButtons) {
+      // item.addEventListener("click", RotateCube);
+      item.addEventListener("click", RotateCubeJs);
+      // item.addEventListener('click', (e) => {
+
+      // });
+    }
+  }
+
+
+
+  function activateDrag(e) {
+    cube.requestPointerLock();
+    CheckRotateY();
+    // cube.addEventListener('mousemove', trackDrag);
+    document.addEventListener('mousemove', trackDrag);
+    cube.style.transition = "";
+  }
+
+  function deactivateDrag(e) {
+    document.exitPointerLock();
+    document.removeEventListener('mousemove', trackDrag);
+    snapToNearestPosition();
+  }
+
+
+
+  function trackDrag(e) {
+    requestAnimationFrame(() => {
+      const oldRotateX = Number(window.getComputedStyle(document.body).getPropertyValue("--rotateX"));
+      const oldRotateY = Number(window.getComputedStyle(document.body).getPropertyValue("--rotateY"));
+
+      // 마우스의 Y축 이동에 따라 X축 회전 (아래로 드래그 시 아래로 회전)
+      const newRotateX = oldRotateX + e.movementX * sensitivity;
+      // 마우스의 X축 이동에 따라 Y축 회전 (좌우 드래그 시 좌우 회전)
+      const newRotateY = oldRotateY + e.movementY * sensitivity;
+
+      // CSS 변수에 새로운 각도 설정
+      document.body.style.setProperty('--rotateX', newRotateX);
+      document.body.style.setProperty('--rotateY', newRotateY);
+    });
+  }
+
+
+  function normalizeAngle(angle) {
+    // -180도에서 180도 범위로 변환
+    return (angle + 180) % 360 - 180;
+  }
+
+  function calculateDistance(currentX, currentY, targetX, targetY) {
+
+
+    const normalizedCurrentX = normalizeAngle(currentX);
+    const normalizedCurrentY = normalizeAngle(currentY);
+    const normalizedTargetX = normalizeAngle(targetX);
+    const normalizedTargetY = normalizeAngle(targetY);
+
+    // 각도 차이의 절대값 계산
+    const distanceX = Math.abs(normalizedCurrentX - normalizedTargetX);
+    const distanceY = Math.abs(normalizedCurrentY - normalizedTargetY);
+
+    // Y축의 경우, 반전된 각도를 고려하여 절대값 비교
+    const adjustedDistanceY = Math.min(distanceY, 360 - distanceY);
+
+    // 반전된 경우 처리
+    const invertedDistanceX = Math.abs(normalizedCurrentX + 180) + Math.abs(normalizedTargetX);
+    const invertedDistanceY = Math.abs(normalizedCurrentY + 180) + Math.abs(normalizedTargetY);
+    // console.log(`Current: (${normalizedCurrentX}, ${normalizedCurrentY}), Target: (${normalizedTargetX}, ${normalizedTargetY})`);
+
+    return Math.min(distanceX + adjustedDistanceY, invertedDistanceX + invertedDistanceY); // 총 거리 반환
+
+  }
+
+
+
+  function snapToNearestPosition() {
+    const oldRotateX = Number(window.getComputedStyle(document.body).getPropertyValue("--rotateX"));
+    const oldRotateY = Number(window.getComputedStyle(document.body).getPropertyValue("--rotateY"));
+
+    let closestPosition = null;
+    let closestDistance = Infinity;
+    const currentClass = Array.from(cube.classList).find(cls => cls in CubePositions);
+
+    // 클래스에 있는 포지션을 제외하고 가장 가까운 포지션 찾기
+    for (const [position, { rotateX, rotateY }] of Object.entries(CubePositions)) {
+      const totalDistance = calculateDistance(oldRotateX, oldRotateY, rotateX, rotateY);
+      // console.log(`Checking Position: ${position}, Total Distance: ${totalDistance}`);
+
+      // 현재 포지션이 클래스에 있으면 패스
+      // if (position === currentClass) {
+      //   continue;
+      // }
+
+      // 가장 가까운 위치 찾기
+      if (totalDistance < closestDistance) {
+        closestDistance = totalDistance;
+        closestPosition = position;
+      }
+    }
+
+    // console.log(`Closest Position: ${closestPosition}, Distance: ${closestDistance}`)
+
+    // 가장 가까운 위치로 이동
+    // cube.style.transition = "";
+    if (closestPosition) {
+      if (currentClass) {
+        cube.classList.remove(currentClass);
+      }
+
+      cube.style.transition = "all 1.5s ease";
+      document.body.style.setProperty('--rotateX', CubePositions[closestPosition].rotateX);
+      document.body.style.setProperty('--rotateY', CubePositions[closestPosition].rotateY);
+      cube.classList.add(closestPosition);
+    }
+  }
+
+
+
+  function RotateCube(event) {
+    const targetNode = event.target.nodeName;
+    const targetClass = event.target.className.split(" ")[0]; // 첫 번째 클래스 이름만 가져옴
+    changeCubeClass(targetClass);
+  }
+
+  function RotateCubeJs(e) {
+    const targetClass = e.target.className.split(" ")[0];
+    const currentClass = Array.from(cube.classList).find(cls => cls in CubePositions);
+    cube.style.transition = "all 1.5s ease";
+    CheckRotateY();
+    if(currentClass) {
+      cube.classList.remove(currentClass);
+    }
+    if (CubePositions[targetClass]) {
+      document.body.style.setProperty('--rotateX', CubePositions[targetClass].rotateX);
+      document.body.style.setProperty('--rotateY', CubePositions[targetClass].rotateY);
+      cube.classList.add(targetClass);
+    }
+  }
+
+  function CheckRotateY() {
+    if (cube.classList.contains("rotate-y")) {
+      cube.classList.remove("rotate-y");
+    }
+  }
+
+  function changeCubeClass(newClass) {
+    console.log("newClass", newClass);
+    cube.classList.replace(cubeClass, newClass);
+    cubeClass = newClass;
+  }
+
+
+</script>

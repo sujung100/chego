@@ -1,0 +1,155 @@
+<script type="module">
+
+  import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js";
+  // import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/js/controls/OrbitControls.js";
+
+  window.addEventListener("DOMContentLoaded", () => {
+    init();
+  });
+
+  let scene, camera, renderer, cubedrag;
+
+  function init() {
+    // 씬, 카메라, 렌더러 초기화
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.querySelector('.cube-container').appendChild(renderer.domElement);
+
+    // 큐브 생성 (기존 HTML 구조를 사용)
+    cubedrag = document.getElementById("cube");
+    cubedrag = new THREE.Object3D(); // 새로운 Three.js Object3D 생성
+
+    // 큐브의 각 면을 Three.js 메쉬로 변환
+    const faces = document.querySelectorAll('.cube-face');
+    faces.forEach((face, index) => {
+      const geometry = new THREE.PlaneGeometry(1, 1); // 각 면의 크기
+      const material = new THREE.MeshBasicMaterial({ color: Math.random() * 0xffffff, side: THREE.DoubleSide });
+      const mesh = new THREE.Mesh(geometry, material);
+
+      // 면의 위치 조정
+      mesh.position.set(0, 0, 0.5); // 초기 위치 설정
+      mesh.rotation.y = index * Math.PI / 3; // 각 면의 회전 설정
+
+      cubedrag.add(mesh);
+    });
+
+    scene.add(cubedrag);
+    camera.position.z = 3;
+
+    // 마우스 드래그 이벤트 처리
+    let isDragging = false;
+    let previousMousePosition = { x: 0, y: 0 };
+
+    function onMouseDown(event) {
+      isDragging = true;
+    }
+
+    function onMouseMove(event) {
+      if (isDragging) {
+        const deltaMove = {
+          x: event.clientX - previousMousePosition.x,
+          y: event.clientY - previousMousePosition.y,
+        };
+
+        // 큐브 회전
+        cubedrag.rotation.y += deltaMove.x * 0.01; // 수평 회전
+        cubedrag.rotation.x += deltaMove.y * 0.01; // 수직 회전
+      }
+      previousMousePosition = {
+        x: event.clientX,
+        y: event.clientY,
+      };
+    }
+
+    function onMouseUp() {
+      isDragging = false;
+    }
+
+    // 이벤트 리스너 추가
+    window.addEventListener('mousedown', onMouseDown, false);
+    window.addEventListener('mousemove', onMouseMove, false);
+    window.addEventListener('mouseup', onMouseUp, false);
+
+    animate();
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+    renderer.render(scene, camera);
+  }
+
+  // init();
+
+
+
+
+
+
+
+
+
+
+  // let scene, camera, renderer, cubedrag;
+
+  // function init() {
+  //   // 씬, 카메라, 렌더러 초기화
+  //   scene = new THREE.Scene();
+  //   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  //   renderer = new THREE.WebGLRenderer({ antialias: true });
+  //   renderer.setSize(window.innerWidth, window.innerHeight);
+  //   document.querySelector('.cube-container').appendChild(renderer.domElement);
+
+  //   // 큐브 생성
+  //   const geometry = new THREE.BoxGeometry();
+  //   const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: false });
+  //   cubedrag = new THREE.Mesh(geometry, material);
+  //   scene.add(cubedrag);
+
+  //   camera.position.z = 5;
+
+  //   // 마우스 드래그 이벤트 처리
+  //   let isDragging = false;
+  //   let previousMousePosition = { x: 0, y: 0 };
+
+  //   function onMouseDown(event) {
+  //     isDragging = true;
+  //   }
+
+  //   function onMouseMove(event) {
+  //     if (isDragging) {
+  //       const deltaMove = {
+  //         x: event.clientX - previousMousePosition.x,
+  //         y: event.clientY - previousMousePosition.y,
+  //       };
+
+  //       // 큐브 회전
+  //       cubedrag.rotation.y += deltaMove.x * 0.01; // 수평 회전
+  //       cubedrag.rotation.x += deltaMove.y * 0.01; // 수직 회전
+  //     }
+  //     previousMousePosition = {
+  //       x: event.clientX,
+  //       y: event.clientY,
+  //     };
+  //   }
+
+  //   function onMouseUp() {
+  //     isDragging = false;
+  //   }
+
+  //   // 이벤트 리스너 추가
+  //   window.addEventListener('mousedown', onMouseDown, false);
+  //   window.addEventListener('mousemove', onMouseMove, false);
+  //   window.addEventListener('mouseup', onMouseUp, false);
+
+  //   animate();
+  // }
+
+  // function animate() {
+  //   requestAnimationFrame(animate);
+  //   renderer.render(scene, camera);
+  // }
+
+  // init();
+</script>

@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'manager/css/admin_page/admin_home.css' %}?after">
+  <link rel="stylesheet" href="{% static 'manager/css/admin_page/screen--1.css' %}?after">
+  <title>ADMIN HOME</title>
+</head>
+
+<body>
+
+  <div id="wrap">
+
+    <div class="screens" data-screen="1">
+      
+      <div class="screen screen--1 active">
+        <!-- <div class="screen__content"></div> -->
+        <!-- <div class="screen__layer screen__layer--1"></div> -->
+        {% include "manager/admin_page/screen--1.html" %}
+      </div>
+
+      <div class="screen screen--2">
+        <div class="screen__content">Screen 2</div>
+      </div>
+      <div class="screen screen--3">
+        <div class="screen__content">Screen 3</div>
+      </div>
+      <div class="screen screen--4">
+        <div class="screen__content">Screen 4</div>
+      </div>
+    </div>
+    <div class="pagination">
+      <a class="active">1</a>
+      <a>2</a>
+      <a>3</a>
+      <a>4</a>
+
+    </div>
+
+  </div>
+</body>
+
+</html>
+
+{% include "manager/js/admin_page/admin_home_js.html" %}
+{% include "manager/js/admin_page/screen--1_js.html" %}

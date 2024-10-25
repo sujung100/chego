@@ -1,0 +1,280 @@
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,200,0,0");
+/* @import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"); */
+
+
+html,
+body {
+  font-size: 62.5%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  /* 25rem일때 */
+  /* --tl-Z: 12.7rem; */
+
+  /* 25% 25% 일때 */
+  /* --tl-Z: 9.4rem; */
+  /* 15% 30% */
+  --tl-Z: 12.5rem;
+  --minus-ts-Z: 0rem;
+
+}
+
+#wrap {
+  width: 100%;
+  height: 100vh;
+  background-color: #323036;
+  background-image: -webkit-radial-gradient(50% 50%, ellipse cover, transparent, rgba(0, 0, 0, 0.5));
+  ;
+}
+
+nav {
+  /* transform: 50% 50%; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 입체적인 버튼 스타일 */
+
+/* 공통 버튼 스타일 */
+.nav-button {
+  opacity: 0;
+  transform: translateY(-1rem);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  width: 100px;
+  height: 50px;
+  background: linear-gradient(145deg, #ffffff, #e0e0e0);
+  border: 2px solid #cccccc;
+  border-radius: 8px;
+  /* box-shadow:
+    5px 5px 15px rgba(0, 0, 0, 0.3),
+    -5px -5px 15px rgba(255, 255, 255, 0.7); */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1em;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin: 5px 5px;
+}
+
+/* 호버 상태 */
+
+nav:hover .nav-button {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+nav:hover .nav-button:hover {
+  transform: translateY(-5px);
+  /* box-shadow:
+    10px 10px 20px rgba(0, 0, 0, 0.4),
+    -10px -10px 20px rgba(255, 255, 255, 0.8); */
+}
+
+/* 클릭(액티브) 상태 */
+nav:hover .nav-button:active {
+  transform: translateY(2px);
+  /* box-shadow:
+    2px 2px 5px rgba(0, 0, 0, 0.2),
+    -2px -2px 5px rgba(255, 255, 255, 0.5); */
+}
+
+/* 각 버튼의 위치별 추가 스타일 */
+
+
+/* 필요에 따라 개별 스타일 추가 가능 */
+nav .top-position {
+  background: linear-gradient(145deg, #ffcccc, #e0a1a1);
+}
+
+nav .bottom-position {
+  background: linear-gradient(145deg, #ccffcc, #a1e0a1);
+}
+
+nav .right-position {
+  background: linear-gradient(145deg, #ccccff, #a1a1e0);
+}
+
+nav .left-position {
+  background: linear-gradient(145deg, #ffffcc, #e0e0a1);
+}
+
+nav .front-position {
+  background: linear-gradient(145deg, #ffccff, #e0a1e0);
+}
+
+nav .back-position {
+  background: linear-gradient(145deg, #ccffff, #a1e0e0);
+}
+
+.canvas {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+
+  perspective: 100rem;
+  perspective-origin: center;
+  transform-style: preserve-3d;
+  transform: translateY(100%);
+}
+
+
+#original {
+  --size: 15rem;
+  --forward: calc(var(--size) * 0.5);
+  --back: calc(var(--size) * -0.5);
+
+  position: relative;
+  width: var(--size);
+  height: var(--size);
+
+  transform-style: preserve-3d;
+  transform: rotateX(calc(var(--rotateY, 0) * -1deg)) rotateY(calc(var(--rotateX, 0) * 1deg));
+  /* transition: all 1.5s ease; */
+}
+
+.side {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  /* border: 1px solid rgba(255, 255, 255, 0.5); */
+  transform: rotateX(var(--x, 0)) rotateY(var(--y, 0)) translateZ(var(--z, 0)) scaleX(var(--backX, 1));
+  /* transform: rotateX(var(--x, 0)) rotateY(var(--y, 0)) translateZ(var(--z, 0)) scaleX(var(--backX, 1)) scaleY(var(--underY, 1)); */
+}
+
+#cover {
+  background: linear-gradient(to right bottom, rgb(128, 255, 255), rgb(128, 192, 255) 100%);
+}
+
+#button-cover {
+  /* border: none; */
+  background-color: green;
+  /* border-color: green; */
+  border-left: 2px solid green;
+  border-right: 2px solid green;
+}
+
+.front-cover {
+  /* position: relative; */
+}
+
+#button-cover .front-glow {
+  /* inset: 0rem; */
+  pointer-events: none;
+  /* animation: throb 3s ease infinite both -0.5s; */
+}
+
+#button-cover .front-glow::before,
+#button-cover .front-glow::after {
+  position: absolute;
+  transition: all 0.5s ease;
+  /* opacity: 0; */
+  content: "";
+  /* border-radius: inherit; */
+  inset: 0rem;
+}
+
+#button-cover .front-glow::before {
+  /* box-shadow: 0 0 3px 2px hsl(213deg 20% 95%),
+    0 0 7px 4px hsl(213deg 20% 80%),
+    0 0 13px 8px hsl(248deg 40% 60%),
+    0 0 22px 6px hsl(248deg 20% 40%);
+  z-index: -1; */
+}
+
+#cover .front-glow {
+  /* position: absolute; */
+  inset: 0rem;
+  pointer-events: none;
+  /* animation: throb 3s ease infinite both -0.5s; */
+}
+
+#cover .front-glow::before,
+#cover .front-glow::after {
+  position: absolute;
+  transition: all 0.5s ease;
+  /* opacity: 0; */
+  content: "";
+  /* border-radius: inherit; */
+  inset: 0rem;
+}
+
+#cover .front-glow::before {
+  box-shadow: 0 0 3px 2px hsl(213deg 20% 95%),
+    0 0 7px 4px hsl(213deg 20% 80%),
+    0 0 13px 8px hsl(248deg 40% 60%),
+    0 0 22px 6px hsl(248deg 20% 40%);
+  z-index: -1;
+  /* box-shadow: 0 0 3px 2px hsl(0deg, 0%, 95%), 
+    0 0 7px 4px hsl(0deg, 0%, 80%),  
+    0 0 13px 8px hsl(0deg, 0%, 60%),  
+    0 0 22px 6px hsl(0deg, 0%, 40%); 
+  z-index: -1; */
+}
+
+/* #cover .front-glow::after {
+  box-shadow: inset 0 0 0 1px hsl(248deg 70% 95%),
+    inset 0 0 3px 1px hsl(248deg 100% 80%),
+    inset 0 0 9px 1px hsl(248deg 100% 70%);
+  z-index: 2;
+} */
+
+@keyframes throb {
+
+  0%,
+  90%,
+  100% {
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+}
+
+.side--x {
+  --x: 90deg;
+}
+
+.side--y {
+  --y: 90deg;
+}
+
+.side--forward {
+  --z: var(--forward);
+}
+
+.side--back {
+  --z: var(--back);
+  --backX: -1;
+  /* transform: rotateY(180deg) scaleX(-1);; */
+}
+
+.side--under {
+  --underY: -1;
+  transform: rotateX(var(--x, 0)) translateZ(var(--z, 0)) scaleY(-1);
+  ;
+}
+
+.rotate-y {
+  animation: spinY 20s infinite linear;
+}
+
+@keyframes spinY {
+  from {
+    transform: translateZ(0rem) translateY(0rem) rotateX(-15deg) rotateY(0deg) rotateZ(0deg);
+    /* transform: rotateY(0); */
+  }
+
+  to {
+    transform: translateZ(0rem) translateY(0rem) rotateX(-15deg) rotateY(360deg) rotateZ(0deg);
+    transition: none;
+  }
+}

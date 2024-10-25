@@ -6,11 +6,8 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth import get_user_model
 from channels.db import database_sync_to_async
 from django.contrib.sessions.models import Session
-from asgiref.sync import sync_to_async
 
 from . import models
-from reservation import models as rsv
-import asyncio
 
 @database_sync_to_async
 def change_session_data(session_key, data):
@@ -25,69 +22,51 @@ ADMIN_USERS = { "admin" : True,}
 
 class ManagerConsumer(AsyncWebsocketConsumer):
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.room_group_name = None  # Initialize room_group_name
-
     async def fetch_messages(self, data):
         messages = models.Message.all_messages()
-        messages = await sync_to_async(models.Message.all_messages)()
         content = {
-            "messages" : await self.messages_to_json(messages)
+            "messages" : self.messages_to_json(messages)
         }
         await self.send_chat_messages(content)
 
     async def new_message(self, data):
-        print("매니져 뉴메세지")
         author = data["from"]
         recipient_username = "admin"
 
         author = author.strip('"')
         try:
-            # author_user = User.objects.get(username=author)
-            # recipient_user = User.objects.get(username=recipient_username)
-            author_user = await sync_to_async(User.objects.get)(username=author)
-            # recipient_user = await sync_to_async(User.objects.get)(username=recipient_user)
+            author_user = User.objects.get(username=author)
+            recipient_user = User.objects.get(username=recipient_username)
         except User.DoesNotExist:
             users = User.objects.all()
             for user in users:
                 print(user.username)
             return
 
-        # message = models.Message.objects.create(author=author_user, recipient=recipient_user, content=data["message"], chatroom=self.room_name)
-        # message = models.Message.objects.create(author=author_user, content=data["message"], chatroom=self.room_name)
-        message = await sync_to_async(models.Message.objects.create)(author=author_user, content=data["message"], chatroom=self.room_name)
+        message = models.Message.objects.create(author=author_user, recipient=recipient_user, content=data["message"], chatroom=self.room_name)
         content = {
             "command" : "new_message",
-            # "message" : self.message_to_json(message)
-            "message" : await self.message_to_json(message),
+            "message" : self.message_to_json(message)
         }
         await self.send_chat_messages(content)
 
-    async def messages_to_json(self, messages):
+    def messages_to_json(self, messages):
         result = []
         for message in messages:
-            result.append(await self.message_to_json(message))
+            result.append(self.message_to_json(message))
         return result
 
-    async def message_to_json(self, message):
+    def message_to_json(self, message):
         return {
             "author" : message.author.username,
             "content" : message.content,
             "timestamp" : message.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
         }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.commands = {
-            "fetch_messages" : self.fetch_messages,
-            "new_message" : self.new_message,
-        }
-
-    # commands = {
-    #     "fetch_messages" : fetch_messages,
-    #     "new_message" : new_message,
-    # }
+    commands = {
+        "fetch_messages" : fetch_messages,
+        "new_message" : new_message,
+    }
 
     async def connect(self):
         print("매니저 커넥트 실행")
@@ -117,43 +96,7 @@ class ManagerConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         data = json.loads(text_data)
         print("매니져 리시브 찍히나", data)
-        # self.commands[data["command"]](self, data)
-        key_command = data.get("command")
-        rsv_id = data.get("rsv_id")
-
-        if key_command == "new_message":
-            await self.commands[key_command](data)
-
-        elif key_command == "RSV_mark_as_read":
-            await self.mark_as_read(rsv_id)
-
-        elif key_command == "selected_date":
-            print(data);
-
-    # async def receive(self, text_data):
-    #     data = json.loads(text_data)
-    #     key_command = data.get("command")
-    #     rsv_id = data.get("rsv_id")
-
-    #     # 명령에 해당하는 함수가 존재하는지 확인
-    #     if key_command in self.commands:
-    #         command_func = self.commands[key_command]
-    #         # 비동기 함수인지 확인 후 적절하게 호출
-    #         if asyncio.iscoroutinefunction(command_func):
-    #             await command_func(self, data)
-    #         else:
-    #             command_func(self, data)
-    #     elif key_command == "RSV_mark_as_read":
-    #         # mark_as_read가 비동기 함수라고 가정
-    #         await self.mark_as_read(rsv_id)
-    #     elif key_command == "selected_date":
-    #         print(data)
-    #     else:
-    #         print(f"알 수 없는 명령: {key_command}")
-
-    async def mark_as_read(self, rsvuser_id):
-        rsv_read = await sync_to_async(rsv.Reservation_user.objects.get, thread_sensitive=True)(id=rsvuser_id)
-        await sync_to_async(rsv_read.rsv_check, thread_sensitive=True)()
+        self.commands[data["command"]](self, data)
 
     async def send_chat_messages(self, message):
         await self.channel_layer.group_send(

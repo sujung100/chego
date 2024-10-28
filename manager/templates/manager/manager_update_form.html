@@ -8,56 +8,121 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{% static 'manager/css/manager_update_form.css' %}?after">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
   <title>업데이트TEST</title>
-  
+
 </head>
+
 <body>
   <div id="wrap">
-    <div class="box1">
-      <div class="content1">
-        {% if request.user.is_authenticated %}
-          <div class="layout">
-            <div class="section1">
-              <div class="timetable">
-                <div class="showtime">
-                  <div class="store-table">
+    <div class="content1">
+      {% if request.user.is_authenticated %}
+      <div class="cont_box1 inner_div1">
+        <div class="cont_box1 inner_div2">
+          <div class="cont_box1 inner_div3">
+            <div class="content2">
+              {% if request.user.is_authenticated %}
+              <div class="con2_nav">
+                <button class="nav_button1" type="button">
+                  <img src="{% static 'manager/img/right-arrow (1).png' %}" alt="접기">
+                </button>
+                <!-- <button id="nav_button2" class="nav_button2" type="button">
+                          <img src=" static 'manager/img/turn-off (1).png' " alt="로그아웃">
+                        </button> -->
+              </div>
+              <div class="con2_manager1">
+                <!-- <img class="profile_img" src="../../static/manager/img/user.png" alt="이미지"> -->
+                <img class="profile_img" src="{% static 'manager/img/user.png' %}" alt="이미지">
+                <span>{{ request.user.username }}</span>
+                <button id="nav_button2" class="nav_button2" type="button">
+                  <!-- <img src="../../static/manager/img/turn-off (1).png" alt="로그아웃"> -->
+                  <img src="{% static 'manager/img/turn-off (1).png' %}" alt="로그아웃">
+                </button>
+              </div>
+        
+        
+              {% else %}
+              <!-- <img class="profile_img" src="../../static/manager/img/user.png" alt="이미지"> -->
+              <a href="/manager/login">
+                <button class="login_test" type="button">로그인</button>
+              </a>
+              <a href="/manager/signup">
+                <button class="signup_test" type="button">회원가입</button>
+              </a>
+              {% endif %}
+            </div>
+            <div class="main">
+              <div class="left_bar">
+                <span class="material-symbols-outlined bar_icons"><a href="{% url 'sungwoo' %}">home</a></span>
+                <span class="material-symbols-outlined bar_icons"><a href="">more_time</a></span>
+                <span class="material-symbols-outlined bar_icons"><a href="{% url 'admin_chat2' %}">forum</a></span>
+              </div>
+              <!-- 여기 -->
+              <div class="right_content">
+                <div class="top_cont">
+                  <div class="t_l">
+                    <img src="{% static 'manager/img/note2.png' %}" alt="이미지1">
+                  </div>
+                  <div class="t_r">
+                    <span class="title">시간표변경</span>
+                    <br>
+                    <br>
                     <div class="st-name">
-                      <div class="st-id">{{ store.id }}</div>
+                      <!-- <div class="st-id">{{ store.id }}</div> -->
                       {{ store.store_name }}
                     </div>
-                    <div class="st-time">
-                      <form action="" method="post" id="myForm">{% csrf_token %}
-                        <br>
-                        <div>새로운 시간 추가</div>
-                        {% for time in sto_time_objects %}
-                          <button class="time-item-{{ store.id }}" type="button" data-time="{{ time.reservation_time }}" id="time-style" style="display: none;">{{  time.reservation_time  }}</button>
-                        {% endfor %}
-                        <!-- <span id="btnwrap" data-pk="{{ store.pk }}" data-store-id="{{ store.id }}">
-                          <button type="button" class="addbtn">&#43;</button>
-                          <button type="button" class="addbtn" id="addbtn-{{ obj.id }}" data-pk="{{ obj.pk }}" data-store-id="{{ obj.id }}">&#43;</button>
-                        </span> -->
-                        <span id="btnwrap" data-pk="{{ manager.pk }}" data-store-id="{{ store.id }}">
-                          <button type="button" class="addbtn">&#43;</button>
-                        </span>
-                        <br>
-                        <!-- <button type="button" class="add_cookies">추가하기</button> -->
-                        <!-- <button class="add_cookies" data-pk="{{ store.pk }}" data-store-id="{{ store.id }}">추가하기</button> -->
-                        <button class="add_cookies" id="add-cookies-{{ store.id }}" data-pk="{{ manager.pk }}" data-store-id="{{ store.id }}">추가하기</button>
-                        
-                        <br>
-                        <div>시간표 변경</div>
-                        <div class="parent">
-                          <div id="attach_btns"></div>
+                    <br>
+                    <span class="description">업체의 타임테이블을 관리합니다.<br>예약가능한 새로운 시간을 추가하시거나,<br>기존 시간을 변경 가능힙니다.<br><br>&#8251; 해당 시간에 예약이 이미 존재하는경우, 시간표 변경이 불가합니다.<br>개별 조정후 다시 시도해주세요.</span>
+                  </div>
+                </div>
+                <hr>
+                <div class="bottom_cont">
+                  <div class="b_l">
+                    <span>달력들어갈자리</span>
+                  </div>
+                  <div class="b_r">
+                    <div class="showtime">
+                      <div class="store-table">
+                        <!-- <div class="st-name">
+                          <div class="st-id">{{ store.id }}</div>
+                          {{ store.store_name }}
+                        </div> -->
+                        <div class="st-time">
+                          <form action="" method="post" id="myForm">{% csrf_token %}
+                            <br>
+                            <div>새로운 시간 추가</div>
+                            {% for time in sto_time_objects %}
+                            <button class="time-item-{{ store.id }}" type="button" data-time="{{ time.reservation_time }}"
+                              id="time-style" style="display: none;">{{ time.reservation_time }}</button>
+                            {% endfor %}
+                            <!-- <span id="btnwrap" data-pk="{{ store.pk }}" data-store-id="{{ store.id }}">
+                                <button type="button" class="addbtn">&#43;</button>
+                                <button type="button" class="addbtn" id="addbtn-{{ obj.id }}" data-pk="{{ obj.pk }}" data-store-id="{{ obj.id }}">&#43;</button>
+                              </span> -->
+                            <span id="btnwrap" data-pk="{{ manager.pk }}" data-store-id="{{ store.id }}">
+                              <button type="button" class="addbtn">&#43;</button>
+                            </span>
+                            <br>
+                            <!-- <button type="button" class="add_cookies">추가하기</button> -->
+                            <!-- <button class="add_cookies" data-pk="{{ store.pk }}" data-store-id="{{ store.id }}">추가하기</button> -->
+                            <button class="add_cookies" id="add-cookies-{{ store.id }}" data-pk="{{ manager.pk }}"
+                              data-store-id="{{ store.id }}">추가하기</button>
+                            <br>
+                            <div>시간표 변경</div>
+                            <div class="parent">
+                              <div id="attach_btns"></div>
+                            </div>
+                            <input type="hidden" id="buttonValues" name="button_values">
+                            <button type="button" id="save_button">저장하기</button>
+                          </form>
                         </div>
-                        <input type="hidden" id="buttonValues" name="button_values">
-                        <button type="button" id="save_button">저장하기</button>
-                      </form>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <br>
-              <!-- <div class="addtime">
+            </div>
+            <!-- <div class="addtime">
                   <table>
                     <br>
                     <label for="select_time1">예약시간</label>
@@ -67,67 +132,33 @@
                   </table>
                   <button type="submit" class="confirm">확인</button>
               </div> -->
-            </div>
-            {% else %}
-            <div class="container">
-              <svg viewBox="0 0 960 300">
-                <symbol id="s-text">
-                  <text text-anchor="middle" x="50%" y="80%">로그인필요</text>
-                </symbol>
-
-                <g class="g-ants">
-                  <use xlink:href="#s-text" class="text-copy"></use>
-                  <use xlink:href="#s-text" class="text-copy"></use>
-                  <use xlink:href="#s-text" class="text-copy"></use>
-                  <use xlink:href="#s-text" class="text-copy"></use>
-                  <use xlink:href="#s-text" class="text-copy"></use>
-                </g>
-              </svg>
-            </div>
+            
           </div>
-        {% endif %}
+          {% else %}
+          <div class="container">
+            <svg viewBox="0 0 960 300">
+              <symbol id="s-text">
+                <text text-anchor="middle" x="50%" y="80%">로그인필요</text>
+              </symbol>
+
+              <g class="g-ants">
+                <use xlink:href="#s-text" class="text-copy"></use>
+                <use xlink:href="#s-text" class="text-copy"></use>
+                <use xlink:href="#s-text" class="text-copy"></use>
+                <use xlink:href="#s-text" class="text-copy"></use>
+                <use xlink:href="#s-text" class="text-copy"></use>
+              </g>
+            </svg>
+          </div>
+        </div>
       </div>
+      {% endif %}
     </div>
-    </div>
+  </div>
 
-    <div class="box2">
-        <div class="content2">
-            {% if request.user.is_authenticated %}
-            <div class="con2_nav">
-              <button class="nav_button1" type="button">
-                <img src="{% static 'manager/img/right-arrow (1).png' %}" alt="접기">
-              </button>
-    
-              <a href="/manager/logout">
-                <button class="nav_button2" type="button">
-                  <img src="{% static 'manager/img/turn-off (1).png' %}" alt="로그아웃">
-                </button>
-              </a>
-            </div>
-            <div class="con2_manager1">
-              <img class="profile_img" src="{% static 'manager/img/user.png' %}" alt="이미지">
-              <span>{{ request.user.username }}</span>
-            </div>
-            <a href="/manager/logout">
-              <button class="logout_test" type="button">로그아웃</button>
-            </a>
-    
-    
-            {% else %}
-            <!-- <img class="profile_img" src="../../static/manager/img/user.png" alt="이미지"> -->
-            <a href="/manager/login">
-              <button class="login_test" type="button">로그인</button>
-            </a>
-            <a href="/manager/signup">
-              <button class="signup_test" type="button">회원가입</button>
-            </a>
-            {% endif %}
-          </div>
-    </div>
 
   </div>
-  {% include "manager/js/manager_update_form_js.html" %} 
+  {% include "manager/js/manager_update_form_js.html" %}
 </body>
 
 </html>
-

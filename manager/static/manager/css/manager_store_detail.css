@@ -119,7 +119,7 @@ body {
   /* background-color: #F8F0DF; */
   /* background-color: #FEFBF3; */
   background-color: #fefbf3d9;
-  border-radius: 0 0 0 10px ;
+  border-radius: 10px 0 0 10px ;
   /* display: flex;
   flex-direction: column; */
 }
@@ -216,7 +216,7 @@ body {
   height: 97.8%; */
   width: 100%;
   height: 95%;
-  border-radius: 0 0 10px 0;
+  border-radius: 0 10px 10px 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1180,7 +1180,7 @@ a:active {
 .box2 {
   /* background-color: brown; */
   /* display:flex; */
-  border-radius: 0 2% 0 0;
+  /* border-radius: 0 2% 0 0; */
 }
 
 .box2 .content2 {
@@ -1193,7 +1193,7 @@ a:active {
   /* align-self: center;  */
   justify-content: center;
   align-items: center;
-  border-radius: 3%;
+  border-radius: 0 10px 0 0;
   display: flex;
   /* 07.07 */
   /* margin-bottom: 5rem; */

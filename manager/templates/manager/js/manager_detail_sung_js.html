@@ -2,11 +2,11 @@
 
 <script>
   let userName = "{{ username|escapejs }}";
-  // console.log(userName);
+  console.log("userName", userName);
   const loc = window.location;
   // console.log(loc);
   // const loc = "127.0.0.1:8000/manager/";
-  const loc2 = "/manager/sung/admin_chat2"; 
+  const loc2 = "/manager/sung/admin_chat2/"; 
   // const loc3 = 
   let weStart = "ws://";
   if (loc.protocol === "https:") {
@@ -17,8 +17,16 @@
   async function accessAllChannels() {
 
     let endpoints = [
+      // { name: "chat", url: weStart + loc.host + loc2 + userName + "/" },
+      // { name: "chat", url: weStart + loc.host + loc2 + userName},
+      // { name: "manager_detail", url: weStart + loc.host + loc.pathname + userName},
+
+      // 성우
       { name: "chat", url: weStart + loc.host + loc2 + userName + "/" },
-      { name: "manager_detail", url: weStart + loc.host + loc.pathname + userName },
+      { name: "manager_detail", url: weStart + loc.host + loc.pathname + userName + "/" },
+      // 수정
+      // { name: "chat", url: weStart + loc.host + loc2 },
+      // { name: "manager_detail", url: weStart + loc.host + loc.pathname},
     ];
     Notification.requestPermission().then(function (permission) {
       console.log('Permission:', permission);

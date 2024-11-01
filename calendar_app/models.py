@@ -19,6 +19,8 @@ class Store(models.Model):
     
     cdate = models.DateTimeField(auto_now_add = True)
     mdate = models.DateTimeField(auto_now = True)
+    start_rsv_possible = models.DateField(null=True, blank=True)
+    end_rsv_possible = models.DateField(null=True, blank=True)
     
 
 

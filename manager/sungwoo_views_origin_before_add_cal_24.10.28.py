@@ -15,7 +15,7 @@ from django.forms.models import model_to_dict
 from django.views.generic.edit import FormView
 from django.http import HttpResponseRedirect
 
-from django.http import JsonResponse, QueryDict, HttpRequest, HttpResponse
+from django.http import JsonResponse, QueryDict, HttpRequest
 from django.views import View
 from django.core.paginator import Paginator
 from django.core import serializers
@@ -29,10 +29,6 @@ from . import models
 from datetime import datetime
 
 from .forms import ManagerUpdateForm, StoreUpdateForm, UpdateForm, TotalReservationForm
-
-# 테스트중 24.10.28
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
 
 
 # 예약조회 - 검색기능 - 전화번호 조회시 기호제거
@@ -388,8 +384,6 @@ class Total_Reservation_Check(LoginRequiredMixin, UpdateView):
         context['input2'] = input2
         context['input3'] = input3
         context['request'] = self.request
-        context["username"] = self.request.user.username
-
         
 
         return context
@@ -711,8 +705,6 @@ class Update(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         print("여긴 되냐")
-        
-        request = self.request
         context = super().get_context_data(**kwargs)
 
         # URL에서 store_id값 가져오기
@@ -788,7 +780,6 @@ class Update(LoginRequiredMixin, UpdateView):
                     
             # 예약이 불가능한 날짜와 시간을 가져와 disabled_dates_info_json에 저장
             context['disabled_dates_info_json'] = json.dumps(disabled_dates_info_list , cls=DjangoJSONEncoder)
-            context['username'] = request.user.username
         # print(context['disabled_dates_info_json'])
 
         # print("콘텍스트", context)
@@ -957,56 +948,6 @@ class Update(LoginRequiredMixin, UpdateView):
         
         return self.get(request, *args, **kwargs)
     
-
-@method_decorator(csrf_exempt, name="dispatch")
-class NewTest1(View):
-    template_name = "manager/test_sung1.html"
-    # template_name = "manager/manager_store_detail.html"
-    def setup_variables(self, store_id):
-        # 공통으로 사용되는 변수들을 설정합니다.
-        if not hasattr(self, 'store'):
-            self.store = get_object_or_404(rsv.Store, id=store_id)
-        if not hasattr(self, 'store_time'):
-            self.store_time = rsv.Store_times.objects.filter(store_id=store_id)
-        if not hasattr(self, 'user_time'):
-            self.user_time = rsv.Reservation_user.objects.filter(store_id=store_id)
-
-    def get(self, request, store_id, *args, **kwargs):
-        self.setup_variables(store_id)
-
-        if not request.user.is_authenticated or request.user.id != self.store.owner_id:
-            return HttpResponseForbidden("접근 권한이 없습니다.")
-        
-        dates_list = [date.reservation_date for date in self.user_time]
-        
-        context = {
-            "user_dates_json": json.dumps(dates_list, cls=DjangoJSONEncoder),
-            "username": request.user.username
-        }
-
-        return render(request, self.template_name, context)
-    
-    def post(self, request, store_id, *args, **kwargs):
-        self.setup_variables(store_id)
-
-        if not request.user.is_authenticated or request.user.id != self.store.owner_id:
-            return JsonResponse({"message": "접근 권한이 없습니다."}, status=403)
-
-        try:
-            data = json.loads(request.body)
-            self.store.start_rsv_possible = data.get("activate_date_start")
-            self.store.end_rsv_possible = data.get("activate_date_end")
-            self.store.full_clean()
-            self.store.save()
-        except json.JSONDecodeError:
-            return JsonResponse({"message": "유효하지 않은 JSON 형식입니다."}, status=400)
-        except ValidationError as e:
-            # 유효성 검사 실패 시 에러
-            error_message = str(e)
-            return HttpResponse(error_message, status=400)
-
-
-        return JsonResponse({"message": "성공적으로 처리되었습니다."}, status=200)
 
 
 

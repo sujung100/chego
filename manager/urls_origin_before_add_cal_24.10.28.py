@@ -43,7 +43,6 @@ urlpatterns = [
   path('sung/update/<int:store_id>/', sungwoo_views.Update.as_view(), name='update3'),
   # 예약조회 페이지 - 사장님
   # path('sung/<int:store_id>/', sungwoo_views.Total_Reservation_Check.as_view(), name='store_detail'),
-  
   path('sung/<int:pk>/', sungwoo_views.Total_Reservation_Check.as_view(), name='store_detail'),
 
 
@@ -57,9 +56,6 @@ urlpatterns = [
   # path('sung/<int:store_id>/', sungwoo_views.detail_list, name='store_detail'),
   # 변경
 
-  # update페이지 달력 추가전 성우님꺼 테스트
-  path('sung/test/<int:store_id>/', sungwoo_views.NewTest1.as_view(), name='n_test1'),
-
 
 # 비동기
   path("sung/api/store-times/", sungwoo_views.StoreTimesView.as_view(), name='store_times'),
@@ -71,6 +67,5 @@ urlpatterns = [
   path("sung/admin_chat2/api/chat-room/user_info/", sungwoo_views.UserInfo.as_view(), name="user_info"),
   path("sung/admin_chat2/api/chat-room/", sungwoo_views.ChatRoom.as_view(), name="chat_room2"),
   path("sung/admin_chat2/api/chat-room/<str:chatroom_name>/messages/", sungwoo_views.EnterChatRoom.as_view(), name="enter_chatroom2"),
-  # 비동기 - update페이지 달력 추가전 성우님꺼
-  path("sung/test/<int:store_id>/api/activate_post/", sungwoo_views.NewTest1.as_view(), name="activate_post"),
+
 ]

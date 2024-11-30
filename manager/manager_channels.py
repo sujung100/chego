@@ -322,34 +322,177 @@ class ManagerConsumer(AsyncWebsocketConsumer):
 
 
 
-class TestConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
-        print("테스트 커넥트 실행")
+# class TestConsumer(AsyncWebsocketConsumer):
+#     async def connect(self):
+#         print("테스트 커넥트 실행")
 
+#         current_user = self.scope["user"].username
+
+#         self.room_name = current_user
+#         self.room_group_name = f"chat_{self.room_name}"
+
+#         await self.channel_layer.group_add(
+#             self.room_group_name, self.channel_name
+#         )
+
+#         await self.accept()
+#         print(f"테스트 컨수머 : {self.room_group_name}")
+
+#     async def disconnect(self, close_code):
+#         await self.channel_layer.group_discard(
+#             self.room_group_name, self.channel_name
+#         )
+
+
+#     # 아직 아무것도 안함
+#     async def receive(self, text_data):
+#         text_data_json = json.loads(text_data)
+#         message = text_data_json['message']
+
+#         # 클라이언트에 메시지 전송
+#         await self.send(text_data=json.dumps({
+#             'message': message
+#         }))
+
+# checkconsumer이름만 바꿈
+class TestConsumer(AsyncWebsocketConsumer):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.room_group_name = None  # Initialize room_group_name
+
+    async def fetch_messages(self, data):
+        messages = models.Message.all_messages()
+        messages = await sync_to_async(models.Message.all_messages)()
+        content = {
+            "messages" : await self.messages_to_json(messages)
+        }
+        await self.send_chat_messages(content)
+
+    async def new_message(self, data):
+        print("매니져 뉴메세지")
+        author = data["from"]
+        recipient_username = "admin"
+
+        author = author.strip('"')
+        try:
+            # author_user = User.objects.get(username=author)
+            # recipient_user = User.objects.get(username=recipient_username)
+            author_user = await sync_to_async(User.objects.get)(username=author)
+            # recipient_user = await sync_to_async(User.objects.get)(username=recipient_user)
+        except User.DoesNotExist:
+            users = User.objects.all()
+            for user in users:
+                print(user.username)
+            return
+
+        # message = models.Message.objects.create(author=author_user, recipient=recipient_user, content=data["message"], chatroom=self.room_name)
+        # message = models.Message.objects.create(author=author_user, content=data["message"], chatroom=self.room_name)
+        message = await sync_to_async(models.Message.objects.create)(author=author_user, content=data["message"], chatroom=self.room_name)
+        content = {
+            "command" : "new_message",
+            # "message" : self.message_to_json(message)
+            "message" : await self.message_to_json(message),
+        }
+        await self.send_chat_messages(content)
+
+    async def messages_to_json(self, messages):
+        result = []
+        for message in messages:
+            result.append(await self.message_to_json(message))
+        return result
+
+    async def message_to_json(self, message):
+        return {
+            "author" : message.author.username,
+            "content" : message.content,
+            "timestamp" : message.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.commands = {
+            "fetch_messages" : self.fetch_messages,
+            "new_message" : self.new_message,
+        }
+
+    # commands = {
+    #     "fetch_messages" : fetch_messages,
+    #     "new_message" : new_message,
+    # }
+
+    async def connect(self):
+        print("매니저 커넥트 실행")
+        # ROOM_NAME = {}
         current_user = self.scope["user"].username
+
+        # ROOM_NAME[current_user] = current_user
+        # for admin_user in ADMIN_USERS.keys():
+        #     ROOM_NAME[admin_user] = admin_user
 
         self.room_name = current_user
         self.room_group_name = f"chat_{self.room_name}"
+        # print("매니저그륩네임",self.room_group_name)
 
         await self.channel_layer.group_add(
             self.room_group_name, self.channel_name
         )
 
         await self.accept()
-        print(f"테스트 컨수머 : {self.room_group_name}")
+        print(f"매니저컨수머 : {self.room_group_name}")
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(
             self.room_group_name, self.channel_name
         )
 
-
-    # 아직 아무것도 안함
     async def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        message = text_data_json['message']
+        data = json.loads(text_data)
+        print("매니져 리시브 찍히나", data)
+        # self.commands[data["command"]](self, data)
+        key_command = data.get("command")
+        rsv_id = data.get("rsv_id")
 
-        # 클라이언트에 메시지 전송
-        await self.send(text_data=json.dumps({
-            'message': message
-        }))
+        if key_command == "new_message":
+            await self.commands[key_command](data)
+
+        elif key_command == "RSV_mark_as_read":
+            await self.mark_as_read(rsv_id)
+
+        elif key_command == "selected_date":
+            print(data);
+    
+        elif key_command == "start_end_date":
+            # 시작 날짜와 종료 날짜, 버튼 값 저장
+            start_date = data.get("start_date")
+            end_date = data.get("end_date")
+            button_values = data.get("buttonValues")
+            
+
+    
+
+    async def mark_as_read(self, rsvuser_id):
+        rsv_read = await sync_to_async(rsv.Reservation_user.objects.get, thread_sensitive=True)(id=rsvuser_id)
+        await sync_to_async(rsv_read.rsv_check, thread_sensitive=True)()
+
+    async def send_chat_messages(self, message):
+        await self.channel_layer.group_send(
+            self.room_group_name, {"type": "chat.message", "message": message}
+        )
+
+    async def send_message(self, message):
+        await self.send(text_data=json.dumps(message))
+
+    async def chat_message(self, event):
+        message = event["message"]
+        await self.send(text_data=json.dumps(message))
+
+    async def notification_message(self, event):
+        print("매니저노티피캐이션")
+        message = event["notification_message"]
+        client_message = {
+            "type" : "notification",
+            "content" : message
+        }
+        await self.send(text_data=json.dumps(client_message))
+

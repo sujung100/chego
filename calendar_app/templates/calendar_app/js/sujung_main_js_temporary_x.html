@@ -481,19 +481,9 @@
                         return response.json();
                     })
                     .then(data => {
-                        // console.log("data", data);
-                        // alert(data.message);
-                        // // window.location.href = "";
-                        if (data.status === 'success') {
-                            // 성공
-                            console.log(data.message);
-                            alert("성공적으로 예약되었습니다.")
-                            // location.reload();
-
-                        } else {
-                            // 실패
-                            console.log(data.message);
-                        }
+                        console.log("data", data);
+                        alert(data.message);
+                        window.location.href = "";
                     })
                     .catch(error => {
                         console.log(error);

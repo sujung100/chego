@@ -1,0 +1,235 @@
+{% autoescape off %}
+<script>
+    // 달력 시작
+    let availableCompanyDates;
+    let totalDisableTimes;
+    const storeData = JSON.parse('{{ store_data_json|escapejs|safe }}');
+    ;
+    // window.onload = function () { 
+    //     buildCalendar();
+    // }    // 웹 페이지가 로드되면 buildCalendar 실행
+
+    let nowMonth = new Date();  // 현재 달을 페이지를 로드한 날의 달로 초기화
+    let today = new Date();     // 페이지를 로드한 날짜를 저장
+    today.setHours(0, 0, 0, 0);    // 비교 편의를 위해 today의 시간을 초기화
+
+    const nowdate = new Date().toISOString().substring(0, 10);
+    document.getElementById("detail_user_date").value = nowdate;
+
+    const prevCalendar_button = document.querySelector(".prevCalendar");
+    const nextCalendar_button = document.querySelector(".nextCalendar");
+    let mainCalendar = document.querySelector("#mainCalendar");
+    let calendar_id = mainCalendar.dataset.storeid;
+
+    // 달력 생성 : 해당 달에 맞춰 테이블을 만들고, 날짜를 채워 넣는다.
+    async function buildCalendar(store_id, start_date, end_date) {
+
+        calendar_id = store_id;
+        // console.log(calendar_id);
+        // console.log("start_date", start_date);
+        // console.log("end_date", end_date);
+        let firstDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth(), 1);     // 이번달 1일
+        let lastDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, 0);  // 이번달 마지막날
+
+        let tbody_Calendar = document.querySelector(".Calendar > tbody");
+        const activateStartDate = new Date(start_date);
+        activateStartDate.setHours(0, 0, 0, 0);
+        const activateEndDate = new Date(end_date);
+        // console.log("activateStartDate", activateStartDate);
+        // console.log("activateEndDate", activateEndDate);
+        // console.log("today", today);
+        // console.log("", );
+
+        document.getElementById("calYear").innerText = nowMonth.getFullYear();             // 연도 숫자 갱신
+        document.getElementById("calMonth").innerText = leftPad(nowMonth.getMonth() + 1);  // 월 숫자 갱신
+
+        while (tbody_Calendar.rows.length > 0) {                        // 이전 출력결과가 남아있는 경우 초기화
+            tbody_Calendar.deleteRow(tbody_Calendar.rows.length - 1);
+        }
+
+        let nowRow = tbody_Calendar.insertRow();        // 첫번째 행 추가           
+
+        for (let j = 0; j < firstDate.getDay(); j++) {  // 이번달 1일의 요일만큼
+            let nowColumn = nowRow.insertCell();        // 열 추가
+        }
+        // 추가
+        const currentDate = localStorage.getItem("selected_date");
+        const selectedStyle = "background:#009476"; // 선택된 날짜의 스타일
+
+        for (let nowDay = new Date(firstDate); nowDay <= lastDate; nowDay.setDate(nowDay.getDate() + 1)) {  // day는 날짜를 저장하는 변수, 이번달 마지막날까지 증가시키며 반복  
+
+            let nowColumn = nowRow.insertCell();        // 새 열을 추가하고
+
+
+            let newDIV = document.createElement("p");
+            newDIV.innerHTML = leftPad(nowDay.getDate());        // 추가한 열에 날짜 입력
+            // 추가
+            // 선택된 날짜에 스타일 적용
+            let formattedDate = `${nowDay.getFullYear()}-${leftPad(nowDay.getMonth() + 1)}-${leftPad(nowDay.getDate())}`;
+            if (formattedDate === currentDate) {
+                newDIV.style = selectedStyle;
+            }
+
+
+
+            if (nowDay.getDay() == 6) {                 // 토요일인 경우
+                nowRow = tbody_Calendar.insertRow();    // 새로운 행 추가
+            }
+            // nowColumn.appendChild(newDIV);
+            if (start_date && end_date) {
+                const nowDayStripped = new Date(nowDay.getFullYear(), nowDay.getMonth(), nowDay.getDate());
+                const todayStripped = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                // const nowDayStripped = new Date(nowDay.getFullYear(), nowDay.getMonth(), nowDay.getDate());
+                const activateStartDateStripped = new Date(activateStartDate.getFullYear(), activateStartDate.getMonth(), activateStartDate.getDate());
+                const activateEndDateStripped = new Date(activateEndDate.getFullYear(), activateEndDate.getMonth(), activateEndDate.getDate());
+                // console.log("nowDay", nowDay);
+                // console.log("activateStartDate", activateStartDate);
+                if (nowDay >= activateStartDate && nowDay <= activateEndDate) {
+                    // console.log("nowDayStripped", nowDayStripped);
+                    // console.log("todayStripped", todayStripped);
+                    if (nowDay < today) {
+                        newDIV.className = "pastDay"
+                    }
+                    else if (nowDayStripped.getTime() == todayStripped.getTime()) {
+                        // console.log("투데이 걸리냐");
+                        newDIV.className = "today choiceDay";
+                        // newDIV.className = "today";
+                        newDIV.onclick = function (e) { choiceDate(this, e); }
+                    }
+                    else {
+                        newDIV.className = "futureDay";
+                        newDIV.onclick = function (e) { choiceDate(this, e); };
+                    }
+                } else {
+                    // 기간 밖에 있는 날짜에 "pastDay" 클래스 부여
+                    newDIV.className = "pastDay";
+                }
+                // nowDay >= activateStartDate && nowDay <= activateEndDate 조건 끝
+            } else {
+                // console.log("엘스 실행 되냐");
+                if (nowDay < today) {                       // 지난날인 경우
+                    newDIV.className = "pastDay";
+                }
+                else if (nowDay.getFullYear() == today.getFullYear() && nowDay.getMonth() == today.getMonth() && nowDay.getDate() == today.getDate()) { // 오늘인 경우           
+                    newDIV.className = "today";
+                    newDIV.onclick = function (e) { choiceDate(this, e); }
+                }
+                else {                                      // 미래인 경우
+                    newDIV.className = "futureDay";
+                    newDIV.onclick = function (e) { choiceDate(this, e); }
+                }
+
+            }
+
+
+
+            nowColumn.appendChild(newDIV);
+        }
+    }
+    // buildCalendar();
+
+    // 날짜 선택
+    function choiceDate(newDIV, e) {
+        if (e.target === newDIV) {
+            // console.log(e);
+            if (document.getElementsByClassName("choiceDay")[0]) {                              // 기존에 선택한 날짜가 있으면
+                document.getElementsByClassName("choiceDay")[0].classList.remove("choiceDay");  // 해당 날짜의 "choiceDay" class 제거
+            }
+
+        }
+        newDIV.classList.add("choiceDay");           // 선택된 날짜에 "choiceDay" class 추가
+
+        let selectedDate = document.getElementById("selectedDate");
+        let year = nowMonth.getFullYear();
+        let month = leftPad(nowMonth.getMonth() + 1);
+        let day = newDIV.textContent;
+
+        let formattedDate = `${year}-${month}-${day}`;
+        newDIV.setAttribute('data-date', formattedDate); // data-date 속성 추가
+        selectedDate.textContent = formattedDate;
+
+        // console.log(formattedDate);
+        // Update the value of the user_date element
+        document.getElementById('detail_user_date').value = formattedDate;
+
+        // setCookie("selected_date", formattedDate, 1);
+        // localStorage.setItem("selected_date", formattedDate);
+        // localStorage.setItem("selected_style", "background:#009476");
+
+
+        // location.reload();
+        for (let i = 0; i < allStoreIds.length; i++) {
+            const storeId = allStoreIds[i];
+            updateDisabledTimes(storeId, formattedDate);
+            // updateDisabledTimes(storeId, sDate);
+            // console.log(updateDisabledTimes(storeId, sDate)[1]);
+        }
+    }
+
+    function applyStyle() {
+        const currentDate = localStorage.getItem("selected_date");
+        const selectedStyle = localStorage.getItem("selected_style");
+        if (currentDate && selectedStyle) {
+            const selectedDiv = document.querySelector(`div[data-date='${currentDate}']`);
+            if (selectedDiv) {
+                selectedDiv.style = selectedStyle;
+            }
+        }
+    }
+
+
+    // 이전달 버튼 클릭
+    async function prevCalendar(store_id, start_date, end_date) {
+        nowMonth = new Date(nowMonth.getFullYear(), nowMonth.getMonth() - 1, nowMonth.getDate());   // 현재 달을 1 감소
+        buildCalendar(store_id, start_date, end_date);    // 달력 다시 생성
+
+
+    }
+    // 다음달 버튼 클릭
+    async function nextCalendar(store_id, start_date, end_date) {
+        nowMonth = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, nowMonth.getDate());   // 현재 달을 1 증가
+        buildCalendar(store_id, start_date, end_date);    // 달력 다시 생성
+    }
+
+    // input값이 한자리 숫자인 경우 앞에 '0' 붙혀주는 함수
+    function leftPad(value) {
+        if (value < 10) {
+            value = "0" + value;
+            return value;
+        }
+        return value;
+    }
+
+    //  달력 끝
+
+
+    // 시간표 조회 화면에서 선택한 날짜를 예약자 정보의 날짜값으로 불러옴(로컬스토리지, 쿠키 사용)
+    function setUserDateValue() {
+        const storedDate = localStorage.getItem("selected_date");
+        if (storedDate) {
+            document.getElementById('detail_user_date').value = storedDate;
+        }
+    }
+    function restoreSelectedDate() {
+        let selectedDateElem = document.getElementById("selectedDate");
+        let storedSelectedDate = getCookie("selected_date");
+
+        if (storedSelectedDate) {
+            selectedDateElem.textContent = storedSelectedDate;
+        }
+    }
+    function restoreSelectedDate2() {
+        let selectedDateElem = document.getElementById("selectedDate");
+        // 로컬 스토리지에서 선택한 날짜 가져오기
+        let storedSelectedDate = localStorage.getItem("selected_date");
+
+        if (storedSelectedDate) {
+            selectedDateElem.textContent = storedSelectedDate;
+        }
+    }
+
+   
+</script>
+{% include "calendar_app/js/sungwoo_main_second_js.html" %}
+{% include "calendar_app/js/sungwoo_main_js.html" %}
+{% endautoescape %}

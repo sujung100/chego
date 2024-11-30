@@ -2,9 +2,6 @@
 	// +버튼 누르면 시작
 	let items = Array.prototype.slice.call(document.querySelectorAll("[id^='time-style']"), 0).map(function (obj) { return obj.textContent });
 	console.log(items);
-
-	let yayaya = document.querySelectorAll("[id^='time-style']")
-	console.log("yayaya", yayaya);
 	
 	
 	// csrf용 쿠키
@@ -431,17 +428,16 @@
 
 	
 	// 저장하기 버튼 클릭시 submit
-	// document.getElementById('save_button').addEventListener('click', function () {
-	// 	if (confirm("저장하시겠습니까?")) {
-	// 		// let allButtons = Array.from(document.querySelectorAll("#attach_btns button"));
-	// 		// let sortedButtons = allButtons.sort((a, b) => a.textContent.localeCompare(b.textContent));
-	// 		// let buttonValues = sortedButtons.map(button => button.textContent);
+	document.getElementById('save_button').addEventListener('click', function () {
+		if (confirm("저장하시겠습니까?")) {
+			let allButtons = Array.from(document.querySelectorAll("#attach_btns button"));
+			let sortedButtons = allButtons.sort((a, b) => a.textContent.localeCompare(b.textContent));
+			let buttonValues = sortedButtons.map(button => button.textContent);
 
-	// 		// document.getElementById('buttonValues').value = JSON.stringify(buttonValues);
-	// 		// document.getElementById('myForm').submit();
-	// 		activatePost(start, end);
-	// 	}
-	// });
+			document.getElementById('buttonValues').value = JSON.stringify(buttonValues);
+			document.getElementById('myForm').submit();
+		}
+	});
 
 
 </script>

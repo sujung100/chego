@@ -78,69 +78,17 @@
                 <hr>
                 <div class="bottom_cont">
                   <div class="b_l">
-                    <!-- <span>달력들어갈자리</span> -->
-                    <table class="Calendar">
-                      <thead>
-                        <tr>
-                          <td onClick="prevCalendar();" style="cursor:pointer;">&#60;</td>
-                          <td colspan="5">
-                            <span id="calYear"></span>년
-                            <span id="calMonth"></span>월
-                          </td>
-                          <td onClick="nextCalendar();" style="cursor:pointer;">&#62;</td>
-                        </tr>
-                        <tr>
-                          <td>일</td>
-                          <td>월</td>
-                          <td>화</td>
-                          <td>수</td>
-                          <td>목</td>
-                          <td>금</td>
-                          <td>토</td>
-                        </tr>
-                      </thead>
-          
-                      <tbody>
-                      </tbody>
-                    </table>
-                    <input type="hidden" id="selected_date" name="selected_date">
-                    <div class="mid">
-          
-                      <div class="rsv_start_end">
-                        <input type="radio" name="rsv_start_end" id="rsv_start_end_yes" checked>
-                        <input type="radio" name="rsv_start_end" id="rsv_start_end_no">
-                        <div class="switch">
-                          <label for="rsv_start_end_yes">시작</label>
-                          <label for="rsv_start_end_no">종료</label>
-                          <span></span>
-                        </div>
-                      </div>
-          
-                      <label class="rocker">
-                        <input type="checkbox" checked>
-                        <span class="switch-left">On</span>
-                        <span class="switch-right">Off</span>
-                      </label>
-          
-                    </div>
-                    <!-- <label for="disable_date_start">시작날짜</label> -->
-                    <!-- <input type="date" name="disable_date_start" id="disable_date_start"> -->
-                    <span id="disable_date_start"></span>
-                    <!-- <br> -->
-                    <!-- <label for="disable_date_end">종료날짜</label> -->
-                    <!-- <input type="date" name="disable_date_end" id="disable_date_end"> -->
-                    <span id="disable_date_end"></span>
-                    <!-- <input type="button" id="rsv_activate" value="예약 활성화"> -->
+                    <span>달력들어갈자리</span>
                   </div>
                   <div class="b_r">
                     <div class="showtime">
                       <div class="store-table">
-                        <div class="st-name">
+                        <!-- <div class="st-name">
                           <div class="st-id">{{ store.id }}</div>
                           {{ store.store_name }}
-                        </div>
+                        </div> -->
                         <div class="st-time">
-                          <!-- <form action="" method="post" id="myForm">{% csrf_token %} -->
+                          <form action="" method="post" id="myForm">{% csrf_token %}
                             <br>
                             <div>새로운 시간 추가</div>
                             {% for time in sto_time_objects %}
@@ -165,9 +113,8 @@
                               <div id="attach_btns"></div>
                             </div>
                             <input type="hidden" id="buttonValues" name="button_values">
-                            <!-- <button type="button" id="save_button">저장하기</button> -->
-                            <input type="button" id="rsv_activate" value="변경사항 저장">
-                          <!-- </form> -->
+                            <button type="button" id="save_button">저장하기</button>
+                          </form>
                         </div>
                       </div>
                     </div>
@@ -212,8 +159,6 @@
 
   </div>
   {% include "manager/js/manager_update_form_js.html" %}
-  {% include "manager/js/build_calendar_js.html" %}
-  {% include "manager/js/activate_calendar_js.html" %}
   {% include "manager/js/manager_update_connect_js.html" %}
 </body>
 

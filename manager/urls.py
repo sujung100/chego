@@ -72,5 +72,9 @@ urlpatterns = [
   path("sung/admin_chat2/api/chat-room/", sungwoo_views.ChatRoom.as_view(), name="chat_room2"),
   path("sung/admin_chat2/api/chat-room/<str:chatroom_name>/messages/", sungwoo_views.EnterChatRoom.as_view(), name="enter_chatroom2"),
   # 비동기 - update페이지 달력 추가전 성우님꺼
-  path("sung/test/<int:store_id>/api/activate_post/", sungwoo_views.NewTest1.as_view(), name="activate_post"),
+  # path("sung/test/<int:store_id>/api/activate_post/", sungwoo_views.NewTest1.as_view(), name="activate_post"),
+  # 비동기 - update페이지 달력 추가후 내꺼
+  # path("sung/update/<int:store_id>/api/activate_post/", sungwoo_views.UpdateData.as_view(), name="activate_post"),
+  # 뷰 바꾸기(UpdateData로..)
+  path("sung/update/<int:store_id>/api/activate_post/", sungwoo_views.Update.as_view(), name="activate_post"),
 ]

@@ -230,8 +230,6 @@ class Idx_list(TemplateView):
             store_data.append({
                 'store_id': store.pk,
                 'sto_time': list(sto_time.values()),
-                'activate_date_start': store.start_rsv_possible,  # 활성 시작 날짜 추가
-                'activate_date_end': store.end_rsv_possible,  # 활성 종료 날짜 추가
                 'store_dates_json': json.dumps(store_dates, cls=DjangoJSONEncoder),
             })
 
@@ -271,9 +269,6 @@ class Idx_list(TemplateView):
     def post(self, request, *args, **kwargs):
         if request.method == 'POST':
             data = json.loads(request.body)
-            print()
-            print("data찍어", data)
-            print()
 
             store_id = data.get("selected_store2")
             reservation_date = data.get("detail_user_date")
@@ -285,8 +280,7 @@ class Idx_list(TemplateView):
             ).exists()
             print("request.method", request.POST)
             if existing_reservation:
-                # return JsonResponse({"error": "이미 해당 시간에 예약이 존재합니다."}, safe=False)
-                return JsonResponse({'message': '이미 해당 시간에 예약이 존재합니다', 'status': 'error'}, safe=False)
+                return JsonResponse({"error": "이미 해당 시간에 예약이 존재합니다."}, safe=False)
 
             rst_user = models.Reservation_user()
             # rst_user.user_name = request.POST["detail_user_name"]
@@ -334,8 +328,7 @@ class Idx_list(TemplateView):
                 return HttpResponse(error_message, status=400)
 
             # POST 처리 완료 시 리디렉션
-            # return HttpResponseRedirect(reverse('Idx_list'))
-            return JsonResponse({'message': '성공적으로 예약되었습니다.', 'status': 'success'}, safe=False)
+            return HttpResponseRedirect(reverse('Idx_list'))
 
         return self.get(request, *args, **kwargs)
 

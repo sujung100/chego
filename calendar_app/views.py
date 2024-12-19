@@ -339,7 +339,18 @@ class Idx_list(TemplateView):
 
         return self.get(request, *args, **kwargs)
 
-
+class Store_calendar(View):
+    def get(self, request, store_id):
+        try:
+            store = models.Store.objects.get(id=store_id)
+            response_data = {
+                "store_id" : store.id,
+                "start_rsv_possible": store.start_rsv_possible,
+                "end_rsv_possible": store.end_rsv_possible,
+            }
+            return JsonResponse(response_data, safe=False)  
+        except models.Store.DoesNotExist:
+            return JsonResponse({'error': 'Store not found'}, status=404)
 
 
 # 예약확인

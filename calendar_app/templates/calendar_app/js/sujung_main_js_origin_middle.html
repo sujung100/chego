@@ -1,18 +1,10 @@
 {% autoescape off %}
 <script>
     // 달력 시작
-
+    
 
     let availableCompanyDates;
     let totalDisableTimes;
-
-    // let CalExists;
-    // console.log("CalExists", CalExists);
-    
-    // let funcExecuted = false;
-    // console.log("funcExecuted", funcExecuted);
-
-    
 
     // window.onload = function () {
     //     buildCalendar();
@@ -24,22 +16,17 @@
 
     const nowdate = new Date().toISOString().substring(0, 10);
     document.getElementById("detail_user_date").value = nowdate;
-
+    
     const prevCalendar_button = document.querySelector(".prevCalendar");
     const nextCalendar_button = document.querySelector(".nextCalendar");
     let mainCalendar = document.querySelector("#mainCalendar");
-    // let calendar_id = mainCalendar.dataset.storeid;
-    let calendar_id;
-
+    let calendar_id = mainCalendar.dataset.storeid;
 
 
     // 달력 생성 : 해당 달에 맞춰 테이블을 만들고, 날짜를 채워 넣는다.
     async function buildCalendar(store_id, start_date, end_date) {
 
         calendar_id = store_id;
-        console.log("성우성우성우", calendar_id);
-
-        
 
         let firstDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth(), 1);     // 이번달 1일
         let lastDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, 0);  // 이번달 마지막날
@@ -111,12 +98,6 @@
             if (nowDay.getDay() == 6) {                 // 토요일인 경우
                 nowRow = tbody_Calendar.insertRow();    // 새로운 행 추가
             }
-            
-            // newDIV.addEventListener("click", function (e) {
-            //     console.log("클릭이벤트 잘됨?");
-            //     choiceDate(this, e);
-            //     updateNextButton();
-            // });
 
             if (start_date && end_date) {
                 const nowDayStripped = new Date(nowDay.getFullYear(), nowDay.getMonth(), nowDay.getDate());
@@ -129,28 +110,14 @@
                 if (nowDay >= activateStartDate && nowDay <= activateEndDate) {
                     // console.log("nowDayStripped", nowDayStripped);
                     // console.log("todayStripped", todayStripped);
-
-                    // newDIV.addEventListener("click", function (e) {
-                    //     console.log("클릭이벤트 잘됨?");
-                    //     choiceDate(this, e);
-                    //     updateNextButton();
-                    // });
-
                     if (nowDay < today) {
                         newDIV.className = "pastDay"
                     }
                     else if (nowDayStripped.getTime() == todayStripped.getTime()) {
                         // console.log("투데이 걸리냐");
-                        // if (funcExecuted) {
-                        //         console.log("funcExecuted = T, 스타일적용");
-                        // newDIV.className = "today choiceDay";
-                        newDIV.className = "today";
-                        console.log("투데이 초이스데이", newDIV);
-                        //         console.log("funcExecuted다시", funcExecuted);
-                        //     }
+                        newDIV.className = "today choiceDay";
                         // newDIV.className = "today";
                         newDIV.onclick = function (e) { choiceDate(this, e); }
-
                     }
                     else {
                         newDIV.className = "futureDay";
@@ -189,16 +156,7 @@
                 document.getElementsByClassName("choiceDay")[0].classList.remove("choiceDay");  // 해당 날짜의 "choiceDay" class 제거
             }
         }
-        // console.log("funcExecuted다시", funcExecuted);
-        // if (funcExecuted) {
-        //     console.log("funcExecuted = T, 스타일적용");
-            
-        newDIV.classList.add("choiceDay");           // 선택된 날짜에 "choiceDay" class 추가 (스타일 자동적용)
-        // }
-        // else {
-        //     console.log("funcExecuted = F, 건너뜀");
-
-        // }
+        newDIV.classList.add("choiceDay");           // 선택된 날짜에 "choiceDay" class 추가
 
         let selectedDate = document.getElementById("selectedDate");
         let year = nowMonth.getFullYear();
@@ -226,16 +184,8 @@
             // updateDisabledTimes(storeId, sDate);
             // console.log(updateDisabledTimes(storeId, sDate)[1]);
         }
-
-        // funcExecuted = true;
-        updateNextButton();
-
     }
 
-    console.log("로스", localStorage);
-
-
-    // 24.12.09 이거 제대로 동작되나 확인
     function applyStyle() {
         // const currentDate = localStorage.getItem("selected_date");
         const currentDate = localStorage.getItem("selected_date");
@@ -270,7 +220,7 @@
         return value;
     }
 
-
+    
     // 24.12.02 
     // let prev_next_button_data = {};
 
@@ -290,14 +240,14 @@
     //     let end_date = data.end_rsv_possible;
     //     prev_next_button_data[storeId] = [start_date, end_date];
     //     // console.log(prev_next_button_data);
-
+        
     //     await buildCalendar(storeId, start_date, end_date);
     //     // console.log(data);
     //     // console.log(nowMonth);
     // }
 
 
-
+    
 
 
     //  달력 끝
@@ -385,13 +335,11 @@
     //     storeTable();
 
 
-
+    
     document.addEventListener('DOMContentLoaded', function () {
         // restoreSelectedDate();
         restoreSelectedDate2();
         setUserDateValue();
-        // storeTable();
-        // updateNextButton();
     });
 
     let timeItems = document.querySelectorAll('[class^="time-item-"]');
@@ -428,21 +376,9 @@
                 });
 
                 storeTable.classList.add('selected');
-                // if (storeTable.classList.contains('selected')) {
-                //     console.log('걸림');
-                //     CalExists = true
-                // }
-                // else {
-                //     console.log('안걸림');
-                //     CalExists = false
-
-                // }
                 updateNextButton();
                 // 24.12.02
                 await calendarHandle(storeCRM);
-
-                // funcExecuted = true;
-
                 // 여기
                 // const [comDates, disTimes] = updateDisabledTimes(storeIdNumber, sDate);
                 // console.log("클릭시 conDates:", comDates);
@@ -453,10 +389,10 @@
     storeTable();
 
 
+    
 
 
-
-
+    
     // 24.12.02 
     let prev_next_button_data = {};
 
@@ -476,55 +412,36 @@
         let end_date = data.end_rsv_possible;
         prev_next_button_data[storeId] = [start_date, end_date];
         // console.log(prev_next_button_data);
-
+        
         await buildCalendar(storeId, start_date, end_date);
         // console.log(data);
         // console.log(nowMonth);
     }
 
 
-    function updateNextButton(crmValue) {
+    function updateNextButton() {
+        // let hasGreen = Array.from(timeItems).some(
         let hasGreenTime = Array.from(timeItems).some(
             (item) => item.classList.contains('green')
         );
-
-        console.log("전달된 crm 값:", crmValue);
-
         // let hasGreenDay = document.getElementsByClassName("choiceDay");
         // let dateItem = document.querySelector('[class="choiceDay"]');
         // let hasGreenDay = dateItem ? dateItem.classList.contains('green') : false;
         // let hasGreenDay = document.getElementsByClassName('td p[class="choiceDay"]');
 
-        // let tdElement = document.querySelector('td');
-        // let dateItem = tdElement.getElementsByClassName('choiceDay');
-        // let hasGreenDay = dateItem.length > 0 ? dateItem[0] : null;
-        // console.log('hasGreenDay:', hasGreenDay);
-
-        let dateItem = document.getElementsByClassName('choiceDay');
+        let tdElement = document.querySelector('td');
+        let dateItem = tdElement.getElementsByClassName('choiceDay');
         let hasGreenDay = dateItem.length > 0 ? dateItem[0] : null;
-        console.log("dateItem", dateItem);
-        console.log("hasGreenDay", hasGreenDay);
+        console.log('hasGreenDay:', hasGreenDay);
 
-        if (hasGreenDay && hasGreenTime) {
+
+        // if (hasGreen) {
+        if (hasGreenTime && hasGreenDay) {
             nextButton.style.display = 'block';
-            console.log('날짜,시간 둘다클릭');
-            // if (hasGreenDay) {
-            //     if (hasGreenTime){
-            //         nextButton.style.display = 'block';
-            //         console.log('날짜,시간 둘다클릭');
-            //     }
-            // } else if (hasGreenTime) {
-            //     if (hasGreenDay){
-            //         nextButton.style.display = 'block';
-            //         console.log('시간, 날짜 둘다클릭');
-            //     }
         } else {
             nextButton.style.display = 'none';
-            console.log('미클릭');
         }
     }
-
-    
 
     // 시간 선택하면 기존에 선택됐던것은 선택해제 후, 선택한 시간을 예약자 정보에 할당
     timeItems.forEach(function (item) {
@@ -546,16 +463,9 @@
             // console.log(grandParentData);
             nextButton.dataset.crm = grandParentData;
             reservationButton.dataset.crm = grandParentData;
-            console.log("아이템 찍어봐", item);
-
-            let stoId = this.closest('.store-table').querySelector('.st-id');
-            let stoIdVal = stoId.dataset.crm
-            console.log("stoId값", stoIdVal);
-            console.log("캘린더 아이디", calendar_id)
-
             channel_name.value = grandParentData
             console.log("channel_name", channel_name.value);
-            updateNextButton(stoIdVal);
+            updateNextButton();
         });
     });
 
@@ -648,7 +558,6 @@
 
 
 
-    // 24.12.09 이것도 제대로 실행되나 테스트(선언만하고 미실행)
     // 날짜 선택안하면 alert 띄우기
     function checkSelectedDate() {
         const selectedDate = document.getElementsByClassName("choiceDay");
@@ -755,43 +664,43 @@
         // const response = await fetch("send_msg/", {
         // const baseUrl = window.location.origin;
         const response = await fetch(`${baseUrl}/send_msg/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
-            },
-            body: json,
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('서버 오류');
-                }
-                localStorage.removeItem('selected_date');
-                console.log('localStorage 초기화됨');
-                console.log("response", response);
-                return response.json();
-            })
-            .then(data => {
-                // console.log("data", data);
-                // alert(data.message);
-                // // window.location.href = "";
-                if (data.status === 'success') {
-                    // 성공
-                    console.log(data.message);
-                    alert("성공적으로 예약되었습니다.")
-                    // location.reload();
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: json,
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('서버 오류');
+                        }
+                        localStorage.removeItem('selected_date');
+                        console.log('localStorage 초기화됨');
+                        console.log("response", response);
+                        return response.json();
+                    })
+                    .then(data => {
+                        // console.log("data", data);
+                        // alert(data.message);
+                        // // window.location.href = "";
+                        if (data.status === 'success') {
+                            // 성공
+                            console.log(data.message);
+                            alert("성공적으로 예약되었습니다.")
+                            // location.reload();
 
-                } else {
-                    // 실패
-                    console.log(data.message);
+                        } else {
+                            // 실패
+                            console.log(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        console.log("실패실패실패");
+                    })
                 }
-            })
-            .catch(error => {
-                console.log(error);
-                console.log("실패실패실패");
-            })
-    }
-
+                
 
     // submit버튼누르면, 비동기로 데이터보내기
     // 여기는 비동기 함수 두개 실행시킬 함수로 빼기..

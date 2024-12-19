@@ -28,18 +28,13 @@
     const prevCalendar_button = document.querySelector(".prevCalendar");
     const nextCalendar_button = document.querySelector(".nextCalendar");
     let mainCalendar = document.querySelector("#mainCalendar");
-    // let calendar_id = mainCalendar.dataset.storeid;
-    let calendar_id;
-
+    let calendar_id = mainCalendar.dataset.storeid;
 
 
     // 달력 생성 : 해당 달에 맞춰 테이블을 만들고, 날짜를 채워 넣는다.
     async function buildCalendar(store_id, start_date, end_date) {
 
         calendar_id = store_id;
-        console.log("성우성우성우", calendar_id);
-
-        
 
         let firstDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth(), 1);     // 이번달 1일
         let lastDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, 0);  // 이번달 마지막날
@@ -483,13 +478,10 @@
     }
 
 
-    function updateNextButton(crmValue) {
+    function updateNextButton() {
         let hasGreenTime = Array.from(timeItems).some(
             (item) => item.classList.contains('green')
         );
-
-        console.log("전달된 crm 값:", crmValue);
-
         // let hasGreenDay = document.getElementsByClassName("choiceDay");
         // let dateItem = document.querySelector('[class="choiceDay"]');
         // let hasGreenDay = dateItem ? dateItem.classList.contains('green') : false;
@@ -524,8 +516,6 @@
         }
     }
 
-    
-
     // 시간 선택하면 기존에 선택됐던것은 선택해제 후, 선택한 시간을 예약자 정보에 할당
     timeItems.forEach(function (item) {
         item.addEventListener('click', function () {
@@ -547,15 +537,9 @@
             nextButton.dataset.crm = grandParentData;
             reservationButton.dataset.crm = grandParentData;
             console.log("아이템 찍어봐", item);
-
-            let stoId = this.closest('.store-table').querySelector('.st-id');
-            let stoIdVal = stoId.dataset.crm
-            console.log("stoId값", stoIdVal);
-            console.log("캘린더 아이디", calendar_id)
-
             channel_name.value = grandParentData
             console.log("channel_name", channel_name.value);
-            updateNextButton(stoIdVal);
+            updateNextButton();
         });
     });
 

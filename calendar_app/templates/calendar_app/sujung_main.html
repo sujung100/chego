@@ -40,12 +40,14 @@
       <table class="Calendar">
         <thead>
           <tr>
-            <td onClick="prevCalendar();" style="cursor:pointer;">&#60;</td>
+            <!-- <td onClick="prevCalendar();" style="cursor:pointer;">&#60;</td> -->
+            <td class="prevCalendar" style="cursor:pointer;">&#60;</td>
             <td colspan="5">
               <span id="calYear"></span>년
               <span id="calMonth"></span>월
             </td>
-            <td onClick="nextCalendar();" style="cursor:pointer;">&#62;</td>
+            <!-- <td onClick="nextCalendar();" style="cursor:pointer;">&#62;</td> -->
+            <td class="nextCalendar" style="cursor:pointer;">&#62;</td>
           </tr>
           <tr>
             <td>일</td>
@@ -64,7 +66,7 @@
 
     <div class="next" id="next-button" style="display: none;">
       
-      <button type="button" class="send-bt" id="send-bt">다음</button>
+      <button type="button" class="send-bt" id="send-bt" onclick="toggleTabs();">다음</button>
     </div>
   </div>
   <div class="rs-info" id="info-display" style="display: none;">
@@ -72,7 +74,8 @@
       <div id="back-btn">&lt;뒤로</div>
       <h1>예약자 정보</h1>
       <div class="user-input">
-        <form action="" method="post" id="form1">{% csrf_token %}
+        <!-- <form action="" method="post" id="form1"> csrf_token  -->
+        <form action="" method="post" id="rsv_post">{% csrf_token %}
           <span id="selected_store" style="display: none;"></span>
           <input type="hidden" name="selected_store2" id="selected_store2"></input><br>
           <input type="hidden" name="channel_name" id="channel_name"></input><br>

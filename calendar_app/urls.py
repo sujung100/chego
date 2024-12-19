@@ -35,6 +35,8 @@ urlpatterns = [
   
   # 성우님꺼 테스트(주석처리)
   path('test/', views.Test_list.as_view(), name='Test_list'),
+  # Idx_list ajax
+   path("api/store_calendar/<int:store_id>/", views.Store_calendar.as_view(), name="store_calendar"),
 
 
   

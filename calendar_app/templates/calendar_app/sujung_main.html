@@ -36,6 +36,16 @@
   </div>
   <div class="rs-date" id="date-display">
     <div class="name" id="selected-store">업체를 선택하세요.</div>
+    <div class="signs">
+      <div class="notice">
+        <div class="today-sign"> </div>
+        <p>&nbsp;&#58; 오늘&nbsp;&nbsp;</p>
+      </div>
+      <div class="notice">
+        <div class="selected-sign"> </div>
+        <p>&nbsp;&#58; 선택일</p>
+      </div>
+    </div>
     <div id="mainCalendar">
       <table class="Calendar">
         <thead>
@@ -136,14 +146,14 @@
     <h1>시간표 조회</h1>
     <div class="scroll box2">
       {% for obj in store_list %}
-      <div class="store-table" data-crm="{{ obj.owner.username }}">
-        <div class="st-name">
+      <div class="store-table" data-user="{{ obj.owner.username }}" data-crm="{{ obj.id }}">
+        <div class="st-name" >
           <div class="st-id" data-crm="{{ obj.id }}"></div>
           {{ obj.store_name }}
         </div>
-        <div class="st-time">
+        <div class="st-time" data-crm="{{ obj.id }}">
           {% for time in store_times_dict|get_item:obj.pk %}
-          <button class="time-item-{{ obj.id }}" type="button" data-time="{{ time.reservation_time }}" id="time-style">{{ time.reservation_time}}</button>
+          <button class="time-item-{{ obj.id }}" type="button" data-crm="{{ obj.id }}" data-time="{{ time.reservation_time }}" id="time-style">{{ time.reservation_time}}</button>
           {% endfor %}
         </div>
       </div>

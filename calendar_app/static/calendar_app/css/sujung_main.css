@@ -839,6 +839,40 @@ rs-tabs, rs-list, rs-date, rs-info
   border: 1px solid #009476;
 }
 
+.rs-date .signs {
+  font-size: 0.8rem;
+  color: #fff;
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 25%;
+  margin-bottom: 0.5rem;
+}
+
+.rs-date .notice {
+  display: flex;
+}
+
+.rs-date .notice p{
+  margin-bottom: 0;
+}
+
+.rs-date .today-sign{
+  background-color: #F5D042;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  margin: auto 0;
+}
+
+.rs-date .selected-sign{
+  border: 2px solid #009476;
+  background-color: #1c6f5e;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  margin: auto 0;
+}
+
 
 .reserve-wrap .rs-body .rs-info {
   width: calc(100% - (10% + 30% + 35%));
@@ -1191,6 +1225,7 @@ td {
   margin: 2.5px;
   display: block;
   text-align: center;
+  box-sizing: border-box;
 }
 
 .pastDay {
@@ -1200,9 +1235,9 @@ td {
 .today {
   background-color: #F5D042;
   color: black;
-  /* font-weight: 600; */
   cursor: pointer;
 }
+
 
 .futureDay {
   /* background-color: #555; */
@@ -1216,10 +1251,15 @@ td {
 
 .futureDay.choiceDay,
 .today.choiceDay {
-  background: #009476;
-  color: #fff;
-  /* font-weight: 600; */
+  background: #335c54;
+  outline: 4px solid #009476;
   cursor: pointer;
+  color: #fff;
+}
+
+.futureDay.choiceDay:hover,
+.today.choiceDay:hover {
+  background: #009476;
 }
 
 .date-container {

@@ -50,62 +50,54 @@
 
        
         // // 이벤트리스너1
-        // document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('.st-time button').forEach(button => {
-                console.log("이벤트리스너1");
-                // 이벤트리스너2
-                button.addEventListener('click', function(event) {
-                    // 클릭된 버튼으로부터 가장 가까운 .store-table 요소 찾기
-                    const clickedStoreTable = event.target.closest('.store-table');
-                    
-                    // .store-table 내의 .st-id 요소 찾기
-                    const clickedchild1 = clickedStoreTable.querySelector('.st-id');
-                    
-                    // 필요한 작업 수행, 예: stIdElement의 데이터 사용
-                    // console.log(clickedchild1.dataset.crm); // 예시 출력
-                    
-                    console.log("이벤트리스너2");
-                    var storeId = clickedchild1.getAttribute('data-crm');
-                    // const clickedchild2 = clickedStoreTable.querySelector(".greeen");
-                    var reservationTime = event.target.getAttribute('data-time');
-                    var date = document.querySelector("#detail_user_date").value
-                    console.log("1", event.target); // 이벤트 발생 대상 확인
-                    console.log("2", storeId);
-                    console.log("3", reservationTime);
-                    console.log("4", date);
-                    const sendBt = document.querySelector(".send-bt");
-                    // const submitBt = document.querySelector(".booking"); -- 예약하기버튼
-                    // var dateVal = date
+        function sendRsvData() {
+            let sendBt = document.querySelector(".send-bt");
+            sendBt.addEventListener("click", function (event) {
+                document.querySelectorAll('.st-time button').forEach(button => {
+                    // 이벤트리스너2
+                    button.addEventListener('click', function(event) {
+                        // 클릭된 버튼으로부터 가장 가까운 .store-table 요소 찾기
+                        let clickedStoreTable = event.target.closest('.store-table');
+                        
+                        // .store-table 내의 .st-id 요소 찾기
+                        let clickedchild1 = clickedStoreTable.querySelector('.st-id');
+                        
+                        console.log("이벤트리스너2");
+                        let storeId = clickedchild1.getAttribute('data-crm');
+                        let reservationTime = event.target.getAttribute('data-time');
+                        
 
                     // 이벤트리스너3
-                    sendBt.addEventListener("click", function (event) {
+                    // sendBt.addEventListener("click", function (event) {
+                    // 24.12.21 수정
+                    // 달력의 .choiceDay 요소 찾기
+                    if (dateFixed) {
+                        let clickedDate1 = document.querySelector('.choiceDay');
+                        console.log("초초", clickedDate1);
+                        let date = clickedDate1.getAttribute('data-date');
+                        console.log("date찍어봐", date);
+
+                        console.log("1", event.target); // 이벤트 발생 대상 확인
+                        console.log("2", storeId);
+                        console.log("3", reservationTime);
+                        console.log("4", date);
+                        
                         console.log("이벤트리스너3");
-                        var data = {
+                        let data = {
                             storeId: storeId,
                             date: date,
                             reservationTime: reservationTime
                         };
                         console.log("데이터", data);
                         socket.send(JSON.stringify(data));
-                        // alert("새로고침테스트");
+                        }
                         
                     });
-                    // 이벤트리스너4
-                    // submitBt.addEventListener("click", function (event) {
-                    //     console.log("이벤트리스너4");
-                    //     var data = {
-                    //         storeId: storeId,
-                    //         date: date,
-                    //         reservationTime: reservationTime
-                    //     };
-                    //     console.log("데이터최종전송", data);
-                    //     socket.send(JSON.stringify(data));
-                    //     // alert("새로고침테스트");
-                        
-                    // });
+                    
                 });
             });
-        // });
+        }
+        sendRsvData();
 
     };
 

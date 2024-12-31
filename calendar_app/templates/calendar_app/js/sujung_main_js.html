@@ -6,17 +6,9 @@
     let availableCompanyDates;
     let totalDisableTimes;
 
-    // let CalExists;
-    // console.log("CalExists", CalExists);
-    
-    // let funcExecuted = false;
-    // console.log("funcExecuted", funcExecuted);
+    // 
+    let dateFixed = false;
 
-    
-
-    // window.onload = function () {
-    //     buildCalendar();
-    // }    // 웹 페이지가 로드되면 buildCalendar 실행
 
     let nowMonth = new Date();  // 현재 달을 페이지를 로드한 날의 달로 초기화
     let today = new Date();     // 페이지를 로드한 날짜를 저장
@@ -30,14 +22,14 @@
     let mainCalendar = document.querySelector("#mainCalendar");
     // let calendar_id = mainCalendar.dataset.storeid;
     let calendar_id;
-
+    let nextButton = document.getElementById('next-button');
 
 
     // 달력 생성 : 해당 달에 맞춰 테이블을 만들고, 날짜를 채워 넣는다.
     async function buildCalendar(store_id, start_date, end_date) {
 
+        nextButton.style.display = "none";
         calendar_id = store_id;
-        console.log("성우성우성우", calendar_id);
 
         
 
@@ -48,10 +40,6 @@
         const activateStartDate = new Date(start_date);
         activateStartDate.setHours(0, 0, 0, 0);
         const activateEndDate = new Date(end_date);
-        // console.log("activateStartDate", activateStartDate);
-        // console.log("activateEndDate", activateEndDate);
-        // console.log("today", today);
-        // console.log("", );
 
         document.getElementById("calYear").innerText = nowMonth.getFullYear();             // 연도 숫자 갱신
         document.getElementById("calMonth").innerText = leftPad(nowMonth.getMonth() + 1);  // 월 숫자 갱신
@@ -66,19 +54,13 @@
             let nowColumn = nowRow.insertCell();        // 열 추가
         }
         // 추가
-        const currentDate = localStorage.getItem("selected_date");
+        // const currentDate = localStorage.getItem("selected_date");
+        let currentDate = localStorage.getItem("selected_date");
         const selectedStyle = "background:#009476"; // 선택된 날짜의 스타일
 
         for (let nowDay = new Date(firstDate); nowDay <= lastDate; nowDay.setDate(nowDay.getDate() + 1)) {  // day는 날짜를 저장하는 변수, 이번달 마지막날까지 증가시키며 반복  
 
             let nowColumn = nowRow.insertCell();        // 새 열을 추가하고
-
-            // ////////////////////////////////////////////
-            // 달력에 점을 찍기위해서 위치를 잡을 컨테이너 생성
-            // let dateContainer = document.createElement("div");
-            // dateContainer.className = "date-container";
-            // nowColumn.appendChild(dateContainer);
-            // ////////////////////////////////////////////
 
 
             let newDIV = document.createElement("p");
@@ -90,65 +72,26 @@
                 newDIV.style = selectedStyle;
             }
 
-            // nowColumn.appendChild(newDIV);
-
-            // //////////////////////////////////////////////////////////////////////////////
-            // // 열 생성후, 클래스 부여
-            // let circleElement = document.createElement("div");
-            // circleElement.className = "circle";
-            // dateContainer.appendChild(circleElement);
-
-            // // 점과 같이 표시될 예약가능숫자
-            // let okTime = comDates - disTimes;
-            // let reserveElement = document.createElement( 'div' );
-            // let rvText = document.createTextNode(okTime);
-            // // console.log(rvText);
-            // reserveElement.appendChild( rvText );
-            // reserveElement.className = "reservetxt";
-            // dateContainer.appendChild( reserveElement );
-            // //////////////////////////////////////////////////////////////////////////////
 
             if (nowDay.getDay() == 6) {                 // 토요일인 경우
                 nowRow = tbody_Calendar.insertRow();    // 새로운 행 추가
             }
             
-            // newDIV.addEventListener("click", function (e) {
-            //     console.log("클릭이벤트 잘됨?");
-            //     choiceDate(this, e);
-            //     updateNextButton();
-            // });
+
 
             if (start_date && end_date) {
                 const nowDayStripped = new Date(nowDay.getFullYear(), nowDay.getMonth(), nowDay.getDate());
                 const todayStripped = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-                // const nowDayStripped = new Date(nowDay.getFullYear(), nowDay.getMonth(), nowDay.getDate());
                 const activateStartDateStripped = new Date(activateStartDate.getFullYear(), activateStartDate.getMonth(), activateStartDate.getDate());
                 const activateEndDateStripped = new Date(activateEndDate.getFullYear(), activateEndDate.getMonth(), activateEndDate.getDate());
-                // console.log("nowDay", nowDay);
-                // console.log("activateStartDate", activateStartDate);
+
                 if (nowDay >= activateStartDate && nowDay <= activateEndDate) {
-                    // console.log("nowDayStripped", nowDayStripped);
-                    // console.log("todayStripped", todayStripped);
-
-                    // newDIV.addEventListener("click", function (e) {
-                    //     console.log("클릭이벤트 잘됨?");
-                    //     choiceDate(this, e);
-                    //     updateNextButton();
-                    // });
-
                     if (nowDay < today) {
                         newDIV.className = "pastDay"
                     }
                     else if (nowDayStripped.getTime() == todayStripped.getTime()) {
-                        // console.log("투데이 걸리냐");
-                        // if (funcExecuted) {
-                        //         console.log("funcExecuted = T, 스타일적용");
-                        // newDIV.className = "today choiceDay";
                         newDIV.className = "today";
                         console.log("투데이 초이스데이", newDIV);
-                        //         console.log("funcExecuted다시", funcExecuted);
-                        //     }
-                        // newDIV.className = "today";
                         newDIV.onclick = function (e) { choiceDate(this, e); }
 
                     }
@@ -162,7 +105,6 @@
                 }
                 // nowDay >= activateStartDate && nowDay <= activateEndDate 조건 끝
             } else {
-                // console.log("엘스 실행 되냐");
                 if (nowDay < today) {                       // 지난날인 경우
                     newDIV.className = "pastDay";
                 }
@@ -174,7 +116,6 @@
                     newDIV.className = "futureDay";
                     newDIV.onclick = function (e) { choiceDate(this, e); }
                 }
-
             }
 
 
@@ -189,16 +130,8 @@
                 document.getElementsByClassName("choiceDay")[0].classList.remove("choiceDay");  // 해당 날짜의 "choiceDay" class 제거
             }
         }
-        // console.log("funcExecuted다시", funcExecuted);
-        // if (funcExecuted) {
-        //     console.log("funcExecuted = T, 스타일적용");
             
         newDIV.classList.add("choiceDay");           // 선택된 날짜에 "choiceDay" class 추가 (스타일 자동적용)
-        // }
-        // else {
-        //     console.log("funcExecuted = F, 건너뜀");
-
-        // }
 
         let selectedDate = document.getElementById("selectedDate");
         let year = nowMonth.getFullYear();
@@ -209,26 +142,17 @@
         newDIV.setAttribute('data-date', formattedDate); // data-date 속성 추가
         selectedDate.textContent = formattedDate;
 
-        // console.log(formattedDate);
-        // Update the value of the user_date element
         document.getElementById('detail_user_date').value = formattedDate;
-
-        // setCookie("selected_date", formattedDate, 1);
-        // localStorage.setItem("selected_date", formattedDate);
-        // localStorage.setItem("selected_style", "background:#009476");
-
-
-        // location.reload();
 
         for (let i = 0; i < allStoreIds.length; i++) {
             const storeId = allStoreIds[i];
             updateDisabledTimes(storeId, formattedDate);
-            // updateDisabledTimes(storeId, sDate);
-            // console.log(updateDisabledTimes(storeId, sDate)[1]);
         }
 
-        // funcExecuted = true;
-        updateNextButton();
+        updateNextButton(e);
+
+        dateFixed = true;
+        console.log("날짜 선택 완료");
 
     }
 
@@ -237,9 +161,8 @@
 
     // 24.12.09 이거 제대로 동작되나 확인
     function applyStyle() {
-        // const currentDate = localStorage.getItem("selected_date");
-        const currentDate = localStorage.getItem("selected_date");
-        const selectedStyle = localStorage.getItem("selected_style");
+        // let currentDate = localStorage.getItem("selected_date");
+        // const selectedStyle = localStorage.getItem("selected_style");
         if (currentDate && selectedStyle) {
             const selectedDiv = document.querySelector(`div[data-date='${currentDate}']`);
             if (selectedDiv) {
@@ -269,34 +192,6 @@
         }
         return value;
     }
-
-
-    // 24.12.02 
-    // let prev_next_button_data = {};
-
-    // prevCalendar_button.addEventListener('click', async function () {
-    //     prevCalendar(calendar_id, prev_next_button_data[calendar_id][0], prev_next_button_data[calendar_id][1]);
-    // });
-
-    // // '다음 달력' 버튼에 클릭 이벤트 리스너 추가
-    // nextCalendar_button.addEventListener('click', async function () {
-    //     nextCalendar(calendar_id, prev_next_button_data[calendar_id][0], prev_next_button_data[calendar_id][1]);
-    // });
-
-    // async function calendarHandle(storeId) {
-    //     let table_click = await fetch(`api/store_calendar/${storeId}`);
-    //     let data = await table_click.json();
-    //     let start_date = data.start_rsv_possible;
-    //     let end_date = data.end_rsv_possible;
-    //     prev_next_button_data[storeId] = [start_date, end_date];
-    //     // console.log(prev_next_button_data);
-
-    //     await buildCalendar(storeId, start_date, end_date);
-    //     // console.log(data);
-    //     // console.log(nowMonth);
-    // }
-
-
 
 
 
@@ -329,91 +224,27 @@
         }
     }
 
-    // 여기까지
-
-    // 달력 title에 상호명 띄우고 클릭한 업체 배경색 변경
-    // 시간선택 -> 다음 버튼 나타나게
-    // document.addEventListener('DOMContentLoaded', function () {
-    //     // restoreSelectedDate();
-    //     restoreSelectedDate2();
-    //     setUserDateValue();
-
-    //     let timeItems = document.querySelectorAll('[class^="time-item-"]');
-    //     let nextButton = document.getElementById('next-button');
-    //     let reservationButton = document.querySelector(".booking");
-    //     // console.log(reservationButton);
-
-    //     // 업체목록의 업체를 클릭하면,
-    //     function storeTable() {
-    //         document.querySelectorAll('.store-table').forEach(function (storeTable) {
-    //             storeTable.addEventListener('click', async function () {
-    //                 const storeName = storeTable.querySelector('.st-name');
-    //                 const storeId = storeTable.querySelector('.st-id');
-    //                 const storeCRM = storeId.dataset.crm;
-    //                 // console.log("씨알엠",storeCRM)
-    //                 const selectedStore = document.getElementById('selected-store')
-    //                 selectedStore.textContent = storeName.innerText;
-    //                 selectedStore.dataset.crm = storeTable.dataset.crm;
-    //                 // document.getElementById('selected_store').innerText = storeId.innerText;
-    //                 // 선택한 업체의 id를 정수로 변환
-    //                 const storeIdNumber = parseInt(storeCRM, 10);
-    //                 // console.log(storeIdNumber);
-    //                 document.getElementById('selected_store2').value = storeIdNumber;
-
-    //                 document.querySelectorAll('.store-table').forEach(function (others) {
-    //                     if (others !== storeTable) {
-    //                         others.classList.remove('selected');
-
-    //                         // otherItem 확인 및 제거
-    //                         others.querySelectorAll('[class^="time-item-"]').forEach(function (otherItem) {
-    //                             otherItem.classList.remove('green');
-    //                         });
-    //                     }
-    //                 });
-
-    //                 storeTable.classList.add('selected');
-    //                 updateNextButton();
-    //                 // 24.12.02
-    //                 await calendarHandle(storeCRM);
-    //                 // 여기
-    //                 // const [comDates, disTimes] = updateDisabledTimes(storeIdNumber, sDate);
-    //                 // console.log("클릭시 conDates:", comDates);
-    //                 // console.log("클릭시 disTimes:", disTimes);
-    //             });
-    //         });
-    //     }
-    //     storeTable();
-
-
 
     document.addEventListener('DOMContentLoaded', function () {
-        // restoreSelectedDate();
         restoreSelectedDate2();
         setUserDateValue();
-        // storeTable();
-        // updateNextButton();
     });
 
     let timeItems = document.querySelectorAll('[class^="time-item-"]');
-    let nextButton = document.getElementById('next-button');
     let reservationButton = document.querySelector(".booking");
-    // console.log(reservationButton);
 
     // 업체목록의 업체를 클릭하면,
     function storeTable() {
         document.querySelectorAll('.store-table').forEach(function (storeTable) {
-            storeTable.addEventListener('click', async function () {
+            storeTable.addEventListener('click', async function (e) {
                 const storeName = storeTable.querySelector('.st-name');
                 const storeId = storeTable.querySelector('.st-id');
                 const storeCRM = storeId.dataset.crm;
-                // console.log("씨알엠",storeCRM)
                 const selectedStore = document.getElementById('selected-store')
                 selectedStore.textContent = storeName.innerText;
                 selectedStore.dataset.crm = storeTable.dataset.crm;
-                // document.getElementById('selected_store').innerText = storeId.innerText;
                 // 선택한 업체의 id를 정수로 변환
                 const storeIdNumber = parseInt(storeCRM, 10);
-                // console.log(storeIdNumber);
                 document.getElementById('selected_store2').value = storeIdNumber;
 
                 document.querySelectorAll('.store-table').forEach(function (others) {
@@ -428,25 +259,10 @@
                 });
 
                 storeTable.classList.add('selected');
-                // if (storeTable.classList.contains('selected')) {
-                //     console.log('걸림');
-                //     CalExists = true
-                // }
-                // else {
-                //     console.log('안걸림');
-                //     CalExists = false
 
-                // }
-                updateNextButton();
-                // 24.12.02
+                updateNextButton(e);
                 await calendarHandle(storeCRM);
 
-                // funcExecuted = true;
-
-                // 여기
-                // const [comDates, disTimes] = updateDisabledTimes(storeIdNumber, sDate);
-                // console.log("클릭시 conDates:", comDates);
-                // console.log("클릭시 disTimes:", disTimes);
             });
         });
     }
@@ -454,10 +270,6 @@
 
 
 
-
-
-
-    // 24.12.02 
     let prev_next_button_data = {};
 
     prevCalendar_button.addEventListener('click', async function () {
@@ -470,96 +282,92 @@
     });
 
     async function calendarHandle(storeId) {
+        if(calendar_id === storeId){
+            return;
+        }
         let table_click = await fetch(`api/store_calendar/${storeId}`);
         let data = await table_click.json();
         let start_date = data.start_rsv_possible;
         let end_date = data.end_rsv_possible;
         prev_next_button_data[storeId] = [start_date, end_date];
-        // console.log(prev_next_button_data);
 
         await buildCalendar(storeId, start_date, end_date);
-        // console.log(data);
-        // console.log(nowMonth);
     }
 
 
-    function updateNextButton(crmValue) {
+
+
+    let stoIdVal;
+    function updateNextButton(e) {
+
+        const sungwoo = e.target.dataset.crm;
+        let currentstoIdVal = sungwoo;
+        if(sungwoo){
+            stoIdVal = currentstoIdVal;
+        }
+        // console.log("스토어밸류", stoIdVal);
         let hasGreenTime = Array.from(timeItems).some(
             (item) => item.classList.contains('green')
         );
 
-        console.log("전달된 crm 값:", crmValue);
-
-        // let hasGreenDay = document.getElementsByClassName("choiceDay");
-        // let dateItem = document.querySelector('[class="choiceDay"]');
-        // let hasGreenDay = dateItem ? dateItem.classList.contains('green') : false;
-        // let hasGreenDay = document.getElementsByClassName('td p[class="choiceDay"]');
-
-        // let tdElement = document.querySelector('td');
-        // let dateItem = tdElement.getElementsByClassName('choiceDay');
-        // let hasGreenDay = dateItem.length > 0 ? dateItem[0] : null;
-        // console.log('hasGreenDay:', hasGreenDay);
 
         let dateItem = document.getElementsByClassName('choiceDay');
         let hasGreenDay = dateItem.length > 0 ? dateItem[0] : null;
-        console.log("dateItem", dateItem);
+        // console.log("dateItem", dateItem);
         console.log("hasGreenDay", hasGreenDay);
 
+        
+       
+
         if (hasGreenDay && hasGreenTime) {
-            nextButton.style.display = 'block';
-            console.log('날짜,시간 둘다클릭');
-            // if (hasGreenDay) {
-            //     if (hasGreenTime){
-            //         nextButton.style.display = 'block';
-            //         console.log('날짜,시간 둘다클릭');
-            //     }
-            // } else if (hasGreenTime) {
-            //     if (hasGreenDay){
-            //         nextButton.style.display = 'block';
-            //         console.log('시간, 날짜 둘다클릭');
-            //     }
+            if (stoIdVal == calendar_id){
+                nextButton.style.display = 'block';
+            
+            }
+          
         } else {
             nextButton.style.display = 'none';
             console.log('미클릭');
         }
     }
 
-    
 
     // 시간 선택하면 기존에 선택됐던것은 선택해제 후, 선택한 시간을 예약자 정보에 할당
-    timeItems.forEach(function (item) {
-        item.addEventListener('click', function () {
-            const selectedTime = this.getAttribute('data-time');
-            document.getElementById('detail_user_time').value = selectedTime;
-            timeItems.forEach(function (otherItem) {
-                if (otherItem.closest('.store-table.selected') !== null) {
-                    if (otherItem !== item) {
-                        otherItem.classList.remove('green');
-                    }
+    function timeClick(e) {
+        let selectedTime = this.getAttribute('data-time');
+        document.getElementById('detail_user_time').value = selectedTime;
+        console.log("야 찍어봐", selectedTime)
+        timeItems.forEach(function (otherItem) {
+            if (otherItem.closest('.store-table.selected') !== null) {
+                if (otherItem !== e.currentTarget) {
+                    otherItem.classList.remove('green');
                 }
-            });
-
-            item.classList.toggle('green');
-            const grandParentData = this.parentNode.parentNode.dataset.crm;
-            const channel_name = document.querySelector("#channel_name");
-            // const grandParentData = this.parentElement.parentElement.dataset;
-            // console.log(grandParentData);
-            nextButton.dataset.crm = grandParentData;
-            reservationButton.dataset.crm = grandParentData;
-            console.log("아이템 찍어봐", item);
-
-            let stoId = this.closest('.store-table').querySelector('.st-id');
-            let stoIdVal = stoId.dataset.crm
-            console.log("stoId값", stoIdVal);
-            console.log("캘린더 아이디", calendar_id)
-
-            channel_name.value = grandParentData
-            console.log("channel_name", channel_name.value);
-            updateNextButton(stoIdVal);
+            }
         });
-    });
 
-    updateNextButton();
+        this.classList.toggle('green');
+        const grandParentData = this.parentNode.parentNode.dataset.crm;
+        const channel_name = document.querySelector("#channel_name");
+        nextButton.dataset.crm = grandParentData;
+        reservationButton.dataset.crm = grandParentData;
+        // console.log("아이템 찍어봐", item);
+
+        let stoId = this.closest('.store-table').querySelector('.st-id');
+        channel_name.value = grandParentData
+        console.log("channel_name", channel_name.value);
+
+        // 여기 24.12.20
+        updateNextButton(e);
+        console.log("--------");
+        console.log("타임클릭 실행");
+    }
+
+
+    timeItems.forEach(function (item) {
+        item.addEventListener('click', timeClick);
+    });
+    //성우가 주석처리함
+    // updateNextButton();
 
     let selectedDateElement = document.getElementById("selectedDate");
     let sDate = selectedDateElement.textContent;
@@ -570,7 +378,6 @@
     // console.log('sId:', sId);
 
     const storeData = JSON.parse('{{ store_data_json|escapejs|safe }}');
-    // console.log(storeData)
     function findStoreDates(storeId) {
         let companyDates = [];
 
@@ -586,7 +393,6 @@
 
     function updateDisabledTimes(storeId, selectedDate) {
         let companyDates = findStoreDates(storeId);
-        // console.log(companyDates);
 
         let disableTimes = [];
 
@@ -606,22 +412,12 @@
                 timeButtons[i].disabled = true;
                 // 비활성버튼 css스타일 주기
                 timeButtons[i].classList.add('disabled-time');
-                // console.log("가나다");
             } else {
                 timeButtons[i].disabled = false;
                 timeButtons[i].classList.remove('disabled-time');
             }
         }
 
-        // console.log("disableTimes:", disableTimes);
-        // console.log("disableTimes의 갯수:", disableTimes.length);
-        // console.log(companyDates);
-        // console.log("companyDates 갯수임:", companyDates.length/2);
-        // comDates = companyDates.length / 2;
-        // disTimes = disableTimes.length;
-        // console.log("companyDates 갯수:", companyDates.length);
-        // 여기
-        // return [companyDates.length / 2, disableTimes.length];
     }
 
     // updateDisabledTimes(3, selectedDate);
@@ -660,7 +456,6 @@
     }
 
 
-
     //  다음버튼 클릭시, 달력 -> 예약탭 전환
     const dateDisplay = document.getElementById('date-display');
     const infoDisplay = document.getElementById('info-display');
@@ -669,7 +464,7 @@
     const sendBt = document.querySelector(".send-bt");
     sendBt.addEventListener("click", function (event) {
         toggleTabs(event);
-        // fetchSelect(event.target);
+        // timeClick();
     })
     function toggleTabs(event) {
         if (infoDisplay.style.display === 'none') {
@@ -772,9 +567,6 @@
                 return response.json();
             })
             .then(data => {
-                // console.log("data", data);
-                // alert(data.message);
-                // // window.location.href = "";
                 if (data.status === 'success') {
                     // 성공
                     console.log(data.message);
@@ -808,33 +600,6 @@
         fetchSendForm(formData);
     });
 
-    // fetch get요청
-    // alert 메세지띄우기
-    // async function fetchSendMessage() {
-    //         const baseUrl = window.location.origin;
-    //         const response = await fetch(`${baseUrl}/send_msg/`, {
-    //         method: 'POST',
-    //         // headers: {
-    //         //     'Content-Type': 'application/json',
-    //         //     'X-CSRFToken': csrfToken
-    //         // },
-    //         body: data,
-    //         });
-    //         if (response.ok) {
-    //             const data = await response.json();
-    //             if (data.error) {
-    //                 alert(data.error);
-    //             }
-    //             else if (data.success) {
-    //                 alert(data.success);
-    //             }
-    //         } else {
-    //             // 에러출력
-    //             console.error('Server response:', response.statusText);
-    //         }
-    //     }
-
-
 
     // 예약시 전화번호 입력칸에 자동 대쉬
     document.querySelector('#detail_user_phone').addEventListener('keyup', function () {
@@ -843,8 +608,6 @@
             .match(/(\d{0,3})(\d{0,4})(\d{0,4})/).slice(1).join('-')
             .replace(/-*$/g, '');
     });
-
-
 
 </script>
 {% endautoescape %}

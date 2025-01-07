@@ -35,8 +35,8 @@
     </div>
   </div>
   <div class="rs-date" id="date-display">
-    <div class="name" id="selected-store">업체를 선택하세요.</div>
-    <div class="signs">
+    <div class="name" id="selected-store"> </div>
+    <div class="signs hidden">
       <div class="notice">
         <div class="today-sign"> </div>
         <p>&nbsp;&#58; 오늘&nbsp;&nbsp;</p>
@@ -46,7 +46,7 @@
         <p>&nbsp;&#58; 선택일</p>
       </div>
     </div>
-    <div id="mainCalendar">
+    <div id="mainCalendar" class="hidden">
       <table class="Calendar">
         <thead>
           <tr>
@@ -72,6 +72,18 @@
         <tbody>
         </tbody>
       </table>
+    </div>
+
+    <div class="guide visible">
+      <p class="title">HOW TO</p>
+      <!-- <br> -->
+      <p>예약방법</p>
+      <br>
+      <p><span>STEP1. </span>업체를 선택하세요.</p>
+      <p><span>STEP2. </span>달력의 날짜를 선택하세요.</p>
+      <p><span>STEP3. </span>시간을 선택하세요.</p>
+      <p><span>STEP4. </span>다음 버튼을 눌러주세요.</p>
+      <p><span>STEP5. </span>예약자 정보를 입력하시고 예약하기 버튼을 눌러주세요.</p>
     </div>
 
     <div class="next" id="next-button" style="display: none;">
@@ -158,11 +170,11 @@
         </div>
       </div>
       {% endfor %}
-      <p>STEP1. 달력의 날짜를 선택하세요.</p>
+      <!-- <p>STEP1. 달력의 날짜를 선택하세요.</p>
       <p>STEP2. 업체를 선택하세요.</p>
       <p>STEP3. 시간을 선택하세요.</p>
       <p>STEP4. 다음 버튼을 눌러주세요.</p>
-      <p>STEP5. 예약자 정보를 입력하시고 예약하기 버튼을 눌러주세요.</p>
+      <p>STEP5. 예약자 정보를 입력하시고 예약하기 버튼을 눌러주세요.</p> -->
     </div>
   </div>
 

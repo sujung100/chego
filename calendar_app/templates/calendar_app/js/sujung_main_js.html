@@ -23,11 +23,19 @@
     // let calendar_id = mainCalendar.dataset.storeid;
     let calendar_id;
     let nextButton = document.getElementById('next-button');
+    let signs = document.querySelector('.signs');
+    let guide = document.querySelector('.guide');
 
 
     // 달력 생성 : 해당 달에 맞춰 테이블을 만들고, 날짜를 채워 넣는다.
     async function buildCalendar(store_id, start_date, end_date) {
 
+        mainCalendar.classList.remove('hidden');
+        mainCalendar.classList.add('visible');
+        guide.classList.remove('visible');
+        guide.classList.add('hidden');
+        signs.classList.add('visible');
+        
         nextButton.style.display = "none";
         calendar_id = store_id;
 
@@ -412,6 +420,9 @@
                 timeButtons[i].disabled = true;
                 // 비활성버튼 css스타일 주기
                 timeButtons[i].classList.add('disabled-time');
+                if (timeButtons[i].classList.contains('green')) {
+                    timeButtons[i].classList.remove('green');
+                }
             } else {
                 timeButtons[i].disabled = false;
                 timeButtons[i].classList.remove('disabled-time');
@@ -549,7 +560,8 @@
 
         // const response = await fetch("send_msg/", {
         // const baseUrl = window.location.origin;
-        const response = await fetch(`${baseUrl}/send_msg/`, {
+        // const response = await fetch(`$baseUrl/send_msg/`, {
+        const response = await fetch(`${baseUrl}/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

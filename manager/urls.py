@@ -37,13 +37,13 @@ urlpatterns = [
   # 임시
   # path('sung/update/<int:pk>_<i nt:store_id>/', sungwoo_views.Update.as_view(), name='update'),
   # path('sung/update/<int:store_id>/', sungwoo_views.Update2.as_view(), name='update2'),
+
   # ----------------
   # 완성
   # 예약가능시간 추가 - 사장님이 개인업체 시간표 열어둠 / pk값 하나떼버림
   path('sung/update/<int:store_id>/', sungwoo_views.Update.as_view(), name='update3'),
   # 예약조회 페이지 - 사장님
   # path('sung/<int:store_id>/', sungwoo_views.Total_Reservation_Check.as_view(), name='store_detail'),
-  
   path('sung/<int:pk>/', sungwoo_views.Total_Reservation_Check.as_view(), name='store_detail'),
 
 

@@ -79,28 +79,6 @@
                 <div class="bottom_cont">
                   <div class="b_l">
                     <!-- <span>달력들어갈자리</span> -->
-                    <div class="mid">
-          
-                      <div class="rsv_start_end">
-                        <input type="radio" name="rsv_start_end" id="rsv_start_end_yes" checked>
-                        <input type="radio" name="rsv_start_end" id="rsv_start_end_no">
-                        <div class="switch">
-                          <label for="rsv_start_end_yes">시작</label>
-                          <label for="rsv_start_end_no">종료</label>
-                          <span></span>
-                        </div>
-                      </div>
-          
-                      <div class="cal_top">
-                        <div class="title_setting">예약가능일 설정</div>
-                        <label class="rocker">
-                          <input type="checkbox" checked>
-                          <span class="switch-left">Off</span>
-                          <span class="switch-right">On</span>
-                        </label>
-                      </div>
-          
-                    </div>
                     <table class="Calendar">
                       <thead>
                         <tr>
@@ -126,7 +104,25 @@
                       </tbody>
                     </table>
                     <input type="hidden" id="selected_date" name="selected_date">
-                    
+                    <div class="mid">
+          
+                      <div class="rsv_start_end">
+                        <input type="radio" name="rsv_start_end" id="rsv_start_end_yes" checked>
+                        <input type="radio" name="rsv_start_end" id="rsv_start_end_no">
+                        <div class="switch">
+                          <label for="rsv_start_end_yes">시작</label>
+                          <label for="rsv_start_end_no">종료</label>
+                          <span></span>
+                        </div>
+                      </div>
+          
+                      <label class="rocker">
+                        <input type="checkbox" checked>
+                        <span class="switch-left">On</span>
+                        <span class="switch-right">Off</span>
+                      </label>
+          
+                    </div>
                     <!-- <label for="disable_date_start">시작날짜</label> -->
                     <!-- <input type="date" name="disable_date_start" id="disable_date_start"> -->
                     <span id="disable_date_start"></span>

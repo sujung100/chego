@@ -1,4 +1,27 @@
 <script>
+
+	// tab메뉴 스타일적용
+	document.addEventListener("DOMContentLoaded", function() {
+	var tabs = document.querySelectorAll('.tabs .trapez');
+
+	for (var i = 0, len = tabs.length; i < len; i++) {
+		tabs[i].addEventListener("click", function() {
+		if (this.classList.contains('active'))
+			return;
+
+		var parent = this.parentNode,
+			innerTabs = parent.querySelectorAll('.trapez');
+
+		for (var index = 0, iLen = innerTabs.length; index < iLen; index++) {
+			innerTabs[index].classList.remove('active');
+		}
+
+		this.classList.add('active');
+		});
+	}
+
+	});
+
 	// +버튼 누르면 시작
 	let items = Array.prototype.slice.call(document.querySelectorAll("[id^='time-style']"), 0).map(function (obj) { return obj.textContent });
 	console.log(items);

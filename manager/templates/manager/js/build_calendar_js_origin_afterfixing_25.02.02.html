@@ -31,23 +31,16 @@
   let selectedCount = 0; // 선택 횟수 카운트
   let lastDisabledDate = null; // 마지막 선택된 시작 날짜 (d_choiceDay)
 
-  // ///////////////// 25.02.06 수정전
-  // // 달력 재생성되도 유지할 값
-  // let selectedDates = {
-  //   [nowMonth.getFullYear()]: {
-  //       [nowMonth.getMonth() + 1]: {
-  //           start: null, // d_choiceDay
-  //           end: null,   // choiceDay2
-  //           between: []  // between
-  //       }
-  //   }
-  // };
   
   // 달력 재생성되도 유지할 값
   let selectedDates = {
-    start: null, // d_choiceDay
-    end: null,   // choiceDay2
-    between: []  // between
+    [nowMonth.getFullYear()]: {
+        [nowMonth.getMonth() + 1]: {
+            start: null, // d_choiceDay
+            end: null,   // choiceDay2
+            between: []  // between
+        }
+    }
   };
 
   const rsv_activate = document.querySelector("#rsv_activate");
@@ -80,9 +73,6 @@
       let nowColumn = nowRow.insertCell();        // 새 열을 추가하고
       let newDIV = document.createElement("p");
       newDIV.innerHTML = leftPad(nowDay.getDate());        // 추가한 열에 날짜 입력
-      let formattedDate = `${nowDay.getFullYear()}-${leftPad(nowDay.getMonth() + 1)}-${leftPad(nowDay.getDate())}`;
-      newDIV.setAttribute('data-date', formattedDate);     // 속성값에 연월일 값 추가 25.02.13
-
       let dateStringArray = [nowDay.getFullYear().toString(), leftPad(nowMonth.getMonth() + 1), leftPad(nowDay.getDate())];
       let rsv_count = countDateOccurrences(userDates, dateStringArray);
       nowColumn.appendChild(newDIV);
@@ -149,63 +139,18 @@
     });
 
 
-    
+    // 25.01.28
     // 기존 선택 상태 복원
     const year = nowMonth.getFullYear();
     const month = leftPad(nowMonth.getMonth() + 1);
 
-    // ////////////////////////////////////// 25.02.06 수정중
-    // if (selectedDates[year] && selectedDates[year][month]) {
-    //     const currentSelection = selectedDates[year][month];
-    //     console.log("currentSelection", currentSelection);
-
-    //     if (currentSelection.start) {
-    //         const startDay = currentSelection.start.split("-");
-    //         const startTd = findTdByDate(startDay[0], startDay[1], startDay[2]);
-    //         if (startTd) {
-    //             const startP = startTd.querySelector('p');
-    //             startP.classList.add("d_choiceDay");
-    //             lastOddChoice = startP;
-    //         }
-    //     }
-
-    //     if (currentSelection.end) {
-    //         const endDay = currentSelection.end.split("-");
-    //         const endTd = findTdByDate(endDay[0], endDay[1], endDay[2]);
-    //         if (endTd) {
-    //             const endP = endTd.querySelector('p');
-    //             endP.classList.add("choiceDay2");
-    //             lastEvenChoice = endP;
-    //         }
-    //     }
-
-    //     currentSelection.between.forEach(date => {
-    //         const betweenTd = findTdByDate(year, month, date);
-    //         console.log("betweenTd찍어봐라", betweenTd);
-    //         if (betweenTd) {
-    //             const betweenP = betweenTd.querySelector('p');
-    //             console.log("P찍어봐라", betweenP);
-    //             if (betweenP) {
-    //                 betweenP.classList.add("between");
-    //             }
-    //         }
-    //     });
-    //  }
-    //  console.log("selectedDates", selectedDates)
-
-
-    if (selectedDates) {
-        const currentSelection = selectedDates;
+    if (selectedDates[year] && selectedDates[year][month]) {
+        const currentSelection = selectedDates[year][month];
         console.log("currentSelection", currentSelection);
-        
+
         if (currentSelection.start) {
-          const startDay = currentSelection.start.split("-");
-          console.log("startTd 0", startDay[0]);
-          console.log("startTd 1", startDay[1]);
-          console.log("startTd 2", startDay[2]);
-          const startTd = findTdByDate(startDay[0], startDay[1], startDay[2]);
-          console.log("startTd찍어", startTd);
-          
+            const startDay = currentSelection.start.split("-");
+            const startTd = findTdByDate(startDay[0], startDay[1], startDay[2]);
             if (startTd) {
                 const startP = startTd.querySelector('p');
                 startP.classList.add("d_choiceDay");
@@ -224,20 +169,15 @@
         }
 
         currentSelection.between.forEach(date => {
-          console.log("date찍어봐라", date);
-          const betweenDay = date.split("-");
-          const betweenTd = findTdByDate(betweenDay[0], betweenDay[1], betweenDay[2]);
-          console.log("betweenTd찍어봐라", betweenTd);
-          if (betweenTd) {
-              const betweenP = betweenTd.querySelector('p');
-              console.log("P찍어봐라", betweenP);
-              if (betweenP) {
-                  betweenP.classList.add("between");
-              }
-          }
+            const betweenTd = findTdByDate(year, month, date);
+            if (betweenTd) {
+                const betweenP = betweenTd.querySelector('p');
+                if (betweenP) {
+                    betweenP.classList.add("between");
+                }
+            }
         });
      }
-     console.log("selectedDates", selectedDates)
   }
 
 
@@ -266,18 +206,21 @@
 
 
   function findTdByDate(year, month, day) {
+
+      // const formattedDate = `${year}-${leftPad(month)}-${leftPad(day)}`;
       const formattedDate = `${year}-${month}-${day}`;
       console.log("formattedDate찍어봐", formattedDate);
-      const tds = document.querySelectorAll('tbody td');
-        for (let td of tds) {
-            const pTag = td.querySelectorAll('p');
-            for (let i = 0; i < pTag.length; i++) {
-              // console.log(pTag[i].getAttribute('data-date'));
-            }
-              if (pTag.length > 0 && pTag[0].getAttribute('data-date') === formattedDate) {
-                  return td;
-              }
-        }
+      const tds = document.querySelectorAll('.Calendar td');
+
+      for (let td of tds) {
+          const p = td.querySelector('p');
+          if (p && p.textContent === leftPad(day)) {
+              return td; // 해당 날짜의 td 반환
+              // console.log("td찍어봐", td);
+          }
+      }
+     
+      
       return null; // 찾지 못한 경우
   }
 
@@ -372,93 +315,6 @@
 
   // }
 
-  // ///////////////////////////////////////////// 25.02.06 수정전
-  // function disableMode_choiceDate(newDIV) {
-  //     console.log("disableMode_choiceDate 실행");
-      
-  //     let year = nowMonth.getFullYear();
-  //     let month = leftPad(nowMonth.getMonth() + 1);
-  //     let day = newDIV.textContent;
-  //     let disableMode_choice_date = `${year}-${month}-${day}`;
-
-  //     selectedCount++; // 선택 횟수 증가
-
-  //     // 홀수 번째 선택
-  //     if (selectedCount % 2 === 1) {
-  //         // 이전 홀수 선택이 있다면 클래스 제거
-  //         if (lastOddChoice) {
-  //             lastOddChoice.classList.remove("d_choiceDay");
-  //             removeBetweenClass();
-  //         }
-
-  //         // 기존 짝수 선택이 존재한다면 클래스 제거
-  //         if (lastEvenChoice) {
-  //             lastEvenChoice.classList.remove("choiceDay2"); // 기존 짝수 선택 클래스 제거
-  //             lastEvenChoice = null; // 마지막 짝수 선택 초기화
-  //         }
-
-  //         newDIV.classList.add("d_choiceDay"); // 현재 선택에 클래스 추가
-  //         lastOddChoice = newDIV; // 마지막 홀수 선택 업데이트
-  //         lastDisabledDate = disableMode_choice_date; // 시작 날짜 업데이트
-  //         disable_date_start.textContent = disableMode_choice_date; // 시작 날짜 설정
-
-  //          // 상태 업데이트
-  //         if (!selectedDates[year]) {
-  //             selectedDates[year] = {};
-  //         }
-  //         if (!selectedDates[year][month]) {
-  //             selectedDates[year][month] = { start: null, end: null, between: [] };
-  //         }
-  //         selectedDates[year][month].start = disableMode_choice_date;
-  //         selectedDates[year][month].end = null; // 초기화
-  //         selectedDates[year][month].between = []; // 초기화
-
-  //     } else { // 짝수 번째 선택
-  //         // 이전 짝수 선택이 있다면 클래스 제거
-  //         if (lastEvenChoice) {
-  //             lastEvenChoice.classList.remove("choiceDay2");
-  //         }
-
-  //         // 현재 선택 날짜가 마지막 선택된 시작 날짜보다 이전인지 확인
-  //         if (lastDisabledDate && disableMode_choice_date < lastDisabledDate) {
-  //             alert("이전 날짜를 종료 날짜로 선택할 수 없습니다.");
-  //             selectedCount--;
-  //             // console.log("선택횟수 출력", selectedCount);
-  //             return; // 이전 날짜 선택 방지
-  //         }
-
-  //         newDIV.classList.add("choiceDay2"); // 현재 선택에 클래스 추가
-  //         lastEvenChoice = newDIV; // 마지막 짝수 선택 업데이트
-  //         disable_date_end.textContent = disableMode_choice_date; // 종료 날짜 설정
-          
-          
-  //          // 선택된 td 요소 찾기
-  //         const startTd = lastOddChoice ? lastOddChoice.parentElement : null; // d_choiceDay 클래스가 있는 td
-  //         const endTd = lastEvenChoice.parentElement; // choiceDay2 클래스가 있는 td
-          
-  //         // 사이에 between 클래스 추가
-  //         // if (startTd) {
-  //         //     addBetweenClass(startTd, endTd);
-  //         //     // 상태 업데이트
-  //         //     selectedDates.end = disableMode_choice_date;
-  //         //     // between 클래스가 추가된 날짜를 저장
-  //         //     let currentTd = startTd.nextElementSibling;
-  //         //     while (currentTd && currentTd !== endTd) {
-  //         //         selectedDates.between.push(currentTd.querySelector('p').textContent);
-  //         //         currentTd = currentTd.nextElementSibling;
-  //         //     }
-  //         // }
-  //         if (startTd && endTd) {
-  //           addBetweenClass(selectedDates[year][month].start, disableMode_choice_date);
-  //           selectedDates[year][month].end = disableMode_choice_date; // 종료 날짜 업데이트
-  //       }
-  //   }
-
-  //     console.log("선택된 날짜:", disableMode_choice_date);
-  //     console.log("현재 홀수 선택:", lastOddChoice ? lastOddChoice.textContent : "없음");
-  //     console.log("현재 짝수 선택:", lastEvenChoice ? lastEvenChoice.textContent : "없음");
-  //     console.log("선택횟수 출력", selectedCount);
-  // }
 
   function disableMode_choiceDate(newDIV) {
       console.log("disableMode_choiceDate 실행");
@@ -490,15 +346,15 @@
           disable_date_start.textContent = disableMode_choice_date; // 시작 날짜 설정
 
            // 상태 업데이트
-          if (!selectedDates) {
-              selectedDates = {};
+          if (!selectedDates[year]) {
+              selectedDates[year] = {};
           }
-          // if (!selectedDates[year][month]) {
-          //     selectedDates[year][month] = { start: null, end: null, between: [] };
-          // }
-          selectedDates.start = disableMode_choice_date;
-          selectedDates.end = null; // 초기화
-          selectedDates.between = []; // 초기화
+          if (!selectedDates[year][month]) {
+              selectedDates[year][month] = { start: null, end: null, between: [] };
+          }
+          selectedDates[year][month].start = disableMode_choice_date;
+          selectedDates[year][month].end = null; // 초기화
+          selectedDates[year][month].between = []; // 초기화
 
       } else { // 짝수 번째 선택
           // 이전 짝수 선택이 있다면 클래스 제거
@@ -536,8 +392,8 @@
           //     }
           // }
           if (startTd && endTd) {
-            addBetweenClass(selectedDates.start, disableMode_choice_date);
-            selectedDates.end = disableMode_choice_date; // 종료 날짜 업데이트
+            addBetweenClass(selectedDates[year][month].start, disableMode_choice_date);
+            selectedDates[year][month].end = disableMode_choice_date; // 종료 날짜 업데이트
         }
     }
 
@@ -547,60 +403,18 @@
       console.log("선택횟수 출력", selectedCount);
   }
 
-  // /////////////////////////////////// 25.02.06 수정중
-  // function addBetweenClass(startDate, endDate) {
-  //   const start = new Date(startDate);
-  //   const end = new Date(endDate);
-
-  //   let currentDate = new Date(start);
-  //   currentDate.setDate(currentDate.getDate() + 1);
-
-  //   while (currentDate < end) {
-  //       const currentDay = leftPad(currentDate.getDate());
-  //       const currentMonth = leftPad(currentDate.getMonth() + 1);
-  //       const currentYear = currentDate.getFullYear();
-
-  //       // 해당 날짜에 해당하는 td 찾기
-  //       const td = findTdByDate(currentYear, currentMonth, currentDay);
-  //       if (td) {
-  //           const dayParagraph = td.querySelector('p');
-  //           if (dayParagraph) {
-  //               dayParagraph.classList.add("between"); // between 클래스 추가
-  //           }
-  //       }
-
-  //       // between 배열에 추가
-  //       selectedDates[currentYear][currentMonth].between.push(`${currentYear}-${currentMonth}-${currentDay}`);
-
-  //       currentDate.setDate(currentDate.getDate() + 1); // 다음 날짜로 이동
-  //   }
-  // }
   
-  function addBetweenClass(startDate, endDate) {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+  function addBetweenClass(startTd, endTd) {
+      let currentTd = startTd.nextElementSibling;
+      console.log("currentTd", currentTd);
 
-    let currentDate = new Date(start);
-    currentDate.setDate(currentDate.getDate() + 1);
-
-    while (currentDate < end) {
-        const currentDay = leftPad(currentDate.getDate());
-        const currentMonth = leftPad(currentDate.getMonth() + 1);
-        const currentYear = currentDate.getFullYear();
-
-        // 해당 날짜에 해당하는 td 찾기
-        const td = findTdByDate(currentYear, currentMonth, currentDay);
-        if (td) {
-            const dayParagraph = td.querySelector('p');
-            if (dayParagraph) {
-                dayParagraph.classList.add("between"); // between 클래스 추가
-            }
-        }
-
-        // between 배열에 추가
-        selectedDates.between.push(`${currentYear}-${currentMonth}-${currentDay}`);
-
-        currentDate.setDate(currentDate.getDate() + 1); // 다음 날짜로 이동
+      // startTd의 다음 td부터 endTd까지 반복
+      while (currentTd && currentTd !== endTd) {
+        const dayParagraphs = currentTd.querySelectorAll('p'); // 현재 td의 모든 p 태그 선택
+        dayParagraphs.forEach(p => {
+            p.classList.add("between"); // between 클래스 추가
+        });
+        currentTd = currentTd.nextElementSibling; // 다음 td로 이동
     }
   }
 

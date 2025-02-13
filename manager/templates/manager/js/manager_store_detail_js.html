@@ -18,7 +18,7 @@ checkboxes.forEach(checkbox => {
             // 체크 해제된 경우 배열에서 제거
             selected = selected.filter(item => item !== checkbox);
         }
-        console.log('선택된 체크박스:', selected.map(cb => cb.value));
+        // console.log('선택된 체크박스:', selected.map(cb => cb.value));
     });
 });
 
@@ -28,7 +28,7 @@ deleteButton.addEventListener('click', function() {
         event.preventDefault();
         submitSelected(selected); // 선택된 체크박스 배열을 인자로 전달
     } else {
-        console.log('선택된 체크박스가 없습니다.');
+        // console.log('선택된 체크박스가 없습니다.');
     }
 });
 
@@ -86,7 +86,7 @@ deleteButton.addEventListener('click', function() {
 
   const store_item2 = document.querySelector(".store_item2");
   const clicked_rsv = document.querySelector(".clicked_rsv");
-  console.log("store_item2", store_item2);
+  // console.log("store_item2", store_item2);
 
   // url에서 store id값 잘라오면 안되는 이유 = 1) 배포시에 문제.. 2)페이지네이션 쿼리
   // const location111 = window.location;
@@ -96,7 +96,7 @@ deleteButton.addEventListener('click', function() {
   // const yeah2 = yeah.split('/').reverse()[0]
   // console.log("이거", yeah2);
   let store_id = "{{ store.pk }}"
-  console.log("store_id", store_id);
+  // console.log("store_id", store_id);
 
 
 
@@ -105,7 +105,7 @@ deleteButton.addEventListener('click', function() {
   function buildCalendar() {
 
     const userDates = JSON.parse('{{ user_dates_json | escapejs | safe }}');
-    console.log("유저 데이터 찍히냐?", userDates);
+    // console.log("유저 데이터 찍히냐?", userDates);
 
     let userDates1 = userDates.map(function (date) {
       let parts = date.split("-");
@@ -277,7 +277,7 @@ deleteButton.addEventListener('click', function() {
     //   resizable(ele);
     // });
     // console.log("넥스트시블링찍어봐", nextSibling);
-    console.log("실행됐다");
+    // console.log("실행됐다");
   }
 
   // click => 삭제 03.07 fetch말고 웹소켓으로 가져오는걸로 수정
@@ -350,7 +350,7 @@ function resizable(ele) {
   //   // prevSibling.querySelector(".content") 코드 실행
   // }
   const nextSibling = resizer.nextElementSibling.querySelector(".content");
-  console.log("넥시", nextSibling);
+  // console.log("넥시", nextSibling);
 
   let x = 0;
   let y = 0;
@@ -361,11 +361,11 @@ function resizable(ele) {
     // console.log("찍어봐라", prevSibling);
     if (!prevSibling) {
       // 이전 형제 요소가 없거나 .content 요소가 없는 경우 처리 로직
-      console.log("실행됨1");
+      // console.log("실행됨1");
       return;
     }
     else {
-    console.log("실행됨2");
+    // console.log("실행됨2");
     x = e.clientX;
     y = e.clientY;
     const rect = prevSibling.getBoundingClientRect();
@@ -379,14 +379,14 @@ function resizable(ele) {
 
   const mouseMoveHandler = function (e) {
     const dy = e.clientY - y;
-    console.log("사이즈조절", dy);
+    // console.log("사이즈조절", dy);
 
     if (direction === "vertical") {
       const h =
         ((prevSiblingHeight + dy) * 100) /
         resizer.parentNode.getBoundingClientRect().height;
       prevSibling.style.height = `${h}%`;
-      console.log("찍어봐라2", prevSibling.style.height);
+      // console.log("찍어봐라2", prevSibling.style.height);
     }
 
     const cursor = "row-resize";
@@ -505,7 +505,7 @@ function resizable(ele) {
         hiddenInput.value = id;
         form.appendChild(hiddenInput);
       });
-      console.log(selectedIds);
+      // console.log(selectedIds);
       // 폼 제출
       form.submit();
     

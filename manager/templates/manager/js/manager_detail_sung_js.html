@@ -2,7 +2,6 @@
 
 <script>
   let userName = "{{ username|escapejs }}";
-  console.log("userName", userName);
   const loc = window.location;
   // console.log(loc);
   // const loc = "127.0.0.1:8000/manager/";
@@ -51,10 +50,9 @@
       // };
       webSocket.onmessage = function (e) {
         data = JSON.parse(e.data);
-        console.log(data);
+        // console.log("데이터뭐냐", data)
         if (data.message_type == 'reservation_details') {
           var reservations = data.data;
-          console.log("reservations", reservations);
           // console.log("reservations길이", reservations.length);
           var clickedRsv = document.querySelector('.clicked_rsv');
           var attach = document.querySelector('.store_item3');

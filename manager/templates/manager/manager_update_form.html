@@ -79,7 +79,7 @@
                 <div class="bottom_cont">
                   <div class="b_l">
                     <!-- <span>달력들어갈자리</span> -->
-                    <div class="mid">
+                    <!-- <div class="mid">
           
                       <div class="rsv_start_end">
                         <input type="radio" name="rsv_start_end" id="rsv_start_end_yes" checked>
@@ -126,52 +126,125 @@
                       </tbody>
                     </table>
                     <input type="hidden" id="selected_date" name="selected_date">
-                    
-                    <!-- <label for="disable_date_start">시작날짜</label> -->
-                    <!-- <input type="date" name="disable_date_start" id="disable_date_start"> -->
                     <span id="disable_date_start"></span>
-                    <!-- <br> -->
-                    <!-- <label for="disable_date_end">종료날짜</label> -->
-                    <!-- <input type="date" name="disable_date_end" id="disable_date_end"> -->
-                    <span id="disable_date_end"></span>
-                    <!-- <input type="button" id="rsv_activate" value="예약 활성화"> -->
+                    <span id="disable_date_end"></span> -->
                   </div>
                   <div class="b_r">
-                    <div class="showtime">
+                    <!-- <div class="showtime">
                       <div class="store-table">
                         <div class="st-name">
-                          <div class="st-id">{{ store.id }}</div>
-                          {{ store.store_name }}
+                          <div class="st-id"> store.id </div>
+                           store.store_name 
                         </div>
                         <div class="st-time">
-                          <!-- <form action="" method="post" id="myForm">{% csrf_token %} -->
                             <br>
                             <div>새로운 시간 추가</div>
-                            {% for time in sto_time_objects %}
-                            <button class="time-item-{{ store.id }}" type="button" data-time="{{ time.reservation_time }}"
-                              id="time-style" style="display: none;">{{ time.reservation_time }}</button>
-                            {% endfor %}
-                            <!-- <span id="btnwrap" data-pk="{{ store.pk }}" data-store-id="{{ store.id }}">
-                                <button type="button" class="addbtn">&#43;</button>
-                                <button type="button" class="addbtn" id="addbtn-{{ obj.id }}" data-pk="{{ obj.pk }}" data-store-id="{{ obj.id }}">&#43;</button>
-                              </span> -->
-                            <span id="btnwrap" data-pk="{{ manager.pk }}" data-store-id="{{ store.id }}">
+                             for time in sto_time_objects 
+                            <button class="time-innerbox- store.id " type="button" data-time=" time.reservation_time "
+                              id="time-style" style="display: none;"> time.reservation_time </button>
+                             endfor 
+                            
+                            <span id="btnwrap" data-pk=" manager.pk " data-store-id=" store.id ">
                               <button type="button" class="addbtn">&#43;</button>
                             </span>
                             <br>
-                            <!-- <button type="button" class="add_cookies">추가하기</button> -->
-                            <!-- <button class="add_cookies" data-pk="{{ store.pk }}" data-store-id="{{ store.id }}">추가하기</button> -->
-                            <button class="add_cookies" id="add-cookies-{{ store.id }}" data-pk="{{ manager.pk }}"
-                              data-store-id="{{ store.id }}">추가하기</button>
+                            <button class="add_cookies" id="add-cookies- store.id " data-pk=" manager.pk "
+                              data-store-id=" store.id ">추가하기</button>
                             <br>
                             <div>시간표 변경</div>
                             <div class="parent">
                               <div id="attach_btns"></div>
                             </div>
                             <input type="hidden" id="buttonValues" name="button_values">
-                            <!-- <button type="button" id="save_button">저장하기</button> -->
                             <input type="button" id="rsv_activate" value="변경사항 저장">
-                          <!-- </form> -->
+                        </div>
+                      </div>
+                    </div> -->
+                    <div class="tabwrap">
+                      <div class="tabcont">
+                        <div class="card tabs">
+                          <input id="tab-1" type="radio" class="tab tab-selector" checked="checked" name="tab" />
+                          <label for="tab-1" class="tab tab1 trapez active"><span class="material-symbols-outlined">calendar_month</span>&nbsp;기간설정</label>
+                          <input id="tab-2" type="radio" class="tab tab-selector" name="tab" />
+                          <label for="tab-2" class="tab tab2 trapez"><span class="material-symbols-outlined">schedule</span>&nbsp;시간설정</label>
+                          <input id="tab-3" type="radio" class="tab tab-selector" name="tab" />
+                          <label for="tab-3" class="tab tab3 trapez"><span class="material-symbols-outlined">coffee</span>&nbsp;휴무설정</label>
+                          <input id="tab-4" type="radio" class="tab tab-selector" name="tab" />
+                          <label for="tab-4" class="tab tab4 trapez"><span class="material-symbols-outlined">groups</span>&nbsp;인원설정</label>
+                          <div class="tabshadow"></div>
+                          <div class="h-slider"></div>
+                          <section class="innertxt">
+                            <div class="innerbox" id="innertxt-1">
+                              <div class="tab-title tab1">기간설정</div>
+                              <div class="txtcont">
+                                <div class="mid">
+                                  <div class="rsv_start_end">
+                                    <input type="radio" name="rsv_start_end" id="rsv_start_end_yes" checked>
+                                    <input type="radio" name="rsv_start_end" id="rsv_start_end_no">
+                                    <!-- <div class="switch">
+                                      <label for="rsv_start_end_yes">시작</label>
+                                      <label for="rsv_start_end_no">종료</label>
+                                      <span></span>
+                                    </div> -->
+                                  </div>
+                                  <div class="cal_top">
+                                    <div class="title_setting">예약가능일 설정</div>
+                                    <label class="rocker">
+                                      <input type="checkbox" checked>
+                                      <span class="switch-left">Off</span>
+                                      <span class="switch-right">On</span>
+                                    </label>
+                                  </div>
+                                </div>
+                                <table class="Calendar">
+                                  <thead>
+                                    <tr>
+                                      <td onClick="prevCalendar();" style="cursor:pointer;">&#60;</td>
+                                      <td colspan="5">
+                                        <span id="calYear"></span>년
+                                        <span id="calMonth"></span>월
+                                      </td>
+                                      <td onClick="nextCalendar();" style="cursor:pointer;">&#62;</td>
+                                    </tr>
+                                    <tr>
+                                      <td>일</td>
+                                      <td>월</td>
+                                      <td>화</td>
+                                      <td>수</td>
+                                      <td>목</td>
+                                      <td>금</td>
+                                      <td>토</td>
+                                    </tr>
+                                  </thead>
+                                
+                                  <tbody>
+                                  </tbody>
+                                </table>
+                              </div>
+                              <input type="hidden" id="selected_date" name="selected_date">
+                              <span id="disable_date_start"></span>
+                              <span id="disable_date_end"></span>
+                              <!-- <p>
+                                <span class = "numit"></span>
+                              </p> -->
+                            </div>
+                            <div class="innerbox" id="innertxt-2">
+                              <div class="tab-title tab2">Tab 2</div>
+                              <p>
+                                <span class = "numit">2</span> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor </p>
+                            </div>
+                            <div class="innerbox" id="innertxt-3">
+                              <div class="tab-title tab3">Tab 3</div>
+                              <p>
+                                <span class = "numit">3</span> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis </p>
+                            </div>
+                            <div class="innerbox" id="innertxt-4">
+                              <div class="tab-title tab4">Tab 4</div>
+                              <p>
+                                <span class = "numit">4</span> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+                            </div>
+                          </section>
+                    
                         </div>
                       </div>
                     </div>

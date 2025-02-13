@@ -740,46 +740,23 @@ span.numit {
   background-color: #555;
 }
 
-.futureDay.choiceDay,
-.today.choiceDay {
+.futureDay.choiceDay.unchecked,
+.today.choiceDay.unchecked {
   background: green;
   color: #fff;
 }
-/* 
-.futureDay.d_choiceDay,
-.today.d_choiceDay {
+
+.futureDay.d_choiceDay.unchecked,
+.today.d_choiceDay.unchecked {
   background: #4cd964;
   color: #fff;
 }
 
-.futureDay.choiceDay2,
-.today.choiceDay2 {
+.futureDay.choiceDay2.unchecked,
+.today.choiceDay2.unchecked {
   background: red;
   color: #fff;
-} */
-
-/* 추가 25.02.13 */
-.futureDay.between {
-  border-radius: 0;
 }
- .futureDay.d_choiceDay,  .futureDay.between,  .futureDay.choiceDay2 {
-  background-color: #b670f4;
-  color: #fff;
-}
- .futureDay.d_choiceDay {
-  border-radius: 12px 0 0 12px;
-}
- .futureDay.choiceDay2 {
-  border-radius: 0 12px 12px 0;
-}
- .futureDay.d_choiceDay.choiceDay2 {
-  border-radius: 12px;
-}
-.futureDay.d_choiceDay.choiceDay2:after {
-  display: none;
-}
-/* 추가 25.02.13 */
-
 /* 달력 다크모드 끝 */
 /* 달력 끝 */
 

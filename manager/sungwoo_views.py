@@ -288,11 +288,8 @@ class Total_Reservation_Check(LoginRequiredMixin, UpdateView):
         # store_id = self.kwargs['store_id']
         store_id = self.kwargs['pk']
         store = get_object_or_404(rsv.Store, pk=store_id)
-        print("스토어찍어봐라", store.id)
         manager = rsv.Manager.objects.get(user=self.request.user)
-        print("매니저찍어봐라", manager.id)
         context = super().get_context_data(**kwargs)
-
         context['manager'] = manager
         context['store'] = store
 
@@ -303,11 +300,9 @@ class Total_Reservation_Check(LoginRequiredMixin, UpdateView):
         # context['form'] = ManagerUpdateForm(instance=self.manager)
         # context['form_store'] = StoreUpdateForm(instance=self.store)
 
-        print("콘텍스트찍어봐", context)
         name = self.request.GET.get('name')
         phone = self.request.GET.get('phone')
         kw = self.request.GET.get('kw')
-        print("kw찍어봐라", kw)
         
         date_filter = Q()
         if kw:
@@ -351,7 +346,6 @@ class Total_Reservation_Check(LoginRequiredMixin, UpdateView):
         # 두 번째 페이지네이션
         second_pgt = Paginator(reservations, 5)
         second_num = self.request.GET.get('second_page')
-        print("페이지찍어봐", second_num)
         second_obj = second_pgt.get_page(second_num)
 
         context['1st_obj'] = first_obj
@@ -366,13 +360,11 @@ class Total_Reservation_Check(LoginRequiredMixin, UpdateView):
 
         user_dates = []
         dates_list = [date.reservation_date for date in user_time]
-        print(dates_list)
         user_dates.append({
             "user_dates" : dates_list
         })
         context["user_dates_json"] = json.dumps(dates_list, cls=DjangoJSONEncoder)
 
-        print("전체 콘텍스트 출력: ", context)
 
 
         input1 = self.request.GET.get('name', '')
@@ -398,7 +390,6 @@ class Total_Reservation_Check(LoginRequiredMixin, UpdateView):
     def post(self, request, *args, **kwargs):
         # URL에서 pk값 가져오기
         requested_store_id = self.kwargs.get('pk')
-
         # Store테이블의 id값을 가진 객체찾기 (url에서 가져온 store_id값과 일치하는)
         store = get_object_or_404(rsv.Store, pk=requested_store_id)
         

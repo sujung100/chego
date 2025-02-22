@@ -266,7 +266,6 @@
       console.log("라스트트루");
       return;
     }
-    if(canvas.id === "verify"){return;}
     // for (let item of cubeButtons) { item.removeEventListener("click", RotateCubeJs); }
     lastAcivation = true;
     // let currentMain = MainMap().get(a);
@@ -315,6 +314,7 @@
 
 
   function SecondCubeActivation(m_side, c_name, cover_element) {
+    // console.log("세컨액티배이션");
     // const targetMain = MainMap().get(m_side);
     const targetMain = mainMap.get(m_side);
     const mainInclue = targetMain.querySelector(":first-child");
@@ -352,56 +352,35 @@
         this.style.animation = "text-shdow-neon1-down linear 0.2s forwards";
         $wrap.style.setProperty("--wrap-image", "-webkit-radial-gradient(50% 50%, ellipse cover, transparent, rgba(0, 0, 0, 0.9))");
         $wrap.style.setProperty("--wrap-bg", "#422700");
-      }, { once: true });
+      });
 
       // c_name.addEventListener("mouseup", cnameClick);
-      c_name.addEventListener("mouseup", async function (e) {
+      c_name.addEventListener("mouseup", function (e) {
         this.removeEventListener("mouseleave", c_nameMouseLeave);
         $wrap.style.setProperty("--wrap-image", "");
         $wrap.style.setProperty("--wrap-bg", "");
+        cubeCovers.forEach(cover => {
+          // cover.style.backgroundColor = "rgba(0, 0, 0, 0)";
+        });
+        // this.style.animation = "text-shdow-neon1-up linear 0.1s forwards";
 
+        // this.style.setProperty("--cn-op", "1");
         this.style.animation = "text-shdow-neon1-up linear 3s forwards";
+        // this.style.setProperty("--cover-after", "text-shdow-after 1.3s ease-out infinite");
         this.style.setProperty("--cover-after", "text-shdow-after 3s linear forwards");
 
+        // cover_element.style.setProperty("--front-cover-before", "front-cover-before 2s 3s ease-in forwards");
         cover_element.style.setProperty("--front-cover-before", "front-cover-before 3s linear forwards");
+        // cover_element.style.setProperty("--text-bg-before", "text-bg-before 3.5s linear forwards");
 
+        // cover_element.style.setProperty("--FC-after-cp", "circle(100% at 50% 50%)");
         cover_element.style.setProperty("--FC-after-cp", "FC-after-cp 3s linear forwards");
-        // setTimeout(function () {
-        // }, 2600);
-        const phrases = "HI";
-        const fx = new TextScramble(c_name);
-        // console.log("디스뭔데", this);
-
-        const next = () => {
-          fx.setText(phrases);
-          cubeCovers.forEach(cover => {
-            let cname = cover.querySelector(".cover-name");
-          if(cover == cover_element){return;}
-          // cover.style.backgroundColor = "rgba(0, 0, 0, 0)";
-          cname.style.display = "none";
-        });
-        };
-        // 애니메이션 완료를 기다리는 Promise를 반환하는 함수
-        const waitForAnimation = () => {
-          return new Promise((resolve) => {
-            const handleAnimationEnd = () => {
-              resolve(); // 애니메이션이 끝났을 때 Promise 해결
-              this.removeEventListener("animationend", handleAnimationEnd); // 이벤트 리스너 제거
-            };
-
-            this.addEventListener("animationend", handleAnimationEnd);
-          });
-        };
-
-        // async/await를 사용하여 애니메이션 완료를 기다림
-        await waitForAnimation();
-        canvas.id = "verify";
-        next();
-        // 애니메이션이 완료된 후 실행할 코드
-        console.log("애니메이션이 완료되었습니다.");
-        // 추가 작업을 여기에 추가
-        // fx.setText(phrases);
-      }, { once: true });
+        setTimeout(function () {
+          // cover_element.style.setProperty("--frontBefore", "block");
+          // c_name.style.clipPath = "inset(50%)"
+          // c_name.style.setProperty("--front-CN", "inset(50%)");
+        }, 2600);
+      });
 
       eventState = true;
       // c_name.addEventListener("mouseup", function(){

@@ -14,15 +14,13 @@
   <div id="root">
     <div class="container">
       <div class="app">
-        <section id="navigation">
-          <!-- <nav class="nav"> -->
+        <!-- <section id="navigation">
             <div class="nav-box1">
               <div class="nav1">회원목록</div>
               <div class="nav2">채팅</div>
+              <div class="nav3">큐브</div>
             </div>
-            
-          </nav>
-        </section>
+        </section> -->
 
         <section id="chat-list">
           <div class="chat-list-header">
@@ -30,7 +28,9 @@
               <div class="chats">Chats</div>
               <span class="collapse-nav-items"><i class="fa-solid fa-ellipsis-vertical"></i></span>
             </div> -->
+
             <input type="search" placeholder="search messages or user" class="search-input" />
+
           </div>
           <div class="chat-box">
 
@@ -56,11 +56,6 @@
                   <span class="name"></span>
                 </div>
               </div>
-              <div class="user-options">
-                <span href="#" class="opt-one opt"><i class="fa-solid fa-video"></i></span>
-                <span href="#" class="opt-two opt"><i class="fa-solid fa-phone"></i></span>
-                <span class="other-opts opt"><i class="fa-solid fa-ellipsis-vertical"></i></span>
-              </div>
             </div>
 
             <div id="messages-room">
@@ -69,8 +64,12 @@
             </div>
 
             <div class="chat-input-box">
-              <input type="text" class="text-input" placeholder="Type your message..." />
-              <button class="send" type="submit"><i class="fa-sharp fa-solid fa-paper-plane"></i></button>
+              <input type="text" class="text-input" placeholder="대화 내용을 입력하세요." />
+              <!-- <button class="send" type="submit">
+              </button> -->
+              <div class="send">
+                <span class="material-symbols-outlined">send</span>
+              </div>
             </div>
           </div>
         </section>

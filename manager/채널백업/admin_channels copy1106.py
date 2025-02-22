@@ -12,10 +12,6 @@ from . import models
 User = get_user_model()
 ADMIN_USERS = { "admin" : True,}
 connected_count = 0
-admin_RoomName = None
-connected_users = {}
-
-
 # TEST 코드
 class AdminChatConsumer(AsyncWebsocketConsumer):
 
@@ -51,6 +47,7 @@ class AdminChatConsumer(AsyncWebsocketConsumer):
     async def new_message(self,data):
         print("어드민 뉴메세지")
         author = data["from"]
+
         author = author.strip('"')
         try:
             author_user = await sync_to_async(User.objects.get)(username=author)
@@ -119,16 +116,7 @@ class AdminChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         print("어드민커넥트실행")
         # self.room_name = self.scope['url_route']['kwargs']['room_name']
-        if 'room_name' in self.scope['url_route']['kwargs'] and self.scope['url_route']['kwargs']['room_name']:
-            self.room_name = self.scope['url_route']['kwargs']['room_name']
-            print("룸네임룸네임", self.room_name)
-        else:
-            print("엘스 룸네임")
-            global admin_RoomName
-            self.room_name = admin_RoomName 
         
-        # print("self.channel_name", self.channel_name)
-        # print("self.room_name", self.room_name)
         # self.room_group_name = f"chat_{self.room_name}"
         self.room_group_name = "chat_admin"
         await self.channel_layer.group_add(
@@ -138,6 +126,7 @@ class AdminChatConsumer(AsyncWebsocketConsumer):
         global connected_count
         connected_count += 1
         await self.accept()
+        # print(f'Current connections: {connected_count}')
         print(f"어드민컨수머 : {self.room_group_name}")
 
 
@@ -150,6 +139,7 @@ class AdminChatConsumer(AsyncWebsocketConsumer):
             )
             global connected_count
             connected_count -= 1
+            print(f'Current connections: {connected_count}')
         else:
             print("디스커넥트에서 못찾음.")
       
@@ -161,7 +151,6 @@ class AdminChatConsumer(AsyncWebsocketConsumer):
 
         key_command = data.get("command")
         key_message_id = data.get("message_id")
-        key_chatroom = data.get("chatroom")
 
        
         if key_command == "mark_as_read":
@@ -174,17 +163,10 @@ class AdminChatConsumer(AsyncWebsocketConsumer):
             # if key_command in self.commands:
             # await self.commands[key_command](data)
             await self.commands["new_message"](data)
-
             
         elif key_command == "real_time_new_message":
             await self.mark_as_read(key_message_id)
 
-        elif key_command == "select_chatroom":
-            self.room_name = key_chatroom
-            # connected_users[self.room_name] = self.channel_name
-            # global admin_RoomName
-            # admin_RoomName = key_chatroom
-            # print("admin_RoomName", admin_RoomName)
 
         else:
             print(f"Unknown command : {key_command}")
@@ -193,12 +175,6 @@ class AdminChatConsumer(AsyncWebsocketConsumer):
         message = await sync_to_async(models.Message.objects.get, thread_sensitive=True)(id=message_id)
         await sync_to_async(message.read_message, thread_sensitive=True)()
         
-
-    # async def send_chat_messages(self, message):
-    #     # print("셀프셀프", self.__dict__)
-    #     # print("메세지메세지", message)
-    #     await self.channel_layer.send(
-    #         connected_users[self.room_name], {"type": "chat.message", "message": message})
 
     async def send_chat_messages(self, message):
 
@@ -218,6 +194,7 @@ class AdminChatConsumer(AsyncWebsocketConsumer):
     # Receive message from room group
     async def chat_message(self, event):
         message = event["message"]
+        # print("챗메세지가 지금은 뭐냐", message)
         # notification = event["notification"]
         # Send message to WebSocket
         await self.send(text_data=json.dumps(message))

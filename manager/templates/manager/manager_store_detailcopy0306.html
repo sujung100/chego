@@ -11,6 +11,7 @@
 
 <body>
   <div id="wrap">
+    <div id="bg"></div>
     <div class="box1">
       <div class="content1">
         {% if request.user.is_authenticated %}
@@ -182,3 +183,4 @@
 </script>
 
 {% include "manager/js/manager_detail_calendar_js.html" %}
+{% include "manager/js/manager_detail_second_js.html" %}

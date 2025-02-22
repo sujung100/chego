@@ -11,8 +11,8 @@
 
 <body>
   <div id="wrap" class="">
-    <div class="bg"></div>
-    <div class="bg-animation"></div>
+    <!-- <div class="bg"></div> -->
+    <!-- <div class="bg-animation"></div> -->
     <nav>
       <div class="nav-button">
         <span class="top-position material-symbols-outlined">edit_notifications</span>
@@ -37,50 +37,33 @@
     <div id="resetbutton">
       <span class="material-symbols-outlined">token</span>
     </div>
-    
 
-    <div id="" class="canvas">
+    <div class="canvas">
       <div id="original" class="cube rotate-y">
-        <div id="cover" class="side side--x side--forward top-cover">
-          <div class="cover-name">TOP</div>
-        </div>
+        <div id="cover" class="side side--x side--forward top-cover">위</div>
         <div id="main-side" class="side side--x side--forward top-main"></div>
 
         <div id="cover" class="side side--x side--back side--under bottom-cover">
-          <div class="cover-name">BOTTOM</div>
+          <div class="cover-name">아래</div>
         </div>
         <div id="main-side" class="side side--x side--back bottom-main"></div>
 
-        <div id="cover" class="side side--y side--forward right-cover">
-          <div class="cover-name">RIGHT</div>
-        </div>
-        <div id="main-side" class="side side--y side--forward right-main"></div>
+        <div id="cover" class="side side--y side--forward">오른쪽</div>
 
-        <div id="cover" class="side side--y side--back left-cover">
-          <div class="cover-name">LEFT</div>
-        </div>
-        <div id="main-side" class="side side--y side--back left-main"></div>
-        
-        <div id="cover" class="side side--z side--forward front-cover">
-          <div class="cover-name">MESSAGE</div>
-        </div>
-        <div id="main-side" class="side side--z side--forward front-main">
-          {% include "manager/admin_page/cube1/cube_1.html" %}
-        </div>
+        <div id="cover" class="side side--y side--back">왼쪽</div>
 
-        <div id="cover" class="side side--z side--back back-cover">
-          <div class="cover-name">BACK</div>
-        </div>
-        <div id="main-side" class="side side--z side--back back-main"></div>
+        <div id="cover" class="side side--z side--forward">앞</div>
         
+        <div id="cover" class="side side--z side--back">뒤</div>
+
       </div>
     </div>
-    
+
+
 </body>
 
 </html>
 
 
 {% include "manager/js/admin_page/bg_animation_js.html" %}
-{% include "manager/js/admin_page/text_scramble_js.html" %}
 {% include "manager/js/admin_page/admin_cube_js.html" %}

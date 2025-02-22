@@ -22,7 +22,7 @@
 
   const loc = window.location;
   // console.log(loc);
-  const loc2 = "127.0.0.1:8000/manager/admin_chat2/";
+  const loc2 = "127.0.0.1:8000/manager/hs/admin_chat2/";
   const loc3 = "127.0.0.1:8000/reservation/";
   // const loc2 = "port-0-chego-2aat2clujod5fm.sel5.cloudtype.app/manager/admin_chat2/";
   // const loc3 = "port-0-chego-2aat2clujod5fm.sel5.cloudtype.app/reservation/";
@@ -38,7 +38,7 @@
 
     let endpoints = [
       // { name: "chat", url: weStart + loc2 + userName + "/" },
-      { name: "chat", url: weStart + loc.host + loc.pathname + loc.search + "admin_chat2/" + userName + "/" },
+      { name: "chat", url: weStart + loc.host + loc.pathname + loc.search + "hs/admin_chat2/" + userName + "/" },
       // { name: "user", url: weStart + loc3 + userName + "/" },
       { name: "manager", url: weStart + loc.host + loc.pathname + loc.search },
     ];
@@ -58,7 +58,7 @@
       // }
       let webSocket = new ReconnectingWebSocket(ept.url);
       manager_webSockets[ept.name] = webSocket;
-      // console.log(ept.name);
+      // console.log(ept.url);
 
       webSocket.onopen = function (e) {
         console.log(webSocket.url);
@@ -73,9 +73,10 @@
       //   console.error('Socket closed unexpectedly');
       // };
     }
-
+    console.log("manager_webSockets", manager_webSockets["chat"]);
     manager_webSockets["chat"].addEventListener("message", function (e) {
       // handleOnMessage(manager_webSockets["chat"], e);
+      console.log("전송되냐");
       eventListeners["chat"] = handleOnMessage1(manager_webSockets["chat"], e);
     });
     
@@ -190,22 +191,18 @@
   let eventListeners = {};
 
   async function handleOnMessage1(socket, e) {
-    // console.log("이게 2번 실행 되는거냐");
-    // eventListeners["chat"] = handleOnMessage1;
 
     // resetChatSoket = socket;
     modalContent = document.querySelector(".modal-content");
     const data = await JSON.parse(e.data);
-
-    handleChatSocket(data);
+    console.log(data);
+    if(data.message.chatroom === userName){
+      handleChatSocket(data);
+    }
 
   }
 
   async function handleOnMessage2(socket, e) {
-    // console.log("이게 2번 실행 되는거냐");
-    // eventListeners["nonotification"] = handleOnMessage2;
-    // console.log("핸들온메2", socket.url);
-    // console.log("핸들온메2", manager_webSockets["chat"].url);
     const data = await JSON.parse(e.data);
     console.log("핸들온메2 데이터", data);
     if (data.command === "new_message"){
@@ -282,17 +279,6 @@
 
 
     messageInputDom.value = '';
-    // console.log("센드메세지 챗룸핸들러");
-
-    // resetChatSoket.addEventListener("message", function (e) {
-    //   console.log("챗소켓전송");
-    //   // console.log("eventListeners", eventListeners);
-    //   handleOnMessage(resetChatSoket, e);
-    // });
-    // if (eventListeners["chat"]) {
-    //   console.log("eventListeners", eventListeners);
-    //   resetChatSoket.removeEventListener("message", eventListeners["chat"]);
-    // }
 
     if (!eventListeners["chat"]) {
       console.log("이게 실행 되는거냐");

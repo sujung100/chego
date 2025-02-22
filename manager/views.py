@@ -289,12 +289,12 @@ class Reservation_Details(View):
         else:
             # print(user_id)
             rsv_model = rsv.Reservation_user.objects.defer("pwhash").filter(store_id__owner_id=user_id, reservation_check=False)
-            print("Reservation_Details 엘스", rsv_model)
+            # print("Reservation_Details 엘스", rsv_model)
             rsv_dict = [model_to_dict(r) for r in rsv_model]
             for r in rsv_dict:
                 r.pop("pwhash", None)
                 r["rsv_check"] = self.rsv_check(user_id)
-            print("엘스", rsv_dict)
+            # print("엘스", rsv_dict)
             return JsonResponse(rsv_dict, safe=False)
 
     
@@ -497,7 +497,7 @@ class IntegratedDetailView(View):
         context["username"] = self.request.user.username if self.request.user.is_authenticated else None
         return context
         
-@method_decorator(csrf_exempt, name="dispatch")
+# @method_decorator(csrf_exempt, name="dispatch")
 class DetailListView(View):
     template_name = "manager/manager_store_detailcopy0306.html"
     # template_name = "manager/manager_store_detail.html"

@@ -1,0 +1,161 @@
+<script>
+  let debug = false;
+  // var numPer = 10;
+  let numPer = 5;
+  let speed = 40; // 1 second = 1000
+  let divArray = new Array(numPer);
+  for (let i = 0; i < divArray.length; i++) {
+    divArray[i] = new Array(numPer);
+  }
+  let activeArray = [];
+  let activeIndex = 0; // 초기화 필요
+  let rColor, looper, Cp, Ts;
+  let config = 'click location'; // 'top corner' 'click location'
+
+  const $bg_ani_div = document.querySelector(".bg-animation");
+  const $bg2 = document.querySelector(".bg");
+  const totalCount = divArray.reduce((acc, row) => acc + row.length, 0);
+  const $wrapBg = document.querySelector("#wrap");
+  // console.log("처음 divArray", divArray);
+  // console.log(totalCount);
+
+  function SetBox() {
+    console.log("셋박스");
+    for (let row = 0; row < numPer; row++) {
+      for (let col = 0; col < numPer; col++) {
+        // console.log("바로 실행되냐");
+        const div = document.createElement('div');
+        div.className = 'colorBox';
+        div.setAttribute('data-row', row);
+        div.setAttribute('data-col', col);
+        div.setAttribute('data-color-changed', 'false');
+
+        // 스타일 설정
+        const wd = (100 / numPer) + '%';
+        const hg = (100 / numPer) + '%';
+        div.style.width = wd;
+        div.style.height = hg;
+        div.style.textAlign = 'center';
+        div.style.setProperty("--colorBox-wh", `${wd}`);
+        div.style.setProperty("--colorBox-hg", `${hg}`);
+        // div.style.clipPath
+
+        divArray[row][col] = div;
+
+        if (debug) {
+          div.textContent = row * numPer + col;
+        }
+
+        $bg_ani_div.appendChild(div);
+      }
+    }
+    ClickBgBox();
+    console.log(activeArray);
+  }
+
+  function ClickBgBox() {
+    console.log("셋박스안의클릭박스");
+    const $bg_ani_div13 = document.querySelector(".bg-animation > div:nth-child(13)");
+    // console.log($bg_ani_div13);
+    $bg2.style.setProperty("--bd-am", "bg-am 1s 1.3s ease-in forwards ");
+    $bg_ani_div13.setAttribute('data-color-changed', 'true');
+    // activeArray = [];
+    activeArray.push($bg_ani_div13);
+
+
+
+    
+    for (let row = 0; row < numPer; row++) {
+      for (let col = 0; col < numPer; col++) {
+        divArray[row][col].setAttribute('data-color-changed', 'false');
+      }
+    }
+    looper = setInterval(colorLoop, speed);
+
+    // while(){
+
+    // }
+    // console.log("activeArray", activeArray);
+    // colorLoop();
+  }
+
+
+
+
+  function BoxAnimation(e) {
+    // e.style.setProperty("--am", "b-and-w 2s cubic-bezier(0.65, 0, 0.35, 1) forwards");
+    e.style.setProperty("--colorbox-am", "colorbox-am 2s 1s ease-in-out forwards");
+  }
+
+  function WrapBgAm(){
+    $wrapBg.style.setProperty("--wrap-bg", "rgba(0, 0, 0, 0.5)");
+    $wrapBg.style.setProperty("--wrap-image", "none");
+  }
+  function colorLoop() {
+    // console.log("셋박스안의클릭박스안의컬러루프", divArray);
+    // console.log("셋박스안의클릭박스안의컬러루프", activeArray);
+    // console.log("activeArray[activeIndex]", activeArray[activeIndex]);
+    // activeIndex가 activeArray의 길이보다 작을 때만 실행
+    if (activeIndex < activeArray.length) {
+      const activeElement = activeArray[activeIndex];
+
+      // activeElement가 유효한지 확인
+      // if (!activeElement) {
+      //   clearInterval(looper); 
+      //   return;
+      // }
+
+      const aRow = parseInt(activeElement.getAttribute('data-row'));
+      const aCol = parseInt(activeElement.getAttribute('data-col'));
+      // console.log("aRow", aRow);
+      // console.log("aCol", aCol);
+
+      // Top
+      if (aRow > 0) {
+        const tempDiv = divArray[aRow - 1][aCol];
+        if (tempDiv.getAttribute('data-color-changed') === 'false') {
+          tempDiv.setAttribute('data-color-changed', 'true');
+          // tempDiv.style.backgroundColor = rColor;
+          BoxAnimation(tempDiv);
+          activeArray.push(tempDiv);
+        }
+      }
+
+      // Bottom
+      if (aRow < numPer - 1) {
+        const tempDiv = divArray[aRow + 1][aCol];
+        if (tempDiv.getAttribute('data-color-changed') === 'false') {
+          tempDiv.setAttribute('data-color-changed', 'true');
+          BoxAnimation(tempDiv);
+          activeArray.push(tempDiv);
+        }
+      }
+
+      // Left
+      if (aCol > 0) {
+        const tempDiv = divArray[aRow][aCol - 1];
+        if (tempDiv.getAttribute('data-color-changed') === 'false') {
+          tempDiv.setAttribute('data-color-changed', 'true');
+          BoxAnimation(tempDiv);
+          activeArray.push(tempDiv);
+        }
+      }
+
+      // Right
+      if (aCol < numPer - 1) {
+        const tempDiv = divArray[aRow][aCol + 1];
+        if (tempDiv.getAttribute('data-color-changed') === 'false') {
+          tempDiv.setAttribute('data-color-changed', 'true');
+          BoxAnimation(tempDiv);
+          activeArray.push(tempDiv);
+        }
+      }
+
+      activeIndex++;
+    } else {
+      clearInterval(looper);
+      setTimeout(WrapBgAm, 1000);
+      
+    }
+  }
+</script>

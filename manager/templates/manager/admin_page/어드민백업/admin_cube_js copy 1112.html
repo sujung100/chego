@@ -6,18 +6,16 @@
 
   const body = document.body;
   const canvas = document.querySelector(".canvas");
-  const cubeButtons = document.querySelector("nav").querySelectorAll("div > span");
-  const cubeButton = document.querySelector("nav");
+  const cubeButtons = document.querySelector("nav").querySelectorAll("div");
   // const test = document.querySelector("nav" > ".resetbutton");
+  // console.log("test", test);
   const cube = document.querySelector("#original");
-  let cubeClass = cube.classList[1];
+  let cubeClass = cube.classList[0];
   const sides = document.querySelectorAll(".side");
   const sides2 = document.querySelector(".side");
   const sensitivity = 1; // 민감도 조정 값
-  let cubeCovers = document.querySelectorAll("#cover");
-  let cubeMains = document.querySelectorAll("#main-side");
-  const $wrap = document.querySelector("#wrap");
-  // const $bg = document.querySelector(".bg");
+  const cubeCovers = document.querySelectorAll("#cover");
+  const cubeMains = document.querySelectorAll("#main-side");
 
 
   const CubePositions = {
@@ -29,34 +27,25 @@
     'back-position': { rotateX: 180, rotateY: 0, main: "back-main", cover: "back-cover" },
   };
 
-  let cubeSide1 = document.querySelector("#root");
+  const cubeSide1 = document.querySelector("#root");
   // let cubeReset;
   let currentPosition;
   const cubeReset = document.querySelector("#resetbutton");
-  let lastAcivation = null;
-  let lastCoverDisplay = null;
-  let count = 0;
-
-  const mainMap = new Map();
-  MainMap();
-
-  const coverMap = new Map();
-  CoverMap();
-
-  // console.log(coverMap);
+  
 
   function ExeCution() {
-
     cube.addEventListener('mousedown', activateDrag);
     cube.addEventListener('mouseup', deactivateDrag);
     requestAnimationFrame(() => {
-      // UpdateCubeSize();
-      for (let item of cubeButtons) { item.addEventListener("click", RotateCubeJs); }
+      UpdateCubeSize();
+      for (let item of cubeButtons) {item.addEventListener("click", RotateCubeJs);}
+      // if(CubeActivation())
     });
 
   }
 
   function MainMap() {
+    const mainMap = new Map();
     Object.entries(CubePositions).forEach(([key, value]) => {
       mainMap.set(key, value.main);
     });
@@ -65,15 +54,18 @@
       for (const [key, value] of mainMap.entries()) {
         if (classes.includes(value)) {
           mainMap.set(key, main);
-          // break;
+          break;
         }
       }
     });
-    // return mainMap;
+    return mainMap;
   }
 
+  // console.log("메인맵", MainMap());
+  // console.log("커버맵", CoverMap());
 
   function CoverMap() {
+    const coverMap = new Map();
     Object.entries(CubePositions).forEach(([key, value]) => {
       coverMap.set(key, value.cover);
     });
@@ -81,33 +73,26 @@
       // cover의 클래스 목록을 배열로 변환
       const classes = Array.from(cover.classList);
       // coverMap의 값을 기준으로 일치하는 클래스 찾기
-      // console.log(classes);
       for (const [key, value] of coverMap.entries()) {
         if (classes.includes(value)) {
           // coverMap에 노드를 추가
           coverMap.set(key, cover); // 클래스와 해당 노드를 매핑
-          // break; 
-          // 첫 번째 일치하는 클래스만 찾으면 반복 종료
+          break; // 첫 번째 일치하는 클래스만 찾으면 반복 종료
         }
-        // console.log(coverMap);
       }
     });
-    // return coverMap;
+    return coverMap;
   }
 
 
   function activateDrag(e) {
-    // console.log("액티배이트드래그");
     const targetClass = cube.className.split(" ")[1];
-    // const targetCover = CoverMap().get(targetClass);
-    // const targetMainside = MainMap().get(targetClass);
-    const targetCover = coverMap.get(targetClass);
-    const targetMainside = mainMap.get(targetClass);
-    // const targetCover = cover_map.get(targetClass);
-    // const targetMainside = side_map.get(targetClass)
+    const targetCover = CoverMap().get(targetClass);
+    const targetMainside = MainMap().get(targetClass)
+    currentPosition = Array.from(cube.classList[1]).find(cls => cls in CubePositions)
     if (targetCover) {
       if (e.target === targetCover.querySelector("div") || targetMainside.classList.contains("activate")) {
-        // console.log("타겟 예외 처리 잘 되냐");
+        console.log("타겟 예외 처리 잘 되냐");
         e.stopPropagation();
         return;
       }
@@ -126,7 +111,6 @@
   }
 
   function deactivateDrag(e) {
-    // console.log("디 액티배이트드래그");
     document.exitPointerLock();
     document.removeEventListener('mousemove', trackDrag);
     snapToNearestPosition();
@@ -174,6 +158,7 @@
     // 반전된 경우 처리
     const invertedDistanceX = Math.abs(normalizedCurrentX + 180) + Math.abs(normalizedTargetX);
     const invertedDistanceY = Math.abs(normalizedCurrentY + 180) + Math.abs(normalizedTargetY);
+    // console.log(`Current: (${normalizedCurrentX}, ${normalizedCurrentY}), Target: (${normalizedTargetX}, ${normalizedTargetY})`);
 
     return Math.min(distanceX + adjustedDistanceY, invertedDistanceX + invertedDistanceY); // 총 거리 반환
 
@@ -192,6 +177,7 @@
     // 클래스에 있는 포지션을 제외하고 가장 가까운 포지션 찾기
     for (const [position, { rotateX, rotateY }] of Object.entries(CubePositions)) {
       const totalDistance = calculateDistance(oldRotateX, oldRotateY, rotateX, rotateY);
+      // console.log(`Checking Position: ${position}, Total Distance: ${totalDistance}`);
 
       // 현재 포지션이 클래스에 있으면 패스
       // if (position === currentClass) {
@@ -205,22 +191,21 @@
       }
     }
 
+    // console.log(`Closest Position: ${closestPosition}, Distance: ${closestDistance}`)
 
     // 가장 가까운 위치로 이동
-
+    // cube.style.transition = "";
     if (closestPosition) {
       if (currentClass) {
         cube.classList.remove(currentClass);
       }
       requestAnimationFrame(() => {
-        cube.style.transition = "all 1s linear";
-        // cube.style.transition = "width 2s ease";
+        cube.style.transition = "all 1.5s ease";
         document.body.style.setProperty('--rotateX', CubePositions[closestPosition].rotateX);
         document.body.style.setProperty('--rotateY', CubePositions[closestPosition].rotateY);
         cube.classList.add(closestPosition);
-        if (lastAcivation !== true) {
-          CubeActivation(closestPosition);
-        }
+        CubeActivation(closestPosition);
+        console.log("closestPosition", closestPosition);
 
       })
     }
@@ -229,12 +214,15 @@
 
 
   function RotateCubeJs(e) {
-    if (lastCoverDisplay === false) { CoverDisplay(); }
+    console.log("여기서 누적?");
     const targetClass = e.target.className.split(" ")[0];
     const currentClass = Array.from(cube.classList).find(cls => cls in CubePositions);
+    // console.log(Array.from(cube.classList));
     currentPosition = targetClass;
     cube.style.transition = "all 1.5s ease";
     CheckRotateY();
+    // console.log("currentClass", currentClass);
+    // console.log("targetClass", targetClass);
     if (currentClass) {
       cube.classList.remove(currentClass);
       CubeDeactivation(currentClass);
@@ -243,218 +231,85 @@
       document.body.style.setProperty('--rotateX', CubePositions[targetClass].rotateX);
       document.body.style.setProperty('--rotateY', CubePositions[targetClass].rotateY);
       cube.classList.add(targetClass);
-      if (lastAcivation !== true) {
+      if(!targetMain.classList.contains("activate")){
         CubeActivation(targetClass);
       }
-      // if(!targetMain.classList.contains("activate")){
-      // }
     }
-  }
-
-
-
-  function BgChange() {
-    const $bg = document.querySelector(".bg");
-    const $bgBefore = window.getComputedStyle($bg, "::before");
-    const $currentClipPath = $bgBefore.getPropertyValue("clip-path");
-
-    SetBox();
   }
 
   function CubeActivation(a) {
-    if (lastAcivation === true) {
-      console.log("라스트트루");
-      return;
-    }
-    if(canvas.id === "verify"){return;}
-    // for (let item of cubeButtons) { item.removeEventListener("click", RotateCubeJs); }
-    lastAcivation = true;
-    // let currentMain = MainMap().get(a);
-    // let currentCover = CoverMap().get(a);
-    let currentMain = mainMap.get(a);
-    let currentCover = coverMap.get(a);
-    // let currentCover = cover_map.get(a);
+    console.log("큐브액티배이션");
+    let currentCover = CoverMap().get(a);
+    console.log("currentCover", currentCover);
     let coverName = currentCover.querySelector(".cover-name");
-    // console.log(coverName);
     currentCover.classList.add("active");
-
-    // if(a === "front-position"){
-    //   $wrap.classList.add("bg-blue");
-    // }
     if (currentCover.classList.contains("active") && coverName) {
+      console.log("액티브 없잖아");
       coverName.style.cursor = "pointer";
-      coverName.addEventListener("mouseenter", function () {
-        // $wrap.style.backgroundColor = "#1B0C00";
-        $wrap.style.setProperty("--wrap-bg", "#1B0C00");
-      });
-      coverName.addEventListener("mouseleave", function () {
-        // $wrap.style.backgroundColor = "";
-        $wrap.style.setProperty("--wrap-bg", "");
-      });
-      // console.log("cubeClass", cubeClass);
-      // if(cubeClass !== "front-position"){
-      // }
       SecondCubeActivation(a, coverName, currentCover);
     }
-    // if (targetMain.classList.contains("activate")) {
-    // }
-
-    // SecondCubeDeactivation(currentCover, a);
   }
 
   function CubeDeactivation(d) {
-    lastAcivation = false;
-    let previousCover = coverMap.get(d);
-    // let previousCover = cover_map.get(d);
-    if (lastCoverDisplay === false) { CoverDisplay(); }
+    let previousCover = CoverMap().get(d);
+    console.log("previousCover", previousCover);
     if (previousCover) {
       previousCover.classList.remove("active");
-      $wrap.className = "";
     }
   }
 
 
   function SecondCubeActivation(m_side, c_name, cover_element) {
-    // const targetMain = MainMap().get(m_side);
-    const targetMain = mainMap.get(m_side);
+    console.log("세컨액티배이션");
+    // console.log("currentside", side);
+    const targetMain = MainMap().get(m_side);
     const mainInclue = targetMain.querySelector(":first-child");
-    let eventState;
-    const cnameClick = function (e) {
-      // cover_element.classList.remove("active");
-      c_name.style.animation = "";
+    c_name.addEventListener("click", function () {
+      // console.log("클릭이벤트 됨??");
+      cover_element.classList.remove("active");
       cover_element.style.display = "none";
       cubeSide1.style.display = "flex";
-      cube.style.width = "80vw";
-      cube.style.height = "80vh";
+      cube.style.width = "85vw";
+      cube.style.height = "85vh";
       targetMain.style.display = "block";
       targetMain.classList.add("activate");
-      cubeButton.style.display = "none";
       // mainInclue.style.backgroundColor = "#012a23";
-      if (cubeSide1.style.display === "flex") {
-        accessAllChannels();
-        // $wrap.style.animation = "wrap-background linear 2s forwards";
-        // $bg.classList.add("change-wrap");
-        BgChange();
-      }
       CoverDisplayNone(cover_element);
-      SecondCubeDeactivation(m_side, c_name, cover_element);
-      // count ++;
-      // console.log(count);
-    }
 
-    const c_nameMouseLeave = function () {
-      this.style = "";
-    }
-    if (cubeClass !== m_side) {
-      // c_name.addEventListener("click", cnameClick);
-      c_name.addEventListener("mousedown", function () {
-        this.addEventListener("mouseleave", c_nameMouseLeave);
-        this.style.animation = "text-shdow-neon1-down linear 0.2s forwards";
-        $wrap.style.setProperty("--wrap-image", "-webkit-radial-gradient(50% 50%, ellipse cover, transparent, rgba(0, 0, 0, 0.9))");
-        $wrap.style.setProperty("--wrap-bg", "#422700");
-      }, { once: true });
-
-      // c_name.addEventListener("mouseup", cnameClick);
-      c_name.addEventListener("mouseup", async function (e) {
-        this.removeEventListener("mouseleave", c_nameMouseLeave);
-        $wrap.style.setProperty("--wrap-image", "");
-        $wrap.style.setProperty("--wrap-bg", "");
-
-        this.style.animation = "text-shdow-neon1-up linear 3s forwards";
-        this.style.setProperty("--cover-after", "text-shdow-after 3s linear forwards");
-
-        cover_element.style.setProperty("--front-cover-before", "front-cover-before 3s linear forwards");
-
-        cover_element.style.setProperty("--FC-after-cp", "FC-after-cp 3s linear forwards");
-        // setTimeout(function () {
-        // }, 2600);
-        const phrases = "HI";
-        const fx = new TextScramble(c_name);
-        // console.log("디스뭔데", this);
-
-        const next = () => {
-          fx.setText(phrases);
-          cubeCovers.forEach(cover => {
-            let cname = cover.querySelector(".cover-name");
-          if(cover == cover_element){return;}
-          // cover.style.backgroundColor = "rgba(0, 0, 0, 0)";
-          cname.style.display = "none";
-        });
-        };
-        // 애니메이션 완료를 기다리는 Promise를 반환하는 함수
-        const waitForAnimation = () => {
-          return new Promise((resolve) => {
-            const handleAnimationEnd = () => {
-              resolve(); // 애니메이션이 끝났을 때 Promise 해결
-              this.removeEventListener("animationend", handleAnimationEnd); // 이벤트 리스너 제거
-            };
-
-            this.addEventListener("animationend", handleAnimationEnd);
-          });
-        };
-
-        // async/await를 사용하여 애니메이션 완료를 기다림
-        await waitForAnimation();
-        canvas.id = "verify";
-        next();
-        // 애니메이션이 완료된 후 실행할 코드
-        console.log("애니메이션이 완료되었습니다.");
-        // 추가 작업을 여기에 추가
-        // fx.setText(phrases);
-      }, { once: true });
-
-      eventState = true;
-      // c_name.addEventListener("mouseup", function(){
-      //   this.style.animation = "cover-name-ready 3s forwards";
-      //   // this.classList.add("up-ready");
-      // });
-    }
-    cubeClass = m_side;
-  }
-
-  let secondCount = 0;
-  cubeReset.addEventListener("click", function () {
-    secondCount++;
-    if (secondCount >= 5) { location.reload(); }
-  })
-
-  function FcAnimationed(e) {
-    console.log(e.animationName);
-    console.log("애니메이션 끝남");
-  }
-
-  function SecondCubeDeactivation(m_side, c_name, c_element) {
-    // console.log("세컨디액티배이트");
-    console.log("secondCount", secondCount);
-    if (secondCount >= 5) {
-      location.reload();
-    }
-    const targetMain = MainMap().get(m_side);
-    const $messageRoom = document.querySelector("#messages-room");
-    cubeReset.addEventListener("click", function () {
-      c_element.style.display = "flex";
-      cubeSide1.style.display = "none";
-      cube.style.width = "";
-      cube.style.height = "";
-      targetMain.classList.remove("activate");
-      $messageRoom.innerHTML = "";
-      // BgChange();
-      // console.log("$messageRoom", $messageRoom);
-      currentChatRoom = null;
-      // console.log("currentChatRoom", currentChatRoom);
-      CloseWebsocket();
-      // count --;
-      // console.log(count);
     }, { once: true });
-    secondCount++;
+
+    if (cubeSide1.style.display === "flex") {
+      accessAllChannels();
+    }
+    if (targetMain.classList.contains("activate")) {
+      cubeReset.addEventListener("click", function () {
+        SecondCubeDeactivation(cover_element, m_side);
+      }, { once: true });
+    }
   }
 
-  function UnlockCube() {
+
+  function SecondCubeDeactivation(c_element, m_side) {
+    console.log("액티배이트 아님");
+    const targetMain = MainMap().get(m_side);
+    // console.log("targetMain", targetMain);
+    // const cubeReset = document.querySelector("nav" > ".resetbutton");
+    if (targetMain) {
+      cubeReset.addEventListener("click", function () {
+        c_element.style.display = "flex";
+        cubeSide1.style.display = "none";
+        cube.style.width = "";
+        cube.style.height = "";
+        // CoverDisplay();
+      }, { once: true });
+    }
+
 
   }
+
+
 
   function CoverDisplayNone(c_element) {
-    lastCoverDisplay = false;
     cubeCovers.forEach(cover => {
       if (cover !== c_element) {
         cover.style.display = 'none';
@@ -463,7 +318,6 @@
   }
 
   function CoverDisplay() {
-    lastCoverDisplay = true;
     cubeCovers.forEach(cover => {
       cover.style.display = "";
     });
@@ -478,9 +332,8 @@
   function UpdateCubeSize() {
     const coverName = document.querySelector(".cover-name");
     const size = Math.min(window.innerWidth, window.innerHeight);
-    // coverFontsize = size * 0.065;
-    coverFontsize = size * 0.1;
-    cube.style.setProperty('--size', `${size / 2.5}px`);
+    coverFontsize = size * 0.05;
+    cube.style.setProperty('--size', `${size / 3}px`);
     coverName.style.setProperty("--fontSize", `${coverFontsize}px`);
     // coverName.style.fontSize = coverFontsize;
   }

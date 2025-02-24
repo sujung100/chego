@@ -647,7 +647,7 @@ span.numit {
   /* height:70%; */
   text-align: center;
   border-collapse: separate;
-  border-spacing: 15px 0;
+  border-spacing: 0;
   margin: 1rem auto;
 }
 
@@ -678,12 +678,12 @@ span.numit {
 
 
 .Calendar>tbody>tr>td>p {
-  margin:0 auto;
+  margin: 3px 6px;
   /* border:2px solid lightsalmon; */
   /* font-family: 'Montserrat', sans-serif; */
   width: 100%;
   /* height: auto; */
-  border-radius: 50%;
+  /* border-radius: 50%; */
   transition-duration: .2s;
   /* line-height: 300%; */
   /* margin: 5%; */
@@ -694,7 +694,12 @@ span.numit {
   color:green;
   font-size:0.8rem;
   font-weight: bold;
-}        
+}
+/* 
+.Calendar .unchecked2 {
+  background-color: #555;
+  border: 3px solid red;
+} */
 
 .pastDay {
   /* width:50%; */
@@ -708,6 +713,7 @@ span.numit {
   color: #fff;
   font-weight: 600;
   cursor: pointer;
+  border-radius: 50%;
 }
 
 .futureDay {
@@ -716,6 +722,7 @@ span.numit {
 }
 .futureDay:hover{
   background:#ddd;
+  border-radius: 50%;
 }
 
 .futureDay.choiceDay,
@@ -726,9 +733,37 @@ span.numit {
   cursor: pointer;
 }
 
+.Calendar thead.change_mode {
+  display: block;
+  width: 100%;
+}
+
+.change_mode tr {
+  display: table;
+  width: 100%;
+}
+
+.change_mode tr td {
+  text-align: center;
+}
+
 /* 달력 다크모드 시작 */
+.edit_mode.unchecked2 {
+  display: block;
+  background-color: #555;
+  /* border: 10px solid red; */
+  padding: 15px 15px 15px 5px;
+  border-radius: 0.8rem;
+  /* z-index: 4; */
+}
+
+.edit_mode.unchecked2 tr {
+  /* display: table; */
+}
+
 .pastDay.unchecked {
-  color: #343434;
+  /* color: #bbb; */
+  color: #000;
 }
 
 .today.unchecked {
@@ -737,13 +772,34 @@ span.numit {
 }
 
 .futureDay.unchecked {
-  background-color: #555;
+  /* background-color: transparent; */
+  /* background-color: #555; */
+  color: #bbb;
+}
+
+.futureDay.unchecked:hover {
+  /* background-color: transparent; */
+  /* background-color: #555; */
+  color: #000;
+}
+
+.futureDay.unchecked {
+  /* background-color: transparent; */
+  /* background-color: #555; */
+  color: #bbb;
+}
+
+.today.unchecked.d_choiceDay {
+  background-color: #8446FC;
+  border-radius: 12px 0 0 12px;
+  color: #fff;
 }
 
 .futureDay.choiceDay,
 .today.choiceDay {
   background: green;
   color: #fff;
+  border-radius: 50%;
 }
 /* 
 .futureDay.d_choiceDay,
@@ -763,7 +819,8 @@ span.numit {
   border-radius: 0;
 }
  .futureDay.d_choiceDay,  .futureDay.between,  .futureDay.choiceDay2 {
-  background-color: #b670f4;
+  /* background-color: #b670f4; */
+  background-color: #8446FC;
   color: #fff;
 }
  .futureDay.d_choiceDay {

@@ -653,10 +653,14 @@
   async function disableMode() {
 
     let unchecked_elements = document.querySelectorAll(".pastDay, .today, .futureDay");
+    let change_visble = document.querySelector(".edit_mode");
+    let title_block = document.querySelector(".Calendar thead");
     if (!disable_checkbox.checked) {
       // console.log('Checkbox is not checked');
       // console.log("disableMode 실행");
       // rsv_activate.style.display = "block";
+      change_visble.classList.add("unchecked2");
+      title_block.classList.add("change_mode");
       unchecked_elements.forEach(function (element) {
         // console.log(element);
         element.classList.add("unchecked");
@@ -667,9 +671,20 @@
     else {
       console.log('체크박스 꺼짐');
       unchecked_elements.forEach(function (element) {
+        element.classList.remove("choiceDay2");
+        element.classList.remove("d_choiceDay");
+        element.classList.remove("between");
+
         element.classList.remove("unchecked");
+        change_visble.classList.remove("unchecked2");
+        title_block.classList.remove("change_mode");
         rsv_start_end.style.display = "none";
       });
+      // off버튼 클릭시 start/ end/ between 값 초기화
+      selectedDates = {};
+      console.log("오프시 배열은?", selectedDates);
+      disable_date_start.textContent = ''
+      disable_date_end.textContent = ''
       // location.reload();
     }
   }

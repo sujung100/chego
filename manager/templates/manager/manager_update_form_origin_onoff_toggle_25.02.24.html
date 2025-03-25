@@ -176,154 +176,54 @@
                           <section class="innertxt">
                             <div class="innerbox" id="innertxt-1">
                               <div class="tab-title tab1">기간설정</div>
-                              <div class="period-setting">
-                                <div class="auto-setting">
-                                  <p>자동</p>
-                                  <div class="setting-btn btn-pill" id="auto-manual">
-                                    <input type="checkbox" class="checkbox-input" id="toggle-checkbox">
-                                    <div class="knob"></div>
-                                    <div class="btn-bg"></div>
+                              <div class="txtcont">
+                                <div class="mid">
+                                  <div class="rsv_start_end">
+                                    <input type="radio" name="rsv_start_end" id="rsv_start_end_yes" checked>
+                                    <input type="radio" name="rsv_start_end" id="rsv_start_end_no">
+                                    <!-- <div class="switch">
+                                      <label for="rsv_start_end_yes">시작</label>
+                                      <label for="rsv_start_end_no">종료</label>
+                                      <span></span>
+                                    </div> -->
                                   </div>
-                                  <p>수동</p>
-                                </div>
-                                <div class="notice-txt">
-                                  <p>자동&#58; 설정한 단위마다 예약 가능 기간이 자동으로 갱신됩니다.</p>
-                                  <p>수동&#58; 예약 가능 기간을 고정합니다. &#40;자동으로 갱신되지 않습니다.&#41;</p>
-                                </div>
-                                <div id="setting-options">
-                                  <div id="setting-manual" style="display: none;">
-                                    <div class="after-setting">
-                                      <!-- <div class="tab-title tab1">기간설정</div> -->
-                                      <div class="txtcont">
-                                        <div class="mid">
-                                          <div class="rsv_start_end">
-                                            <input type="radio" name="rsv_start_end" id="rsv_start_end_yes" checked>
-                                            <input type="radio" name="rsv_start_end" id="rsv_start_end_no">
-                                            <!-- <div class="switch">
-                                              <label for="rsv_start_end_yes">시작</label>
-                                              <label for="rsv_start_end_no">종료</label>
-                                              <span></span>
-                                            </div> -->
-                                          </div>
-                                          <div class="cal_top">
-                                            <div class="title_setting">편집모드</div>
-                                            <label class="rocker">
-                                              <input type="checkbox" checked>
-                                              <span class="switch-left">끄기</span>
-                                              <span class="switch-right">켜기</span>
-                                            </label>
-                                          </div>
-                                        </div>
-                                        <table class="Calendar">
-                                          <thead>
-                                            <tr>
-                                              <td onClick="prevCalendar();" style="cursor:pointer;">&#60;</td>
-                                              <td colspan="5">
-                                                <span id="calYear"></span>년
-                                                <span id="calMonth"></span>월
-                                              </td>
-                                              <td onClick="nextCalendar();" style="cursor:pointer;">&#62;</td>
-                                            </tr>
-                                            <tr>
-                                              <td>일</td>
-                                              <td>월</td>
-                                              <td>화</td>
-                                              <td>수</td>
-                                              <td>목</td>
-                                              <td>금</td>
-                                              <td>토</td>
-                                            </tr>
-                                          </thead>
-                                      
-                                          <tbody class="edit_mode">
-                                          </tbody>
-                                        </table>
-                                      </div>
-                                      <input type="hidden" id="selected_date" name="selected_date">
-                                      <span id="disable_date_start"></span>
-                                      <span id="disable_date_end"></span>
-                                    </div> 
-                                  </div>
-                                  <div id="setting-auto">
-                                      <label for="auto_week">
-                                          <input type="radio" name="auto_set" id="auto_week" value="week">
-                                          <div>
-                                              <p>1주</p>
-                                              <span>한 주 주기로 예약을 허용합니다.</span>
-                                          </div>
-                                      </label>
-                                      <label for="auto_month">
-                                          <input type="radio" name="auto_set" id="auto_month" value="month">
-                                          <div>
-                                              <p>1달</p>
-                                              <span>한 달 주기로 예약을 허용합니다.</span>
-                                          </div>
-                                      </label>
-                                      <label for="auto_year">
-                                          <input type="radio" name="auto_set" id="auto_year" value="year">
-                                          <div>
-                                              <p>1년</p>
-                                              <span>일 년 주기로 예약을 허용합니다.</span>
-                                          </div>
-                                      </label>
+                                  <div class="cal_top">
+                                    <div class="title_setting">예약가능일 설정</div>
+                                    <label class="rocker">
+                                      <input type="checkbox" checked>
+                                      <span class="switch-left">Off</span>
+                                      <span class="switch-right">On</span>
+                                    </label>
                                   </div>
                                 </div>
-                              
-                                <!-- <div class="changing-txt">
-                                  <p id="status-text">아닙니다</p>
-                                </div> -->
-
-                                <div class="setting-complete">
-                                  <button id="complete-button">선택완료</button>
-                                </div>
+                                <table class="Calendar">
+                                  <thead>
+                                    <tr>
+                                      <td onClick="prevCalendar();" style="cursor:pointer;">&#60;</td>
+                                      <td colspan="5">
+                                        <span id="calYear"></span>년
+                                        <span id="calMonth"></span>월
+                                      </td>
+                                      <td onClick="nextCalendar();" style="cursor:pointer;">&#62;</td>
+                                    </tr>
+                                    <tr>
+                                      <td>일</td>
+                                      <td>월</td>
+                                      <td>화</td>
+                                      <td>수</td>
+                                      <td>목</td>
+                                      <td>금</td>
+                                      <td>토</td>
+                                    </tr>
+                                  </thead>
+                                
+                                  <tbody class="edit_mode">
+                                  </tbody>
+                                </table>
                               </div>
-                              <!-- <div class="after-setting">
-                                <div class="tab-title tab1">기간설정</div>
-                                <div class="txtcont">
-                                  <div class="mid">
-                                    <div class="rsv_start_end">
-                                      <input type="radio" name="rsv_start_end" id="rsv_start_end_yes" checked>
-                                      <input type="radio" name="rsv_start_end" id="rsv_start_end_no">
-                                
-                                    </div>
-                                    <div class="cal_top">
-                                      <div class="title_setting">예약가능일 설정</div>
-                                      <label class="rocker">
-                                        <input type="checkbox" checked>
-                                        <span class="switch-left">Off</span>
-                                        <span class="switch-right">On</span>
-                                      </label>
-                                    </div>
-                                  </div>
-                                  <table class="Calendar">
-                                    <thead>
-                                      <tr>
-                                        <td onClick="prevCalendar();" style="cursor:pointer;">&#60;</td>
-                                        <td colspan="5">
-                                          <span id="calYear"></span>년
-                                          <span id="calMonth"></span>월
-                                        </td>
-                                        <td onClick="nextCalendar();" style="cursor:pointer;">&#62;</td>
-                                      </tr>
-                                      <tr>
-                                        <td>일</td>
-                                        <td>월</td>
-                                        <td>화</td>
-                                        <td>수</td>
-                                        <td>목</td>
-                                        <td>금</td>
-                                        <td>토</td>
-                                      </tr>
-                                    </thead>
-                                
-                                    <tbody class="edit_mode">
-                                    </tbody>
-                                  </table>
-                                </div>
-                                <input type="hidden" id="selected_date" name="selected_date">
-                                <span id="disable_date_start"></span>
-                                <span id="disable_date_end"></span>
-                              </div> -->
+                              <input type="hidden" id="selected_date" name="selected_date">
+                              <span id="disable_date_start"></span>
+                              <span id="disable_date_end"></span>
                               <!-- <p>
                                 <span class = "numit"></span>
                               </p> -->

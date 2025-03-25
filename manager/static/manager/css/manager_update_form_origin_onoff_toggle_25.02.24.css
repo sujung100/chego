@@ -26,27 +26,6 @@ ol, ul{
   list-style: none;
 }
 
-/* 기본스타일 제거, 버튼 모양 재설정 */
-input[type='radio'] {
-  flex-shrink:0;
-  -webkit-appearance: none; /* 웹킷 브라우저에서 기본 스타일 제거*/
-  -moz-appearance: none; /* 모질라 브라우저에서 기본 스타일 제거*/ 
-  appearance: none; /*기본 브라우저에서 기본 스타일 제거*/
-  width: 13px;
-  height: 13px;
-  border: 1px solid #ccc; /*체크되지 않았을 때의 테두리 색상*/
-  border-radius: 50%;
-  outline: none; /*focus 시에 나타나는 기본 스타일 제거*/
-  cursor: pointer;
-}
-/* 체크 시 버튼 모양 스타일*/
-input[type='radio']:checked {
-  background-color: #111; /*체크 시 내부 원 색상*/
-  border: 3px solid #fff; /*라인이 아닌, 라인과 원 사이 색상*/
-  box-shadow: 0 0 0 1px #111; /*라인*/
-}
-
-
 .content1 {
   width: 100%;
   /* height: 100vh; */
@@ -378,7 +357,7 @@ input[type='radio']:checked {
 }
 
 
-.tabs > input {
+.tabs input {
   position: relative;
   opacity: 0;
   margin: auto !important;
@@ -523,7 +502,7 @@ input[type='radio']:checked {
   /* color: #444; */
   line-height: 30px;
   margin-top: 10pt;
-  /* font-weight: 300 !important; */
+  font-weight: 300 !important;
 }
 
 div.tab-title.tab4,
@@ -658,165 +637,6 @@ span.numit {
 
 /* tab 끝 */
 
-/* innertxt auto-manual 전환버튼 */
-
-.auto-setting {
-  display: flex;
-  justify-content: center;
-  margin: 30px 0;
-}
-
-.auto-setting p {
-  margin: auto 0;
-  font-size: 0.8rem;
-  font-weight: bold;
-}
-
-.setting-complete {
-  display: flex;
-  justify-content: flex-end;
-}
-
-#setting-options input {
-  opacity: 1;
-}
-
-#setting-auto label{
-  display:flex;
-  gap:10px;
-  border:1px solid #e1e1e1;
-  border-radius:13px;
-  margin:20px;
-  padding:20px
-}
-
-#setting-auto label p{
-  font-weight:600;
-  font-size:1rem;
-  margin: 0;
-}
-
-
-
-/* 기본스타일 제거, 버튼 모양 재설정 */
-input[type='radio'] {
-  flex-shrink:0;
-  -webkit-appearance: none; /* 웹킷 브라우저에서 기본 스타일 제거*/
-  -moz-appearance: none; /* 모질라 브라우저에서 기본 스타일 제거*/ 
-  appearance: none; /*기본 브라우저에서 기본 스타일 제거*/
-  width: 13px;
-  height: 13px;
-  border: 1px solid #ccc; /*체크되지 않았을 때의 테두리 색상*/
-  border-radius: 50%;
-  outline: none; /*focus 시에 나타나는 기본 스타일 제거*/
-  cursor: pointer;
-}
-/* 체크 시 버튼 모양 스타일*/
-input[type='radio']:checked {
-  background-color: #111; /*체크 시 내부 원 색상*/
-  border: 3px solid #fff; /*라인이 아닌, 라인과 원 사이 색상*/
-  box-shadow: 0 0 0 1px #111; /*라인*/
-}
-
-.innertxt .innerbox .period-setting .notice-txt {
-  margin: 0 2rem;
-  text-align: start;
-}
-
-.innertxt .innerbox .period-setting .notice-txt p {
-  font-size: 0.8rem;
-  margin: 0;
-  color: #888;
-  line-height : 1.2em;
-}
-
-.knob,
-.btn-bg {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-}
-
-.setting-btn {
-  position: relative;
-  width: 74px;
-  height: 36px;
-  overflow: hidden;
-}
-
-.setting-btn.btn-pill,
-.setting-btn.btn-pill > .btn-bg {
-  border-radius: 100px;
-}
-
-.checkbox-input {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  padding: 0;
-  margin: 0;
-  opacity: 0;
-  cursor: pointer;
-  z-index: 3;
-}
-
-.knob {
-  z-index: 2;
-}
-
-.btn-bg {
-  width: 100%;
-  /* 토글컬러 1 */
-  /* background-color: #ebf7fc; */
-  /* background-color: #a8dfff; */
-  background-color: #dce2ed;
-  transition: 0.3s ease all;
-  z-index: 1;
-}
-
-#auto-manual .knob:before {
-  content: "A";
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  width: 20px;
-  height: 10px;
-  color: #fff;
-  font-size: 10px;
-  font-weight: bold;
-  text-align: center;
-  line-height: 1;
-  padding: 9px 4px;
-  background-color: #03a9f4;
-  border-radius: 50%;
-  transition: 0.3s ease all, left 0.3s cubic-bezier(0.18, 0.89, 0.35, 1.15);
-}
-
-#auto-manual .checkbox-input:active + .knob:before {
-  width: 46px;
-  border-radius: 100px;
-}
-
-#auto-manual .checkbox-input:checked:active + .knob:before {
-  margin-left: -26px;
-}
-
-#auto-manual .checkbox-input:checked + .knob:before {
-  content: "M";
-  left: 42px;
-  background-color: #f44336;
-}
-
-#auto-manual .checkbox-input:checked ~ .btn-bg {
-  /* background-color: #fcebeb; */
-  /* 토글컬러 2 */
-  /* background-color: #ffbbbb; */
-  background-color: #dce2ed;
-}
-
-
 
 /* 달력 시작 */
 
@@ -869,7 +689,6 @@ input[type='radio']:checked {
   /* margin: 5%; */
   display: block;
   text-align: center;
-  font-weight: 300;
 }        
 .Calendar>tbody>tr>td>div.rsv_check {
   color:green;
@@ -1157,7 +976,6 @@ label[for=rsv_start_end_no] {
 .title_setting {
   font-size: 0.8rem;
   margin-right: 1rem;
-  font-weight: 600;
 }
 
 /* Switch starts here */
@@ -1222,7 +1040,6 @@ label[for=rsv_start_end_no] {
   width: 2em;
   transition: 0.2s;
   padding: 0.33em;
-  font-size: 0.6rem;
 }
 
 .switch-left {

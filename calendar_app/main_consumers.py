@@ -92,7 +92,7 @@ from asgiref.sync import sync_to_async
 
 class CheckingRsvConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        # print("채널명", self.channel_name)
+        print("채널명", self.channel_name)
                 
         self.room_group_name = "index"
         await self.channel_layer.group_add(
@@ -102,11 +102,12 @@ class CheckingRsvConsumer(AsyncWebsocketConsumer):
 
 
     async def disconnect(self, close_code):
+        print("디스커넥")
         pass
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        print("text_data_json", text_data_json)
+        print("먐먐먐먐text_data_json", text_data_json)
         storeId = text_data_json['storeId']
         date = text_data_json['date']
         reservationTime = text_data_json['reservationTime']
@@ -119,6 +120,7 @@ class CheckingRsvConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'exists': dates_info
         }))
+        
 
 
     async def check_reservation(self, storeId, date, reservationTime):
@@ -131,3 +133,11 @@ class CheckingRsvConsumer(AsyncWebsocketConsumer):
         exists_async = sync_to_async(queryset.exists, thread_sensitive=True)
         dates_info = await exists_async()
         return dates_info
+    
+
+    async def setting_message(self, event):
+        message = event["message"]
+        print("메세지찍어봐라메인", message)
+        await self.send(text_data=json.dumps(
+            message
+        ))

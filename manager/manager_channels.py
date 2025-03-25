@@ -9,6 +9,8 @@ from django.contrib.sessions.models import Session
 from asgiref.sync import sync_to_async
 from django.core.exceptions import ObjectDoesNotExist
 
+from channels.layers import get_channel_layer
+
 from . import models
 from calendar_app import models as rsv
 import asyncio
@@ -131,7 +133,7 @@ class CheckConsumer(AsyncWebsocketConsumer):
             await self.mark_as_read(rsv_id)
 
         elif key_command == "selected_date":
-            print(data);
+            print(data)
     
 
     async def mark_as_read(self, rsvuser_id):
@@ -423,6 +425,7 @@ class TestConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
         print("매니저 커넥트 실행")
+        print("겟", get_channel_layer())
         # ROOM_NAME = {}
         current_user = self.scope["user"].username
 
@@ -460,17 +463,32 @@ class TestConsumer(AsyncWebsocketConsumer):
             await self.mark_as_read(rsv_id)
 
         elif key_command == "selected_date":
-            print(data);
+            print(data)
     
         elif key_command == "start_end_date":
             # 시작 날짜와 종료 날짜, 버튼 값 저장
             start_date = data.get("start_date")
             end_date = data.get("end_date")
             button_values = data.get("buttonValues")
+
+        elif key_command == "auto_choice_value":
+            # 자동 수동 설정에서의 값
+            radioValue = data.get("radioValue")
+            todayDate = data.get("todayDate")
+            # print("자동수동1", radioValue)
+            # print("자동수동2", todayDate)
+            message_to_send = {
+            "radioValue": radioValue,
+            "todayDate": todayDate
+            }
+            # 25.03.20
+            await self.send_to_front(message_to_send)
+            # await get_channel_layer().group_send(
+            # "index", {"type": "setting.message", "message": "아무말"}
+            #  )
+
             
-
-    
-
+            
     async def mark_as_read(self, rsvuser_id):
         rsv_read = await sync_to_async(rsv.Reservation_user.objects.get, thread_sensitive=True)(id=rsvuser_id)
         await sync_to_async(rsv_read.rsv_check, thread_sensitive=True)()
@@ -479,6 +497,18 @@ class TestConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_send(
             self.room_group_name, {"type": "chat.message", "message": message}
         )
+
+    async def send_to_front(self, message):
+        print("전송할 메시지:", message)
+        await self.channel_layer.group_send(
+            # 인덱스 그룹에 전송(main_consumer)
+            "index", {"type": "setting.message", "message": message}
+        )
+
+    # 25.03.20
+    # async def setting_message(self, event):
+    #     message = event["message"]
+    #     await self.send(text_data=message)
 
     async def send_message(self, message):
         await self.send(text_data=json.dumps(message))

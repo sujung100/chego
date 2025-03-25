@@ -1,26 +1,69 @@
 <script>
 
-	// tab메뉴 스타일적용
-	document.addEventListener("DOMContentLoaded", function() {
-	var tabs = document.querySelectorAll('.tabs .trapez');
+	// // tab메뉴 스타일적용
+	// document.addEventListener("DOMContentLoaded", function() {
+	// var tabs = document.querySelectorAll('.tabs .trapez');
 
-	for (var i = 0, len = tabs.length; i < len; i++) {
-		tabs[i].addEventListener("click", function() {
-		if (this.classList.contains('active'))
-			return;
+	// for (var i = 0, len = tabs.length; i < len; i++) {
+	// 	tabs[i].addEventListener("click", function() {
+	// 	if (this.classList.contains('active'))
+	// 		return;
 
-		var parent = this.parentNode,
-			innerTabs = parent.querySelectorAll('.trapez');
+	// 	var parent = this.parentNode,
+	// 		innerTabs = parent.querySelectorAll('.trapez');
 
-		for (var index = 0, iLen = innerTabs.length; index < iLen; index++) {
-			innerTabs[index].classList.remove('active');
-		}
+	// 	for (var index = 0, iLen = innerTabs.length; index < iLen; index++) {
+	// 		innerTabs[index].classList.remove('active');
+	// 	}
 
-		this.classList.add('active');
-		});
-	}
+	// 	this.classList.add('active');
+	// 	});
+	// }
 
-	});
+	// });
+
+
+	// // 기간설정-01 자동수동 세팅
+	// const toggleCheckbox = document.getElementById('toggle-checkbox');
+    // const settingAuto = document.getElementById('setting-auto');
+    // const settingManual = document.getElementById('setting-manual');
+	// const completeButton = document.getElementById('complete-button');
+    // toggleCheckbox.addEventListener('change', function() {
+    //     if (this.checked) {
+	// 		// 수동
+    //         settingAuto.style.display = 'none';
+    //         settingManual.style.display = 'block';
+    //     } else {
+	// 		// 자동
+    //         settingAuto.style.display = 'block';
+    //         settingManual.style.display = 'none';
+    //     }
+	// 	// 라디오 버튼 초기화
+    //     const radios = document.querySelectorAll('input[name="auto_set"]');
+    //     radios.forEach(radio => {
+    //         radio.checked = false;
+    //     });
+	
+    // });
+
+	// completeButton.addEventListener('click', function() {
+    //     const selectedRadio = document.querySelector('input[name="auto_set"]:checked');
+    //     const radioValue = selectedRadio ? selectedRadio.value : null;
+
+	// 	console.log("라디오밸류", radioValue);
+
+    //     if (radioValue) {
+    //         if (updateSocket.readyState === WebSocket.OPEN) {
+    //             updateSocket.send(JSON.stringify({
+    //                 "command": "auto_choice_value",
+    //                 "radioValue": radioValue,
+    //             }));
+    //         }
+    //     } else {
+    //         alert("선택된 옵션이 없습니다.");
+    //     }
+    // });
+
 
 	// +버튼 누르면 시작
 	let items = Array.prototype.slice.call(document.querySelectorAll("[id^='time-style']"), 0).map(function (obj) { return obj.textContent });

@@ -208,7 +208,7 @@
                                           <div class="cal_top">
                                             <div class="title_setting">편집모드</div>
                                             <label class="rocker">
-                                              <input type="checkbox" checked>
+                                              <input type="checkbox" id="disable_checkbox" checked>
                                               <span class="switch-left">끄기</span>
                                               <span class="switch-right">켜기</span>
                                             </label>
@@ -329,9 +329,85 @@
                               </p> -->
                             </div>
                             <div class="innerbox" id="innertxt-2">
-                              <div class="tab-title tab2">Tab 2</div>
-                              <p>
-                                <span class = "numit">2</span> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor </p>
+                              <div class="tab-title tab2">시간설정</div>
+                              <div>
+                                <div class="back-bt">
+                                  <button class="goback-to-radio" style="display: none;">뒤로</button>
+                                </div>
+                                <div id="time-radio">
+                                  <label for="same_allday">
+                                      <input type="radio" name="time_set" id="same_allday" value="same_ad">
+                                      <div class="div-width">
+                                          <p>매일 동일</p>
+                                          <span>예약시간을 매일 동일하게 설정합니다.</span>
+                                      </div>
+                                  </label>
+                                  <label for="diff_weekend">
+                                      <input type="radio" name="time_set" id="diff_weekend" value="diff_wkd">
+                                      <div class="div-width">
+                                        <p>평일/주말</p>
+                                        <span>예약시간을 평일과 주말이 다르게 설정합니다.</span>
+                                        <div class="showtime">
+                                          <div class="store-table">
+                                            <div class="st-name">
+                                              <div class="st-id">{{ store.id }}</div>
+                                              {{store.store_name }}
+                                            </div>
+                                            <div class="weekday">
+                                              <div class="st-time">
+                                                <br>
+                                                <div>새로운 시간 추가</div>
+                                                {% for time in sto_time_objects %}
+                                                <button class="time-innerbox-{{ store.id }}" type="button" data-time="{{ time.reservation_time }}"
+                                                  id="time-style" style="display: none;">{{ time.reservation_time }}</button>
+                                                {% endfor %}
+                                                <span id="btnwrap" data-pk="{{ manager.pk }}" data-store-id="{{ store.id }}">
+                                                  <button type="button" class="addbtn">&#43;</button>
+                                                </span>
+                                                <br>
+                                                <button class="add_cookies" id="add-cookies-{{ store.id }}" data-pk="{{ manager.pk }}"
+                                                  data-store-id="{{ store.id }}">추가하기</button>
+                                                <br>
+                                                <div>시간표 변경</div>
+                                                <div class="parent">
+                                                  <div id="attach_btns"></div>
+                                                </div>
+                                                <input type="hidden" id="buttonValues" name="button_values">
+                                                <input type="button" id="rsv_activate" value="변경사항 저장">
+                                              </div>
+                                            </div>
+                                            <div class="weekend">
+                                              <div class="st-time">
+                                                <br>
+                                                <div>새로운 시간 추가</div>
+                                                <span id="btnwrap" data-pk="{{ manager.pk }}" data-store-id="{{ store.id }}">
+                                                  <button type="button" class="addbtn">&#43;</button>
+                                                </span>
+                                                <br>
+                                                <button class="add_cookies" id="add-cookies-{{ store.id }}" data-pk="{{ manager.pk }}"
+                                                  data-store-id="{{ store.id }}">추가하기</button>
+                                                <br>
+                                                <div>시간표 변경</div>
+                                                <div class="parent_2">
+                                                  <div id="attach_btns_2"></div>
+                                                </div>
+                                                <input type="hidden" id="buttonValues" name="button_values">
+                                                <input type="button" id="rsv_activate" value="변경사항 저장">
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                  </label>
+                                  <label for="diff_allday">
+                                      <input type="radio" name="time_set" id="diff_allday" value="diff_ad">
+                                      <div class="div-width">
+                                          <p>요일별 개별설정</p>
+                                          <span>예약시간을 요일별로 다르게 설정합니다.</span>
+                                      </div>
+                                  </label>
+                                </div>
+                              </div>
                             </div>
                             <div class="innerbox" id="innertxt-3">
                               <div class="tab-title tab3">Tab 3</div>

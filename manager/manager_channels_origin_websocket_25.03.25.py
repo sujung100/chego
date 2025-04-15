@@ -471,21 +471,21 @@ class TestConsumer(AsyncWebsocketConsumer):
             end_date = data.get("end_date")
             button_values = data.get("buttonValues")
 
-        # elif key_command == "auto_choice_value":
-        #     # 자동 수동 설정에서의 값
-        #     radioValue = data.get("radioValue")
-        #     todayDate = data.get("todayDate")
-        #     # print("자동수동1", radioValue)
-        #     # print("자동수동2", todayDate)
-        #     message_to_send = {
-        #     "radioValue": radioValue,
-        #     "todayDate": todayDate
-        #     }
-        #     # 25.03.20
-        #     await self.send_to_front(message_to_send)
-        #     # await get_channel_layer().group_send(
-        #     # "index", {"type": "setting.message", "message": "아무말"}
-        #     #  )
+        elif key_command == "auto_choice_value":
+            # 자동 수동 설정에서의 값
+            radioValue = data.get("radioValue")
+            todayDate = data.get("todayDate")
+            # print("자동수동1", radioValue)
+            # print("자동수동2", todayDate)
+            message_to_send = {
+            "radioValue": radioValue,
+            "todayDate": todayDate
+            }
+            # 25.03.20
+            await self.send_to_front(message_to_send)
+            # await get_channel_layer().group_send(
+            # "index", {"type": "setting.message", "message": "아무말"}
+            #  )
 
             
             
@@ -498,13 +498,17 @@ class TestConsumer(AsyncWebsocketConsumer):
             self.room_group_name, {"type": "chat.message", "message": message}
         )
 
-    # async def send_to_front(self, message):
-    #     print("전송할 메시지:", message)
-    #     await self.channel_layer.group_send(
-    #         # 인덱스 그룹에 전송(main_consumer)
-    #         "index", {"type": "setting.message", "message": message}
-    #     )
+    async def send_to_front(self, message):
+        print("전송할 메시지:", message)
+        await self.channel_layer.group_send(
+            # 인덱스 그룹에 전송(main_consumer)
+            "index", {"type": "setting.message", "message": message}
+        )
 
+    # 25.03.20
+    # async def setting_message(self, event):
+    #     message = event["message"]
+    #     await self.send(text_data=message)
 
     async def send_message(self, message):
         await self.send(text_data=json.dumps(message))

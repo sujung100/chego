@@ -12,14 +12,13 @@
     socket.onmessage = function (e) {
         const data = JSON.parse(e.data);
         console.log("서버로부터의 메시지:", data);
-        // 웹소켓 manager -> main 데이터 잘 받아오나
-        // if (data.radioValue && data.radioValue === "week") {
-        //     // 여기에 로직 처리
-        //     console.log("라디오밸류확인_위크");
-        // } else {
-        //     console.log("message가 없거나 radioValue가 'week'가 아닙니다.");
-        // }
-        // 예약검증
+        if (data.radioValue && data.radioValue === "week") {
+            // 여기에 로직 처리
+            console.log("라디오밸류확인_위크");
+        } else {
+            console.log("message가 없거나 radioValue가 'week'가 아닙니다.");
+        }
+        // 예약검증 -- 나중에 위의 if, else안에 각각 넣어주거나 하기 25.03.23
         if (data.exists) {
             alert('예약이 이미 존재합니다.');
             window.location.reload();

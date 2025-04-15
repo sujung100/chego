@@ -816,6 +816,37 @@ input[type='radio']:checked {
   background-color: #dce2ed;
 }
 
+#time-radio label{
+  display:flex;
+  gap:10px;
+  border:1px solid #e1e1e1;
+  border-radius:13px;
+  margin:20px;
+  padding:20px
+}
+
+#time-radio label p{
+  font-weight:600;
+  font-size:1rem;
+  margin: 0;
+}
+
+.div-width {
+  flex-grow: 1;
+}
+
+.btn-display {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+
+/* display none을 제거하기위해 important사용 */
+.show {
+  display: block !important;
+}
+
 
 
 /* 달력 시작 */

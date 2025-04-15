@@ -40,7 +40,7 @@
   };
 
   const rsv_activate = document.querySelector("#rsv_activate");
-  // console.log(disable_checkbox.checked);
+  console.log(disable_checkbox.checked);
 
 
   // tab메뉴 스타일적용
@@ -68,12 +68,9 @@
 
 	// 기간설정-01 자동수동 세팅
 	const toggleCheckbox = document.getElementById('toggle-checkbox');
-  const editmodeCheckbox = document.getElementById('editmode_checkbox');
   const settingAuto = document.getElementById('setting-auto');
   const settingManual = document.getElementById('setting-manual');
 	const completeButton = document.getElementById('complete-button');
-  let title_block = document.querySelector(".Calendar thead");
-  let clickedOnce = false;
   toggleCheckbox.addEventListener('change', function() {
       if (this.checked) {
         // 수동
@@ -83,31 +80,6 @@
         // 자동
         settingAuto.style.display = 'block';
         settingManual.style.display = 'none';
-        
-        // 수동의 편집모드 끄기 25.04.10
-        if (title_block.classList.contains('change_mode')) {
-          disable_checkbox.checked = !disable_checkbox.checked;
-        }
-        checkF();
-
-        // let unchecked_elements = document.querySelectorAll(".pastDay, .today, .futureDay");
-        // let change_visble = document.querySelector(".edit_mode");
-        // let title_block = document.querySelector(".Calendar thead");
-        // unchecked_elements.forEach(function (element) {
-        //   element.classList.remove("choiceDay2");
-        //   element.classList.remove("d_choiceDay");
-        //   element.classList.remove("between");
-
-        //   element.classList.remove("unchecked");
-        //   change_visble.classList.remove("unchecked2");
-        //   title_block.classList.remove("change_mode");
-        //   rsv_start_end.style.display = "none";
-        // });
-        // selectedDates = {};
-        // console.log("오프시 배열은?", selectedDates);
-        // disable_date_start.textContent = ''
-        // disable_date_end.textContent = ''
-
       }
       // 라디오 버튼 초기화
       const radios = document.querySelectorAll('input[name="auto_set"]');
@@ -117,20 +89,16 @@
 
   });
 
-  // 선택완료 클릭시
 	completeButton.addEventListener('click', function() {
-        // 기간설정 -> 자동 -> 하위의 radio중 선택한게 있는지  
         const selectedRadio = document.querySelector('input[name="auto_set"]:checked');
         const radioValue = selectedRadio ? selectedRadio.value : null;
-        // 기간설정 -> 수동 선택
-        const selectManual = document.querySelector('input[class="checkbox-input"]:checked');
 
         const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'long', timeZone: 'Asia/Seoul' };
         const truncatedDate = today.toLocaleDateString('ko-KR', dateOptions).replace(/\. /g, '-').replace(/요일/, '');
-        // console.log("dateOptions", dateOptions);
+        console.log("dateOptions", dateOptions);
         // console.log("todayDate", truncatedDate);
 
-        console.log("라디오밸류", radioValue);
+        // console.log("라디오밸류", radioValue);
         // console.log("todayDate", truncatedDate);
 
         // if (radioValue) {
@@ -145,48 +113,16 @@
         //     alert("선택된 옵션이 없습니다.");
         // }
 
-
-        // 자동선택 후 radio까지 선택했을 때
         if (radioValue) {
           // 자동 수동 선택값 저장 25.03.25
-          console.log("자동찍힘");
-          console.log("선택값1", selectedDates);
-          return selectAuto = {
+          sendingPeriodData1 = {
             radioValue: radioValue,
             todayDate: truncatedDate,
-          };
-          console.log("라디오버튼 선택값1", selectAuto);
-          // 수동선택시
-        } else if (selectManual) {
-          
-          console.log("수동찍힘");
-          selectAuto = {};
-          console.log("라디오버튼 선택값2", selectAuto);
-          console.log("선택값2", selectedDates);
-
-          // 유효성검사 - start, end 다들어갔는지(activate_calendar.js)
-          let activate_start = disable_date_start.textContent;
-          let activate_end = disable_date_end.textContent;
-          const validationResult = validateDates(activate_start, activate_end);
-          if (!validationResult.valid) {
-            const errorMessage = getErrorMessage(validationResult.errorType);
-            alert(errorMessage);
-            return;
           }
-          const activateResult = confirm("수정하시겠습니까?");
-          if (activateResult) {
-            console.log("활성화 온");
-            activatePost(activate_start, activate_end);
-          }
-
-          // json리턴
-          return selectedDates;
-        
-        // 미선택시
         } else {
-          alert("옵션을 선택해주세요.");
+          alert("옵션 미선택");
         }
-        // console.log("라디오버튼 선택값", selectAuto);
+        console.log("라디오버튼 선택값", sendingPeriodData1);
 
 
     });
@@ -274,15 +210,14 @@
 
     // for문 빠져나옴
     if (!disable_checkbox.checked) {
+      // 시작날짜, 종료날짜가 존재할 때
       if(disable_date_start.textContent && disable_date_end.textContent){
           console.log("둘 다 존재할때");
         } else if (disable_date_start.textContent){
           console.log("if(disable_date_start.valueate)", disable_date_start.textContent);
         }
     }
-    // 25.04.13 change -> click으로 수정
-    // disable_checkbox.addEventListener('change', function () {
-    disable_checkbox.addEventListener('click', function () {
+    disable_checkbox.addEventListener('change', function () {
       disableMode();
     });
 
@@ -519,123 +454,41 @@
   }
 
 
-
-  function checkT() {
-    let unchecked_elements = document.querySelectorAll(".pastDay, .today, .futureDay");
-    let change_visble = document.querySelector(".edit_mode");
-    let title_block = document.querySelector(".Calendar thead");
-
-    change_visble.classList.add("unchecked2");
-    title_block.classList.add("change_mode");
-    unchecked_elements.forEach(function (element) {
-      // console.log(element);
-      element.classList.add("unchecked");
-      rsv_start_end.style.display = "block";
-    });
-  }
-
-  function checkF() {
-    let unchecked_elements = document.querySelectorAll(".pastDay, .today, .futureDay");
-    let change_visble = document.querySelector(".edit_mode");
-    let title_block = document.querySelector(".Calendar thead");
-
-    console.log('체크박스 꺼짐');
-    unchecked_elements.forEach(function (element) {
-      element.classList.remove("choiceDay2");
-      element.classList.remove("d_choiceDay");
-      element.classList.remove("between");
-
-      element.classList.remove("unchecked");
-      change_visble.classList.remove("unchecked2");
-      title_block.classList.remove("change_mode");
-      rsv_start_end.style.display = "none";
-    });
-    // off버튼 클릭시 start/ end/ between 값 초기화
-    selectedDates = {};
-    console.log("오프시 배열은?", selectedDates);
-    disable_date_start.textContent = ''
-    disable_date_end.textContent = ''
-    // location.reload();
-  }
-
-
   async function disableMode() {
 
     let unchecked_elements = document.querySelectorAll(".pastDay, .today, .futureDay");
     let change_visble = document.querySelector(".edit_mode");
     let title_block = document.querySelector(".Calendar thead");
-    console.log("disableMode 실행");
     if (!disable_checkbox.checked) {
-      // // rsv_activate.style.display = "block";
-      // change_visble.classList.add("unchecked2");
-      // title_block.classList.add("change_mode");
-      // unchecked_elements.forEach(function (element) {
-      //   // console.log(element);
-      //   element.classList.add("unchecked");
-      //   rsv_start_end.style.display = "block";
-      // });
-      checkT();
+      // console.log("disableMode 실행");
+      // rsv_activate.style.display = "block";
+      change_visble.classList.add("unchecked2");
+      title_block.classList.add("change_mode");
+      unchecked_elements.forEach(function (element) {
+        // console.log(element);
+        element.classList.add("unchecked");
+        rsv_start_end.style.display = "block";
+      });
 
     }
     else {
-      // console.log('체크박스 꺼짐');
-      // unchecked_elements.forEach(function (element) {
-      //   element.classList.remove("choiceDay2");
-      //   element.classList.remove("d_choiceDay");
-      //   element.classList.remove("between");
+      console.log('체크박스 꺼짐');
+      unchecked_elements.forEach(function (element) {
+        element.classList.remove("choiceDay2");
+        element.classList.remove("d_choiceDay");
+        element.classList.remove("between");
 
-      //   element.classList.remove("unchecked");
-      //   change_visble.classList.remove("unchecked2");
-      //   title_block.classList.remove("change_mode");
-      //   rsv_start_end.style.display = "none";
-      // });
-      // // off버튼 클릭시 start/ end/ between 값 초기화
-      // selectedDates = {};
-      // console.log("오프시 배열은?", selectedDates);
-      // disable_date_start.textContent = ''
-      // disable_date_end.textContent = ''
-      // // location.reload();
-      checkF();
+        element.classList.remove("unchecked");
+        change_visble.classList.remove("unchecked2");
+        title_block.classList.remove("change_mode");
+        rsv_start_end.style.display = "none";
+      });
+      // off버튼 클릭시 start/ end/ between 값 초기화
+      selectedDates = {};
+      console.log("오프시 배열은?", selectedDates);
+      disable_date_start.textContent = ''
+      disable_date_end.textContent = ''
+      // location.reload();
     }
   }
-
-
-  // 분리전 25.04.13
-  // async function disableMode() {
-
-  //   let unchecked_elements = document.querySelectorAll(".pastDay, .today, .futureDay");
-  //   let change_visble = document.querySelector(".edit_mode");
-  //   let title_block = document.querySelector(".Calendar thead");
-  //   console.log("disableMode 실행");
-  //   if (!disable_checkbox.checked) {
-  //     // rsv_activate.style.display = "block";
-  //     change_visble.classList.add("unchecked2");
-  //     title_block.classList.add("change_mode");
-  //     unchecked_elements.forEach(function (element) {
-  //       // console.log(element);
-  //       element.classList.add("unchecked");
-  //       rsv_start_end.style.display = "block";
-  //     });
-
-  //   }
-  //   else {
-  //     console.log('체크박스 꺼짐');
-  //     unchecked_elements.forEach(function (element) {
-  //       element.classList.remove("choiceDay2");
-  //       element.classList.remove("d_choiceDay");
-  //       element.classList.remove("between");
-
-  //       element.classList.remove("unchecked");
-  //       change_visble.classList.remove("unchecked2");
-  //       title_block.classList.remove("change_mode");
-  //       rsv_start_end.style.display = "none";
-  //     });
-  //     // off버튼 클릭시 start/ end/ between 값 초기화
-  //     selectedDates = {};
-  //     console.log("오프시 배열은?", selectedDates);
-  //     disable_date_start.textContent = ''
-  //     disable_date_end.textContent = ''
-  //     // location.reload();
-  //   }
-  // }
 </script>

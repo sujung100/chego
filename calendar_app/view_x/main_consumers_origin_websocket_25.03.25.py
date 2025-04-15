@@ -135,9 +135,9 @@ class CheckingRsvConsumer(AsyncWebsocketConsumer):
         return dates_info
     
 
-    # async def setting_message(self, event):
-    #     message = event["message"]
-    #     print("메세지찍어봐라메인", message)
-    #     await self.send(text_data=json.dumps(
-    #         message
-    #     ))
+    async def setting_message(self, event):
+        message = event["message"]
+        print("메세지찍어봐라메인", message)
+        await self.send(text_data=json.dumps(
+            message
+        ))

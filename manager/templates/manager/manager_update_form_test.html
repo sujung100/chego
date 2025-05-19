@@ -148,7 +148,7 @@
                               <button type="button" class="addbtn">&#43;</button>
                             </span>
                             <br>
-                            <button class="add_time_down" id="add_time_down- store.id " data-pk=" manager.pk "
+                            <button class="add_cookies" id="add-cookies- store.id " data-pk=" manager.pk "
                               data-store-id=" store.id ">추가하기</button>
                             <br>
                             <div>시간표 변경</div>
@@ -347,60 +347,63 @@
                                       <div class="div-width">
                                         <p>평일/주말</p>
                                         <span>예약시간을 평일과 주말이 다르게 설정합니다.</span>
-                                        <div class="showtime" style="display: none;">
+                                        <div class="showtime">
                                           <div class="store-table">
                                             <div class="st-name">
                                               <div class="st-id">{{ store.id }}</div>
                                               {{store.store_name }}
                                             </div>
-                                            <!-- <div class="weekday">
-
+                                            <div class="weekday">
                                               <div class="st-time">
                                                 <div id="timebts-con">
-                                                  <input type="time" id="new-time-input" style="display: none;">
-                                                  <button id="add-time-check" style="display: none;">확인</button>
                                                   <br>
-                                                  <div>시간표 변경</div>
-                                                  <div class="parent">
-                                                      <div id="attach_btns"></div>
-                                                  </div>
-                                                  <input type="hidden" id="buttonValues" name="button_values">
-                                                  <input type="button" id="rsv_activate" value="변경사항 저장">
+                                                  <div>새로운 시간 추가</div>
+                                                  <!-- for time in sto_time_objects -->
+                                                  {% for time in sto_time_objects %}
+                                                  <button class="time-innerbox-{{ store.id }}" type="button" data-time="{{ time.reservation_time }}"
+                                                    id="time-style" style="display: none;">{{ time.reservation_time }}</button>
+                                                  {% endfor %}
+                                                  <span id="btnwrap" data-pk="{{ manager.pk }}" data-store-id="{{ store.id }}">
+                                                    <button type="button" class="addbtn">&#43;</button>
+                                                  </span>
+                                                  <br>
+                                                  <button class="add_cookies" id="add-cookies-{{ store.id }}" data-pk="{{ manager.pk }}"
+                                                    data-store-id="{{ store.id }}">추가하기</button>
+                                                  <br>
                                                 </div>
-                                            </div> -->
-
-                                            <!-- 주중/주말 시간 버튼들이 들어갈 컨테이너 (이전 코드에서 추가한 곳) -->
-                                            <!-- <div id="wd-container"></div> -->
-
-
-                                            <div class="weekend">
+                                                <div>시간표 변경</div>
+                                                <div class="parent">
+                                                  <div id="attach_btns"></div>
+                                                </div>
+                                                <input type="hidden" id="buttonValues" name="button_values">
+                                                <input type="button" id="rsv_activate" value="변경사항 저장">
+                                                <div id="wd-container"></div>
+                                              </div>
+                                            </div>
+                                            <!-- <div class="weekend">
                                               <div class="st-time">
                                                 <br>
-                                                <!-- <div>새로운 시간 추가</div> -->
-                                                <!-- {% for time in wknd_time_objects %}
+                                                <div>새로운 시간 추가</div>
+                                                 for time in sto_time_objects 
                                                       <button class="time-innerbox-{{ store.id }}" type="button" data-time="{{ time.reservation_time }}"
                                                       id="time-style" style="display: none;">{{ time.reservation_time }}</button>
-                                                {% endfor %}
+                                                 endfor 
                                                 <span id="btnwrap" data-pk="{{ manager.pk }}" data-store-id="{{ store.id }}">
                                                   <button type="button" class="addbtn">&#43;</button>
                                                 </span>
                                                 <br>
-                                                <button class="add_time_down" id="add_time_down-{{ store.id }}" data-pk="{{ manager.pk }}"
+                                                <button class="add_cookies" id="add-cookies-{{ store.id }}" data-pk="{{ manager.pk }}"
                                                   data-store-id="{{ store.id }}">추가하기</button>
-                                                <br> -->
-                                                <div id="timebts-con">
-                                                  <input type="time" id="new-time-input" style="display: none;">
-                                                  <button id="add-time-check" style="display: none;">확인</button>
-                                                  <!-- <div>시간표 변경</div> -->
-                                                  <!-- <div class="parent">
-                                                    <div id="attach_btns"></div>
-                                                  </div> -->
-                                                  <input type="hidden" id="buttonValues" name="button_values">
-                                                  <!-- <input type="button" id="rsv_activate" value="변경사항 저장"> -->
+                                                <br>
+                                                <div>시간표 변경</div>
+                                                <div class="parent">
+                                                  <div id="attach_btns"></div>
                                                 </div>
+                                                <input type="hidden" id="buttonValues" name="button_values">
+                                                <input type="button" id="rsv_activate" value="변경사항 저장">
                                                 <div id="wknd-container"></div>
                                               </div>
-                                            </div>
+                                            </div> -->
                                           </div>
                                         </div>
                                       </div>

@@ -1,0 +1,898 @@
+<script>
+
+	// // tab메뉴 스타일적용
+	// document.addEventListener("DOMContentLoaded", function() {
+	// var tabs = document.querySelectorAll('.tabs .trapez');
+
+	// for (var i = 0, len = tabs.length; i < len; i++) {
+	// 	tabs[i].addEventListener("click", function() {
+	// 	if (this.classList.contains('active'))
+	// 		return;
+
+	// 	var parent = this.parentNode,
+	// 		innerTabs = parent.querySelectorAll('.trapez');
+
+	// 	for (var index = 0, iLen = innerTabs.length; index < iLen; index++) {
+	// 		innerTabs[index].classList.remove('active');
+	// 	}
+
+	// 	this.classList.add('active');
+	// 	});
+	// }
+
+	// });
+
+
+	// // 기간설정-01 자동수동 세팅
+	// const toggleCheckbox = document.getElementById('toggle-checkbox');
+    // const settingAuto = document.getElementById('setting-auto');
+    // const settingManual = document.getElementById('setting-manual');
+	// const completeButton = document.getElementById('complete-button');
+    // toggleCheckbox.addEventListener('change', function() {
+    //     if (this.checked) {
+	// 		// 수동
+    //         settingAuto.style.display = 'none';
+    //         settingManual.style.display = 'block';
+    //     } else {
+	// 		// 자동
+    //         settingAuto.style.display = 'block';
+    //         settingManual.style.display = 'none';
+    //     }
+	// 	// 라디오 버튼 초기화
+    //     const radios = document.querySelectorAll('input[name="auto_set"]');
+    //     radios.forEach(radio => {
+    //         radio.checked = false;
+    //     });
+	
+    // });
+
+	// completeButton.addEventListener('click', function() {
+    //     const selectedRadio = document.querySelector('input[name="auto_set"]:checked');
+    //     const radioValue = selectedRadio ? selectedRadio.value : null;
+
+	// 	console.log("라디오밸류", radioValue);
+
+    //     if (radioValue) {
+    //         if (updateSocket.readyState === WebSocket.OPEN) {
+    //             updateSocket.send(JSON.stringify({
+    //                 "command": "auto_choice_value",
+    //                 "radioValue": radioValue,
+    //             }));
+    //         }
+    //     } else {
+    //         alert("선택된 옵션이 없습니다.");
+    //     }
+    // });
+
+
+
+	// 다음버튼 생성 이벤트
+	function createNextBtn(target_p) {
+		const btnDisplay = document.createElement('div');
+		btnDisplay.className = 'btn-display';
+
+		const gotoNextTab = document.createElement('button');
+		gotoNextTab.className = 'goto-nexttab';
+		gotoNextTab.textContent = '다음';
+		gotoNextTab.style.margin = '5rem 0 0 0';
+
+		btnDisplay.appendChild(gotoNextTab);
+
+		const divWidth = target_p.querySelector('.div-width');
+		if (divWidth) {
+			divWidth.appendChild(btnDisplay);
+		}
+	}
+
+
+	same_allday = document.getElementById("same_allday")
+	const goBackToRadio = document.querySelector(".goback-to-radio");
+	const divideWeekend = document.querySelector("#diff_weekend");
+	const diffAllday = document.querySelector("#diff_allday");
+
+	function hideSiblings(target_p) {
+		const siblings = Array.from(target_p.parentElement.children).filter(child => child !== target_p);
+		siblings.forEach(sibling => {
+			sibling.style.display = 'none';
+		});
+	}
+
+	function showAllRadioButtons() {
+		const radioButtons = document.querySelectorAll('#time-radio > label');
+		radioButtons.forEach(radio => {
+			radio.style.display = 'block';
+		});
+	}
+
+	function resetRadioButtons() {
+		const radioButtons = document.querySelectorAll('input[name="time_set"]');
+		radioButtons.forEach(radio => {
+			radio.checked = false;
+		});
+	}
+
+	// 매일동일 radio 선택시 이벤트
+	same_allday.addEventListener('click', function(event) {
+		const target_p = event.target.parentElement
+		hideSiblings(target_p);
+		if (goBackToRadio) {
+			goBackToRadio.style.display = 'block';
+		}
+		createNextBtn(target_p);
+	})
+
+	// 뒤로버튼 클릭 이벤트
+	goBackToRadio.addEventListener('click', function(event) {
+		showAllRadioButtons();
+		resetRadioButtons();
+		if (goBackToRadio) {
+			goBackToRadio.style.display = 'none';
+		}
+		const btnDisplay = document.querySelector('.btn-display');
+		if (btnDisplay) {
+			btnDisplay.remove();
+		}
+	})
+
+	// 평일주말 radio 선택시 이벤트
+	divideWeekend.addEventListener('click', function(event) {
+		const target_p = event.target.parentElement
+		hideSiblings(target_p);
+		if (goBackToRadio) {
+			goBackToRadio.style.display = 'block';
+		}
+		createNextBtn(target_p);
+	})
+
+	// 요일개별 radio 선택시 이벤트
+	diffAllday.addEventListener('click', function(event) {
+		const target_p = event.target.parentElement;
+		hideSiblings(target_p);
+		if (goBackToRadio) {
+			goBackToRadio.style.display = 'block';
+		}
+		createNextBtn(target_p);
+	});
+
+	
+
+
+
+	// const storeId = "{{ store.id }}";
+	// const wkndTimeObjects = {{ wknd_time_objects|safe }};
+	// const managerPk = "{{ manager.pk }}";
+	// document.addEventListener("DOMContentLoaded", function() {
+	// 	const wkndTimeContainer = document.getElementById("wknd-container");
+
+	// 	wkndTimeObjects.forEach(time => {
+	// 		const timeBtn = document.createElement("button");
+	// 		timeBtn.className = `time-innerbox-${storeId}`;
+	// 		timeBtn.type = "button";
+	// 		timeBtn.dataset.time = time.reservation_time;
+	// 		timeBtn.id = "time-style";
+	// 		timeBtn.style.display = "none";
+	// 		timeBtn.textContent = time.reservation_time;
+
+	// 		wkndTimeContainer.appendChild(timeBtn);
+	// 	});
+	// });
+
+	
+	
+	const storeId = "{{ store.id }}";
+	const managerPk = "{{ manager.pk }}";
+	// const wdTimeObjects = 템 wd_time_objects|safe 템;
+	// const wkndTimeObjects = 템 wknd_time_objects|safe 템;
+	const initialWdTimeObjects = {{ wd_time_objects|safe }};
+	const initialWkndTimeObjects = {{ wknd_time_objects|safe }};
+
+	let currentWdTimes = initialWdTimeObjects.map(time => time.reservation_time);
+    let currentWkndTimes = initialWkndTimeObjects.map(time => time.reservation_time);
+
+
+	document.addEventListener("DOMContentLoaded", function() {
+		
+		// tab메뉴 스타일적용
+		var tabs = document.querySelectorAll('.tabs .trapez');
+		for (var i = 0, len = tabs.length; i < len; i++) {
+			tabs[i].addEventListener("click", function() {
+			if (this.classList.contains('active'))
+				return;
+			var parent = this.parentNode,
+				innerTabs = parent.querySelectorAll('.trapez');
+			for (var index = 0, iLen = innerTabs.length; index < iLen; index++) {
+				innerTabs[index].classList.remove('active');
+			}
+			this.classList.add('active');
+			});
+		}
+
+		// 템플릿태그로 생성하던것 -> 자바스크립트로 생성함
+		const timeBtsCon = document.getElementById("timebts-con");
+		if (timeBtsCon) { // timeBtsCon이 실제로 있는지 확인!
+			const br1 = document.createElement('br');
+			const newTimeDiv = document.createElement('div');
+			newTimeDiv.textContent = '새로운 시간 추가';
+
+			const btnWrapSpan = document.createElement('span');
+			btnWrapSpan.id = 'btnwrap';
+			// data-속성 변수 값 할당
+			btnWrapSpan.dataset.pk = managerPk;
+			btnWrapSpan.dataset.storeId = storeId;
+
+			const addBtn = document.createElement('button');
+			addBtn.type = 'button';
+			addBtn.classList.add('addbtn');
+			addBtn.innerHTML = '&#43;'; // '+' 문자
+			const br2 = document.createElement('br');
+
+			const addCookiesBtn = document.createElement('button');
+			addCookiesBtn.classList.add('add_cookies');
+			addCookiesBtn.id = `add-cookies-${storeId}`;
+			// data-속성 변수 값 할당
+			addCookiesBtn.dataset.pk = managerPk;
+			addCookiesBtn.dataset.storeId = storeId;
+			addCookiesBtn.textContent = '추가하기';
+			const br3 = document.createElement('br');
+
+			btnWrapSpan.appendChild(addBtn);
+			timeBtsCon.appendChild(br1);
+			timeBtsCon.appendChild(newTimeDiv);
+			timeBtsCon.appendChild(btnWrapSpan);
+			timeBtsCon.appendChild(br2);
+			timeBtsCon.appendChild(addCookiesBtn);
+			timeBtsCon.appendChild(br3);
+
+		} else {
+			console.error("timebts-con없음");
+		}
+
+
+		// 시간버튼생성
+        function createTimeButtonElement(timeString, storeIdParam, inputElement, checkButtonElement, parentContainer) {
+            const timeBtn = document.createElement("button");
+            timeBtn.className = `time-innerbox-${storeIdParam}`;
+            timeBtn.type = "button";
+            timeBtn.dataset.time = timeString;
+            timeBtn.textContent = timeString;
+            timeBtn.style.display = "none";
+
+            timeBtn.addEventListener('click', function(event) {
+                const containerId = parentContainer.id;
+                const clickedTimeString = this.textContent;
+                if(inputElement) {
+                    inputElement.value = clickedTimeString;
+                    inputElement.style.display = '';
+                }
+                 if(checkButtonElement) {
+					checkButtonElement.style.display = '';
+                 }
+
+                if (containerId === 'wd-container') {
+                    currentWdTimes = currentWdTimes.filter(time => time !== clickedTimeString);
+                    renderButtonsInContainer(parentContainer, currentWdTimes, storeIdParam, inputElement, checkButtonElement);
+                } else if (containerId === 'wknd-container') {
+                    currentWkndTimes = currentWkndTimes.filter(time => time !== clickedTimeString);
+                    renderButtonsInContainer(parentContainer, currentWkndTimes, storeIdParam, inputElement, checkButtonElement);
+                } else {
+                    console.error("알 수 없는 컨테이너");
+                }
+
+            });
+
+            return timeBtn;
+        }
+
+
+
+		// 컨테이너에 시간 배열의 버튼들을 새로고침
+        function renderButtonsInContainer(containerElement, timeStringsArray, storeIdParam, inputElement, checkButtonElement) {
+            if (!containerElement) {
+                console.error("컨테이너x");
+                return;
+            }
+
+            containerElement.innerHTML = '';
+
+            // 시간순정렬(복사후)
+            const sortedTimeStrings = [...timeStringsArray];
+            sortedTimeStrings.sort(function (a, b) {
+                return new Date('1970/01/01 ' + a) - new Date('1970/01/01 ' + b);
+            });
+
+            sortedTimeStrings.forEach(timeString => {
+                const timeBtn = createTimeButtonElement(timeString, storeIdParam, inputElement, checkButtonElement, containerElement);
+                containerElement.appendChild(timeBtn);
+            });
+        }
+
+        const newTimeInput = document.getElementById('new-time-input');
+        const addTimeCheckButton = document.getElementById('add-time-check');
+
+
+        const wdTimeContainer = document.getElementById("wd-container");
+        const wkndTimeContainer = document.getElementById("wknd-container");
+        console.log("주중 시간 데이터 (초기값)", initialWdTimeObjects);
+        if (wdTimeContainer && newTimeInput && addTimeCheckButton) {
+			renderButtonsInContainer(wdTimeContainer, currentWdTimes, storeId, newTimeInput, addTimeCheckButton);
+			console.log("주중 시간 버튼 초기 렌더링");
+        } else {
+			console.error("요소없음");
+        }
+
+        console.log("주말 시간 데이터 (초기값)", initialWkndTimeObjects);
+        console.log("조건1", wkndTimeContainer);
+        console.log("조건2", newTimeInput);
+        console.log("조건3", addTimeCheckButton);
+		if (wkndTimeContainer && newTimeInput && addTimeCheckButton) {
+            renderButtonsInContainer(wkndTimeContainer, currentWkndTimes, storeId, newTimeInput, addTimeCheckButton);
+			console.log("주말 시간 버튼 초기 렌더링");
+        } else {
+			console.error("요소없음");
+        }
+
+        if (addTimeCheckButton && newTimeInput) {
+            addTimeCheckButton.addEventListener('click', function() {
+                const val = newTimeInput.value.trim();
+
+                if (!val) {
+                    console.warn("입력된 시간X");
+                    return;
+                }
+                // 현재 활성화된 탭 찾기 (주중 탭인지 주말 탭인지)
+                const activeTab = document.querySelector('.tabs .trapez.active');
+                let targetContainer = null;
+
+                if (activeTab) {
+					const targetContainerId = activeTab.dataset.targetContainer;
+                    if (targetContainerId) {
+                        targetContainer = document.querySelector(targetContainerId);
+                    } else {
+                         console.error("컨테이너X");
+                    }
+                } else {
+                     console.warn("미활성");
+                }
+
+
+                // 새 시간 추가 로직 실행
+                if (targetContainer) {
+                    const containerId = targetContainer.id;
+                    let targetTimeArray = (containerId === 'wd-container') ? currentWdTimes : currentWkndTimes;
+                    if (targetTimeArray.includes(val)) {
+                        console.warn("이미있음");
+                         newTimeInput.value = '';
+                        return;
+                    }
+                    targetTimeArray.push(val);
+                     addTimeCheckButton.style.display = 'none';
+                     newTimeInput.style.display = 'none';
+                     newTimeInput.value = '';
+
+                    if (containerId === 'wd-container') {
+                        currentWdTimes = targetTimeArray; // currentWdTimes 업데이트
+                        renderButtonsInContainer(targetContainer, currentWdTimes, storeId, newTimeInput, addTimeCheckButton);
+                         console.log(`주중 시간 "${val}" 추가 및 렌더링 완료. 현재 주중 시간:`, currentWdTimes);
+                    } else {
+                        currentWkndTimes = targetTimeArray; // currentWkndTimes 업데이트
+                        renderButtonsInContainer(targetContainer, currentWkndTimes, storeId, newTimeInput, addTimeCheckButton);
+                         console.log(`주말 시간 "${val}" 추가 및 렌더링 완료. 현재 주말 시간:`, currentWkndTimes);
+                    }
+
+                }
+            });
+        } else {
+            console.error("에러");
+        }
+
+
+
+		//  // wdTimeObjects 배열에서 각 요소의 reservation_time 값만 뽑아서 새 배열 생성
+		//  const wdTimeTexts = wdTimeObjects.map(time => time.reservation_time);
+        // console.log("평일배열:", wdTimeTexts);
+
+        // // wkndTimeObjects 배열에서 각 요소의 reservation_time 값만 뽑아서 새 배열 생성
+        // const wkndTimeTexts = wkndTimeObjects.map(time => time.reservation_time);
+        // console.log("주말배열:", wkndTimeTexts);
+
+
+
+		// // json시간값 불러오기(평일)
+		// const wdTimeContainer = document.getElementById("wd-container");
+		// console.log("평일데이터", wdTimeObjects);
+		// if (!wdTimeContainer) {
+		// 	console.error("컨테이너 못찾음");
+		// } else {
+		// 	wdTimeObjects.forEach(time => {
+		// 		const timeBtn = document.createElement("button");
+		// 		timeBtn.className = `time-innerbox-${storeId}`;
+		// 		timeBtn.type = "button";
+		// 		timeBtn.dataset.time = time.reservation_time;
+		// 		// timeBtn.id = "time-style";
+		// 		timeBtn.style.display = "none";
+		// 		timeBtn.textContent = time.reservation_time;
+		// 		wdTimeContainer.appendChild(timeBtn);
+		// 	});
+		// }
+
+		// // json시간값 불러오기(주말)
+		// const wkndTimeContainer = document.getElementById("wknd-container");
+		// console.log("주말데이터", wkndTimeObjects);
+		// if (!wkndTimeContainer) {
+		// 	console.error("컨테이너 못찾음");
+		// } else {
+		// 	wkndTimeObjects.forEach(time => {
+		// 		const timeBtn = document.createElement("button");
+		// 		timeBtn.className = `time-innerbox-${storeId}`;
+		// 		timeBtn.type = "button";
+		// 		timeBtn.dataset.time = time.reservation_time;
+		// 		// timeBtn.id = "time-style";
+		// 		timeBtn.style.display = "none";
+		// 		timeBtn.textContent = time.reservation_time;
+		// 		wkndTimeContainer.appendChild(timeBtn);
+		// 	});
+		// }
+
+
+		// const weekdayButtons = wdTimeContainer ? wdTimeContainer.querySelectorAll(`.time-innerbox-${storeId}`) : [];
+        // console.log("평일시간버튼값들:", weekdayButtons);
+
+        // const weekendButtons = wkndTimeContainer ? wkndTimeContainer.querySelectorAll(`.time-innerbox-${storeId}`) : [];
+        // console.log("주말시간버튼값들:", weekendButtons);
+		
+		// +버튼 누르면 시작
+		// let items = Array.prototype.slice.call(document.querySelectorAll("[id^='time-style']"), 0).map(function (obj) { return obj.textContent });
+		// console.log("아이템", items);
+
+		// let yayaya = document.querySelectorAll("[id^='time-style']")
+		// console.log("yayaya", yayaya);
+		
+		
+		// csrf용 쿠키
+		function getCookie(name) {
+			let cookieValue = null;
+			if (document.cookie && document.cookie !== '') {
+				const cookies = document.cookie.split(';');
+				for (let i = 0; i < cookies.length; i++) {
+					const cookie = cookies[i].trim();
+					if (cookie.substring(0, name.length + 1) === (name + '=')) {
+						cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+						break;
+					}
+				}
+			}
+			return cookieValue;
+		}
+
+
+		// "+"버튼 클릭시 이벤트
+		let inputVals = [];
+		function handleAddBtnClick(event) {
+			let parentElement = event.target.parentNode;
+			// console.log("parentElement보여줘", parentElement)
+
+			let addInput = document.createElement("input");
+			addInput.setAttribute("type", "time");
+			addInput.setAttribute("class", "addinput");
+			addInput.setAttribute("id", "new-time-input");
+			
+			let checkbt = document.createElement("button");
+			checkbt.setAttribute("class", "checkbt");
+			checkbt.setAttribute("id", "add-time-check");
+			checkbt.textContent = "확인";
+
+			parentElement.insertBefore(addInput, event.target.nextSibling);
+			parentElement.insertBefore(checkbt, addInput.nextSibling);
+
+			event.target.style.display = "none";
+
+			checkbt.addEventListener('click', function (event) {
+				event.preventDefault();
+				let val = addInput.value;
+
+				if (inputVals.includes(val)) {
+					alert("중복된 시간입니다. 다른 시간을 입력해주세요.");
+					return;
+				}
+
+				inputVals.push(val);
+
+				// Add button의 데이터 속성에서 pk와 store_id 값 가져오기
+				let pk = parentElement.dataset.pk;
+				let store_id = parentElement.dataset.storeId;
+
+				console.log("pk값1:", pk);
+				console.log("id값1:", store_id);
+				console.log("찍어라", parentElement.dataset);
+
+
+				getInputValue(parentElement, checkbt, addInput);
+
+				// "+" 버튼 추가
+				let newAddBtn = document.createElement("button");
+				newAddBtn.setAttribute("class", "addbtn");
+				newAddBtn.setAttribute("type", "button");
+				newAddBtn.textContent = "+";
+
+				parentElement.appendChild(newAddBtn); // 클릭된 버튼의 부모 요소에 새로운 'addbtn' 추가
+				// 수정 10.09
+				// 클릭된 버튼의 다음 형제 요소인 'newAddBtn'으로 포커스 이동
+				newAddBtn.focus();
+
+				// 클릭된 버튼 제거
+				checkbt.remove();
+
+			});
+		}
+
+
+		document.addEventListener('click', function (event) {
+			if (event.target.matches('.addbtn')) {
+				handleAddBtnClick(event);
+
+			}
+		});
+
+
+
+
+		
+		// "추가하기" 버튼 클릭시 이벤트
+		// 기존 시간표랑 같이 정렬하기 위한 전역변수
+		let allButtons = [];
+		document.addEventListener('click', function (event) {
+			if (event.target.matches('.add_cookies')) {
+				console.log("이벤트1", event);
+				event.preventDefault();
+
+				// #attach_btns 요소 찾기
+				let attach = document.getElementById('attach_btns');
+
+				// inputVals 배열의 모든 값으로 새로운 버튼 생성
+				inputVals.forEach(function (val) {
+					let newButton = document.createElement("button");
+					newButton.textContent = val;
+					newButton.value = val;
+					newButton.classList.add('arrbtn');
+					console.log("야야야", newButton.textContent)
+
+					// allButtons 배열에서 동일한 textContent를 가진 버튼이 있는지 확인
+					if (!allButtons.some(button => button.textContent === newButton.textContent)) {
+						attach.appendChild(newButton);
+						allButtons.push(newButton);
+					}
+
+
+					// ★☆ 성우님이 해결해줌 ^.^ ☆★
+					let arrbtnArray = document.getElementsByClassName("arrbtn");
+					// 배열로 변환
+					let arrbtn = Array.from(arrbtnArray);
+					if (Array.isArray(arrbtn)) {
+						arrbtn.forEach((btn) => {
+
+							commonButtonEvent(btn);
+						});
+
+					}
+					else {
+						console.log("else")
+					}
+					// ★☆ 성우님이 해결해줌 ^.^ ☆★
+
+
+
+					console.log("뉴버튼", newButton);
+					// newButton.addEventListener('click', function (event2) {
+					// 	console.log("이벤트2", event2);
+					// 	// 02.15 추가
+					// 	// handleButtonClick(event, attach, newButton);
+					// 	// 02.20 copiedItems 삭제
+					// 	// handleButtonClick(event2);
+
+					// });
+				});
+				console.log("인풋바 ", inputVals);
+				console.log("전역변수 버튼들 ", allButtons);
+
+
+
+				// 추가-10.14 추가하기누를때 정렬하기
+				let buttons = Array.from(attach.querySelectorAll('button'));
+
+				// finishBt 요소 제거하기 - 10.16
+				let finishBtns = Array.from(document.querySelectorAll('#time-style'));
+				finishBtns.forEach(btn => btn.remove());
+
+
+				buttons.sort((a, b) => {
+					return a.textContent.localeCompare(b.textContent);
+				});
+				while (attach.firstChild) {
+					attach.removeChild(attach.firstChild);
+				}
+				for (let button of buttons) {
+					attach.appendChild(button);
+				}
+
+
+			}
+		});
+		console.log("inputVals2은: ", inputVals)
+
+
+		// input값 가져오는 이벤트
+		// 입력 값을 저장할 배열
+		let inputValues = [];
+		function getInputValue(parentElement, checkButtonElement, inputElement) {
+			let val = inputElement.value;
+
+			let finishBt = document.createElement('button');
+			finishBt.textContent = val;
+			console.log("얌얌 ", finishBt.textContent)
+			finishBt.id = 'time-style';
+
+			checkButtonElement.style.display = 'none';
+			inputElement.style.display = 'none';
+
+			items.push(val);
+
+			items.sort(function (a, b) {
+				return new Date('1970/01/01 ' + a) - new Date('1970/01/01 ' + b);
+			});
+
+			parentElement.appendChild(finishBt);
+
+			let timeItems = Array.from(parentElement.querySelectorAll("[id^='time-style']"));
+
+			// 화면상의 모든 버튼을 다시 불러와서 시간 순서대로 정렬
+			timeItems.sort((a, b) => {
+				return new Date(`1970/01/01 ${a.textContent}`) - new Date(`1970/01/01 ${b.textContent}`);
+			});
+
+			parentElement.innerHTML = ''; // 부모 요소의 모든 자식 요소를 제거
+
+			for (let i = 0; i < timeItems.length; i++) {
+				parentElement.appendChild(timeItems[i]); // 정렬된 버튼들을 다시 추가
+			}
+
+			finishBt.addEventListener('click', function (event) {
+				inputElement.value = val;
+				inputElement.style.display = '';
+				checkButtonElement.style.display = '';
+				this.remove();
+
+				let index = items.indexOf(this.textContent);
+
+				if (index > -1) {
+					items.splice(index, 1);
+					inputValues.splice(inputValues.indexOf(val), 1); // 추가: inputValues 배열에도 값 제거
+				}
+
+				console.log("여긴가?1 ", items);
+
+			});
+			console.log("이건뭘까 ", inputElement.value);
+
+			console.log("여긴가?2 ", items);
+		}
+
+
+		function copyItems() {
+			return Array.from(document.querySelectorAll("[id^='time-style']")).map(obj => obj.textContent);
+		}
+
+
+
+
+		// 02.15 공통코드로 수정중
+		function commonButtonEvent(arrbtn) {
+			let address = document.getElementById('attach_btns');
+
+			// 동일시간 존재여부 확인
+			let buttons = [];
+			
+
+			// 버튼생성시, 한번만 이벤트리스너 추가
+			arrbtn.addEventListener('click', function (event) {
+				event.preventDefault();
+
+				// 이전 시간input존재시 제거
+				let oldTimeInput = document.querySelector('.time-input');
+				if (oldTimeInput)
+					oldTimeInput.remove();
+				let oldOkBt = document.querySelector('.ok-button');
+				if (oldOkBt)
+					oldOkBt.remove();
+				let oldcloseBt = document.querySelector('.close-button');
+				if (oldcloseBt)
+					oldcloseBt.remove();
+				// 새 시간 input생성
+				let timeInput = document.createElement('input');
+				timeInput.setAttribute('type', 'time');
+				timeInput.classList.add('time-input');
+
+				// 새 확인 button생성
+				let okbt = document.createElement("button");
+				okbt.setAttribute("class", "okbt");
+				okbt.textContent = "변경";
+				okbt.classList.add('ok-button');
+
+				// arrbtn을 삭제해줄 버튼 생성
+				let closeButton = document.createElement("button");
+				closeButton.classList.add('close-button');
+				closeButton.textContent = "삭제";
+				// arrbtn.appendChild(closeButton);
+
+
+				// 시간 입력값 변경시 실행되는 이벤트리스너
+				okbt.addEventListener('click', function (e) {
+					e.preventDefault();
+					// 동일시간 존재여부 확인
+					let buttons = Array.from(address.querySelectorAll('button:not(.ok-button)'));
+
+					for (let button of buttons) {
+						// 동일시간존재시, 경고표시후 함수종료
+						if (button.value === timeInput.value) {
+							alert("이미 존재하는 시간입니다.");
+							timeInput.style.display = '';
+							return;
+						}
+					}
+					// 동일 시간값 미존재시, 버튼 텍스트와 value값 변경
+					arrbtn.textContent = timeInput.value;
+					arrbtn.value = timeInput.value;
+
+					console.log("!!", timeInput)
+					console.log("!!??!", timeInput.value)
+					console.log("!!!!!", arrbtn.textContent)
+					console.log("?????", arrbtn.value)
+
+					// 변경된 버튼을 배열에 추가
+					buttons.push(arrbtn);
+					console.log("!arrbtn버튼값찍어봐라", timeInput.value);
+					buttons.sort((a, b) => {
+						return a.value.localeCompare(b.value);
+					});
+					console.log("buttons", buttons)
+					for (let i = 0; i < buttons.length; i++) {
+						// console.log('!버튼텍스트찍히나 ' + (i + 1) + ' Text: ' + buttons[i].textContent);
+						console.log('!버튼값찍히나 ' + (i + 1) + ' Value: ' + buttons[i].value);
+					}
+
+					// 기존 모든버튼제거후, 새로 정렬된 버튼 추가
+					while (address.firstChild) {
+						address.removeChild(address.firstChild);
+					}
+					for (let button of buttons) {
+						address.appendChild(button);
+					}
+					// 시간입력input제거
+					timeInput.remove();
+					okbt.remove();
+					closeButton.remove();
+				});
+				closeButton.addEventListener("click", function (e) {
+					e.preventDefault();
+					// 클릭한 arrbtn 삭제
+					arrbtn.remove();
+					timeInput.remove();
+					okbt.remove();
+					closeButton.remove();
+
+					// buttons배열에서 arrbtn제거
+					let index = buttons.indexOf(arrbtn);
+					if (index > -1) {
+						buttons.splice(index, 1);
+					}
+				});
+
+				// 시간입력input을 버튼 다음에 삽입
+				event.target.parentNode.insertBefore(timeInput, event.target.nextSibling);
+				event.target.parentNode.insertBefore(okbt, timeInput.nextSibling);
+				event.target.parentNode.insertBefore(closeButton, okbt.nextSibling);
+
+			});
+
+
+		}
+
+
+		// 추가 10.14 - 새로운 input값 받아온 버튼도 다시 클릭하면 값 변경 가능하게...
+		// 버튼 클릭 이벤트 핸들러를 별도의 함수로 정의
+		// 02.20 매개변수 copiedItems 삭제
+		function handleButtonClick(event) {
+
+			// console.log("allButtons찍기핸들", allButtons)
+			event.preventDefault();
+			let address = document.getElementById('attach_btns');
+			// 02.16
+			// arrbtn값이 class로 안들어가고있음..
+			// let arrbtn = allButtons;
+			let arrbtnArray = document.getElementsByClassName("arrbtn");
+			// 배열로 변환
+			let arrbtn = Array.from(arrbtnArray);
+			console.log("arrbtn찍어보기", arrbtn)
+			if (Array.isArray(arrbtn)) {
+				arrbtn.forEach((btn) => {
+
+					commonButtonEvent(btn);
+				});
+
+			}
+			else {
+				console.log("else")
+			}
+			
+			console.log("어드레스", address.children)
+
+
+		}
+
+
+		console.log("inputVals1은: ", inputVals)
+
+
+
+		// 기존시간값 가져와서 복사한후, 밑에 뿌리는 이벤트
+		function createButtonsFromItems() {
+			let copiedItems = copyItems();
+			copiedItems = copiedItems.concat(inputValues);
+			copiedItems.sort(function (a, b) {
+				return a.localeCompare(b);
+			});
+
+			let address = document.getElementById('attach_btns');
+			console.log("어드레스", address)
+
+			for (let i = 0; i < copiedItems.length; i++) {
+				let arrbtn = document.createElement("button");
+				arrbtn.textContent = copiedItems[i];
+				arrbtn.value = copiedItems[i];
+				arrbtn.classList.add('arrbtn');
+
+
+				commonButtonEvent(arrbtn);
+				allButtons.push(arrbtn);
+				address.appendChild(arrbtn);
+			}
+
+		}
+		createButtonsFromItems();
+
+
+
+		// 버튼들 재정렬하기
+		allButtons.sort((a, b) => a.textContent.localeCompare(b.textContent));
+		let address = document.getElementById('attach_btns');
+		while (address.firstChild) {
+			address.removeChild(address.firstChild);
+		}
+		for (let button of allButtons) {
+			address.appendChild(button);
+			console.log("전역변수 버튼 값: ", button.textContent);
+		}
+		console.log("전역변수 버튼들 ", allButtons)
+
+	});
+
+
+// 아래코드 전부 돔로드로
+
+
+
+	
+	// 저장하기 버튼 클릭시 submit
+	// document.getElementById('save_button').addEventListener('click', function () {
+	// 	if (confirm("저장하시겠습니까?")) {
+	// 		// let allButtons = Array.from(document.querySelectorAll("#attach_btns button"));
+	// 		// let sortedButtons = allButtons.sort((a, b) => a.textContent.localeCompare(b.textContent));
+	// 		// let buttonValues = sortedButtons.map(button => button.textContent);
+
+	// 		// document.getElementById('buttonValues').value = JSON.stringify(buttonValues);
+	// 		// document.getElementById('myForm').submit();
+	// 		activatePost(start, end);
+	// 	}
+	// });
+
+
+</script>

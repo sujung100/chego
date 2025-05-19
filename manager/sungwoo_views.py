@@ -488,14 +488,29 @@ def write(request):
 
         
         selectTime = request.POST.getlist("select_time[]")
+        sort_value = request.POST.get("sort_set")
         for time in selectTime:
             # print(time)
             sts = rsv.Store_times()
             sts.store_id = sto
             sts.reservation_time = time
+            if sort_value == "none":
+                print("선택 안 함")
+                sts.sort_type = None
+            else:
+                print("선택함")
+                sts.sort_type = sort_value
+            print(f"sts.sort_type: {sts.sort_type}")
             sts.save()
+
+    # 폼재전송 방지용 PRG패턴 post -> redirect -> get
+        return redirect('write')
+    else:
+        # GET 요청 처리 (폼을 보여주는 경우)
+        return render(request, 'manager/manager_write.html')
+
     
-    return render(request, 'manager/manager_write.html')
+    # return render(request, 'manager/manager_write.html')
 
 
 def test_chat(request):
@@ -744,10 +759,25 @@ class Update(LoginRequiredMixin, UpdateView):
                 print("스토어네임찍어", store.store_name)
 
             # Store의 pk값과 Store_times의 store_id값과 일치하는 Store_times 가져오기
-            sto_time_objects = rsv.Store_times.objects.filter(store_id=store.pk)
+            # sort_type : 매니저 시간설정 옵션 (null - 모든요일 동일)
+            sto_time_objects = rsv.Store_times.objects.filter(store_id=store.pk, sort_type__isnull=True)
             context['sto_time_objects'] = sto_time_objects
+            # context['wd_time_objects'] = json.dumps(list(wd_time_objects.values('reservation_time')), cls=DjangoJSONEncoder)
+
+            wd_time_objects = rsv.Store_times.objects.filter(store_id=store.pk, sort_type='wd')
+            # context['wd_time_objects'] = wd_time_objects
+            context['wd_time_objects'] = json.dumps(list(wd_time_objects.values('reservation_time')), cls=DjangoJSONEncoder)
+
+            wknd_time_objects = rsv.Store_times.objects.filter(store_id=store.pk, sort_type='wknd')
+            # context['wknd_time_objects'] = wknd_time_objects
+            context['wknd_time_objects'] = json.dumps(list(wknd_time_objects.values('reservation_time')), cls=DjangoJSONEncoder)
+
             print("찍어보자3", sto_time_objects)
             print("찍어보자3-1", sto_time_objects.values)
+            print("찍어보자3-2", wknd_time_objects)
+            print("찍어보자3-3", wknd_time_objects.values)
+            print("찍어보자3-4", wknd_time_objects)
+            print("찍어보자3-5", wknd_time_objects.values)
             
             sto_time_values_list  = {
                 'store_id': store.pk,

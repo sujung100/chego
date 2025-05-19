@@ -366,7 +366,7 @@ input[type='radio']:checked {
   background-color: #616971;
   color: #444;
 }
-.tabs .trapez.active {
+/* .tabs .trapez.active {
   background-color: #fff;
   z-index: 3;
 }
@@ -375,7 +375,7 @@ input[type='radio']:checked {
 .tabs .trapez.active:after {
   background-color: #fff;
   color: #fff;
-}
+} */
 
 
 .tabs > input {
@@ -510,7 +510,7 @@ input[type='radio']:checked {
   border-top: 1px solid #3b3d3f;
   /* background: hsl(232deg 16% 15%); */
   /* background: transparent; */
-  background: #F5F5EE;
+  /* background: #F5F5EE; */
   position: relative;
 }
 

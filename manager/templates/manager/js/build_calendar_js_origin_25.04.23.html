@@ -50,24 +50,24 @@
 
 
   // tab메뉴 스타일적용
-	// document.addEventListener("DOMContentLoaded", function() {
-	// var tabs = document.querySelectorAll('.tabs .trapez');
+	document.addEventListener("DOMContentLoaded", function() {
+	var tabs = document.querySelectorAll('.tabs .trapez');
 
-	// for (var i = 0, len = tabs.length; i < len; i++) {
-	// 	tabs[i].addEventListener("click", function() {
-	// 	if (this.classList.contains('active'))
-	// 		return;
+	for (var i = 0, len = tabs.length; i < len; i++) {
+		tabs[i].addEventListener("click", function() {
+		if (this.classList.contains('active'))
+			return;
 
-	// 	var parent = this.parentNode,
-	// 		innerTabs = parent.querySelectorAll('.trapez');
+		var parent = this.parentNode,
+			innerTabs = parent.querySelectorAll('.trapez');
 
-	// 	for (var index = 0, iLen = innerTabs.length; index < iLen; index++) {
-	// 		innerTabs[index].classList.remove('active');
-	// 	}
+		for (var index = 0, iLen = innerTabs.length; index < iLen; index++) {
+			innerTabs[index].classList.remove('active');
+		}
 
-	// 	this.classList.add('active');
-	// 	});
-	// }
+		this.classList.add('active');
+		});
+	}
 
 
   // const timeContainer = document.getElementById("time-buttons-container");
@@ -90,7 +90,7 @@
   //   timeContainer.appendChild(timeBtn);
   // });
 
-	// });
+	});
 
 
 

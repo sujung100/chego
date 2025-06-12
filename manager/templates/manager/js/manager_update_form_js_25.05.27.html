@@ -295,8 +295,8 @@
 					const attachDivId = 'attachBtns-' + targetConId;
 					console.log("평일attachDivId", attachDivId);
 					const attachDiv = document.getElementById(attachDivId);
-					let wdTimesBt = Array.from(attachDiv.querySelectorAll('button.arrbtn'));
-					let sortedButtons = wdTimesBt.sort((a, b) => a.textContent.localeCompare(b.textContent));
+					let allButtons = Array.from(attachDiv.querySelectorAll('button.arrbtn'));
+					let sortedButtons = allButtons.sort((a, b) => a.textContent.localeCompare(b.textContent));
 					let bv_wd = sortedButtons.map(button => button.textContent);
 					document.getElementById('buttonValues-wd').value = JSON.stringify(bv_wd);
 					console.log("평일json찍어", bv_wd)
@@ -309,8 +309,8 @@
 					const attachDivId = 'attachBtns-' + targetConId;
 					console.log("주말attachDivId", attachDivId);
 					const attachDiv = document.getElementById(attachDivId);
-					let wkndTimesBt = Array.from(attachDiv.querySelectorAll('button.arrbtn'));
-					let sortedButtons = wkndTimesBt.sort((a, b) => a.textContent.localeCompare(b.textContent));
+					let allButtons = Array.from(attachDiv.querySelectorAll('button.arrbtn'));
+					let sortedButtons = allButtons.sort((a, b) => a.textContent.localeCompare(b.textContent));
 					let bv_wknd = sortedButtons.map(button => button.textContent);
 					document.getElementById('buttonValues-wknd').value = JSON.stringify(bv_wknd);
 					console.log("주말json찍어", bv_wknd)
@@ -338,14 +338,8 @@
 
 		// 기존시간값 가져와서 복사한후, 밑에 뿌리는 이벤트
 		function createBtsWd() {
-			const containerId = 'timeBtsCon-wd'
 			let copiedItems = copyItemsWd();
-			const currentSectionData = sectionData[containerId];
-			let currentValues = currentSectionData.inputValues;
-			console.log("크리에이트안에서1", currentValues);
-			copiedItems = copiedItems.concat(currentValues);
-
-
+			copiedItems = copiedItems.concat(inputValues);
 			copiedItems.sort(function (a, b) {
 				return a.localeCompare(b);
 			});
@@ -361,7 +355,7 @@
 
 
 				commonButtonEvent(arrbtn);
-				wdTimesBt.push(arrbtn);
+				allButtons.push(arrbtn);
 				address.appendChild(arrbtn);
 			}
 
@@ -370,16 +364,8 @@
 
 		// 기존시간값 가져와서 복사한후, 밑에 뿌리는 이벤트
 		function createBtsWknd() {
-
-			const containerId = 'timeBtsCon-wknd'
 			let copiedItems = copyItemsWknd();
-			const currentSectionData = sectionData[containerId];
-			let currentValues = currentSectionData.inputValues;
-			console.log("크리에이트안에서2", currentValues);
-			copiedItems = copiedItems.concat(currentValues);
-
-
-
+			copiedItems = copiedItems.concat(inputValues);
 			copiedItems.sort(function (a, b) {
 				return a.localeCompare(b);
 			});
@@ -395,12 +381,12 @@
 
 
 				commonButtonEvent(arrbtn);
-				wkndTimesBt.push(arrbtn);
+				allButtons.push(arrbtn);
 				address.appendChild(arrbtn);
 			}
 
 		}
-		createBtsWknd();
+		copyItemsWknd();
 
 		// 버튼들 재정렬
 		function resortingAllBts(attachDivId) {
@@ -431,9 +417,9 @@
 
 
 	});
-	// ////////////////items없애기
 	
-	// let items = Array.prototype.slice.call(document.querySelectorAll("[class^='time-innerbox']"), 0).map(function (obj) { return obj.textContent });
+	
+	let items = Array.prototype.slice.call(document.querySelectorAll("[class^='time-innerbox']"), 0).map(function (obj) { return obj.textContent });
 	// +버튼 누르면 시작
 	// let items = Array.prototype.slice.call(document.querySelectorAll("[id^='time-style']"), 0).map(function (obj) { return obj.textContent });
 	// console.log("items", items);
@@ -442,20 +428,11 @@
 
 
 	// "+"버튼 클릭시 이벤트
-	// let inputVals = [];
+	let inputVals = [];
 	function plusBtnClick(event) {
-		const clickedButton = event.target;
-		let parentElement = clickedButton.parentNode;
+		let parentElement = event.target.parentNode;
 		console.log("parentElement보여줘", parentElement)
-		console.log("이벤트타겟보여줘", clickedButton)
-
-		const containerId = parentElement.dataset.containerId;
-		const matchingVal = sectionData[containerId]?.inputValues;
-
-		if (!matchingVal) {
-			console.error(`"${containerId}"오류`);
-			return;
-		}
+		console.log("이벤트타겟보여줘", event.target)
 
 		let addInput = document.createElement("input");
 		addInput.setAttribute("type", "time");
@@ -464,34 +441,22 @@
 		let checkbt = document.createElement("button");
 		checkbt.setAttribute("class", "checkbt");
 		checkbt.textContent = "확인";
-		checkbt.dataset.containerId = containerId;
 
-		parentElement.insertBefore(addInput, clickedButton.nextSibling);
+		parentElement.insertBefore(addInput, event.target.nextSibling);
 		parentElement.insertBefore(checkbt, addInput.nextSibling);
 
-		clickedButton.style.display = "none";
+		event.target.style.display = "none";
 
 		checkbt.addEventListener('click', function (event) {
 			event.preventDefault();
-
-			const clickedCB = event.target;
-			const currentId = clickedCB.dataset.containerId;
-			const targetInputVal = sectionData[currentId]?.inputValues;	
-
-			if (!targetInputVal) {
-				console.error(`"${currentContainerId}"오류`);
-				return;
-			}
-
-
 			let val = addInput.value;
 
-			if (targetInputVal.includes(val)) {
+			if (inputVals.includes(val)) {
 				alert("중복된 시간입니다. 다른 시간을 입력해주세요.");
 				return;
 			}
 
-			targetInputVal.push(val);
+			inputVals.push(val);
 
 			// Add button의 데이터 속성에서 pk와 store_id 값 가져오기
 			let pk = parentElement.dataset.pk;
@@ -502,8 +467,7 @@
 			console.log("찍어라", parentElement.dataset);
 
 
-			getInputValue(parentElement, checkbt, addInput, containerId);
-			// console.log("애프터★", targetInputVal);
+			getInputValue(parentElement, checkbt, addInput);
 
 			// "+" 버튼 추가
 			let newAddBtn = document.createElement("button");
@@ -535,13 +499,12 @@
 	
 	// "추가하기" 버튼 클릭시 이벤트
 	// 기존 시간표랑 같이 정렬하기 위한 전역변수
-	// let allButtons = [];
+	let allButtons = [];
 	document.addEventListener('click', function (event) {
 		if (event.target.matches('.addTime')) {
 			let addtimeId = event.target.id;
 			// const clickedButton = event.target;
     		const containerId = event.target.dataset.containerId;
-			const targetInputVal = sectionData[containerId]?.inputValues;	
 			// console.log("이벤트타겟 찍어봐", clickedButton)
 			console.log("콘아", containerId);
 			event.preventDefault();
@@ -557,16 +520,17 @@
 				return;
 			}
 
-			// if (!Array.isArray(inputVals)) {
-			// 	console.error("inputVals오류");
-			// 	return;
-			// }
+			if (!Array.isArray(inputVals)) {
+				console.error("inputVals오류");
+				return;
+			}
 
 			const containerTime = Array.from(attach.querySelectorAll('button.arrbtn')).map(button => button.textContent);
+        	console.log(`${attach}의 시간들`, containerTime);
 
 
 			// inputVals 배열의 모든 값으로 새로운 버튼 생성
-			targetInputVal.forEach(function (val) {
+			inputVals.forEach(function (val) {
 				
 				const newTimeValue = val;
 				console.log("처리할 새로운 시간:", newTimeValue);
@@ -622,20 +586,18 @@
 
 				// });
 			});
-			// console.log("인풋바 ", inputVals);
+			console.log("인풋바 ", inputVals);
 			// console.log("전역변수 버튼들 ", allButtons);
-			console.log("추가후 정렬", containerTime);
 
 
 
 			// 추가-10.14 추가하기누를때 정렬하기
 			let buttons = Array.from(attach.querySelectorAll('button'));
 
-			const parentId = "btnwrap-" + containerId;
-			let findParent = document.getElementById(parentId);
-			let finishBtns = Array.from(findParent.querySelectorAll("[class^='time-innerbox']"));
+			// finishBt 요소 제거하기 - 10.16
+			// /////// timestyle수정
+			let finishBtns = Array.from(document.querySelectorAll('.time-innerbox'));
 			finishBtns.forEach(btn => btn.remove());
-			
 
 
 			buttons.sort((a, b) => {
@@ -651,40 +613,29 @@
 
 		}
 	});
-	// console.log("inputVals2은: ", inputVals)
+	console.log("inputVals2은: ", inputVals)
 
 
 	// input값 가져오는 이벤트
 	// 입력 값을 저장할 배열
-	// let inputValues = [];
-	const sectionData = {
-		'timeBtsCon-wd': {
-			inputValues: [],
-		},
-		'timeBtsCon-wknd': {
-			inputValues: [],
-		}
-	};
-
-	function getInputValue(parentElement, checkButtonElement, inputElement, containerId) {
-
-		const targetInputVal = sectionData[containerId]?.inputValues;
+	let inputValues = [];
+	function getInputValue(parentElement, checkButtonElement, inputElement) {
 		let val = inputElement.value;
+
 		let finishBt = document.createElement('button');
 		finishBt.textContent = val;
-		console.log("finishBt ", finishBt.textContent)
+		console.log("얌얌 ", finishBt.textContent)
 		// finishBt.id = 'time-style';
 		finishBt.className = `time-innerbox-${storeId}`;
 
 		checkButtonElement.style.display = 'none';
 		inputElement.style.display = 'none';
 
-		console.log("부모요소", parentElement);
-		// items.push(val);
+		items.push(val);
 
-		// items.sort(function (a, b) {
-		// 	return new Date('1970/01/01 ' + a) - new Date('1970/01/01 ' + b);
-		// });
+		items.sort(function (a, b) {
+			return new Date('1970/01/01 ' + a) - new Date('1970/01/01 ' + b);
+		});
 
 		parentElement.appendChild(finishBt);
 
@@ -700,53 +651,26 @@
 		for (let i = 0; i < timeItems.length; i++) {
 			parentElement.appendChild(timeItems[i]); // 정렬된 버튼들을 다시 추가
 		}
-		console.log("비포★", sectionData);
-
-		removeValBtns = [];
 
 		finishBt.addEventListener('click', function (event) {
-
-			const removeVal = inputElement.value; // 또는 const removeVal = val; 사용 가능 (val이 정의되어 있다면)
-			removeValBtns.push(removeVal);
-			console.log("삭제될 버튼들", removeValBtns)
-
-			if (Array.isArray(targetInputVal)) {
-				const addVal = targetInputVal.filter(item => !removeValBtns.includes(item));
-				console.log("검증", addVal);
-
-				if (sectionData && sectionData[containerId]) {
-					sectionData[containerId].inputValues = addVal;
-					console.log(`'${removeValBtns}' 값을 targetInputVal(sectionData)에서 삭제.`, sectionData[containerId].inputValues);
-				} else {
-					targetInputVal = addVal;
-					console.log(`'${removeValBtns}' 값을 targetInputVal 변수에서 삭제.`, targetInputVal);
-				}
-				console.log("중간★", sectionData);
-			} else {
-				console.warn("targetInputVal오류");
-			}
-
-
 			inputElement.value = val;
-			// inputElement.value = "";
 			inputElement.style.display = '';
 			checkButtonElement.style.display = '';
-			console.log("인풋밸류", inputElement.value);
-			console.log("디스찍어봐", this);
 			this.remove();
 
-			// let index = items.indexOf(this.textContent);
+			let index = items.indexOf(this.textContent);
 
-			// if (index > -1) {
-			// 	items.splice(index, 1);
-			// 	targetInputVal.splice(targetInputVal.indexOf(val), 1); // 추가: targetInputVal 배열에도 값 제거
-			// }
-			
-			
+			if (index > -1) {
+				items.splice(index, 1);
+				inputValues.splice(inputValues.indexOf(val), 1); // 추가: inputValues 배열에도 값 제거
+			}
+
+			console.log("여긴가?1 ", items);
+
 		});
-		console.log("애프터★", sectionData);
-		
-		console.log("삭제됐나", finishBt);
+		console.log("이건뭘까 ", inputElement.value);
+
+		console.log("여긴가?2 ", items);
 	}
 
 
@@ -938,7 +862,7 @@
 	// }
 
 
-	// console.log("inputVals1은: ", inputVals)
+	console.log("inputVals1은: ", inputVals)
 
 
 

@@ -414,6 +414,25 @@ input[type='radio']:checked {
   border-radius: 0 0 10px 10px;
 }
 
+/* 평일주말 */
+
+.divide-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.divide-wrap > div {
+  width: 8rem;
+  margin: 1rem 0.5rem;
+  border: 1px solid #e1e1e1;
+  border-radius: 13px;
+  padding: 1rem 2rem;
+}
+.divide-wrap .st-time hr {
+  width: 100%;
+  border: 1px dashed #e1e1e1;
+}
+
 /* 탭 색상 */
 /* #tab-1:checked ~ .tab1, .tab1, .tab1.active:before, .tab1.active:after {
   background-color: #8547ff;

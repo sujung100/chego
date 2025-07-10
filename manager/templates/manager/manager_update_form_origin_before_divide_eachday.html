@@ -77,7 +77,7 @@
                 </div>
                 <hr>
                 <div class="bottom_cont">
-                  <!-- <div class="b_l"> -->
+                  <div class="b_l">
                     <!-- <span>달력들어갈자리</span> -->
                     <!-- <div class="mid">
           
@@ -128,7 +128,7 @@
                     <input type="hidden" id="selected_date" name="selected_date">
                     <span id="disable_date_start"></span>
                     <span id="disable_date_end"></span> -->
-                  <!-- </div> -->
+                  </div>
                   <div class="b_r">
                     <!-- <div class="showtime">
                       <div class="store-table">
@@ -340,10 +340,6 @@
                                       <div class="div-width">
                                           <p>매일 동일</p>
                                           <span>예약시간을 매일 동일하게 설정합니다.</span>
-                                          <div class="showtime1" style="display: none;">
-
-                                            <div><button class="chgSave">변경사항 전체 저장</button></div>
-                                          </div>
                                       </div>
                                   </label>
                                   <label for="diff_weekend">
@@ -351,7 +347,7 @@
                                       <div class="div-width">
                                         <p>평일/주말</p>
                                         <span>예약시간을 평일과 주말이 다르게 설정합니다.</span>
-                                        <div class="showtime2" style="display: none;">
+                                        <div class="showtime" style="display: none;">
                                           <div class="store-table">
                                             <div class="st-name">
                                               <div class="st-id">{{ store.id }}</div>
@@ -415,7 +411,6 @@
                                                 </div>
                                               </div>
                                             </div>
-                                            <div><button class="chgSave">변경사항 전체 저장</button></div>
 
 
                                           </div>
@@ -427,109 +422,6 @@
                                       <div class="div-width">
                                           <p>요일별 개별설정</p>
                                           <span>예약시간을 요일별로 다르게 설정합니다.</span>
-                                          <div class="showtime3" style="display: none;">
-                                            <div class="store-table">
-                                              <div class="st-name">
-                                                <div class="st-id">{{ store.id }}</div>
-                                                {{store.store_name }}
-                                              </div>
-                                              
-
-
-                                              <div class="total-days-wrap">
-                                                <div class="days-wrap">
-                                                  <div class="mon">
-                                                    <div class="st-time">
-                                                      <div>월요일</div>
-                                                      <hr>
-                                                      <div id="timeBtsCon-1">
-                                                        <input type="time" id="new-time-input-1" style="display: none;">
-                                                        <button id="add-time-check-1" style="display: none;">확인</button>
-                                                        <input type="hidden" id="buttonValues-1" name="button_values">
-                                                      </div>
-                                                      <div id="1-container"></div>
-                                                    </div>
-                                                  </div>
-                                                  <div class="tue">
-                                                    <div class="st-time">
-                                                      <div>화요일</div>
-                                                      <hr>
-                                                      <div id="timeBtsCon-2">
-                                                        <input type="time" id="new-time-input-2" style="display: none;">
-                                                        <button id="add-time-check-2" style="display: none;">확인</button>
-                                                        <input type="hidden" id="buttonValues-2" name="button_values">
-                                                      </div>
-                                                      <div id="2-container"></div>
-                                                    </div>
-                                                  </div>
-                                                  <div class="wed">
-                                                    <div class="st-time">
-                                                      <div>수요일</div>
-                                                      <hr>
-                                                      <div id="timeBtsCon-3">
-                                                        <input type="time" id="new-time-input-3" style="display: none;">
-                                                        <button id="add-time-check-3" style="display: none;">확인</button>
-                                                        <input type="hidden" id="buttonValues-3" name="button_values">
-                                                      </div>
-                                                      <div id="3-container"></div>
-                                                    </div>
-                                                  </div>
-                                                  <div class="thu">
-                                                    <div class="st-time">
-                                                      <div>목요일</div>
-                                                      <hr>
-                                                      <div id="timeBtsCon-4">
-                                                        <input type="time" id="new-time-input-4" style="display: none;">
-                                                        <button id="add-time-check-4" style="display: none;">확인</button>
-                                                        <input type="hidden" id="buttonValues-4" name="button_values">
-                                                      </div>
-                                                      <div id="4-container"></div>
-                                                    </div>
-                                                  </div>
-                                                  <div class="fri">
-                                                    <div class="st-time">
-                                                      <div>금요일</div>
-                                                      <hr>
-                                                      <div id="timeBtsCon-5">
-                                                        <input type="time" id="new-time-input-5" style="display: none;">
-                                                        <button id="add-time-check-5" style="display: none;">확인</button>
-                                                        <input type="hidden" id="buttonValues-5" name="button_values">
-                                                      </div>
-                                                      <div id="5-container"></div>
-                                                    </div>
-                                                  </div>
-                                                  <div class="sat">
-                                                    <div class="st-time">
-                                                      <div>토요일</div>
-                                                      <hr>
-                                                      <div id="timeBtsCon-6">
-                                                        <input type="time" id="new-time-input-6" style="display: none;">
-                                                        <button id="add-time-check-6" style="display: none;">확인</button>
-                                                        <input type="hidden" id="buttonValues-6" name="button_values">
-                                                      </div>
-                                                      <div id="6-container"></div>
-                                                    </div>
-                                                  </div>
-                                                  <div class="sun">
-                                                    <div class="st-time">
-                                                      <div>일요일</div>
-                                                      <hr>
-                                                      <div id="timeBtsCon-7">
-                                                        <input type="time" id="new-time-input-7" style="display: none;">
-                                                        <button id="add-time-check-7" style="display: none;">확인</button>
-                                                        <input type="hidden" id="buttonValues-7" name="button_values">
-                                                      </div>
-                                                      <div id="7-container"></div>
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                              
-
-
-                                            </div>
-                                            <div><button class="chgSave">변경사항 전체 저장</button></div>
-                                          </div>
                                       </div>
                                   </label>
                                 </div>

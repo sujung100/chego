@@ -37,8 +37,7 @@
     	}
 	}
 
-	// same_allday = document.getElementById("same_allday")
-	const same_allday = document.querySelector("#same_allday");
+	same_allday = document.getElementById("same_allday")
 	const goBackToRadio = document.querySelector(".goback-to-radio");
 	const divideWeekend = document.querySelector("#diff_weekend");
 	const diffAllday = document.querySelector("#diff_allday");
@@ -73,8 +72,6 @@
 		// console.log("다시찍어", changeSave);
 
 		const target_p = event.target.parentElement
-		const showtime1 = document.querySelector(".showtime1");
-		showtime1.style.display = 'block';
 		hideSiblings(target_p);
 		if (goBackToRadio) {
 			goBackToRadio.style.display = 'block';
@@ -179,12 +176,9 @@
 	const managerPk = "{{ manager.pk }}";
 	// const wdTimeObjects = 템 wd_time_objects|safe 템;
 	// const wkndTimeObjects = 템 wknd_time_objects|safe 템;
-	const initialSameTimeObjects = {{ sto_time_objects|safe }};
 	const initialWdTimeObjects = {{ wd_time_objects|safe }};
 	const initialWkndTimeObjects = {{ wknd_time_objects|safe }};
 
-	// 순서대로 매일동일/ 평일 /주말 /요일별(기존값 불러오지않음)
-	let currentSameTimes = initialSameTimeObjects.map(time => time.reservation_time);
 	let currentWdTimes = initialWdTimeObjects.map(time => time.reservation_time);
     let currentWkndTimes = initialWkndTimeObjects.map(time => time.reservation_time);
 	let newEachDayTimes = [];
@@ -274,8 +268,6 @@
 		timeBtsCon.appendChild(fragment);
     }
 
-
-
 	// 변경사항저장 초기셋팅
 	let changeSave = {};
 
@@ -283,9 +275,6 @@
 	function resetChangeSave (){
 		console.log("★resetChangeSave 함수 시작★");
 		changeSave = {
-			'same': {
-				times: [],
-			},
 			'wd': {
 				times: [],
 			},
@@ -305,7 +294,6 @@
 	document.addEventListener("DOMContentLoaded", function() {
 		
 		// 초기 요소 생성 - DB시간값/ 아이디값/ storeId/ managerPk 전달
-		setupTimeSection(currentSameTimes, 'timeBtsCon-same', storeId, managerPk);
 		setupTimeSection(currentWdTimes, 'timeBtsCon-wd', storeId, managerPk);
 		setupTimeSection(currentWkndTimes, 'timeBtsCon-wknd', storeId, managerPk);
 		
@@ -362,136 +350,78 @@
 		// 	});
 		// });
 
-		function clearButton(containerId) {
-			const container = document.getElementById(containerId);
-			if (container) {
-				const buttonsToRemove = container.querySelectorAll('button.arrbtn');
-				Array.from(buttonsToRemove).forEach(button => button.remove());
-				console.log("삭제완료");
-				console.log(`${containerId}안 버튼 삭제완료`);
-				// location.reload();
-				// setSectionData();
-				// console.log("배열도 삭제완료", sectionData);
-			} else {
-				console.warn("컨테이너없음");
-			}
-	}
-
 
 		const saveButtons = document.querySelectorAll('button.chgSave');
 		console.log("세이브버튼", saveButtons)
-		// 저장될 값
-		let saveVal;
+
 
 		// 변경사항 저장- 수정중
 		saveButtons.forEach(function(button) {
 			button.addEventListener('click', function(event) {
 				console.log("세이브버튼클릭", event.target)
+				// const clickedBtId = event.target.id;
+				// console.log("클릭아이디0",clickedBtId)
+
+				// let targetConId;
+				// let conGroup = clickedBtId.slice(19)
+				// console.log("conGroup찍어", conGroup);
+				// console.log("이벤타겟찍어", event.target)
+				// if (conGroup === 'wd' ||conGroup === 'wknd' ) {
+				// 	console.log("맞음")
+				// }
 				
 				// 변경사항 저장 초기화
 				resetChangeSave();
+				// wk,wknd,1-7의 시간값을 이중배열로 저장?
 				console.log("초기화 후/ 체인지세이브" ,changeSave);
-				// 변경사항 저장 버튼 타입
-				const clickedButtonType = event.target.dataset.type; 
-        		console.log(`타입출력: ${clickedButtonType}`);
+				// let each7Vals = [];
+				let btnsparents = document.querySelectorAll("[id^='attachBtns-timeBtsCon-']")
+				btnsparents.forEach(bp => {
+					let bpFullId = bp.id;
+					let bpSplit = bpFullId.split('-');
+					let eachId = bpSplit[bpSplit.length - 1];
+					// console.log("eachId찍어뵈", eachId);
 
-				if (clickedButtonType === "allsame_group") {
-					console.log('SAME 그룹 저장');
-					const sameSectionElement = document.getElementById('attachBtns-timeBtsCon-same');
-					if (sameSectionElement) {
-						const sameTimesButtons = Array.from(sameSectionElement.querySelectorAll('button.arrbtn'));
-						changeSave.same.times = sameTimesButtons.map(button => button.textContent).sort();
-						console.log('SAME업데이트:', changeSave.same.times);
-						// console.log("모든 처리 후/ 체인지세이브 (최종):", JSON.parse(JSON.stringify(changeSave))); 
-						// saveVal = JSON.parse(JSON.stringify(changeSave));
-					}
+					// const attachDiv = document.getElementById(eachId);
+					if(eachId == "wd"){
+						let wdTimesBt = Array.from(bp.querySelectorAll('button.arrbtn'));
+						let sortedButtons = wdTimesBt.sort((a, b) => a.textContent.localeCompare(b.textContent));
+						let bv_wd = sortedButtons.map(button => button.textContent);
+						// document.getElementById('buttonValues-wd').value = JSON.stringify(bv_wd);
+						// console.log("평일json찍어", bv_wd)
 
-					console.log("모든 처리 후/ 체인지세이브 (최종):", JSON.parse(JSON.stringify(changeSave))); 
-					saveVal = JSON.parse(JSON.stringify(changeSave));
-
-					alert("변경되었습니다.");
-					clearButton('attachBtns-timeBtsCon-same');
-					
-					setSectionData();
-					console.log("배열도 삭제완료", sectionData);
-					console.log("아까제이슨은?", saveVal);
-					
-
-				} else if (clickedButtonType === "day_group") {
-					console.log('WD/WKND 그룹 저장');
-					const wdSectionElement = document.getElementById('attachBtns-timeBtsCon-wd');
-					if (wdSectionElement) {
-						const wdTimesButtons = Array.from(wdSectionElement.querySelectorAll('button.arrbtn'));
-						changeSave.wd.times = wdTimesButtons.map(button => button.textContent).sort();
-						console.log('WD업데이트:', changeSave.wd.times);
-						// console.log("모든 처리 후/ 체인지세이브 (최종):", JSON.parse(JSON.stringify(changeSave))); 
-						// saveVal = JSON.parse(JSON.stringify(changeSave));
-					}
-
-					const wkndSectionElement = document.getElementById('attachBtns-timeBtsCon-wknd');
-					if (wkndSectionElement) {
-						const wkndTimesButtons = Array.from(wkndSectionElement.querySelectorAll('button.arrbtn'));
-						changeSave.wknd.times = wkndTimesButtons.map(button => button.textContent).sort();
-						console.log('WKND업데이트:', changeSave.wknd.times);
-						// console.log("모든 처리 후/ 체인지세이브 (최종):", JSON.parse(JSON.stringify(changeSave)));
-						// saveVal = JSON.parse(JSON.stringify(changeSave));
-					}
-
-					console.log("모든 처리 후/ 체인지세이브 (최종):", JSON.parse(JSON.stringify(changeSave)));
-					saveVal = JSON.parse(JSON.stringify(changeSave));
-					
-					alert("변경되었습니다.");
-					clearButton('attachBtns-timeBtsCon-wd');
-					clearButton('attachBtns-timeBtsCon-wknd');
-					
-					setSectionData();
-					console.log("배열도 삭제완료", sectionData);
-					console.log("아까제이슨은?", saveVal);
-
-				} else if (clickedButtonType === "each_day_group") {
-					console.log('월to금 그룹 저장');
-					for (let i = 1; i <= 7; i++) {
-						const eachDayId = i.toString();
-						const daySectionElement = document.getElementById(`attachBtns-timeBtsCon-${eachDayId}`);
-						if (daySectionElement) {
-							const dayTimesButtons = Array.from(daySectionElement.querySelectorAll('button.arrbtn'));
-							if (dayTimesButtons.length > 0) {
-								changeSave[eachDayId].times = dayTimesButtons.map(button => button.textContent).sort();
-								console.log(`${eachDayId}번째요일 업데이트됨:`, changeSave[eachDayId].times);
-							} else {
-								console.log(`${eachDayId}번째요일 값없음`);
-							}
-						}
-						clearButton(`attachBtns-timeBtsCon-${i}`);
-					}
-					alert("변경되었습니다.");
-					console.log("모든 처리 후/ 체인지세이브 (최종):", JSON.parse(JSON.stringify(changeSave))); 
-					saveVal = JSON.parse(JSON.stringify(changeSave));
-
-					setSectionData();
-					console.log("배열도 삭제완료", sectionData);
-					console.log("아까제이슨은?", saveVal);
-
-					// if(eachId == "wd"){
-					// 	let wdTimesBt = Array.from(bp.querySelectorAll('button.arrbtn'));
-					// 	let sortedButtons = wdTimesBt.sort((a, b) => a.textContent.localeCompare(b.textContent));
-					// 	let bv_wd = sortedButtons.map(button => button.textContent);
-					// 	changeSave[eachId].times = bv_wd;
+						// console.log("평일",bv_wd);
+						// bv_each = changeSave[eachId]?.times;
+						// each7Vals.push(bv_each);
+						changeSave[eachId].times = bv_wd;
+						// console.log("이거부터찍어봐1",wdTimesBt);
+						// console.log("체세1-wd",changeSave);
+						
 
 
-					// }else if(eachId == "wknd"){
-					// 	let wkndTimesBt = Array.from(bp.querySelectorAll('button.arrbtn'));
-					// 	let sortedButtons = wkndTimesBt.sort((a, b) => a.textContent.localeCompare(b.textContent));
-					// 	let bv_wknd = sortedButtons.map(button => button.textContent);
-					// 	changeSave[eachId].times = bv_wknd;
+					}else if(eachId == "wknd"){
+						let wkndTimesBt = Array.from(bp.querySelectorAll('button.arrbtn'));
+						let sortedButtons = wkndTimesBt.sort((a, b) => a.textContent.localeCompare(b.textContent));
+						let bv_wknd = sortedButtons.map(button => button.textContent);
+						// document.getElementById('buttonValues-wknd').value = JSON.stringify(bv_wknd);
+						// console.log("주말json찍어", bv_wknd)
+						// console.log("주말",bv_wknd);
+						changeSave[eachId].times = bv_wknd;
+						// console.log("이거부터찍어봐2",wkndTimesBt);
+						// console.log("체세2-wknd",changeSave);
 					
 				
-					// }else if(/^[1-7]$/.test(eachId)) {
-					// 	let eachDayTimesBt = Array.from(bp.querySelectorAll('button.arrbtn'));
-					// 	if(eachDayTimesBt) {
-					// 		let sortedButtons = eachDayTimesBt.sort((a, b) => a.textContent.localeCompare(b.textContent));
-					// 		let bv_each = sortedButtons.map(button => button.textContent);
-					// 		changeSave[eachId].times = bv_each;
+					}else if(/^[1-7]$/.test(eachId)) {
+						let eachDayTimesBt = Array.from(bp.querySelectorAll('button.arrbtn'));
+						// console.log("정규표현식 통과", eachDayTimesBt);
+						if(eachDayTimesBt) {
+							let sortedButtons = eachDayTimesBt.sort((a, b) => a.textContent.localeCompare(b.textContent));
+							let bv_each = sortedButtons.map(button => button.textContent);
+							
+							// console.log("개별요일",bv_each);
+							// bv_each = changeSave[eachId]?.times;
+							// each7Vals.push(bv_each);
+							changeSave[eachId].times = bv_each;
 							// console.log("이거부터찍어봐3",eachDayTimesBt);
 							// console.log("체세3-each",changeSave);
 
@@ -512,20 +442,27 @@
 							// 	// document.getElementById('buttonValues-each').value = JSON.stringify(bv_each);
 							// 	// console.log("각각json찍어", bv_wd)
 							// });
-				}else if(!eachDayTimesBt) {
-					console.log("시간버튼 없다면");
-							
-				}else {
-					console.log("Null임")
+						}else if(!eachDayTimesBt) {
+									console.log("시간버튼 없다면");
+									let bv_each = [];
+									console.log("안찍히나",bv_each);
+									
+						}else {
+							console.log("널")
 
-				}
+						}
+						
+					}
+					// console.log("평일json찍어", bv_wd)
+					// console.log("주말json찍어", bv_wknd)
+					// console.log("각각json찍어", bv_each)
 				
-			});
+				});
 
-			// console.log("모든 처리 후/ 체인지세이브 (최종):", JSON.parse(JSON.stringify(changeSave))); 
-			// json변환
-			// let allTimeSavingjson = JSON.stringify(changeSave);
-			// console.log("세이브누르면 json",allTimeSavingjson);
+				console.log("모든 처리 후/ 체인지세이브 (최종):", JSON.parse(JSON.stringify(changeSave))); 
+				// json변환
+				let allTimeSavingjson = JSON.stringify(changeSave);
+				console.log("세이브누르면 json",allTimeSavingjson);
 				// getVal = btnsparents.querySelectorAll()
 
 
@@ -561,19 +498,11 @@
 				// 	console.log("월-일 컨네이너선택");
 				// }
 
-			// });
+			});
 		});
 
 		
 
-		function copyItemsSame() {
-			const sameDiv = document.getElementById("attachBtns-timeBtsCon-same");
-			if (!sameDiv) {
-				console.error(`${sameDiv}없음`);
-				return;
-			}
-			return Array.from(sameDiv.querySelectorAll("[class^='time-innerbox']")).map(obj => obj.textContent);
-		}
 		function copyItemsWd() {
 			const wdDiv = document.getElementById("attachBtns-timeBtsCon-wd");
 			if (!wdDiv) {
@@ -592,38 +521,6 @@
 		}
 
 		// 기존시간값 가져와서 복사한후, 밑에 뿌리는 이벤트
-		function createBtsSame() {
-			const containerId = 'timeBtsCon-same'
-			let copiedItems = copyItemsSame();
-			const currentSectionData = sectionData[containerId];
-			let currentValues = currentSectionData.inputValues;
-			console.log("크리에이트안에서0", currentValues);
-			copiedItems = copiedItems.concat(currentValues);
-
-
-			copiedItems.sort(function (a, b) {
-				return a.localeCompare(b);
-			});
-
-			// let address = document.getElementById('attachBtns');
-			let address = document.getElementById('attachBtns-timeBtsCon-same');
-
-			for (let i = 0; i < copiedItems.length; i++) {
-				let arrbtn = document.createElement("button");
-				arrbtn.textContent = copiedItems[i];
-				arrbtn.value = copiedItems[i];
-				arrbtn.classList.add('arrbtn');
-
-
-				commonButtonEvent(arrbtn);
-				wdTimesBt.push(arrbtn);
-				address.appendChild(arrbtn);
-			}
-
-		}
-		createBtsSame();
-
-
 		function createBtsWd() {
 			const containerId = 'timeBtsCon-wd'
 			let copiedItems = copyItemsWd();
@@ -655,7 +552,7 @@
 		}
 		createBtsWd();
 
-
+		// 기존시간값 가져와서 복사한후, 밑에 뿌리는 이벤트
 		function createBtsWknd() {
 
 			const containerId = 'timeBtsCon-wknd'
@@ -713,7 +610,6 @@
 		}
 
 		// 문자열을 변수로 전달
-		resortingAllBts('attachBtns-timeBtsCon-same');
 		resortingAllBts('attachBtns-timeBtsCon-wd');
 		resortingAllBts('attachBtns-timeBtsCon-wknd');
 		for (let i = 1; i <= 7; i++) {
@@ -835,7 +731,6 @@
 			let targetInputVal = sectionData[containerId]?.inputValues;	
 			// console.log("이벤트타겟 찍어봐", clickedButton)
 			console.log("콘아", containerId);
-			console.log("들어있는 값 찍어", targetInputVal);
 			event.preventDefault();
 
 			// #attachBtns 요소 찾기
@@ -955,9 +850,6 @@
 	// const sectionData = {
 	function setSectionData() {
 		sectionData = {
-			'timeBtsCon-same': {
-				inputValues: [],
-			},
 			'timeBtsCon-wd': {
 				inputValues: [],
 			},

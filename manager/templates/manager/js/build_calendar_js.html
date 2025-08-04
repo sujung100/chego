@@ -220,11 +220,11 @@
           tabSelectors[activeTabIndex + 1].checked = true; // 다음 탭 선택
           
           // trapez 스타일 업데이트 (선택된 탭에 'active' 클래스 추가, 나머지는 제거)
-          for (let i = 0; i < tabs.length; i++) {
+          for (let i = 0; i < tabSelectors.length; i++) {
               if (i === activeTabIndex + 1) {
-                  tabs[i].classList.add('active');
+                  tabSelectors[i].classList.add('active');
               } else {
-                  tabs[i].classList.remove('active');
+                  tabSelectors[i].classList.remove('active');
               }
           }
         }

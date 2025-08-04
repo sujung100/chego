@@ -761,8 +761,8 @@ class Update(LoginRequiredMixin, UpdateView):
             # Store의 pk값과 Store_times의 store_id값과 일치하는 Store_times 가져오기
             # sort_type : 매니저 시간설정 옵션 (null - 모든요일 동일)
             sto_time_objects = rsv.Store_times.objects.filter(store_id=store.pk, sort_type__isnull=True)
-            context['sto_time_objects'] = sto_time_objects
-            # context['wd_time_objects'] = json.dumps(list(wd_time_objects.values('reservation_time')), cls=DjangoJSONEncoder)
+            # context['sto_time_objects'] = sto_time_objects
+            context['sto_time_objects'] = json.dumps(list(sto_time_objects.values('reservation_time')), cls=DjangoJSONEncoder)
 
             wd_time_objects = rsv.Store_times.objects.filter(store_id=store.pk, sort_type='wd')
             # context['wd_time_objects'] = wd_time_objects

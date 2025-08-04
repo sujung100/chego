@@ -341,8 +341,26 @@
                                           <p>매일 동일</p>
                                           <span>예약시간을 매일 동일하게 설정합니다.</span>
                                           <div class="showtime1" style="display: none;">
-
-                                            <div><button class="chgSave">변경사항 전체 저장</button></div>
+                                            <div class="store-table">
+                                              <div class="st-name">
+                                                <div class="st-id">{{ store.id }}</div>
+                                                {{store.store_name }}
+                                              </div>
+                                              <div class="divide-wrap">
+                                                <div class="st-time">
+                                                  <br>
+                                                  <div>매일</div>
+                                                  <hr>
+                                                  <div id="timeBtsCon-same">
+                                                    <input type="time" id="new-time-input-same" style="display: none;">
+                                                    <button id="add-time-check-same" style="display: none;">확인</button>
+                                                    <input type="hidden" id="buttonValues-same" name="button_values">
+                                                  </div>
+                                                  <div id="same-container"></div>
+                                                </div>
+                                              </div>
+                                              <div><button class="chgSave" data-type="allsame_group">변경사항 전체 저장</button></div>
+                                            </div>
                                           </div>
                                       </div>
                                   </label>
@@ -415,7 +433,7 @@
                                                 </div>
                                               </div>
                                             </div>
-                                            <div><button class="chgSave">변경사항 전체 저장</button></div>
+                                            <div><button class="chgSave" data-type="day_group">변경사항 전체 저장</button></div>
 
 
                                           </div>
@@ -528,7 +546,7 @@
 
 
                                             </div>
-                                            <div><button class="chgSave">변경사항 전체 저장</button></div>
+                                            <div><button class="chgSave" data-type="each_day_group">변경사항 전체 저장</button></div>
                                           </div>
                                       </div>
                                   </label>

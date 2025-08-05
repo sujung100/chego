@@ -615,7 +615,7 @@
 				arrbtn.classList.add('arrbtn');
 
 
-				commonButtonEvent(arrbtn);
+				// commonButtonEvent(arrbtn);
 				wdTimesBt.push(arrbtn);
 				address.appendChild(arrbtn);
 			}
@@ -647,7 +647,7 @@
 				arrbtn.classList.add('arrbtn');
 
 
-				commonButtonEvent(arrbtn);
+				// commonButtonEvent(arrbtn);
 				wdTimesBt.push(arrbtn);
 				address.appendChild(arrbtn);
 			}
@@ -665,6 +665,11 @@
 			console.log("크리에이트안에서2", currentValues);
 			copiedItems = copiedItems.concat(currentValues);
 
+			
+			// const attachDivId = 'attachBtns-' + containerId;
+			// const attachDiv = document.getElementById(attachDivId);
+			
+
 
 
 			copiedItems.sort(function (a, b) {
@@ -673,6 +678,7 @@
 
 			// let address = document.getElementById('attachBtns');
 			let address = document.getElementById('attachBtns-timeBtsCon-wknd');
+			let wkndTimesBt = Array.from(address.querySelectorAll('button.arrbtn'));
 
 			for (let i = 0; i < copiedItems.length; i++) {
 				let arrbtn = document.createElement("button");
@@ -681,10 +687,11 @@
 				arrbtn.classList.add('arrbtn');
 
 
-				commonButtonEvent(arrbtn);
+				// commonButtonEvent(arrbtn);
 				wkndTimesBt.push(arrbtn);
 				address.appendChild(arrbtn);
 			}
+			console.log("wkndTimesBt찍어봐", wkndTimesBt)
 
 		}
 		createBtsWknd();
@@ -828,6 +835,9 @@
 	// 기존 시간표랑 같이 정렬하기 위한 전역변수
 	// let allButtons = [];
 	document.addEventListener('click', function (event) {
+		
+	
+
 		if (event.target.matches('.addTime')) {
 			let addtimeId = event.target.id;
 			// const clickedButton = event.target;
@@ -854,7 +864,7 @@
 			// 	return;
 			// }
 
-			const containerTime = Array.from(attach.querySelectorAll('button.arrbtn')).map(button => button.textContent);
+			let containerTime = Array.from(attach.querySelectorAll('button.arrbtn')).map(button => button.textContent);
 
 
 			// inputVals 배열의 모든 값으로 새로운 버튼 생성
@@ -895,8 +905,8 @@
 				let arrbtn = Array.from(arrbtnArray);
 				if (Array.isArray(arrbtn)) {
 					arrbtn.forEach((btn) => {
-
-						commonButtonEvent(btn, containerTime);
+						// 임시 없애기
+						// commonButtonEvent(btn, containerTime);
 					});
 
 				}
@@ -942,6 +952,148 @@
 				attach.appendChild(button);
 			}
 
+
+		}
+		else if (event.target.matches('.arrbtn')) {
+			event.preventDefault();
+			
+			const clickedButton = event.target;
+			const attachDivId = clickedButton.parentNode.id;
+			let attach = document.getElementById(attachDivId);
+			let containerTime = Array.from(attach.querySelectorAll('button.arrbtn')).map(button => button.textContent);
+
+			let arrbtn = clickedButton;
+
+			// 이전 시간input존재시 제거
+			let oldTimeInput = document.querySelector('.time-input');
+			if (oldTimeInput)
+				oldTimeInput.remove();
+			let oldOkBt = document.querySelector('.ok-button');
+			if (oldOkBt)
+				oldOkBt.remove();
+			let oldcloseBt = document.querySelector('.close-button');
+			if (oldcloseBt)
+				oldcloseBt.remove();
+			// 새 시간 input생성
+			let timeInput = document.createElement('input');
+			timeInput.setAttribute('type', 'time');
+			timeInput.classList.add('time-input');
+
+			// 새 확인 button생성
+			let okbt = document.createElement("button");
+			okbt.setAttribute("class", "okbt");
+			okbt.textContent = "변경";
+			okbt.classList.add('ok-button');
+
+			// arrbtn을 삭제해줄 버튼 생성
+			let closeButton = document.createElement("button");
+			closeButton.classList.add('close-button');
+			closeButton.textContent = "삭제";
+			// arrbtn.appendChild(closeButton);
+
+
+			// 시간 입력값 변경시 실행되는 이벤트리스너
+			okbt.addEventListener('click', function (e) {
+				e.preventDefault();
+				// 동일시간 존재여부 확인
+				console.log("이이이이이벤트타겟", e.target)
+				let buttons = Array.from(attach.querySelectorAll('button:not(.ok-button)'));
+				console.log("버튼이란게뭐야", buttons)
+
+				for (let button of buttons) {
+					// 동일시간존재시, 경고표시후 함수종료
+					if (button.value === timeInput.value) {
+						alert("이미 존재하는 시간입니다.");
+						timeInput.style.display = '';
+						return;
+					}
+				}
+				// 동일 시간값 미존재시, 버튼 텍스트와 value값 변경
+				arrbtn.textContent = timeInput.value;
+				arrbtn.value = timeInput.value;
+
+				
+
+				// 변경된 버튼을 배열에 추가
+				buttons.push(arrbtn);
+				console.log("!arrbtn버튼값찍어봐라", timeInput.value);
+				buttons.sort((a, b) => {
+					return a.value.localeCompare(b.value);
+				});
+				console.log("buttons", buttons)
+				for (let i = 0; i < buttons.length; i++) {
+					// console.log('!버튼텍스트찍히나 ' + (i + 1) + ' Text: ' + buttons[i].textContent);
+					console.log('!버튼값찍히나 ' + (i + 1) + ' Value: ' + buttons[i].value);
+				}
+
+				// 기존 모든버튼제거후, 새로 정렬된 버튼 추가
+				while (attach.firstChild) {
+					attach.removeChild(attach.firstChild);
+				}
+				for (let button of buttons) {
+					attach.appendChild(button);
+				}
+				// 시간입력input제거
+				timeInput.remove();
+				okbt.remove();
+				closeButton.remove();
+			});
+			// 삭제버튼 클릭이벤트
+			closeButton.addEventListener("click", function (e) {
+				e.preventDefault();
+
+				// 삭제 전 id값 가져옴
+				const fullId = event.target.parentElement.id;
+				const containerId = fullId.replace('attachBtns-', '');
+
+				// 클릭한 arrbtn 삭제
+				arrbtn.remove();
+				timeInput.remove();
+				okbt.remove();
+				closeButton.remove();
+				// console.log("arrbtn밸류", arrbtn.value);
+				// console.log("이벤트타겟찍어봐", event.target);
+
+				const deleteTime = arrbtn.value;
+
+				// 불러온 containerTime배열에서 시간값 제거
+				// (containerTime: 추가하기 버튼 클릭시 추가되는 값 모음)
+				let addedTimes = containerTime;
+				console.log("=======★");
+				console.log("컨테이너타임 삭제전", addedTimes);
+				for(let i = addedTimes.length - 1; i>=0; i--) {
+					if (addedTimes[i] == deleteTime) {
+						addedTimes.splice(i, 1);
+					}
+				}
+				console.log("컨테이너타임 삭제후", addedTimes);
+
+				// targetInputVal배열에서 시간값 제거
+				if (sectionData[containerId]?.inputValues) {
+					const targetInputVal = sectionData[containerId].inputValues;
+					for (let i = targetInputVal.length - 1; i >= 0; i--) {
+						if (targetInputVal[i] === deleteTime) {
+							targetInputVal.splice(i, 1);
+						}
+					}
+					console.log("타겟인풋바 삭제후", sectionData[containerId].inputValues);
+					console.log("=======★");
+				} else {
+					console.log("오류");
+				}
+
+
+				// buttons배열에서 arrbtn제거
+				let index = buttons.indexOf(arrbtn);
+				if (index > -1) {
+					buttons.splice(index, 1);
+				}
+			});
+
+			// 시간입력input을 버튼 다음에 삽입
+			event.target.parentNode.insertBefore(timeInput, event.target.nextSibling);
+			event.target.parentNode.insertBefore(okbt, timeInput.nextSibling);
+			event.target.parentNode.insertBefore(closeButton, okbt.nextSibling);
 
 		}
 	});
@@ -1057,152 +1209,152 @@
 
 
 	// 02.15 공통코드로 수정중
-	function commonButtonEvent(arrbtn, containerTime) {
+	// function commonButtonEvent(arrbtn, containerTime) {
 
-		let buttons = [];
+	// 	let buttons = [];
 		
-		// 버튼생성시, 한번만 이벤트리스너 추가
-		arrbtn.addEventListener('click', function (event) {
-			event.preventDefault();
-			const clickedButton = event.target;
-			const attachDivId = clickedButton.parentNode.id;
-			let address = document.getElementById(attachDivId);
+	// 	// 버튼생성시, 한번만 이벤트리스너 추가
+	// 	// arrbtn.addEventListener('click', function (event) {
+	// 	// 	event.preventDefault();
+	// 	// 	const clickedButton = event.target;
+	// 	// 	const attachDivId = clickedButton.parentNode.id;
+	// 	// 	let address = document.getElementById(attachDivId);
 
-			// 이전 시간input존재시 제거
-			let oldTimeInput = document.querySelector('.time-input');
-			if (oldTimeInput)
-				oldTimeInput.remove();
-			let oldOkBt = document.querySelector('.ok-button');
-			if (oldOkBt)
-				oldOkBt.remove();
-			let oldcloseBt = document.querySelector('.close-button');
-			if (oldcloseBt)
-				oldcloseBt.remove();
-			// 새 시간 input생성
-			let timeInput = document.createElement('input');
-			timeInput.setAttribute('type', 'time');
-			timeInput.classList.add('time-input');
+	// 	// 	// 이전 시간input존재시 제거
+	// 	// 	let oldTimeInput = document.querySelector('.time-input');
+	// 	// 	if (oldTimeInput)
+	// 	// 		oldTimeInput.remove();
+	// 	// 	let oldOkBt = document.querySelector('.ok-button');
+	// 	// 	if (oldOkBt)
+	// 	// 		oldOkBt.remove();
+	// 	// 	let oldcloseBt = document.querySelector('.close-button');
+	// 	// 	if (oldcloseBt)
+	// 	// 		oldcloseBt.remove();
+	// 	// 	// 새 시간 input생성
+	// 	// 	let timeInput = document.createElement('input');
+	// 	// 	timeInput.setAttribute('type', 'time');
+	// 	// 	timeInput.classList.add('time-input');
 
-			// 새 확인 button생성
-			let okbt = document.createElement("button");
-			okbt.setAttribute("class", "okbt");
-			okbt.textContent = "변경";
-			okbt.classList.add('ok-button');
+	// 	// 	// 새 확인 button생성
+	// 	// 	let okbt = document.createElement("button");
+	// 	// 	okbt.setAttribute("class", "okbt");
+	// 	// 	okbt.textContent = "변경";
+	// 	// 	okbt.classList.add('ok-button');
 
-			// arrbtn을 삭제해줄 버튼 생성
-			let closeButton = document.createElement("button");
-			closeButton.classList.add('close-button');
-			closeButton.textContent = "삭제";
-			// arrbtn.appendChild(closeButton);
+	// 	// 	// arrbtn을 삭제해줄 버튼 생성
+	// 	// 	let closeButton = document.createElement("button");
+	// 	// 	closeButton.classList.add('close-button');
+	// 	// 	closeButton.textContent = "삭제";
+	// 	// 	// arrbtn.appendChild(closeButton);
 
 
-			// 시간 입력값 변경시 실행되는 이벤트리스너
-			okbt.addEventListener('click', function (e) {
-				e.preventDefault();
-				// 동일시간 존재여부 확인
-				console.log("이이이이이벤트타겟", e.target)
-				let buttons = Array.from(address.querySelectorAll('button:not(.ok-button)'));
-				console.log("버튼이란게뭐야", buttons)
+	// 	// 	// 시간 입력값 변경시 실행되는 이벤트리스너
+	// 	// 	okbt.addEventListener('click', function (e) {
+	// 	// 		e.preventDefault();
+	// 	// 		// 동일시간 존재여부 확인
+	// 	// 		console.log("이이이이이벤트타겟", e.target)
+	// 	// 		let buttons = Array.from(address.querySelectorAll('button:not(.ok-button)'));
+	// 	// 		console.log("버튼이란게뭐야", buttons)
 
-				for (let button of buttons) {
-					// 동일시간존재시, 경고표시후 함수종료
-					if (button.value === timeInput.value) {
-						alert("이미 존재하는 시간입니다.");
-						timeInput.style.display = '';
-						return;
-					}
-				}
-				// 동일 시간값 미존재시, 버튼 텍스트와 value값 변경
-				arrbtn.textContent = timeInput.value;
-				arrbtn.value = timeInput.value;
+	// 	// 		for (let button of buttons) {
+	// 	// 			// 동일시간존재시, 경고표시후 함수종료
+	// 	// 			if (button.value === timeInput.value) {
+	// 	// 				alert("이미 존재하는 시간입니다.");
+	// 	// 				timeInput.style.display = '';
+	// 	// 				return;
+	// 	// 			}
+	// 	// 		}
+	// 	// 		// 동일 시간값 미존재시, 버튼 텍스트와 value값 변경
+	// 	// 		arrbtn.textContent = timeInput.value;
+	// 	// 		arrbtn.value = timeInput.value;
 
 				
 
-				// 변경된 버튼을 배열에 추가
-				buttons.push(arrbtn);
-				console.log("!arrbtn버튼값찍어봐라", timeInput.value);
-				buttons.sort((a, b) => {
-					return a.value.localeCompare(b.value);
-				});
-				console.log("buttons", buttons)
-				for (let i = 0; i < buttons.length; i++) {
-					// console.log('!버튼텍스트찍히나 ' + (i + 1) + ' Text: ' + buttons[i].textContent);
-					console.log('!버튼값찍히나 ' + (i + 1) + ' Value: ' + buttons[i].value);
-				}
+	// 	// 		// 변경된 버튼을 배열에 추가
+	// 	// 		buttons.push(arrbtn);
+	// 	// 		console.log("!arrbtn버튼값찍어봐라", timeInput.value);
+	// 	// 		buttons.sort((a, b) => {
+	// 	// 			return a.value.localeCompare(b.value);
+	// 	// 		});
+	// 	// 		console.log("buttons", buttons)
+	// 	// 		for (let i = 0; i < buttons.length; i++) {
+	// 	// 			// console.log('!버튼텍스트찍히나 ' + (i + 1) + ' Text: ' + buttons[i].textContent);
+	// 	// 			console.log('!버튼값찍히나 ' + (i + 1) + ' Value: ' + buttons[i].value);
+	// 	// 		}
 
-				// 기존 모든버튼제거후, 새로 정렬된 버튼 추가
-				while (address.firstChild) {
-					address.removeChild(address.firstChild);
-				}
-				for (let button of buttons) {
-					address.appendChild(button);
-				}
-				// 시간입력input제거
-				timeInput.remove();
-				okbt.remove();
-				closeButton.remove();
-			});
-			// 삭제버튼 클릭이벤트
-			closeButton.addEventListener("click", function (e) {
-				e.preventDefault();
+	// 	// 		// 기존 모든버튼제거후, 새로 정렬된 버튼 추가
+	// 	// 		while (address.firstChild) {
+	// 	// 			address.removeChild(address.firstChild);
+	// 	// 		}
+	// 	// 		for (let button of buttons) {
+	// 	// 			address.appendChild(button);
+	// 	// 		}
+	// 	// 		// 시간입력input제거
+	// 	// 		timeInput.remove();
+	// 	// 		okbt.remove();
+	// 	// 		closeButton.remove();
+	// 	// 	});
+	// 	// 	// 삭제버튼 클릭이벤트
+	// 	// 	closeButton.addEventListener("click", function (e) {
+	// 	// 		e.preventDefault();
 
-				// 삭제 전 id값 가져옴
-				const fullId = event.target.parentElement.id;
-				const containerId = fullId.replace('attachBtns-', '');
+	// 	// 		// 삭제 전 id값 가져옴
+	// 	// 		const fullId = event.target.parentElement.id;
+	// 	// 		const containerId = fullId.replace('attachBtns-', '');
 
-				// 클릭한 arrbtn 삭제
-				arrbtn.remove();
-				timeInput.remove();
-				okbt.remove();
-				closeButton.remove();
-				// console.log("arrbtn밸류", arrbtn.value);
-				// console.log("이벤트타겟찍어봐", event.target);
+	// 	// 		// 클릭한 arrbtn 삭제
+	// 	// 		arrbtn.remove();
+	// 	// 		timeInput.remove();
+	// 	// 		okbt.remove();
+	// 	// 		closeButton.remove();
+	// 	// 		// console.log("arrbtn밸류", arrbtn.value);
+	// 	// 		// console.log("이벤트타겟찍어봐", event.target);
 
-				const deleteTime = arrbtn.value;
+	// 	// 		const deleteTime = arrbtn.value;
 
-				// 불러온 containerTime배열에서 시간값 제거
-				// (containerTime: 추가하기 버튼 클릭시 추가되는 값 모음)
-				let addedTimes = containerTime;
-				console.log("=======★");
-				console.log("컨테이너타임 삭제전", addedTimes);
-				for(let i = addedTimes.length - 1; i>=0; i--) {
-					if (addedTimes[i] == deleteTime) {
-						addedTimes.splice(i, 1);
-					}
-				}
-				console.log("컨테이너타임 삭제후", addedTimes);
+	// 	// 		// 불러온 containerTime배열에서 시간값 제거
+	// 	// 		// (containerTime: 추가하기 버튼 클릭시 추가되는 값 모음)
+	// 	// 		let addedTimes = containerTime;
+	// 	// 		console.log("=======★");
+	// 	// 		console.log("컨테이너타임 삭제전", addedTimes);
+	// 	// 		for(let i = addedTimes.length - 1; i>=0; i--) {
+	// 	// 			if (addedTimes[i] == deleteTime) {
+	// 	// 				addedTimes.splice(i, 1);
+	// 	// 			}
+	// 	// 		}
+	// 	// 		console.log("컨테이너타임 삭제후", addedTimes);
 
-				// targetInputVal배열에서 시간값 제거
-				if (sectionData[containerId]?.inputValues) {
-					const targetInputVal = sectionData[containerId].inputValues;
-					for (let i = targetInputVal.length - 1; i >= 0; i--) {
-						if (targetInputVal[i] === deleteTime) {
-							targetInputVal.splice(i, 1);
-						}
-					}
-					console.log("타겟인풋바 삭제후", sectionData[containerId].inputValues);
-					console.log("=======★");
-				} else {
-					console.log("오류");
-				}
-
-
-				// buttons배열에서 arrbtn제거
-				let index = buttons.indexOf(arrbtn);
-				if (index > -1) {
-					buttons.splice(index, 1);
-				}
-			});
-
-			// 시간입력input을 버튼 다음에 삽입
-			event.target.parentNode.insertBefore(timeInput, event.target.nextSibling);
-			event.target.parentNode.insertBefore(okbt, timeInput.nextSibling);
-			event.target.parentNode.insertBefore(closeButton, okbt.nextSibling);
-
-		});
+	// 	// 		// targetInputVal배열에서 시간값 제거
+	// 	// 		if (sectionData[containerId]?.inputValues) {
+	// 	// 			const targetInputVal = sectionData[containerId].inputValues;
+	// 	// 			for (let i = targetInputVal.length - 1; i >= 0; i--) {
+	// 	// 				if (targetInputVal[i] === deleteTime) {
+	// 	// 					targetInputVal.splice(i, 1);
+	// 	// 				}
+	// 	// 			}
+	// 	// 			console.log("타겟인풋바 삭제후", sectionData[containerId].inputValues);
+	// 	// 			console.log("=======★");
+	// 	// 		} else {
+	// 	// 			console.log("오류");
+	// 	// 		}
 
 
-	}
+	// 	// 		// buttons배열에서 arrbtn제거
+	// 	// 		let index = buttons.indexOf(arrbtn);
+	// 	// 		if (index > -1) {
+	// 	// 			buttons.splice(index, 1);
+	// 	// 		}
+	// 	// 	});
+
+	// 	// 	// 시간입력input을 버튼 다음에 삽입
+	// 	// 	event.target.parentNode.insertBefore(timeInput, event.target.nextSibling);
+	// 	// 	event.target.parentNode.insertBefore(okbt, timeInput.nextSibling);
+	// 	// 	event.target.parentNode.insertBefore(closeButton, okbt.nextSibling);
+
+	// 	// });
+
+
+	// }
 
 
 

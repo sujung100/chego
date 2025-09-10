@@ -1005,96 +1005,96 @@ class Update(LoginRequiredMixin, UpdateView):
     
     
     # post요청 -> 수정중
-    # def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
 
-    #     # URL에서 store_id값 가져오기
-    #     requested_store_id = self.kwargs.get('store_id')
+        # URL에서 store_id값 가져오기
+        requested_store_id = self.kwargs.get('store_id')
 
-    #     # Store테이블의 id값을 가진 객체찾기 (url에서 가져온 store_id값과 일치하는)
-    #     store = get_object_or_404(rsv.Store, pk=requested_store_id)
+        # Store테이블의 id값을 가진 객체찾기 (url에서 가져온 store_id값과 일치하는)
+        store = get_object_or_404(rsv.Store, pk=requested_store_id)
 
-    #     if store:
-    #         # Store의 owner(User 객체)와 연결된 Manager 찾기
-    #         manager_of_the_store = rsv.Manager.objects.filter(user=store.owner).first()
+        if store:
+            # Store의 owner(User 객체)와 연결된 Manager 찾기
+            manager_of_the_store = rsv.Manager.objects.filter(user=store.owner).first()
 
 
-    #         # Store의 pk값과 Store_times의 store_id값과 일치하는 Store_times 가져오기
-    #         sto_time_objects = rsv.Store_times.objects.filter(store_id=store.pk)
-    #         # print("sto_time_objects", sto_time_objects)
-    #         # print("sto_time_objects갯수", len(sto_time_objects))
-    #         # print()
+            # Store의 pk값과 Store_times의 store_id값과 일치하는 Store_times 가져오기
+            sto_time_objects = rsv.Store_times.objects.filter(store_id=store.pk)
+            # print("sto_time_objects", sto_time_objects)
+            # print("sto_time_objects갯수", len(sto_time_objects))
+            # print()
 
-    #         # HttpResponseRedirect를 위한 전달인자
-    #         pk_value = manager_of_the_store.pk
-    #         store_id_value = requested_store_id
+            # HttpResponseRedirect를 위한 전달인자
+            pk_value = manager_of_the_store.pk
+            store_id_value = requested_store_id
             
 
-    #         # sto_time_objects의 reservation_time 값들을 리스트로 가져오기
-    #         original_time = list(sto_time_objects.values_list('reservation_time', flat=True))
-    #         print("original_time", original_time)
-    #         print()
+            # sto_time_objects의 reservation_time 값들을 리스트로 가져오기
+            original_time = list(sto_time_objects.values_list('reservation_time', flat=True))
+            print("original_time", original_time)
+            print()
 
-    #         # 이제 모든처리 여기서
-    #         try:
-    #             # JSON 데이터 파싱
-    #             data = json.loads(request.body)
-    #             auto_set_req = "activate_date_start" in data or "activate_date_end" in data
-    #             manual_set_req = "selected_radio_val" in data or "setting_date" in data
-    #             times_set_req = "same" in data or "wd" in data or "wknd" in data
+            # 이제 모든처리 여기서
+            try:
+                # JSON 데이터 파싱
+                data = json.loads(request.body)
+                auto_set_req = "activate_date_start" in data or "activate_date_end" in data
+                manual_set_req = "selected_radio_val" in data or "setting_date" in data
+                times_set_req = "same" in data or "wd" in data or "wknd" in data
 
-    #             # 갱신주기:수동 (달력)
-    #             if auto_set_req: 
-    #                 self.store.start_rsv_possible = data.get("activate_date_start")
-    #                 self.store.end_rsv_possible = data.get("activate_date_end")
-    #                 self.store.renewal_cycle = None
-    #                 self.store.base_date = None
-    #                 self.store.save()
-    #             # 갱신주기:자동
-    #             elif manual_set_req:
-    #                 self.store.renewal_cycle = data.get('selected_radio_val')
-    #                 self.store.base_date = data.get('setting_date')
-    #                 self.store.start_rsv_possible = None
-    #                 self.store.end_rsv_possible = None
-    #                 self.store.save()
-    #                 # print("갱신주기", self.store.renewal_cycle)
-    #                 # print("기준일", self.store.base_date)
+                # 갱신주기:수동 (달력)
+                if auto_set_req: 
+                    self.store.start_rsv_possible = data.get("activate_date_start")
+                    self.store.end_rsv_possible = data.get("activate_date_end")
+                    self.store.renewal_cycle = None
+                    self.store.base_date = None
+                    self.store.save()
+                # 갱신주기:자동
+                elif manual_set_req:
+                    self.store.renewal_cycle = data.get('selected_radio_val')
+                    self.store.base_date = data.get('setting_date')
+                    self.store.start_rsv_possible = None
+                    self.store.end_rsv_possible = None
+                    self.store.save()
+                    # print("갱신주기", self.store.renewal_cycle)
+                    # print("기준일", self.store.base_date)
                 
-    #             # 저장 임시주석
-    #             # self.store.full_clean()
-    #             # self.store.save()
+                # 저장 임시주석
+                # self.store.full_clean()
+                # self.store.save()
 
-    #             # 시간값 수정 및 저장
-    #             elif times_set_req:
+                # 시간값 수정 및 저장
+                elif times_set_req:
 
-    #                 # mon = data.get('1')
-    #                 # print("월찍기", mon)
-    #                 # print("셀프찍기", mon.get('times'))
-    #                 rsv.Store_times.objects.filter(store_id=store).delete()
-    #                 print(f"기존값 삭제 완")
+                    # mon = data.get('1')
+                    # print("월찍기", mon)
+                    # print("셀프찍기", mon.get('times'))
+                    rsv.Store_times.objects.filter(store_id=store).delete()
+                    print(f"기존값 삭제 완")
 
-    #                 for key, value_obj in data.items():
-    #                     if key != "command":
-    #                         sort_type_column_val = key
-    #                         times_array = value_obj.get("times", [])
-    #                         if times_array:
-    #                             for single_time in times_array:
-    #                                 rsv.Store_times.objects.create(
-    #                                 store_id=store,
-    #                                 sort_type=sort_type_column_val,
-    #                                 reservation_time=single_time
-    #                             )
-    #                             # reservation_column_val = times_array
-    #                             print(f"{store.pk}/{sort_type_column_val}/{single_time}저장")
+                    for key, value_obj in data.items():
+                        if key != "command":
+                            sort_type_column_val = key
+                            times_array = value_obj.get("times", [])
+                            if times_array:
+                                for single_time in times_array:
+                                    rsv.Store_times.objects.create(
+                                    store_id=store,
+                                    sort_type=sort_type_column_val,
+                                    reservation_time=single_time
+                                )
+                                # reservation_column_val = times_array
+                                print(f"{store.pk}/{sort_type_column_val}/{single_time}저장")
 
-    #                             # 기존 sort_type과 현재 요청들어온 sort_type을 비교할 필요없이
-    #                             # 그냥 store_id 일치하면 싹 지우고 재생성 하는걸로
-    #                     else:
-    #                         print("times_array 비어있음")
-    #                         pass
-    #             return JsonResponse({"status": "success", "message": "성공적으로 변경되었습니다."})
-    #         except Exception as e:
-    #             print(f"설정 저장중 오류 {e}")
-    #             return JsonResponse({"status": "error", "message": f"오류 발생: {e}"}, status=400)
+                                # 기존 sort_type과 현재 요청들어온 sort_type을 비교할 필요없이
+                                # 그냥 store_id 일치하면 싹 지우고 재생성 하는걸로
+                        else:
+                            print("times_array 비어있음")
+                            pass
+                return JsonResponse({"status": "success", "message": "성공적으로 변경되었습니다."})
+            except Exception as e:
+                print(f"설정 저장중 오류 {e}")
+                return JsonResponse({"status": "error", "message": f"오류 발생: {e}"}, status=400)
 
 
             #     # 이전의 폼으로 제출하던 데이터
@@ -1237,7 +1237,7 @@ class Update(LoginRequiredMixin, UpdateView):
             # except json.JSONDecodeError:
             #     return JsonResponse({"message": "유효하지 않은 JSON 형식입니다.",'status': 'error'}, status=400)
             
-        # return self.get(request, *args, **kwargs)
+        return self.get(request, *args, **kwargs)
     
 
 # 비동기 update용 get만드는중 - 근데 일단 UPDATE뷰 post처리부터 끝내고 작업하기

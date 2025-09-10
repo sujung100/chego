@@ -163,13 +163,13 @@
                     <div class="tabwrap">
                       <div class="tabcont">
                         <div class="card tabs">
-                          <input id="tab-1" type="radio" class="tab tab-selector" checked="checked" name="tab" />
+                          <input id="tab-1" type="radio" class="tab tab-selector" checked="checked" name="tab">
                           <label for="tab-1" class="tab tab1 trapez active"><span class="material-symbols-outlined">calendar_month</span>&nbsp;기간설정</label>
-                          <input id="tab-2" type="radio" class="tab tab-selector" name="tab" />
+                          <input id="tab-2" type="radio" class="tab tab-selector" name="tab">
                           <label for="tab-2" class="tab tab2 trapez"><span class="material-symbols-outlined">schedule</span>&nbsp;시간설정</label>
-                          <input id="tab-3" type="radio" class="tab tab-selector" name="tab" />
+                          <input id="tab-3" type="radio" class="tab tab-selector" name="tab">
                           <label for="tab-3" class="tab tab3 trapez"><span class="material-symbols-outlined">coffee</span>&nbsp;휴무설정</label>
-                          <input id="tab-4" type="radio" class="tab tab-selector" name="tab" />
+                          <input id="tab-4" type="radio" class="tab tab-selector" name="tab">
                           <label for="tab-4" class="tab tab4 trapez"><span class="material-symbols-outlined">groups</span>&nbsp;인원설정</label>
                           <div class="tabshadow"></div>
                           <div class="h-slider"></div>
@@ -555,13 +555,71 @@
                             </div>
                             <div class="innerbox" id="innertxt-3">
                               <div class="tab-title tab3">STEP3 휴무설정</div>
-                              <p>
-                                <span class = "numit">3</span> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis </p>
+                              <div class="dayoff-wrap">
+                                <p class="boldtxt">정기휴무</p>
+                                <div class="regular-set">
+                                  <div class="sets">
+                                    <input type="radio" name="dayoff_set" id="eachday-off" value="ed-off" checked>
+                                    <label for="eachday-off" class="daylabels">매주</label>
+                                  </div>
+                                  <div class="sets">
+                                    <input type="radio" name="dayoff_set" id="biweekly-off" value="bw-off">
+                                    <label for="biweekly-off" class="daylabels">격주</label>
+                                  </div>
+                                  <div class="sets">
+                                    <input type="radio" name="dayoff_set" id="monthly-off" value="mt-off">
+                                    <label for="monthly-off" class="daylabels">매달</label>
+                                  </div>
+                                  <div class="sets">
+                                    <input type="radio" name="dayoff_set" id="no-off" value="n-off">
+                                    <label for="no-off" class="daylabels">무휴</label>
+                                  </div>
+                                </div>
+                                <p class="boldtxt">휴무일</p>
+                                <div class="whichday">
+                                  <div class="wh-days">
+                                    <input type="checkbox" name="day_set" id="d-mon" value="mon">
+                                    <label for="d-mon" class="labels">월</label>
+                                  </div>
+                                  <div class="wh-days">
+                                    <input type="checkbox" name="day_set" id="d-tue" value="tue">
+                                    <label for="d-tue" class="labels">화</label>
+                                  </div>
+                                  <div class="wh-days">
+                                    <input type="checkbox" name="day_set" id="d-wed" value="wed">
+                                    <label for="d-wed" class="labels">수</label>
+                                  </div>
+                                  <div class="wh-days">
+                                    <input type="checkbox" name="day_set" id="d-thu" value="thu">
+                                    <label for="d-thu" class="labels">목</label>
+                                  </div>
+                                  <div class="wh-days">
+                                    <input type="checkbox" name="day_set" id="d-fri" value="fri">
+                                    <label for="d-fri" class="labels">금</label>
+                                  </div>
+                                  <div class="wh-days">
+                                    <input type="checkbox" name="day_set" id="d-sat" value="sat">
+                                    <label for="d-sat" class="labels">토</label>
+                                  </div>
+                                  <div class="wh-days">
+                                    <input type="checkbox" name="day_set" id="d-sun" value="sun">
+                                    <label for="d-sun" class="labels">일</label>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
                             <div class="innerbox" id="innertxt-4">
                               <div class="tab-title tab4">STEP4 인원설정</div>
-                              <p>
-                                <span class = "numit">4</span> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+                              <div>
+                                <div>
+                                  <label for="maxpeople">개별 예약 당 최대 예약 가능 인원:</label>
+                                  <input type="number" id="maxpeople" name="peoplenum" min="1" max="100">
+                                </div>
+                                <div>
+                                  <label for="per1hour">시간 당 최대 예약 가능 팀 수:</label>
+                                  <input type="number" id="per1hour" name="teamnum" min="1" max="100">
+                                </div>
+                              </div>
                             </div>
                           </section>
                     

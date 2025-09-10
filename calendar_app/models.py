@@ -17,8 +17,11 @@ class Store(models.Model):
     address = models.CharField(max_length=50)
     owner = models.ForeignKey(User, on_delete = models.CASCADE, blank = True, null = True)
     
+    # cdate: 생성일 / mdate: 수정일 - 근데 이상하게 오류있음 mdate
     cdate = models.DateTimeField(auto_now_add = True)
     mdate = models.DateTimeField(auto_now = True)
+    renewal_cycle = models.CharField(max_length=10, null=True, blank=True)
+    base_date = models.CharField(max_length=10, null=True, blank=True)
     start_rsv_possible = models.DateField(null=True, blank=True)
     end_rsv_possible = models.DateField(null=True, blank=True)
     

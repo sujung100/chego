@@ -157,49 +157,32 @@
         // }
 
 
-        // 자동선택 후 radio까지 선택했을 때 전달값 : selectAuto
+        // 자동선택 후 radio까지 선택했을 때
         if (radioValue) {
-
           // 자동 수동 선택값 저장 25.03.25
           console.log("자동찍힘");
-          console.log("날짜 선택값 없어야정상", selectedDates);
+          console.log("선택값1", selectedDates);
           // return selectAuto = {
           //   radioValue: radioValue,
           //   todayDate: truncatedDate,
           // };
-          // selectAuto = {
-          //   radioValue: radioValue,
-          //   todayDate: truncatedDate,
-          // };
-          let radioVal = radioValue;
-          let todayDate = truncatedDate;
-          // selectAuto도 후에 selectedDates랑 같이 db에 따로 저장되어야함
-          // 라디오(1주, 1달, 1년)선택값이랑 기준점이되는 오늘날짜(설정날짜)
-          console.log("라디오버튼 선택값2", radioVal);
-          console.log("라디오버튼 선택값3", todayDate);
-          sendAutoData(radioVal, todayDate);
+          selectAuto = {
+            radioValue: radioValue,
+            todayDate: truncatedDate,
+          };
+          console.log("라디오버튼 선택값1", selectAuto);
           
-        
-        // 수동선택시 전달값 : selectedDates
+          // 수동선택시
         } else if (selectManual) {
-
+          
           console.log("수동찍힘");
-          // selectAuto = null;
-          radioVal = null;
-          todayDate = null;
-          console.log("자동 라디오버튼 선택값 없어야정상2", radioVal);
-          console.log("자동 라디오버튼 선택값 없어야정상3", todayDate);
-          console.log("달력날짜 선택값2", selectedDates);
+          selectAuto = {};
+          console.log("라디오버튼 선택값2", selectAuto);
+          console.log("선택값2", selectedDates);
 
           // 유효성검사 - start, end 다들어갔는지(activate_calendar.js)
           let activate_start = disable_date_start.textContent;
           let activate_end = disable_date_end.textContent;
-          // between을 넣기는 비효율적인듯(db) 필요하면 나중에 프론트에서 계산해서 사용
-          // let activate_between = selectedDates.between;
-
-          console.log("액스", activate_start);
-          console.log("액앤", activate_end);
-          // console.log("액비", activate_between);
           const validationResult = validateDates(activate_start, activate_end);
           if (!validationResult.valid) {
             const errorMessage = getErrorMessage(validationResult.errorType);
@@ -209,13 +192,12 @@
           const activateResult = confirm("수정하시겠습니까?");
           if (activateResult) {
             console.log("활성화 온");
-            // activatePost(activate_start, activate_end);
-            sendManualData(activate_start, activate_end);
+            activatePost(activate_start, activate_end);
           }
 
           // json리턴
           // return selectedDates;
-          // selectedDates;
+          selectedDates;
         
         // 미선택시
         } else {

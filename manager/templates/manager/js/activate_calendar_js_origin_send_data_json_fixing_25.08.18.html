@@ -53,143 +53,61 @@
     // activateHandle();
     
     
-    function sendAutoData(radioVal, today) {
+    function activatePost(start, end) {
+      let allButtons = Array.from(document.querySelectorAll("#attach_btns button"));
+      let sortedButtons = allButtons.sort((a, b) => a.textContent.localeCompare(b.textContent));
+      let buttonValues = sortedButtons.map(button => button.textContent);
+      console.log("소티드버튼", sortedButtons);
+      console.log("버튼밸류", buttonValues);
+      console.log("제이슨버튼밸류", JSON.stringify(buttonValues));
+      buttonValues.value = JSON.stringify(buttonValues);
+      // document.getElementById('buttonValues').value = JSON.stringify(buttonValues);
+      
+      fetch("api/activate_post/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCookie("csrftoken"),
+        },
+        body: JSON.stringify({
+          "activate_date_start": start,
+          "activate_date_end": end,
+          "buttonValues": buttonValues
+        })
+      })
+      // .then(response => response.json())
+      .then(response => {
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+          return response.json();
+      })
+      // .then(data => console.log(data))
+      .then(data => {
+        if (data.status === 'success') {
+            // 성공
+            console.log(data.message);
+            alert("변경되었습니다.")
+            // location.reload();
 
-      // fetch("api/activate_post/", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //     "X-CSRFToken": getCookie("csrftoken"),
-      //   },
-      //   body: JSON.stringify({
-      //     "selected_radio_val": radioVal,
-      //     "setting_date": today,
-      //   })
-      // })
-      // // .then(response => response.json())
-      // .then(response => {
-      //     if (!response.ok) {
-      //         throw new Error('Network response was not ok');
-      //     }
-      //     return response.json();
-      // })
-      // // .then(data => console.log(data))
-      // .then(data => {
-      //   if (data.status === 'success') {
-      //       // 성공
-      //       console.log(data.message);
-      //       alert("변경되었습니다.")
-      //       // location.reload();
+        } else {
+            // 실패
+            console.log(data.message);
+        }
+      })
+      .catch(error => console.log(error));
 
-      //   } else {
-      //       // 실패
-      //       console.log(data.message);
-      //   }
-      // })
-      // .catch(error => console.log(error));
-
-      if (updateSocket.readyState === WebSocket.OPEN) {
-        updateSocket.send(JSON.stringify({
-          "command": "rsv_renewal_cycle",
-          "renewal_cycle": radioVal,
-          "set_date": today,
-          "rsv_id": storeId,
-        }));
-      }
-    }
-
-
-    // 기존 통합 전송 코드 분리중 - 25.08.18
-    // function activatePost(start, end) {
-    function sendManualData(start, end) {
-
-      // fetch("api/activate_post/", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //     "X-CSRFToken": getCookie("csrftoken"),
-      //   },
-      //   body: JSON.stringify({
-      //     "activate_date_start": start,
-      //     "activate_date_end": end,
-      //     // "buttonValues": buttonValues
-      //   })
-      // })
-      // // .then(response => response.json())
-      // .then(response => {
-      //     if (!response.ok) {
-      //         throw new Error('Network response was not ok');
-      //     }
-      //     return response.json();
-      // })
-      // // .then(data => console.log(data))
-      // .then(data => {
-      //   if (data.status === 'success') {
-      //       // 성공
-      //       console.log(data.message);
-      //       alert("변경되었습니다.")
-      //       // location.reload();
-
-      //   } else {
-      //       // 실패
-      //       console.log(data.message);
-      //   }
-      // })
-      // .catch(error => console.log(error));
+      
 
       if (updateSocket.readyState === WebSocket.OPEN) {
         updateSocket.send(JSON.stringify({
           "command": "start_end_date",
           "start_date": start,
           "end_date": end,
-          "rsv_id": storeId,
+          "buttonValues": buttonValues,
         }));
       }
     }
-
-
-    // // 시간값들
-    function saveTimes(changeSave) {
-
-      // fetch("api/activate_post/", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //     "X-CSRFToken": getCookie("csrftoken"),
-      //   },
-      //   body: JSON.stringify(changeSave)
-      // })
-      // // .then(response => response.json())
-      // .then(response => {
-      //     if (!response.ok) {
-      //         throw new Error('Network response was not ok');
-      //     }
-      //     return response.json();
-      // })
-      // // .then(data => console.log(data))
-      // .then(data => {
-      //   if (data.status === 'success') {
-      //       // 성공
-      //       console.log(data.message);
-      //       alert("변경되었습니다.")
-      //       // location.reload();
-
-      //   } else {
-      //       // 실패
-      //       console.log(data.message);
-      //   }
-      // })
-      // .catch(error => console.log(error));
-
-      if (updateSocket.readyState === WebSocket.OPEN) {
-        updateSocket.send(JSON.stringify({
-          "command": "temporary",
-          ...changeSave,
-          "rsv_id": storeId,
-        }));
-      }
-    }
-
 
 
 

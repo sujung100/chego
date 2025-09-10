@@ -457,19 +457,11 @@ class TestConsumer(AsyncWebsocketConsumer):
         key_command = data.get("command")
         rsv_id = data.get("rsv_id")
 
-        if not rsv_id:
-            print("상점아이디 미제공")
-            return
-        try:
-            store = await sync_to_async(get_object_or_404)(rsv.Store, pk=rsv_id)
-        except Exception as e:
-            print("스토어 조회 오류")
-            await self.send(text_data=json.dumps({
-                "status": "error",
-                "message": "스토어X"
-            }))
-            return
-
+        # if not rsv_id:
+        #     print("상점아이디 미제공")
+        #     return
+        
+        store = await sync_to_async(get_object_or_404(rsv.Store, pk=rsv_id))
 
         if key_command == "new_message":
             await self.commands[key_command](data)
@@ -485,73 +477,32 @@ class TestConsumer(AsyncWebsocketConsumer):
             renewal_cycle = data.get("renewal_cycle")
             set_date = data.get("set_date")
 
-            store.renewal_cycle = renewal_cycle
-            store.base_date = set_date
-            store.start_rsv_possible = None
-            store.end_rsv_possible = None
-            await sync_to_async(store.save)()
-
-            await self.send(text_data=json.dumps({
-                "status": "success",
-                "message": "변경되었습니다."
-            }))
-
-
         elif key_command == "start_end_date":
             # 시작 날짜와 종료 날짜, 버튼 값 저장 - 기간설정(수동)
             start_date = data.get("start_date")
             end_date = data.get("end_date")
-            store.start_rsv_possible = start_date
-            store.end_rsv_possible = end_date
-            store.renewal_cycle = None
-            store.base_date = None
-            await sync_to_async(store.save)()
-            
-            await self.send(text_data=json.dumps({
-                "status": "success",
-                "message": "변경되었습니다."
-            }))
-
+            # button_values = data.get("buttonValues")
     
         elif key_command == "temporary":
             # 시간값들 임시 확인용
             print(data)
-            try:
-                await sync_to_async(rsv.Store_times.objects.filter(store_id=store).delete)()
-                print("기존 시간값 삭제완료")
-
-                for key, value_obj in data.items():
-                    if key != "command" and key != "rsv_id":
-                        sort_type_column_val = key
-                        times_array = value_obj.get("times", [])
-                        if times_array:
-                            for single_time in times_array:
-                                await sync_to_async(rsv.Store_times.objects.create)(
-                                
-                                store_id=store,
-                                sort_type=sort_type_column_val,
-                                reservation_time=single_time
-                            )
-                            print(f"{store.pk}/{sort_type_column_val}/{single_time}저장")
-                        else:
-                            print("시간값X")
-                            pass
-                    await self.send(text_data=json.dumps({
-                        "status": "success",
-                        "message": "변경되었습니다."
-                    }))
-            except Exception as e:
-                print("시간저장오류")
-                await self.send(text_data=json.dumps({
-                    "status": "error",
-                    "message": f"시간저장오류 {e}"
-                }))
-                return
-        else:
-            print("그외에러")
-
-
-
+            # button_values = data.get("buttonValues")
+    
+        # elif key_command == "auto_choice_value":
+        #     # 자동 수동 설정에서의 값
+        #     radioValue = data.get("radioValue")
+        #     todayDate = data.get("todayDate")
+        #     # print("자동수동1", radioValue)
+        #     # print("자동수동2", todayDate)
+        #     message_to_send = {
+        #     "radioValue": radioValue,
+        #     "todayDate": todayDate
+        #     }
+        #     # 25.03.20
+        #     await self.send_to_front(message_to_send)
+        #     # await get_channel_layer().group_send(
+        #     # "index", {"type": "setting.message", "message": "아무말"}
+        #     #  )
 
             
             

@@ -6,7 +6,7 @@
 	function calcWidth() {
 		if(contA && contB) {
 			const widthA = contA.offsetwidth;
-			const widthB = contB.offsetwidthB;
+			const widthB = contB.offsetwidth;
 			console.log("widthA",widthA);
 			console.log("widthB",widthB);
 		}
@@ -242,13 +242,6 @@
         attachDiv.id = 'attachBtns-' + containerId;
         attachDiv.classList.add('parent');
 
-        // 변경사항 저장 버튼 생성
-        // const changeSaveButton = document.createElement('button');
-        // changeSaveButton.id = 'chgSave-' + containerId;
-        // changeSaveButton.textContent = '변경사항 저장';
-        // changeSaveButton.dataset.containerId = containerId;
-
-
         btnWrapSpan.appendChild(addBtn);
         fragment.appendChild(br1);
         fragment.appendChild(titleDiv1);
@@ -315,53 +308,6 @@
 			setupTimeSection(newEachDayTimes, day7ContainerId, storeId, managerPk);
 		}
 
-		// const saveButtons = document.querySelectorAll('button#chgSave');
-		// console.log("세이브버튼", saveButtons)
-
-
-		// 변경사항 저장 - 기존
-		// saveButtons.forEach(button => {
-		// 	button.addEventListener('click', function(event) {
-		// 		const clickedBtId = event.target.id;
-		// 		console.log("세이브버튼클릭")
-		// 		console.log("클릭아이디0",clickedBtId)
-				
-		// 		기존
-		// 		let targetConId;
-		// 		if (clickedBtId === 'chgSave-timeBtsCon-wd') {
-		// 			console.log("클릭아이디",clickedBtId)
-		// 			targetConId = 'timeBtsCon-wd';
-		// 			console.log("평일 변경사항 저장");
-		// 			const attachDivId = 'attachBtns-' + targetConId;
-		// 			console.log("평일attachDivId", attachDivId);
-		// 			const attachDiv = document.getElementById(attachDivId);
-		// 			let wdTimesBt = Array.from(attachDiv.querySelectorAll('button.arrbtn'));
-		// 			let sortedButtons = wdTimesBt.sort((a, b) => a.textContent.localeCompare(b.textContent));
-		// 			let bv_wd = sortedButtons.map(button => button.textContent);
-		// 			document.getElementById('buttonValues-wd').value = JSON.stringify(bv_wd);
-		// 			console.log("평일json찍어", bv_wd)
-
-					
-		// 		} else if (clickedBtId === 'chgSave-timeBtsCon-wknd') {
-		// 			console.log("클릭아이디",clickedBtId)
-		// 			targetConId = 'timeBtsCon-wknd';
-		// 			console.log("주말 변경사항 저장");
-		// 			const attachDivId = 'attachBtns-' + targetConId;
-		// 			console.log("주말attachDivId", attachDivId);
-		// 			const attachDiv = document.getElementById(attachDivId);
-		// 			let wkndTimesBt = Array.from(attachDiv.querySelectorAll('button.arrbtn'));
-		// 			let sortedButtons = wkndTimesBt.sort((a, b) => a.textContent.localeCompare(b.textContent));
-		// 			let bv_wknd = sortedButtons.map(button => button.textContent);
-		// 			document.getElementById('buttonValues-wknd').value = JSON.stringify(bv_wknd);
-		// 			console.log("주말json찍어", bv_wknd)
-					
-		// 		} else if (/^chgSave-timeBtsCon-[1-7]$/.test(clickedBtId)) {
-		// 			console.log("월-일 컨네이너선택");
-		// 		}
-
-		// 	});
-		// });
-
 		function clearButton(containerId) {
 			const container = document.getElementById(containerId);
 			if (container) {
@@ -375,7 +321,43 @@
 			} else {
 				console.warn("컨테이너없음");
 			}
-	}
+
+	
+		}
+
+		const setsContainers = document.querySelectorAll('.sets');
+		// 정기휴무 지정
+		function dayOffSet () {
+	
+			setsContainers.forEach(container => {
+				container.addEventListener('click', function() {
+					const radioInput = this.querySelector('input[type="radio"]');
+	
+					if (radioInput) {
+						radioInput.checked = true;
+						setsContainers.forEach(con => {
+							const otherRadio = con.querySelector('input[type="radio"]');
+							if (otherRadio && otherRadio.checked) {
+								con.classList.add('clickedset');
+							} else {
+								con.classList.remove('clickedset');
+							}
+						});
+					}
+				});
+			});
+
+		}
+		dayOffSet();
+
+		// 페이지 첫 로딩시 checked 표시
+		setsContainers.forEach(container => {
+			const radioInput = container.querySelector('input[type="radio"]');
+			if (radioInput && radioInput.checked) {
+				container.classList.add('clickedset');
+			}
+		});
+
 
 
 		const saveButtons = document.querySelectorAll('button.chgSave');
@@ -402,11 +384,11 @@
 						const sameTimesButtons = Array.from(sameSectionElement.querySelectorAll('button.arrbtn'));
 						changeSave.same.times = sameTimesButtons.map(button => button.textContent).sort();
 						console.log('SAME업데이트:', changeSave.same.times);
-						// console.log("모든 처리 후/ 체인지세이브 (최종):", JSON.parse(JSON.stringify(changeSave))); 
-						// saveVal = JSON.parse(JSON.stringify(changeSave));
 					}
 
-					console.log("모든 처리 후/ 체인지세이브 (최종):", JSON.parse(JSON.stringify(changeSave))); 
+					console.log("모든 처리 후/ 체인지세이브 (최종)테스트중:", changeSave);
+					saveTimes(changeSave); 
+					// console.log("모든 처리 후/ 체인지세이브 (최종):", JSON.parse(JSON.stringify(changeSave))); 
 					saveVal = JSON.parse(JSON.stringify(changeSave));
 
 					alert("변경되었습니다.");
@@ -424,8 +406,6 @@
 						const wdTimesButtons = Array.from(wdSectionElement.querySelectorAll('button.arrbtn'));
 						changeSave.wd.times = wdTimesButtons.map(button => button.textContent).sort();
 						console.log('WD업데이트:', changeSave.wd.times);
-						// console.log("모든 처리 후/ 체인지세이브 (최종):", JSON.parse(JSON.stringify(changeSave))); 
-						// saveVal = JSON.parse(JSON.stringify(changeSave));
 					}
 
 					const wkndSectionElement = document.getElementById('attachBtns-timeBtsCon-wknd');
@@ -433,11 +413,11 @@
 						const wkndTimesButtons = Array.from(wkndSectionElement.querySelectorAll('button.arrbtn'));
 						changeSave.wknd.times = wkndTimesButtons.map(button => button.textContent).sort();
 						console.log('WKND업데이트:', changeSave.wknd.times);
-						// console.log("모든 처리 후/ 체인지세이브 (최종):", JSON.parse(JSON.stringify(changeSave)));
-						// saveVal = JSON.parse(JSON.stringify(changeSave));
 					}
 
-					console.log("모든 처리 후/ 체인지세이브 (최종):", JSON.parse(JSON.stringify(changeSave)));
+					// console.log("모든 처리 후/ 체인지세이브 (최종):", JSON.parse(JSON.stringify(changeSave)));
+					console.log("모든 처리 후/ 체인지세이브 (최종)테스트중:", changeSave);
+					saveTimes(changeSave);
 					saveVal = JSON.parse(JSON.stringify(changeSave));
 					
 					alert("변경되었습니다.");
@@ -466,52 +446,14 @@
 					}
 					alert("변경되었습니다.");
 					console.log("모든 처리 후/ 체인지세이브 (최종):", JSON.parse(JSON.stringify(changeSave))); 
+					saveTimes(changeSave);
 					saveVal = JSON.parse(JSON.stringify(changeSave));
 
 					setSectionData();
 					console.log("배열도 삭제완료", sectionData);
 					console.log("아까제이슨은?", saveVal);
 
-					// if(eachId == "wd"){
-					// 	let wdTimesBt = Array.from(bp.querySelectorAll('button.arrbtn'));
-					// 	let sortedButtons = wdTimesBt.sort((a, b) => a.textContent.localeCompare(b.textContent));
-					// 	let bv_wd = sortedButtons.map(button => button.textContent);
-					// 	changeSave[eachId].times = bv_wd;
-
-
-					// }else if(eachId == "wknd"){
-					// 	let wkndTimesBt = Array.from(bp.querySelectorAll('button.arrbtn'));
-					// 	let sortedButtons = wkndTimesBt.sort((a, b) => a.textContent.localeCompare(b.textContent));
-					// 	let bv_wknd = sortedButtons.map(button => button.textContent);
-					// 	changeSave[eachId].times = bv_wknd;
 					
-				
-					// }else if(/^[1-7]$/.test(eachId)) {
-					// 	let eachDayTimesBt = Array.from(bp.querySelectorAll('button.arrbtn'));
-					// 	if(eachDayTimesBt) {
-					// 		let sortedButtons = eachDayTimesBt.sort((a, b) => a.textContent.localeCompare(b.textContent));
-					// 		let bv_each = sortedButtons.map(button => button.textContent);
-					// 		changeSave[eachId].times = bv_each;
-							// console.log("이거부터찍어봐3",eachDayTimesBt);
-							// console.log("체세3-each",changeSave);
-
-							// json변환
-							// let eachDayjson = JSON.stringify(changeSave);
-							// console.log("eachDayjson찍어",eachDayjson);
-
-							// console.log("each7Vals찍어",each7Vals);
-
-							// eachDayTimesBt.forEach(ec => {
-							// 	// let bv_each = sortedButtons.map(button => button.textContent);
-							// 	console.log("시간버튼존재하는지", ec);
-							// 	// console.log("솔티드 버튼2",sortedButtons);
-							// 	console.log("바이이치",bv_each);
-							// 	each7Vals.push(bv_each);
-							// 	console.log("each7Vals찍어",each7Vals);
-								
-							// 	// document.getElementById('buttonValues-each').value = JSON.stringify(bv_each);
-							// 	// console.log("각각json찍어", bv_wd)
-							// });
 				}else if(!eachDayTimesBt) {
 					console.log("시간버튼 없다면");
 							
@@ -522,46 +464,6 @@
 				
 			});
 
-			// console.log("모든 처리 후/ 체인지세이브 (최종):", JSON.parse(JSON.stringify(changeSave))); 
-			// json변환
-			// let allTimeSavingjson = JSON.stringify(changeSave);
-			// console.log("세이브누르면 json",allTimeSavingjson);
-				// getVal = btnsparents.querySelectorAll()
-
-
-				// let targetConId;
-				// if (clickedBtId === 'chgSave-timeBtsCon-wd') {
-				// 	console.log("클릭아이디",clickedBtId)
-				// 	targetConId = 'timeBtsCon-wd';
-				// 	console.log("평일 변경사항 저장");
-				// 	const attachDivId = 'attachBtns-' + targetConId;
-				// 	console.log("평일attachDivId", attachDivId);
-				// 	const attachDiv = document.getElementById(attachDivId);
-				// 	let wdTimesBt = Array.from(attachDiv.querySelectorAll('button.arrbtn'));
-				// 	let sortedButtons = wdTimesBt.sort((a, b) => a.textContent.localeCompare(b.textContent));
-				// 	let bv_wd = sortedButtons.map(button => button.textContent);
-				// 	document.getElementById('buttonValues-wd').value = JSON.stringify(bv_wd);
-				// 	console.log("평일json찍어", bv_wd)
-
-					
-				// } else if (clickedBtId === 'chgSave-timeBtsCon-wknd') {
-				// 	console.log("클릭아이디",clickedBtId)
-				// 	targetConId = 'timeBtsCon-wknd';
-				// 	console.log("주말 변경사항 저장");
-				// 	const attachDivId = 'attachBtns-' + targetConId;
-				// 	console.log("주말attachDivId", attachDivId);
-				// 	const attachDiv = document.getElementById(attachDivId);
-				// 	let wkndTimesBt = Array.from(attachDiv.querySelectorAll('button.arrbtn'));
-				// 	let sortedButtons = wkndTimesBt.sort((a, b) => a.textContent.localeCompare(b.textContent));
-				// 	let bv_wknd = sortedButtons.map(button => button.textContent);
-				// 	document.getElementById('buttonValues-wknd').value = JSON.stringify(bv_wknd);
-				// 	console.log("주말json찍어", bv_wknd)
-					
-				// } else if (/^chgSave-timeBtsCon-[1-7]$/.test(clickedBtId)) {
-				// 	console.log("월-일 컨네이너선택");
-				// }
-
-			// });
 		});
 
 		
@@ -665,18 +567,10 @@
 			console.log("크리에이트안에서2", currentValues);
 			copiedItems = copiedItems.concat(currentValues);
 
-			
-			// const attachDivId = 'attachBtns-' + containerId;
-			// const attachDiv = document.getElementById(attachDivId);
-			
-
-
-
 			copiedItems.sort(function (a, b) {
 				return a.localeCompare(b);
 			});
 
-			// let address = document.getElementById('attachBtns');
 			let address = document.getElementById('attachBtns-timeBtsCon-wknd');
 			let wkndTimesBt = Array.from(address.querySelectorAll('button.arrbtn'));
 
@@ -738,8 +632,6 @@
 	function plusBtnClick(event) {
 		const clickedButton = event.target;
 		let parentElement = clickedButton.parentNode;
-		// console.log("parentElement보여줘", parentElement)
-		// console.log("이벤트타겟보여줘", clickedButton)
 
 		const containerId = parentElement.dataset.containerId;
 		const matchingVal = sectionData[containerId]?.inputValues;
@@ -795,13 +687,7 @@
 			let pk = parentElement.dataset.pk;
 			let store_id = parentElement.dataset.storeId;
 
-			// console.log("pk값1:", pk);
-			// console.log("id값1:", store_id);
-			// console.log("찍어라", parentElement.dataset);
-
-
 			getInputValue(parentElement, checkbt, addInput, containerId);
-			// console.log("애프터★", targetInputVal);
 
 			// "+" 버튼 추가
 			let newAddBtn = document.createElement("button");
@@ -809,9 +695,8 @@
 			newAddBtn.setAttribute("type", "button");
 			newAddBtn.textContent = "+";
 
-			parentElement.appendChild(newAddBtn); // 클릭된 버튼의 부모 요소에 새로운 'addbtn' 추가
-			// 수정 10.09
-			// 클릭된 버튼의 다음 형제 요소인 'newAddBtn'으로 포커스 이동
+			parentElement.appendChild(newAddBtn);
+			// 클릭된 버튼의 다음 형제 요소로 포커스
 			newAddBtn.focus();
 
 			// 클릭된 버튼 제거
@@ -827,8 +712,6 @@
 
 		}
 	});
-
-
 
 	
 	// "추가하기" 버튼 클릭시 이벤트
@@ -859,11 +742,6 @@
 				return;
 			}
 
-			// if (!Array.isArray(inputVals)) {
-			// 	console.error("inputVals오류");
-			// 	return;
-			// }
-
 			let containerTime = Array.from(attach.querySelectorAll('button.arrbtn')).map(button => button.textContent);
 
 
@@ -885,11 +763,6 @@
 					newButton.classList.add('time-innerbox-' + storeId)
 					console.log("새시간추가 확인", newTimeValue)
 
-					// allButtons 배열에서 동일한 textContent를 가진 버튼이 있는지 확인
-					// if (!allButtons.some(button => button.textContent === newButton.textContent)) {
-					// 	attach.appendChild(newButton);
-					// 	allButtons.push(newButton);
-					// }
 					attach.appendChild(newButton);
 					containerTime.push(newTimeValue);
 					console.log("컨테이너타임 확인", containerTime);
@@ -913,23 +786,7 @@
 				else {
 					console.log("배열이 아님")
 				}
-				// ★☆ 성우님이 해결해줌 ^.^ ☆★
-
-
-
-				// console.log("뉴버튼", newButton);
-				// newButton.addEventListener('click', function (event2) {
-				// 	console.log("이벤트2", event2);
-				// 	// 02.15 추가
-				// 	// handleButtonClick(event, attach, newButton);
-				// 	// 02.20 copiedItems 삭제
-				// 	// handleButtonClick(event2);
-
-				// });
 			});
-			// console.log("인풋바 ", inputVals);
-			// console.log("전역변수 버튼들 ", allButtons);
-
 
 
 			// 추가-10.14 추가하기누를때 정렬하기
@@ -940,8 +797,6 @@
 			let finishBtns = Array.from(findParent.querySelectorAll("[class^='time-innerbox']"));
 			finishBtns.forEach(btn => btn.remove());
 			
-
-
 			buttons.sort((a, b) => {
 				return a.textContent.localeCompare(b.textContent);
 			});
@@ -956,6 +811,8 @@
 		}
 		else if (event.target.matches('.arrbtn')) {
 			event.preventDefault();
+
+			let buttons = [];
 			
 			const clickedButton = event.target;
 			const attachDivId = clickedButton.parentNode.id;
@@ -1051,8 +908,6 @@
 				timeInput.remove();
 				okbt.remove();
 				closeButton.remove();
-				// console.log("arrbtn밸류", arrbtn.value);
-				// console.log("이벤트타겟찍어봐", event.target);
 
 				const deleteTime = arrbtn.value;
 
@@ -1097,8 +952,6 @@
 
 		}
 	});
-	// console.log("inputVals2은: ", inputVals)
-
 
 	// input값 가져오는 이벤트
 	// 입력 값을 저장할 배열
@@ -1156,18 +1009,19 @@
 			return new Date(`1970/01/01 ${a.textContent}`) - new Date(`1970/01/01 ${b.textContent}`);
 		});
 
-		parentElement.innerHTML = ''; // 부모 요소의 모든 자식 요소를 제거
+		// 부모 요소의 모든 자식 요소 제거
+		parentElement.innerHTML = '';
 
 		for (let i = 0; i < timeItems.length; i++) {
-			parentElement.appendChild(timeItems[i]); // 정렬된 버튼들을 다시 추가
+			 // 정렬된 버튼들 다시 추가
+			parentElement.appendChild(timeItems[i]);
 		}
-		// console.log("비포★", sectionData);
 
 		removeValBtns = [];
 
 		finishBt.addEventListener('click', function (event) {
 
-			// +로 시간추가후, 추가하기 누르기전 시간값 클릭시 삭제
+			// +로 시간추가후 추가하기 누르기전 시간값 클릭시 삭제
 			const removeVal = inputElement.value;
 			removeValBtns.push(removeVal);
 			console.log("삭제될 버튼들", removeValBtns)
@@ -1196,165 +1050,100 @@
 			console.log("인풋밸류", inputElement.value);
 			console.log("디스찍어봐", this);
 			this.remove();
-
-			
-			
 		});
-		// console.log("애프터★", sectionData);
 		
 		console.log("삭제됐나", finishBt);
 	}
 
+	// 휴무일 설정(요일클릭)
+	// const whichday = document.querySelector('.whichday');
+	// const daySelectBoxs = whichday.querySelectorAll('input[type="checkbox"]');
+	// daySelectBoxs.forEach(checkbox => {
+	// 	checkbox.addEventListener('change', function() {
+	// 		const parentDiv = this.closest('.wh-days');
+	// 		if (parentDiv) {
+	// 			parentDiv.classList.toggle('clickedday');
+	// 			console.log("실행");
+	// 		}
+	// 	});
+	// });
+
+
+	// 정기휴무 설정
+	// const offSetParent = document.querySelector('.regular-set');
+	// const offSelectBoxs = offSetParent.querySelectorAll('input[type="checkbox"]');
+	// offSelectBoxs.forEach(checkbox => {
+	// 	checkbox.addEventListener('change', function() {
+	// 		const parentDiv = this.closest('.sets');
+	// 		if (parentDiv) {
+	// 			parentDiv.classList.toggle('clickedset');
+	// 		}
+	// 	});
+	// });
+
+	// const offSetParentCon = document.querySelectorAll('.sets');
+	// offSetParentCon.forEach(container => {
+	// 	container.addEventListener('click', function(event) {
+	// 		if (event.target.classList.contains('daylabels')) {
+	// 			return;
+	// 		}
+	// 		const checkbox = this.querySelector('input[type="checkbox"]');
+
+	// 		if (checkbox) {
+	// 			checkbox.checked = !checkbox.checked;
+	// 			const changeEvent = new Event('change');
+	// 			checkbox.dispatchEvent(changeEvent);
+	// 			console.log("실행");
+	// 		}
+	// 	});
+	// });
 
 
 
-	// 02.15 공통코드로 수정중
-	// function commonButtonEvent(arrbtn, containerTime) {
 
-	// 	let buttons = [];
-		
-	// 	// 버튼생성시, 한번만 이벤트리스너 추가
-	// 	// arrbtn.addEventListener('click', function (event) {
-	// 	// 	event.preventDefault();
-	// 	// 	const clickedButton = event.target;
-	// 	// 	const attachDivId = clickedButton.parentNode.id;
-	// 	// 	let address = document.getElementById(attachDivId);
+	// 휴무요일 지정
+	const whichday = document.querySelector('.whichday');
+	const daySelectBoxs = whichday.querySelectorAll('input[type="checkbox"]');
+	daySelectBoxs.forEach(checkbox => {
+		checkbox.addEventListener('change', function() {
+			const parentDiv = this.closest('.wh-days');
+			if (parentDiv) {
+				parentDiv.classList.toggle('clickedday');
+			}
+		});
+	});
 
-	// 	// 	// 이전 시간input존재시 제거
-	// 	// 	let oldTimeInput = document.querySelector('.time-input');
-	// 	// 	if (oldTimeInput)
-	// 	// 		oldTimeInput.remove();
-	// 	// 	let oldOkBt = document.querySelector('.ok-button');
-	// 	// 	if (oldOkBt)
-	// 	// 		oldOkBt.remove();
-	// 	// 	let oldcloseBt = document.querySelector('.close-button');
-	// 	// 	if (oldcloseBt)
-	// 	// 		oldcloseBt.remove();
-	// 	// 	// 새 시간 input생성
-	// 	// 	let timeInput = document.createElement('input');
-	// 	// 	timeInput.setAttribute('type', 'time');
-	// 	// 	timeInput.classList.add('time-input');
+	const parentCon = document.querySelectorAll('.wh-days');
+	parentCon.forEach(container => {
+		container.addEventListener('click', function(event) {
+			// if (event.target.classList.contains('labels')) {
+			// 	return;
+			// }
+			event.stopPropagation(); 
+			event.preventDefault();
+			const checkbox = this.querySelector('input[type="checkbox"]');
 
-	// 	// 	// 새 확인 button생성
-	// 	// 	let okbt = document.createElement("button");
-	// 	// 	okbt.setAttribute("class", "okbt");
-	// 	// 	okbt.textContent = "변경";
-	// 	// 	okbt.classList.add('ok-button');
-
-	// 	// 	// arrbtn을 삭제해줄 버튼 생성
-	// 	// 	let closeButton = document.createElement("button");
-	// 	// 	closeButton.classList.add('close-button');
-	// 	// 	closeButton.textContent = "삭제";
-	// 	// 	// arrbtn.appendChild(closeButton);
-
-
-	// 	// 	// 시간 입력값 변경시 실행되는 이벤트리스너
-	// 	// 	okbt.addEventListener('click', function (e) {
-	// 	// 		e.preventDefault();
-	// 	// 		// 동일시간 존재여부 확인
-	// 	// 		console.log("이이이이이벤트타겟", e.target)
-	// 	// 		let buttons = Array.from(address.querySelectorAll('button:not(.ok-button)'));
-	// 	// 		console.log("버튼이란게뭐야", buttons)
-
-	// 	// 		for (let button of buttons) {
-	// 	// 			// 동일시간존재시, 경고표시후 함수종료
-	// 	// 			if (button.value === timeInput.value) {
-	// 	// 				alert("이미 존재하는 시간입니다.");
-	// 	// 				timeInput.style.display = '';
-	// 	// 				return;
-	// 	// 			}
-	// 	// 		}
-	// 	// 		// 동일 시간값 미존재시, 버튼 텍스트와 value값 변경
-	// 	// 		arrbtn.textContent = timeInput.value;
-	// 	// 		arrbtn.value = timeInput.value;
-
-				
-
-	// 	// 		// 변경된 버튼을 배열에 추가
-	// 	// 		buttons.push(arrbtn);
-	// 	// 		console.log("!arrbtn버튼값찍어봐라", timeInput.value);
-	// 	// 		buttons.sort((a, b) => {
-	// 	// 			return a.value.localeCompare(b.value);
-	// 	// 		});
-	// 	// 		console.log("buttons", buttons)
-	// 	// 		for (let i = 0; i < buttons.length; i++) {
-	// 	// 			// console.log('!버튼텍스트찍히나 ' + (i + 1) + ' Text: ' + buttons[i].textContent);
-	// 	// 			console.log('!버튼값찍히나 ' + (i + 1) + ' Value: ' + buttons[i].value);
-	// 	// 		}
-
-	// 	// 		// 기존 모든버튼제거후, 새로 정렬된 버튼 추가
-	// 	// 		while (address.firstChild) {
-	// 	// 			address.removeChild(address.firstChild);
-	// 	// 		}
-	// 	// 		for (let button of buttons) {
-	// 	// 			address.appendChild(button);
-	// 	// 		}
-	// 	// 		// 시간입력input제거
-	// 	// 		timeInput.remove();
-	// 	// 		okbt.remove();
-	// 	// 		closeButton.remove();
-	// 	// 	});
-	// 	// 	// 삭제버튼 클릭이벤트
-	// 	// 	closeButton.addEventListener("click", function (e) {
-	// 	// 		e.preventDefault();
-
-	// 	// 		// 삭제 전 id값 가져옴
-	// 	// 		const fullId = event.target.parentElement.id;
-	// 	// 		const containerId = fullId.replace('attachBtns-', '');
-
-	// 	// 		// 클릭한 arrbtn 삭제
-	// 	// 		arrbtn.remove();
-	// 	// 		timeInput.remove();
-	// 	// 		okbt.remove();
-	// 	// 		closeButton.remove();
-	// 	// 		// console.log("arrbtn밸류", arrbtn.value);
-	// 	// 		// console.log("이벤트타겟찍어봐", event.target);
-
-	// 	// 		const deleteTime = arrbtn.value;
-
-	// 	// 		// 불러온 containerTime배열에서 시간값 제거
-	// 	// 		// (containerTime: 추가하기 버튼 클릭시 추가되는 값 모음)
-	// 	// 		let addedTimes = containerTime;
-	// 	// 		console.log("=======★");
-	// 	// 		console.log("컨테이너타임 삭제전", addedTimes);
-	// 	// 		for(let i = addedTimes.length - 1; i>=0; i--) {
-	// 	// 			if (addedTimes[i] == deleteTime) {
-	// 	// 				addedTimes.splice(i, 1);
-	// 	// 			}
-	// 	// 		}
-	// 	// 		console.log("컨테이너타임 삭제후", addedTimes);
-
-	// 	// 		// targetInputVal배열에서 시간값 제거
-	// 	// 		if (sectionData[containerId]?.inputValues) {
-	// 	// 			const targetInputVal = sectionData[containerId].inputValues;
-	// 	// 			for (let i = targetInputVal.length - 1; i >= 0; i--) {
-	// 	// 				if (targetInputVal[i] === deleteTime) {
-	// 	// 					targetInputVal.splice(i, 1);
-	// 	// 				}
-	// 	// 			}
-	// 	// 			console.log("타겟인풋바 삭제후", sectionData[containerId].inputValues);
-	// 	// 			console.log("=======★");
-	// 	// 		} else {
-	// 	// 			console.log("오류");
-	// 	// 		}
-
-
-	// 	// 		// buttons배열에서 arrbtn제거
-	// 	// 		let index = buttons.indexOf(arrbtn);
-	// 	// 		if (index > -1) {
-	// 	// 			buttons.splice(index, 1);
-	// 	// 		}
-	// 	// 	});
-
-	// 	// 	// 시간입력input을 버튼 다음에 삽입
-	// 	// 	event.target.parentNode.insertBefore(timeInput, event.target.nextSibling);
-	// 	// 	event.target.parentNode.insertBefore(okbt, timeInput.nextSibling);
-	// 	// 	event.target.parentNode.insertBefore(closeButton, okbt.nextSibling);
-
-	// 	// });
-
-
-	// }
+			if (checkbox) {
+				// if (event.target.tagName.toLowerCase() !== 'label') {
+					checkbox.checked = !checkbox.checked;
+					const changeEvent = new Event('change');
+					checkbox.dispatchEvent(changeEvent);
+					console.log("실행", checkbox.checked);
+					// event.stopPropagation();
+				// }
+			}
+		});
+	});
+	const labelEventOnce = document.querySelectorAll('.wh-days > label');
+	labelEventOnce.forEach(label => {
+		label.addEventListener('click', function(event) {
+			console.log("실행되나");
+			// input과 연결되어 중복실행되는거 방지
+			event.preventDefault();
+			// 버블링막기
+			// event.stopPropagation();
+		});
+	});
 
 
 

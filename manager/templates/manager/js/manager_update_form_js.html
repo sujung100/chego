@@ -326,13 +326,17 @@
 		}
 
 		const setsContainers = document.querySelectorAll('.sets');
-		// 정기휴무 지정
+		let sendDayOffVal = "";
+		// 휴무설정 - 정기휴무 지정
 		function dayOffSet () {
 	
 			setsContainers.forEach(container => {
 				container.addEventListener('click', function() {
 					const radioInput = this.querySelector('input[type="radio"]');
-	
+					console.log("라디오인풋찍어", radioInput)
+					sendDayOffVal = radioInput.value;
+					// console.log("라디오인풋값", sendDayOffVal)
+
 					if (radioInput) {
 						radioInput.checked = true;
 						setsContainers.forEach(con => {
@@ -356,6 +360,15 @@
 			if (radioInput && radioInput.checked) {
 				container.classList.add('clickedset');
 			}
+		});
+
+		
+		// 휴무설정값 저장
+		const hoilsetButton = document.querySelector('#hoilset-button');
+		hoilsetButton.addEventListener('click', function(event){
+			console.log("정기휴무값", sendDayOffVal)
+			console.log("휴무요일값", sendHoliday);
+			sendDayoffData(sendDayOffVal, sendHoliday);
 		});
 
 
@@ -1101,39 +1114,48 @@
 
 
 
-	// 휴무요일 지정
+	// 휴무설정 - 휴무요일 지정
 	const whichday = document.querySelector('.whichday');
 	const daySelectBoxs = whichday.querySelectorAll('input[type="checkbox"]');
+	let sendHoliday = [];
 	daySelectBoxs.forEach(checkbox => {
 		checkbox.addEventListener('change', function() {
 			const parentDiv = this.closest('.wh-days');
 			if (parentDiv) {
 				parentDiv.classList.toggle('clickedday');
 			}
+			if (this.checked) {
+				if (!sendHoliday.includes(this.value)) {
+					sendHoliday.push(this.value);
+				}
+			}
+			else {
+				const index = sendHoliday.indexOf(this.value);
+				if (index > -1) {
+					sendHoliday.splice(index, 1);
+				}
+			}
+			// console.log("배열잘들어감?", sendHoliday);
 		});
 	});
 
 	const parentCon = document.querySelectorAll('.wh-days');
 	parentCon.forEach(container => {
 		container.addEventListener('click', function(event) {
-			// if (event.target.classList.contains('labels')) {
-			// 	return;
-			// }
 			event.stopPropagation(); 
 			event.preventDefault();
 			const checkbox = this.querySelector('input[type="checkbox"]');
 
 			if (checkbox) {
-				// if (event.target.tagName.toLowerCase() !== 'label') {
-					checkbox.checked = !checkbox.checked;
-					const changeEvent = new Event('change');
-					checkbox.dispatchEvent(changeEvent);
-					console.log("실행", checkbox.checked);
-					// event.stopPropagation();
-				// }
+				// 토글
+				checkbox.checked = !checkbox.checked;
+				const changeEvent = new Event('change');
+				checkbox.dispatchEvent(changeEvent);
+				console.log("실행", checkbox.checked);
 			}
 		});
 	});
+	
 	const labelEventOnce = document.querySelectorAll('.wh-days > label');
 	labelEventOnce.forEach(label => {
 		label.addEventListener('click', function(event) {
@@ -1145,6 +1167,17 @@
 		});
 	});
 
+	// 인원설정 - 
+	const maxPeople = document.querySelector('#maxpeople');
+	const maxTeam = document.querySelector('#per1hour');
+	const numsetButton = document.querySelector('#numset-button');
+	numsetButton.addEventListener('click', function() {
+		const numMaxPeople = Number(maxPeople.value);
+		const numMaxTeam = Number(maxTeam.value);
+		console.log("출력1", numMaxPeople);
+		console.log("출력2", numMaxTeam);
+		sendMaxNumData(numMaxPeople, numMaxTeam);
+	});
 
 
 </script>

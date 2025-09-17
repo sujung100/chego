@@ -394,6 +394,15 @@ class Total_Reservation_Check(LoginRequiredMixin, UpdateView):
         store = get_object_or_404(rsv.Store, pk=requested_store_id)
         
         if store:
+            # Store의 owner(User 객체)와 연결된 Manager 찾기
+            # manager_of_the_store = rsv.Manager.objects.filter(user=store.owner).first()
+            # Store의 pk값과 Reservation_user의 store_id값과 일치하는 예약목록 가져오기
+            # rsv_objects = rsv.Reservation_user.objects.filter(store_id=store.pk)
+
+            # HttpResponseRedirect를 위한 전달인자
+            # pk_value = manager_of_the_store.pk
+            # store_id_value = requested_store_id
+
             # post요청
             if request.method == 'POST':
                  # 전달받은 rsv_ids를 리스트로 변환
@@ -499,6 +508,9 @@ def write(request):
     else:
         # GET 요청 처리 (폼을 보여주는 경우)
         return render(request, 'manager/manager_write.html')
+
+    
+    # return render(request, 'manager/manager_write.html')
 
 
 def test_chat(request):
@@ -652,6 +664,35 @@ class Test123(LoginRequiredMixin, UpdateView):
         return get_object_or_404(rsv.Store, pk=store_id)
     
 
+# 임시(현재 사용x)
+# class Update2(LoginRequiredMixin, UpdateView):
+#     model = rsv.Store
+#     form_class = UpdateForm
+#     template_name = 'manager/manager_update_form.html'
+
+#     def get_object(self, queryset=None):
+#         # URL에서 store_id를 사용하여 Store 객체 찾기
+#         store_id = self.kwargs.get('store_id')
+#         return get_object_or_404(rsv.Store, id=store_id)
+
+#     def dispatch(self, request, *args, **kwargs):
+#         self.store = self.get_object()
+        
+#         # 현재 로그인한 사용자가 Store의 owner와 일치하는지 확인
+#         if request.user.is_authenticated and request.user == self.store.owner:
+#             return super(Update2, self).dispatch(request, *args, **kwargs)
+#         else:
+#             raise PermissionDenied
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+        
+#         # URL에서 store_id값 가져오기
+#         requested_store_id = self.kwargs.get('store_id')
+#         context['requested_store_id'] = requested_store_id
+
+#         return context
+
 
 # 수정완 - pk하나로 변경
 class Update(LoginRequiredMixin, UpdateView):
@@ -793,9 +834,452 @@ class Update(LoginRequiredMixin, UpdateView):
             print()
             print()
             print("콘텍스트    ", context)
+
+            # context = {
+            #     "user_dates_json": json.dumps(dates_list, cls=DjangoJSONEncoder),
+            #     "username": request.user.username
+            # }
+        # print(context['disabled_dates_info_json'])
+
+        # print("콘텍스트", context)
         return context
+
+    # 수정전
+    # def post(self, request, *args, **kwargs):
+
+    #     # URL에서 store_id값 가져오기
+    #     requested_store_id = self.kwargs.get('store_id')
+    #     # Store테이블의 id값을 가진 객체찾기 (url에서 가져온 store_id값과 일치하는)
+    #     store = get_object_or_404(rsv.Store, pk=requested_store_id)
+    #     if store:
+    #         # Store의 owner(User 객체)와 연결된 Manager 찾기
+    #         manager_of_the_store = rsv.Manager.objects.filter(user=store.owner).first()
+    #         # Store의 pk값과 Store_times의 store_id값과 일치하는 Store_times 가져오기
+    #         sto_time_objects = rsv.Store_times.objects.filter(store_id=store.pk)
+    #         # HttpResponseRedirect를 위한 전달인자
+    #         pk_value = manager_of_the_store.pk
+    #         store_id_value = requested_store_id
+
+    #         # sto_time_objects의 reservation_time 값들을 리스트로 가져오기
+    #         original_time = list(sto_time_objects.values_list('reservation_time', flat=True))
+
+    #         # post요청1
+    #         if 'myForm' in request.POST:
+    #             button_values_str = request.POST.get('button_values')
+    #             added_time = json.loads(button_values_str)
+    #             print()
+    #             print("button_values_str찍기", button_values_str)
+    #             print("added_time찍기", added_time)
+    #             print()
+
+    #             # Reservation_user에서 예약 정보 가져오기
+    #             reserved_time = []
+    #             for sto_time in sto_time_objects:
+    #                 reservation_user_objects = rsv.Reservation_user.objects.filter(
+    #                     Q(store_id=store) &
+    #                     Q(user_time=sto_time.reservation_time)
+    #                 )
+
+    #                 # 사용자 예약내역이 존재하면:
+    #                 if reservation_user_objects.exists():
+    #                     for reservation in reservation_user_objects:
+
+    #                         # user_date_str = reservation.reservation_date
+    #                         # print("user_date_str찍어보기", user_date_str)
+    #                         datetime_obj = datetime.strptime(reservation.user_time, '%H:%M')
+    #                         print("datetime_obj찍어보기", datetime_obj)
+    #                         formatted_time_str = datetime_obj.strftime('%H:%M')
+    #                         print("formatted_time_str찍어보기", formatted_time_str)
+    #                         print("="*30)
+
+    #                         reserved_time.append(formatted_time_str)
+
+    #             # original_time : 사장님이 저장했던 기존시간값
+    #             # added_time : 사장님이 변경할 시간 (프론트에서 요청이 들어온)
+    #             # reserved_time : 사용자 예약이 존재하는 시간(사용X)
+    #             # matching_times_set : 기존시간과 추가된시간의 교집합
+    #             # check_added_set : 추가된시간 - 기존시간인 차집합
+
+
+    #             original_time_set = set(original_time)
+    #             added_time_set = set(added_time)
+    #             # 교집합
+    #             matching_times_set = original_time_set & added_time_set
+    #             # 차집합
+    #             check_added_set = added_time_set - original_time_set
+
+    #             print("matching_times_set", matching_times_set)
+    #             print("matching_times_set갯수", len(matching_times_set))
+    #             print("check_added_set갯수", len(check_added_set))
+    #             print("="*30)
+    #             print()
+
+    #             # 모든 시간이 일치하는 경우
+    #             if matching_times_set == original_time_set:
+    #                 print("CASE1/ 모든 시간이 존재하거나 처음생성")
+    #                 for time in added_time:
+    #                     sto_time, created = rsv.Store_times.objects.get_or_create(
+    #                         store_id=store,
+    #                         reservation_time=time,
+    #                     )
+    #                     if created:
+    #                         print(f"{time}에 대한 새로운 Store_times 객체가 생성되었습니다.")
+
+
+    #             # 일부 시간이 일치하는 경우
+    #             elif len(matching_times_set) > 0:
+    #                 print("CASE2/ 일부 시간이 존재")
+    #                 # 삭제된 시간은 삭제
+    #                 for time in original_time_set - matching_times_set:
+    #                     rsv.Store_times.objects.filter(store_id=store, reservation_time=time).delete()
+    #                     # rsv.Store_times.save()
+    #                     print(f"{time} 시간이 rsv.Store_times에서 삭제되었습니다.")
+
+    #                 # 추가된 시간은 추가
+    #                 for time in added_time_set - matching_times_set:
+    #                     new_store_time = rsv.Store_times.objects.create(store_id=store, reservation_time=time)
+    #                     # rsv.Store_times.save()
+    #                     new_store_time.save()
+    #                     print(f"{time} 시간이 rsv.Store_times에 추가되었습니다.")
+
+    #             # 시간이 하나도 일치하지 않는 경우
+    #             elif len(matching_times_set) == 0:
+    #                 print("CASE3/ 시간이 하나도 일치X")
+    #                 print("added_time_set갯수", len(added_time_set))
+    #                 print("original_time_set갯수", len(original_time_set))
+
+    #                 # 기존 시간값이 모두 없을경우(삭제 혹은 변경)
+    #                 if len(original_time_set) == 0:
+    #                     print("3-1/ 기존 시간값이 모두 삭제된경우")
+
+    #                     # original_time 삭제
+    #                     for time in original_time_set:
+    #                         rsv.Store_times.objects.filter(store_id=store, reservation_time=time).delete()
+    #                         print(f"{time} 시간이 rsv.Store_times에서 삭제되었습니다.")
+
+    #                     for time in added_time_set:
+    #                         new_store_time = rsv.Store_times.objects.create(store_id=store, reservation_time=time)
+    #                         new_store_time.save()
+    #                         print(f"{time} 시간이 rsv.Store_times에 추가되었습니다.")
+
+
+    #                 # 기존 시간값이 존재했지만, 삭제되거나 변경되는경우
+    #                 elif len(check_added_set) == len(added_time_set):
+    #                 # 추가된 시간 - 기존시간을 뺀 값 갯수 = 추가된 시간 갯수 일경우:
+    #                     print("3-3/ 기존 시간값이 존재했지만, 삭제되거나 변경되는경우")
+
+    #                     for time in original_time_set:
+    #                         rsv.Store_times.objects.filter(store_id=store, reservation_time=time).delete()
+    #                         print(f"{time} 시간이 rsv.Store_times에서 삭제되었습니다.")
+                        
+    #                     for time in added_time_set:
+    #                         new_store_time = rsv.Store_times.objects.create(store_id=store, reservation_time=time)
+    #                         new_store_time.save()
+    #                         print(f"{time} 시간이 rsv.Store_times에 추가되었습니다.")
+
+    #                 else: 
+    #                     # 오류잡기용
+    #                     print("3-4/ 그외")
+
+    #             # POST 처리 완료 시 리디렉션
+    #             # return HttpResponseRedirect(reverse('update', kwargs={'pk': pk_value, 'store_id': store_id_value}))
+    #             return HttpResponseRedirect(reverse('update3', kwargs={'store_id': store_id_value}))
+            
+            
+    #         # 자바스크립트 post요청 처리
+    #         try:
+    #             # JSON 데이터 파싱
+    #             data = json.loads(request.body)
+
+    #             # 데이터 처리
+    #             self.store.start_rsv_possible = data.get("activate_date_start")
+    #             self.store.end_rsv_possible = data.get("activate_date_end")
+    #             self.store.full_clean()
+    #             self.store.save()
+                
+    #         except json.JSONDecodeError:
+    #             return JsonResponse({"message": "유효하지 않은 JSON 형식입니다."}, status=400)
+            
+        
+    #     return self.get(request, *args, **kwargs)
     
-    # post요청 삭제 -> 웹소켓으로 db저장하도록 수정
+    
+    # post요청 -> 수정중
+    # def post(self, request, *args, **kwargs):
+
+    #     # URL에서 store_id값 가져오기
+    #     requested_store_id = self.kwargs.get('store_id')
+
+    #     # Store테이블의 id값을 가진 객체찾기 (url에서 가져온 store_id값과 일치하는)
+    #     store = get_object_or_404(rsv.Store, pk=requested_store_id)
+
+    #     if store:
+    #         # Store의 owner(User 객체)와 연결된 Manager 찾기
+    #         manager_of_the_store = rsv.Manager.objects.filter(user=store.owner).first()
+
+
+    #         # Store의 pk값과 Store_times의 store_id값과 일치하는 Store_times 가져오기
+    #         sto_time_objects = rsv.Store_times.objects.filter(store_id=store.pk)
+    #         # print("sto_time_objects", sto_time_objects)
+    #         # print("sto_time_objects갯수", len(sto_time_objects))
+    #         # print()
+
+    #         # HttpResponseRedirect를 위한 전달인자
+    #         pk_value = manager_of_the_store.pk
+    #         store_id_value = requested_store_id
+            
+
+    #         # sto_time_objects의 reservation_time 값들을 리스트로 가져오기
+    #         original_time = list(sto_time_objects.values_list('reservation_time', flat=True))
+    #         print("original_time", original_time)
+    #         print()
+
+    #         # 이제 모든처리 여기서
+    #         try:
+    #             # JSON 데이터 파싱
+    #             data = json.loads(request.body)
+    #             auto_set_req = "activate_date_start" in data or "activate_date_end" in data
+    #             manual_set_req = "selected_radio_val" in data or "setting_date" in data
+    #             times_set_req = "same" in data or "wd" in data or "wknd" in data
+
+    #             # 갱신주기:수동 (달력)
+    #             if auto_set_req: 
+    #                 self.store.start_rsv_possible = data.get("activate_date_start")
+    #                 self.store.end_rsv_possible = data.get("activate_date_end")
+    #                 self.store.renewal_cycle = None
+    #                 self.store.base_date = None
+    #                 self.store.save()
+    #             # 갱신주기:자동
+    #             elif manual_set_req:
+    #                 self.store.renewal_cycle = data.get('selected_radio_val')
+    #                 self.store.base_date = data.get('setting_date')
+    #                 self.store.start_rsv_possible = None
+    #                 self.store.end_rsv_possible = None
+    #                 self.store.save()
+    #                 # print("갱신주기", self.store.renewal_cycle)
+    #                 # print("기준일", self.store.base_date)
+                
+    #             # 저장 임시주석
+    #             # self.store.full_clean()
+    #             # self.store.save()
+
+    #             # 시간값 수정 및 저장
+    #             elif times_set_req:
+
+    #                 # mon = data.get('1')
+    #                 # print("월찍기", mon)
+    #                 # print("셀프찍기", mon.get('times'))
+    #                 rsv.Store_times.objects.filter(store_id=store).delete()
+    #                 print(f"기존값 삭제 완")
+
+    #                 for key, value_obj in data.items():
+    #                     if key != "command":
+    #                         sort_type_column_val = key
+    #                         times_array = value_obj.get("times", [])
+    #                         if times_array:
+    #                             for single_time in times_array:
+    #                                 rsv.Store_times.objects.create(
+    #                                 store_id=store,
+    #                                 sort_type=sort_type_column_val,
+    #                                 reservation_time=single_time
+    #                             )
+    #                             # reservation_column_val = times_array
+    #                             print(f"{store.pk}/{sort_type_column_val}/{single_time}저장")
+
+    #                             # 기존 sort_type과 현재 요청들어온 sort_type을 비교할 필요없이
+    #                             # 그냥 store_id 일치하면 싹 지우고 재생성 하는걸로
+    #                     else:
+    #                         print("times_array 비어있음")
+    #                         pass
+    #             return JsonResponse({"status": "success", "message": "성공적으로 변경되었습니다."})
+    #         except Exception as e:
+    #             print(f"설정 저장중 오류 {e}")
+    #             return JsonResponse({"status": "error", "message": f"오류 발생: {e}"}, status=400)
+
+
+            #     # 이전의 폼으로 제출하던 데이터
+            #     button_values_str = data.get('buttonValues')
+
+
+            #     # button_values_str가 문자열인지 확인
+            #     if isinstance(button_values_str, str):
+            #         added_time = json.loads(button_values_str)
+            #     else:
+            #         added_time = button_values_str  # 이미 리스트라면 그대로 사용
+                
+            #     # added_time = json.loads(button_values_str)
+            #     print("button_values_str찍기", button_values_str)
+            #     print("added_time찍기", added_time)
+            #     # Reservation_user에서 예약 정보 가져오기
+            #     reserved_time = []
+            #     for sto_time in sto_time_objects:
+            #         reservation_user_objects = rsv.Reservation_user.objects.filter(
+            #             Q(store_id=store) &
+            #             Q(user_time=sto_time.reservation_time)
+            #         )
+
+            #         # 사용자 예약내역이 존재하면:
+            #         if reservation_user_objects.exists():
+            #             for reservation in reservation_user_objects:
+
+            #                 # user_date_str = reservation.reservation_date
+            #                 # print("user_date_str찍어보기", user_date_str)
+            #                 datetime_obj = datetime.strptime(reservation.user_time, '%H:%M')
+            #                 print("datetime_obj찍어보기", datetime_obj)
+            #                 formatted_time_str = datetime_obj.strftime('%H:%M')
+            #                 print("formatted_time_str찍어보기", formatted_time_str)
+            #                 print("="*30)
+
+            #                 reserved_time.append(formatted_time_str)
+
+            #     # original_time : 사장님이 저장했던 기존시간값
+            #     # added_time : 사장님이 변경할 시간 (프론트에서 요청이 들어온)
+            #     # reserved_time : 사용자 예약이 존재하는 시간(사용X)
+            #     # matching_times_set : 기존시간과 추가된시간의 교집합
+            #     # check_added_set : 추가된시간 - 기존시간인 차집합
+
+
+            #     original_time_set = set(original_time)
+            #     added_time_set = set(added_time)
+            #     # 교집합
+            #     matching_times_set = original_time_set & added_time_set
+            #     # 차집합
+            #     check_added_set = added_time_set - original_time_set
+
+            #     print("matching_times_set", matching_times_set)
+            #     print("matching_times_set갯수", len(matching_times_set))
+            #     print("check_added_set갯수", len(check_added_set))
+            #     print("="*30)
+            #     print()
+
+            #     # 모든 시간이 일치하는 경우
+            #     if matching_times_set == original_time_set:
+            #         print("CASE1/ 모든 시간이 존재하거나 처음생성")
+            #         for time in added_time:
+            #             sto_time, created = rsv.Store_times.objects.get_or_create(
+            #                 store_id=store,
+            #                 reservation_time=time,
+            #             )
+            #             if created:
+            #                 print(f"{time}에 대한 새로운 Store_times 객체가 생성되었습니다.")
+
+
+            #     # 일부 시간이 일치하는 경우
+            #     elif len(matching_times_set) > 0:
+            #         print("CASE2/ 일부 시간이 존재")
+            #         # 삭제된 시간은 삭제
+            #         for time in original_time_set - matching_times_set:
+            #             rsv.Store_times.objects.filter(store_id=store, reservation_time=time).delete()
+            #             # rsv.Store_times.save()
+            #             print(f"{time} 시간이 rsv.Store_times에서 삭제되었습니다.")
+
+            #         # 추가된 시간은 추가
+            #         for time in added_time_set - matching_times_set:
+            #             new_store_time = rsv.Store_times.objects.create(store_id=store, reservation_time=time)
+            #             # rsv.Store_times.save()
+            #             new_store_time.save()
+            #             print(f"{time} 시간이 rsv.Store_times에 추가되었습니다.")
+
+            #     # 시간이 하나도 일치하지 않는 경우
+            #     elif len(matching_times_set) == 0:
+            #         print("CASE3/ 시간이 하나도 일치X")
+            #         print("added_time_set갯수", len(added_time_set))
+            #         print("original_time_set갯수", len(original_time_set))
+
+            #         # 기존 시간값이 모두 없을경우(삭제 혹은 변경)
+            #         if len(original_time_set) == 0:
+            #             print("3-1/ 기존 시간값이 모두 삭제된경우")
+
+            #             # original_time 삭제
+            #             for time in original_time_set:
+            #                 rsv.Store_times.objects.filter(store_id=store, reservation_time=time).delete()
+            #                 print(f"{time} 시간이 rsv.Store_times에서 삭제되었습니다.")
+
+            #             for time in added_time_set:
+            #                 new_store_time = rsv.Store_times.objects.create(store_id=store, reservation_time=time)
+            #                 new_store_time.save()
+            #                 print(f"{time} 시간이 rsv.Store_times에 추가되었습니다.")
+
+
+            #         # 기존 시간값이 존재했지만, 삭제되거나 변경되는경우
+            #         elif len(check_added_set) == len(added_time_set):
+            #         # 추가된 시간 - 기존시간을 뺀 값 갯수 = 추가된 시간 갯수 일경우:
+            #             print("3-2/ 기존 시간값이 존재했지만, 삭제되거나 변경되는경우")
+
+            #             for time in original_time_set:
+            #                 rsv.Store_times.objects.filter(store_id=store, reservation_time=time).delete()
+            #                 print(f"{time} 시간이 rsv.Store_times에서 삭제되었습니다.")
+                        
+            #             for time in added_time_set:
+            #                 new_store_time = rsv.Store_times.objects.create(store_id=store, reservation_time=time)
+            #                 new_store_time.save()
+            #                 print(f"{time} 시간이 rsv.Store_times에 추가되었습니다.")
+
+            #         else: 
+            #             # 오류잡기용
+            #             print("3-3/ 그외")
+            #             send_data = {
+            #                 'message': '올바른 요청이 아닙니다.',
+            #                 'status': 'error'
+            #             }
+                
+            #     send_data = {
+            #         'message': '변경되었습니다.',
+            #         'status': 'success'
+            #     }
+
+            #     # POST 처리 완료 시 리디렉션
+            #     # return HttpResponseRedirect(reverse('update', kwargs={'pk': pk_value, 'store_id': store_id_value}))
+            #     # return HttpResponseRedirect(reverse('update3', kwargs={'store_id': store_id_value}))
+            #     return JsonResponse(send_data, safe=False)
+            
+
+            # except json.JSONDecodeError:
+            #     return JsonResponse({"message": "유효하지 않은 JSON 형식입니다.",'status': 'error'}, status=400)
+            
+        # return self.get(request, *args, **kwargs)
+    
+
+# 비동기 update용 get만드는중 - 근데 일단 UPDATE뷰 post처리부터 끝내고 작업하기
+# class UpdateData(View):
+
+#     def setup_variables(self, store_id):
+#         # 공통 변수 설정
+#         if not hasattr(self, 'store'):
+#             self.store = get_object_or_404(rsv.Store, id=store_id)
+#         if not hasattr(self, 'store_time'):
+#             self.store_time = rsv.Store_times.objects.filter(store_id=store_id)
+#         if not hasattr(self, 'user_time'):
+#             self.user_time = rsv.Reservation_user.objects.filter(store_id=store_id)
+    
+#     def get_object(self, queryset=None):
+#         # URL에서 store_id를 사용하여 Store 객체 찾기
+#         store_id = self.kwargs.get('store_id')
+#         return get_object_or_404(rsv.Store, id=store_id)
+
+#     def dispatch(self, request, *args, **kwargs):
+#         self.store = self.get_object()
+        
+#         # 현재 로그인한 사용자가 Store의 owner와 일치하는지 확인
+#         if request.user.is_authenticated and request.user == self.store.owner:
+#             return super(UpdateData, self).dispatch(request, *args, **kwargs)
+#         else:
+#             raise PermissionDenied
+        
+
+#     def get(self, request, store_id, *args, **kwargs):
+#         self.setup_variables(store_id)
+
+#         if not request.user.is_authenticated or request.user.id != self.store.owner_id:
+#             return HttpResponseForbidden("접근 권한이 없습니다.")
+#         # return JsonResponse(data, safe=False)
+
+#         elif request.user.is_authenticated and request.user.id == self.store.owner_id:
+#             # elif 조건수정, 결과 추가하기- try except로 바꾸던가
+#             return JsonResponse([], safe=False)
+
+#         else:
+#             return JsonResponse([], safe=False)
 
 
 # @method_decorator(csrf_exempt, name="dispatch")

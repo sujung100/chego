@@ -42,7 +42,58 @@
   };
 
   const rsv_activate = document.querySelector("#rsv_activate");
+  // console.log(disable_checkbox.checked);
+
+  // const storeId = "{{ store.id }}";
+	// const wkndTimeObjects = {{ wknd_time_objects|safe }};
+	// const managerPk = "{{ manager.pk }}";
+
+
+  // tab메뉴 스타일적용
+	// document.addEventListener("DOMContentLoaded", function() {
+	// var tabs = document.querySelectorAll('.tabs .trapez');
+
+	// for (var i = 0, len = tabs.length; i < len; i++) {
+	// 	tabs[i].addEventListener("click", function() {
+	// 	if (this.classList.contains('active'))
+	// 		return;
+
+	// 	var parent = this.parentNode,
+	// 		innerTabs = parent.querySelectorAll('.trapez');
+
+	// 	for (var index = 0, iLen = innerTabs.length; index < iLen; index++) {
+	// 		innerTabs[index].classList.remove('active');
+	// 	}
+
+	// 	this.classList.add('active');
+	// 	});
+	// }
+
+
+  // const timeContainer = document.getElementById("time-buttons-container");
+  // console.log("위켄드데이터", wkndTimeObjects);
   
+  // if (!timeContainer) {
+  //   console.error("컨테이너 못찾음");
+  //   return;
+  // }
+
+  // wkndTimeObjects.forEach(time => {
+  //   const timeBtn = document.createElement("button");
+  //   timeBtn.className = `time-innerbox-${storeId}`;
+  //   timeBtn.type = "button";
+  //   timeBtn.dataset.time = time.reservation_time;
+  //   timeBtn.id = "time-style";
+  //   timeBtn.style.display = "none";
+  //   timeBtn.textContent = time.reservation_time;
+
+  //   timeContainer.appendChild(timeBtn);
+  // });
+
+	// });
+
+
+
 
 	// 기간설정-01 자동수동 세팅
 	const toggleCheckbox = document.getElementById('toggle-checkbox');
@@ -87,8 +138,24 @@
 
         const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'long', timeZone: 'Asia/Seoul' };
         const truncatedDate = today.toLocaleDateString('ko-KR', dateOptions).replace(/\. /g, '-').replace(/요일/, '');
+        // console.log("dateOptions", dateOptions);
+        // console.log("todayDate", truncatedDate);
 
         console.log("라디오밸류", radioValue);
+        // console.log("todayDate", truncatedDate);
+
+        // if (radioValue) {
+        //     if (updateSocket.readyState === WebSocket.OPEN) {
+        //         updateSocket.send(JSON.stringify({
+        //             "command": "auto_choice_value",
+        //             "radioValue": radioValue,
+        //             "todayDate": truncatedDate,
+        //         }));
+        //     }
+        // } else {
+        //     alert("선택된 옵션이 없습니다.");
+        // }
+
 
         // 자동선택 후 radio까지 선택했을 때 전달값 : selectAuto
         if (radioValue) {
@@ -96,6 +163,14 @@
           // 자동 수동 선택값 저장 25.03.25
           console.log("자동찍힘");
           console.log("날짜 선택값 없어야정상", selectedDates);
+          // return selectAuto = {
+          //   radioValue: radioValue,
+          //   todayDate: truncatedDate,
+          // };
+          // selectAuto = {
+          //   radioValue: radioValue,
+          //   todayDate: truncatedDate,
+          // };
           let radioVal = radioValue;
           let todayDate = truncatedDate;
           // selectAuto도 후에 selectedDates랑 같이 db에 따로 저장되어야함

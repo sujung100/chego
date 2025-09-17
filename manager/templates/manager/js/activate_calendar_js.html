@@ -32,62 +32,10 @@
       return { valid: true };
     }
   
-    // function activateHandle() {
-    //   // 2탭 버튼에서 1탭 선택완료버튼 클릭이벤트로 변경
-    //   completeButton.addEventListener("click", function () {
-    //     let activate_start = disable_date_start.textContent;
-    //     let activate_end = disable_date_end.textContent;
-    //     const validationResult = validateDates(activate_start, activate_end);
-    //     if (!validationResult.valid) {
-    //       const errorMessage = getErrorMessage(validationResult.errorType);
-    //       alert(errorMessage);
-    //       return;
-    //     }
-    //     const activateResult = confirm("수정하시겠습니까?");
-    //     if (activateResult) {
-    //       console.log("활성화 온");
-    //       activatePost(activate_start, activate_end);
-    //     }
-    //   });
-    // }
-    // activateHandle();
+    // 변경 : fetch없앰 post요청 db저장 -> 웹소켓으로 처리
     
-    
+    // 기간설정 - 자동선택
     function sendAutoData(radioVal, today) {
-
-      // fetch("api/activate_post/", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //     "X-CSRFToken": getCookie("csrftoken"),
-      //   },
-      //   body: JSON.stringify({
-      //     "selected_radio_val": radioVal,
-      //     "setting_date": today,
-      //   })
-      // })
-      // // .then(response => response.json())
-      // .then(response => {
-      //     if (!response.ok) {
-      //         throw new Error('Network response was not ok');
-      //     }
-      //     return response.json();
-      // })
-      // // .then(data => console.log(data))
-      // .then(data => {
-      //   if (data.status === 'success') {
-      //       // 성공
-      //       console.log(data.message);
-      //       alert("변경되었습니다.")
-      //       // location.reload();
-
-      //   } else {
-      //       // 실패
-      //       console.log(data.message);
-      //   }
-      // })
-      // .catch(error => console.log(error));
-
       if (updateSocket.readyState === WebSocket.OPEN) {
         updateSocket.send(JSON.stringify({
           "command": "rsv_renewal_cycle",
@@ -98,45 +46,8 @@
       }
     }
 
-
-    // 기존 통합 전송 코드 분리중 - 25.08.18
-    // function activatePost(start, end) {
+    // 기간설정 - 수동선택(달력값)
     function sendManualData(start, end) {
-
-      // fetch("api/activate_post/", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //     "X-CSRFToken": getCookie("csrftoken"),
-      //   },
-      //   body: JSON.stringify({
-      //     "activate_date_start": start,
-      //     "activate_date_end": end,
-      //     // "buttonValues": buttonValues
-      //   })
-      // })
-      // // .then(response => response.json())
-      // .then(response => {
-      //     if (!response.ok) {
-      //         throw new Error('Network response was not ok');
-      //     }
-      //     return response.json();
-      // })
-      // // .then(data => console.log(data))
-      // .then(data => {
-      //   if (data.status === 'success') {
-      //       // 성공
-      //       console.log(data.message);
-      //       alert("변경되었습니다.")
-      //       // location.reload();
-
-      //   } else {
-      //       // 실패
-      //       console.log(data.message);
-      //   }
-      // })
-      // .catch(error => console.log(error));
-
       if (updateSocket.readyState === WebSocket.OPEN) {
         updateSocket.send(JSON.stringify({
           "command": "start_end_date",
@@ -148,39 +59,8 @@
     }
 
 
-    // // 시간값들
+    // 시간설정 - 시간값들
     function saveTimes(changeSave) {
-
-      // fetch("api/activate_post/", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //     "X-CSRFToken": getCookie("csrftoken"),
-      //   },
-      //   body: JSON.stringify(changeSave)
-      // })
-      // // .then(response => response.json())
-      // .then(response => {
-      //     if (!response.ok) {
-      //         throw new Error('Network response was not ok');
-      //     }
-      //     return response.json();
-      // })
-      // // .then(data => console.log(data))
-      // .then(data => {
-      //   if (data.status === 'success') {
-      //       // 성공
-      //       console.log(data.message);
-      //       alert("변경되었습니다.")
-      //       // location.reload();
-
-      //   } else {
-      //       // 실패
-      //       console.log(data.message);
-      //   }
-      // })
-      // .catch(error => console.log(error));
-
       if (updateSocket.readyState === WebSocket.OPEN) {
         updateSocket.send(JSON.stringify({
           "command": "temporary",
@@ -189,126 +69,32 @@
         }));
       }
     }
-
-
-
-
-
-    // 기존 25.04.08
-    // let activate_result = false;
-  
-    // function getErrorMessage(errorType) {
-    //   const errorMessages = {
-    //     "startDateMissing": "예약 활성화 시작일을 선택해 주세요.",
-    //     "endDateMissing": "예약 활성화 종료일을 선택해 주세요.",
-    //     "dateNotSelected": "예약 날짜를 선택해 주세요."
-  
-    //   };
-  
-    //   return errorMessages[errorType] || "알 수 없는 오류가 발생했습니다.";
-    // }
-  
-  
-    // function validateDates(start, end) {
-    //   console.log("start", start);
-    //   console.log("end", end);
-    //   // 날짜가 선택되지 않은 경우
-    //   if (!start || isNaN(new Date(start).getTime())) {
-    //     return { valid: false, errorType: "startDateMissing" };
-    //   }
-    //   if (!end || isNaN(new Date(end).getTime())) {
-    //     return { valid: false, errorType: "endDateMissing" };
-    //   }
-  
-    //   // 시작일과 종료일을 Date 객체로 변환
-    //   const start_type_date = new Date(start);
-    //   const end_type_date = new Date(end);
-    //   // const disableStart = new Date(disableStartDate);
-    //   // const disableEnd = new Date(disableEndDate);
-  
-    //   // // 시작일이 종료일보다 늦은 경우
-    //   // if (start_type_date > end_type_date) {
-    //   //     return { valid: false, errorType: "startAfterEnd" };
-    //   // }
-  
-    //   // // 예약 가능한 날짜 범위를 벗어난 경우
-    //   // if (start_type_date < disableStart || end_type_date > disableEnd) {
-    //   //     return { valid: false, errorType: "dateNotInRange" };
-    //   // }
-  
-    //   // 모든 유효성 검사를 통과한 경우
-    //   return { valid: true };
-    // }
-  
-    // function activateHandle() {
-    //   rsv_activate.addEventListener("click", function () {
-    //     let activate_start = disable_date_start.textContent;
-    //     let activate_end = disable_date_end.textContent;
-    //     const validationResult = validateDates(activate_start, activate_end);
-    //     if (!validationResult.valid) {
-    //       const errorMessage = getErrorMessage(validationResult.errorType);
-    //       alert(errorMessage);
-    //       return;
-    //     }
-    //     const activateResult = confirm("수정하시겠습니까?");
-    //     if (activateResult) {
-    //       console.log("활성화 온");
-    //       activatePost(activate_start, activate_end);
-    //     }
-    //   });
-    // }
-    // activateHandle();
     
+    // 휴무설정
+    function sendDayoffData(dayOffCycle, dayoff) {
+      if (updateSocket.readyState === WebSocket.OPEN) {
+        updateSocket.send(JSON.stringify({
+          "command": "dayoff_set",
+          "dayoff_cycle": dayOffCycle,
+          "dayoff": dayoff,
+          "rsv_id": storeId,
+        }));
+      }
+    }
     
-    // function activatePost(start, end) {
-    //   let allButtons = Array.from(document.querySelectorAll("#attach_btns button"));
-    //   let sortedButtons = allButtons.sort((a, b) => a.textContent.localeCompare(b.textContent));
-    //   let buttonValues = sortedButtons.map(button => button.textContent);
-    //   document.getElementById('buttonValues').value = JSON.stringify(buttonValues);
-      
-    //   fetch("api/activate_post/", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       "X-CSRFToken": getCookie("csrftoken"),
-    //     },
-    //     body: JSON.stringify({
-    //       "activate_date_start": start,
-    //       "activate_date_end": end,
-    //       "buttonValues": buttonValues
-    //     })
-    //   })
-    //   // .then(response => response.json())
-    //   .then(response => {
-    //       if (!response.ok) {
-    //           throw new Error('Network response was not ok');
-    //       }
-    //       return response.json();
-    //   })
-    //   // .then(data => console.log(data))
-    //   .then(data => {
-    //     if (data.status === 'success') {
-    //         // 성공
-    //         console.log(data.message);
-    //         alert("변경되었습니다.")
-    //         location.reload();
+    // 인원설정
+    function sendMaxNumData(maxPeople, maxTeam) {
+      if (updateSocket.readyState === WebSocket.OPEN) {
+        updateSocket.send(JSON.stringify({
+          "command": "num_set",
+          "max_people": maxPeople,
+          "max_team": maxTeam,
+          "rsv_id": storeId,
+        }));
+      }
+    }
 
-    //     } else {
-    //         // 실패
-    //         console.log(data.message);
-    //     }
-    //   })
-    //   .catch(error => console.log(error));
 
-      
 
-    //   if (updateSocket.readyState === WebSocket.OPEN) {
-    //     updateSocket.send(JSON.stringify({
-    //       "command": "start_end_date",
-    //       "start_date": start,
-    //       "end_date": end,
-    //       "buttonValues": buttonValues,
-    //     }));
-    //   }
-    // }
+
   </script>

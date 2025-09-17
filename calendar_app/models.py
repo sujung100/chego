@@ -24,8 +24,10 @@ class Store(models.Model):
     base_date = models.CharField(max_length=10, null=True, blank=True)
     start_rsv_possible = models.DateField(null=True, blank=True)
     end_rsv_possible = models.DateField(null=True, blank=True)
+    dayoff_cycle = models.CharField(max_length=10, null=True, blank=True)
+    max_people = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(99)], null=True)
+    max_team = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(99)], null=True)
     
-
 
     class Meta:
         # pass
@@ -37,6 +39,22 @@ class Store(models.Model):
     
     def get_absolute_url(self):
         return reverse("community:view_detail", args=(self.id,))
+    
+
+class Dayoff(models.Model):
+    id = models.AutoField(primary_key=True)
+    store_id = models.ForeignKey(Store, on_delete=models.CASCADE, db_column="store_id")
+    dayoff = models.CharField(max_length=10, null=True, blank=True)
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["store_id", "dayoff"], name="uq_store_dayoff"),
+        ]
+        indexes = [
+            models.Index(fields=["store_id"]),
+            models.Index(fields=["dayoff"]),
+        ]
+
     
 class Manager(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

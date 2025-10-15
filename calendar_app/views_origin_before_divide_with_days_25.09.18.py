@@ -174,17 +174,13 @@ class Idx_list(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         store_list = models.Store.objects.all()
-        # context['store_list'] = store_list
-        # 25.09.22
-        
+        context['store_list'] = store_list
 
         store_times_dict = {}
         for store in store_list:
             store_times = models.Store_times.objects.filter(store_id=store.pk)
             store_times_dict[store.pk] = store_times
         context['store_times_dict'] = store_times_dict
-        print("스토어타임즈딕트", store_times_dict)
-        print("스토어리스트", store_list)
 
         pk = self.kwargs.get('pk')
         if pk:
@@ -197,14 +193,11 @@ class Idx_list(TemplateView):
         else:
             store_list = store_list
 
-        # context['all_category_lists'] = store_list
+        store_data = []
 
-        # store_data = []
-        # stores_field = []
-        final_data = []
         for store in store_list:
             sto_time = models.Store_times.objects.filter(store_id=store.pk)
-            print("스토어찍어", sto_time.values('sort_type'))
+            print(store)
             store_dates = []
             for dates in sto_time:
                 dates_info  = models.Reservation_user.objects.filter(
@@ -231,34 +224,20 @@ class Idx_list(TemplateView):
                 user_dates = [info.reservation_date for info in dates_info]
                 store_dates.append({
                 'user_date': user_dates,
-                'disable_time': [info.user_time for info in dates_info ]
+                'disable_time': json.dumps([info.user_time for info in dates_info ])
                 })
                 # print(store_dates)
-            final_data.append({
-                'id': store.id,
-                'store_name': store.store_name,
-                'address': store.address,
-                'owner_id': store.owner_id,
-                'renewal_cycle': store.renewal_cycle,
-                'base_date': store.base_date,
-                'dayoff_cycle': store.dayoff_cycle,
-                'max_people': store.max_people,
-                'max_team': store.max_team,
-                # 'sto_time': list(sto_time.values('reservation_time')),
-                'sto_time': list(sto_time.values_list('reservation_time', flat=True)),
+            store_data.append({
+                'store_id': store.pk,
+                'sto_time': list(sto_time.values()),
                 'activate_date_start': store.start_rsv_possible,  # 활성 시작 날짜 추가
                 'activate_date_end': store.end_rsv_possible,  # 활성 종료 날짜 추가
-                'store_dates_json': store_dates,
+                'store_dates_json': json.dumps(store_dates, cls=DjangoJSONEncoder),
             })
-            print("전달데이터", final_data)
 
         # context['store_data'] = store_data
-        # context['store_data_json'] = json.dumps(store_data, cls=DjangoJSONEncoder)
-        # context['store_list_json'] = json.dumps(final_data, cls=DjangoJSONEncoder)
-        context['store_list_json'] = final_data
-        # 임시추가 25.10.13
-        # context['store_dates_json'] = store_dates
-        # print("콘텍스트찍기" , context)
+        context['store_data_json'] = json.dumps(store_data, cls=DjangoJSONEncoder)
+        # print(store_data)
         return context
 
 

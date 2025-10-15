@@ -157,28 +157,19 @@
   <div class="rs-list">
     <h1>시간표 조회</h1>
     <div class="scroll box2">
-      <div id="store-container">
-      </div>
-      <!-- <script id="store-list" type="application/json"> -->
-        {{ store_list_json|json_script:"store-list" }}
-         <!-- store_dates_json|json_script:"store-data"  -->
-      <!-- </script> -->
-       <!-- store_data_json|json_script:"store-data-json"  -->
-
-
-       <!-- for obj in store_list 
-      <div class="store-table" data-user=" obj.owner.username " data-crm=" obj.id ">
+      {% for obj in store_list %}
+      <div class="store-table" data-user="{{ obj.owner.username }}" data-crm="{{ obj.id }}">
         <div class="st-name" >
-          <div class="st-id" data-crm=" obj.id "></div>
-           obj.store_name 
+          <div class="st-id" data-crm="{{ obj.id }}"></div>
+          {{ obj.store_name }}
         </div>
-        <div class="st-time" data-crm=" obj.id ">
-           for time in store_times_dict|get_item:obj.pk 
-          <button class="time-item- obj.id " type="button" data-crm="obj.id " data-time=" time.reservation_time " id="time-style"> time.reservation_time</button>
-           endfor 
+        <div class="st-time" data-crm="{{ obj.id }}">
+          {% for time in store_times_dict|get_item:obj.pk %}
+          <button class="time-item-{{ obj.id }}" type="button" data-crm="{{ obj.id }}" data-time="{{ time.reservation_time }}" id="time-style">{{ time.reservation_time}}</button>
+          {% endfor %}
         </div>
       </div>
-       endfor  -->
+      {% endfor %}
       <!-- <p>STEP1. 달력의 날짜를 선택하세요.</p>
       <p>STEP2. 업체를 선택하세요.</p>
       <p>STEP3. 시간을 선택하세요.</p>

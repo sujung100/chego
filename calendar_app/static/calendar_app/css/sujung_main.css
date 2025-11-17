@@ -731,6 +731,12 @@ rs-tabs, rs-list, rs-date, rs-info
   text-align: center;
 }
 
+.rs-list #store-container.hide-style {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+
 .rs-list .store-table {
   width: calc(100% - 2.4rem);
   border: 1px solid #818181;
@@ -741,11 +747,20 @@ rs-tabs, rs-list, rs-date, rs-info
   display: flex;
 }
 
+.rs-list #store-container .store-table.hide-style {
+  width: 8rem;
+}
+
 .rs-list .store-table .st-name {
   width: 30%;
   border-right: 1px solid #818181;
   text-align: center;
   margin: auto 0;
+}
+
+.rs-list #store-container .store-table .st-name.hide-style {
+  border: none;
+  width: 100%;
 }
 
 .rs-list .store-table .st-name h5 {
@@ -762,11 +777,16 @@ rs-tabs, rs-list, rs-date, rs-info
   padding: 0 0.5rem;
 }
 
+.rs-list #store-container .store-table .st-time.hide-style {
+  display: none;
+}
+
 .rs-list .scroll p {
   margin-left: 1rem;
 }
 
-.rs-list .store-table .st-time #time-style {
+/* .rs-list .store-table .st-time #time-style { */
+.rs-list .store-table .st-time [class^="time-item"] {
   cursor: pointer;
   border: 0;
   outline: 0;
@@ -778,7 +798,8 @@ rs-tabs, rs-list, rs-date, rs-info
   padding: 0.5rem;
 }
 
-.rs-list .store-table .st-time #time-style:hover {
+/* .rs-list .store-table .st-time #time-style:hover { */
+.rs-list .store-table .st-time [class^="time-item"]:hover {
   background-color: #009476;
   color: #fff;
   border: 1px solid #009476;

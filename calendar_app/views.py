@@ -202,6 +202,7 @@ class Idx_list(TemplateView):
         # store_data = []
         # stores_field = []
         final_data = []
+        type_val = []
         for store in store_list:
             sto_time = models.Store_times.objects.filter(store_id=store.pk)
             print("스토어찍어", sto_time.values('sort_type'))
@@ -211,6 +212,22 @@ class Idx_list(TemplateView):
                 Q(store_id=store) &
                 Q(user_time=dates.reservation_time) 
                 )
+                print()
+                print()
+                print()
+                print("개별sortType찍어", dates.sort_type)
+                print()
+                print()
+                print()
+                type_val.append ({
+                    # dates.reservation_time: dates.sort_type
+                    "store_id": store.pk,
+                    "reservation_time": dates.reservation_time,
+                    "sort_type": dates.sort_type
+                })
+                print("*************")
+                print("타입밸찍어", type_val)
+                print("*************")
 
                 hour_disabled_dates = {}
 
@@ -249,6 +266,7 @@ class Idx_list(TemplateView):
                 'activate_date_start': store.start_rsv_possible,  # 활성 시작 날짜 추가
                 'activate_date_end': store.end_rsv_possible,  # 활성 종료 날짜 추가
                 'store_dates_json': store_dates,
+                'type_val_json': type_val,
             })
             print("전달데이터", final_data)
 

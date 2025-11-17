@@ -22,7 +22,6 @@
     let signs = document.querySelector('.signs');
     let guide = document.querySelector('.guide');
     let choiceDay = null;
-    // let getDayCode = null;
 
 
     // 달력 생성 - 달마다 테이블 생성후 날짜값 채워넣기
@@ -131,12 +130,9 @@
         }
     }
 
-    // 호출여부 저장
-    let exeChoiceDate = false;
+     
     // 날짜 선택
     function choiceDate(newDIV, e) {
-        exeChoiceDate = true;
-
         if (e.target === newDIV) {
             if (document.getElementsByClassName("choiceDay")[0]) {                              // 기존에 선택한 날짜가 있으면
                 document.getElementsByClassName("choiceDay")[0].classList.remove("choiceDay");  // 해당 날짜의 "choiceDay" class 제거
@@ -282,24 +278,16 @@
         // 날짜별 시간표시
         let dayCode = clickedDay.getAttribute('data-daycode');
         // console.log("데이코드타입 찍어봐", typeof dayCode)
-        console.log("데이코드 찍어봐", dayCode);
-        // getDayCode = dayCode;
-        const sendingVal = dayCode;
-        console.log("A실행");
-        const event = new CustomEvent('sendingValue', {
-            detail: sendingVal
-        });
-        document.dispatchEvent(event);
-
+        console.log("데이코드 찍어봐", dayCode)
 
         // let choiceDay = document.querySelector('.choiceDay');
         // const currentDay = getChioceDay();
         // let dayCode = currentDay.getAttribute('data-daycode');
 
         // console.log("커런트데이찍어봐", currentDay);
-        // if (dayCode === "3") {
-        //     console.log("데이코드3");
-        // }
+        if (dayCode === "3") {
+            console.log("데이코드3");
+        }
         
     }
 
@@ -317,194 +305,64 @@
         restoreSelectedDate2();
         setUserDateValue();
 
-        function timeCreate() {
-
-            // console.log("전달받은daycode값", getDayCode);
-            // 기존 템플릿태그로 생성 -> 동적생성
-            function passResult(dayCodeVals) {
-                console.log('B실행');
-                if (dayCodeVals) {
-                    const result = dayCodeVals;
-                    console.log('B값', result);
-                    return result;
-                } else {
-                    console.log('넘겨받은값 없음');
-                    return null;
-                }
+        // 기존 템플릿태그로 생성 -> 동적생성
+        const dataElement = document.getElementById('store-list');
+        // console.log("데이터엘리먼트", dataElement);
+        
+        try {
+            if (dataElement && dataElement.textContent) {
+                stores = JSON.parse(dataElement.textContent || '[]');
+                console.log("stores타입/내용: ", typeof stores, stores);
             }
-
-            const dataElement = document.getElementById('store-list');
-            // console.log("데이터엘리먼트", dataElement);
-            
-            try {
-                if (dataElement && dataElement.textContent) {
-                    stores = JSON.parse(dataElement.textContent || '[]');
-                    console.log("stores타입/내용: ", typeof stores, stores);
-                }
-            }
-            catch (e) {
-                console.error("store list json파싱오류", e);
-            }
-    
-            const storeContainer = document.getElementById('store-container');
-    
-            if (!stores || stores.length === 0) {
-                return;
-            }
-            storeContainer.innerHTML = '';
-    
-            console.log("forEach전 stores타입/내용:", typeof stores, stores);
-
-
-            stores.forEach(store => {
-                const storeTableDiv = document.createElement('div');
-                storeTableDiv.className = 'store-table';
-                storeTableDiv.dataset.crm = store.id;
-    
-                const nameDiv = document.createElement('div');
-                nameDiv.className = 'st-name';
-                const idDiv = document.createElement('div');
-                idDiv.className = 'st-id';
-                idDiv.dataset.crm = store.id;
-                
-                nameDiv.appendChild(document.createTextNode(store.store_name));
-                nameDiv.appendChild(idDiv);
-    
-                const timeDiv = document.createElement('div');
-                timeDiv.className = 'st-time';
-                timeDiv.dataset.crm = store.id;
-                
-                console.log("type_val_json찍어", store.type_val_json);
-                
-                
-                // type_val_json의 아이디와 store id비교
-                if (Array.isArray(store.type_val_json)) {
-                    store.type_val_json.forEach(item => {
-                        if (String(item.store_id) === String(store.id)) {
-                            const timeVal = String(item.reservation_time);
-                            const timeButton = document.createElement('button');
-                            timeButton.className = `time-item-${store.id}`;
-                            timeButton.type = 'button';
-                            timeButton.dataset.crm = store.id;
-                            timeButton.dataset.time = timeVal;
-                            if (item.sort_type !== null && item.sort_type !== undefined) {
-                                    timeButton.dataset.sorttype = String(item.sort_type);
-                                }
-                                timeButton.textContent = timeVal;
-                                timeDiv.appendChild(timeButton);
-                                }
-                            });
-                        }
-                        // const itemStoreId = item.store_id !== undefined && item.store_id !== null
-                        // ? String(item.store_id)
-                        // : null;
-                        // const currentStoreId = store.id !== undefined && store.id !== null
-                        // ? String(store.id)
-                        // : null;
-                    
-                        // if (itemStoreId && currentStoreId && itemStoreId === currentStoreId) {
-                        //     const timeVal = String(item.reservation_time);
-                        //     const timeButton = document.createElement('button');
-                        //     timeButton.className = `time-item-${store.id}`;
-                        //     timeButton.type = 'button';
-                        //     timeButton.id = 'time-style';
-                        //     timeButton.dataset.crm = store.id;
-                        //     timeButton.dataset.time = timeVal;
-                        //     // sorttype 데이터속성 추가
-                        //     if (item.sort_type !== null && item.sort_type !== undefined) {
-                        //         timeButton.dataset.sorttype = String(item.sort_type);
-                        //     }
-                        //     timeButton.textContent = timeVal;
-                        //     timeDiv.appendChild(timeButton);
-
-                        //      // 커스텀이벤트 sendingValue
-                        //     document.addEventListener('sendingValue', (event) => {
-                        //         console.log('C실행');
-                        //         const receivedData = event.detail;
-                        //         console.log('C받은값', receivedData);
-                        //         console.log('************');
-                                
-                        //         const dayNum = passResult(receivedData);
-                        //         console.log('C날짜값', dayNum);
-                        //         console.log('C비교값', timeButton.dataset.sorttype);
-                        //         if (dayNum === timeButton.dataset.sorttype) {
-                        //             console.log('동일');
-                        //         // } else {
-                        //         //     console.log('그외');
-                        //         //     timeButton.style.display = "none";
-                        //         //     storeTableDiv.style.display = "none";
-                        //         } else if (dayNum !== timeButton.dataset.sorttype) {
-                        //             console.log('★안동일');
-                        //             if (timeButton.dataset.crm === storeTableDiv.dataset.crm) {
-                        //                 console.log("☆삭제");
-                        //                 storeTableDiv.style.display = "none";
-                        //             }
-                        //         }
-                        //     });
-
-
-                        // }
-                    
-                //     });
-                // }
-                storeTableDiv.appendChild(nameDiv);
-                storeTableDiv.appendChild(timeDiv);
-                storeContainer.appendChild(storeTableDiv);
-
-
-               
-
-                
-            });
-
-        // daycode, sorttype 비교
-        document.addEventListener('sendingValue', (event) => {
-            const raw = event.detail;
-            if (raw === null || raw === undefined) return;
-
-            const dayCode = String(raw).trim();
-            const dayNum = Number(dayCode);
-            const storeDivs = document.querySelectorAll('.store-table');
-            storeDivs.forEach(storeDiv => {
-                const buttons = storeDiv.querySelectorAll('button[data-time]');
-
-                // 매칭버튼갯수
-                let matchCount = 0;
-                buttons.forEach(btn => {
-                    const rawSort = btn.dataset.sorttype;
-                    const sort = (rawSort === undefined || rawSort === null) ? null : String(rawSort).trim().toLowerCase();
-                    let isMatch = false;
-
-                    if (sort === 'same') {
-                        isMatch = true;
-                    } else if (!Number.isNaN(dayNum) && dayNum >= 1 && dayNum <=5) {
-                        if (sort === dayCode || sort === 'wd') isMatch = true;
-                        // 평일 (wd나 1~5)
-                    } else if (!Number.isNaN(dayNum) && (dayNum === 6 || dayNum === 7)) {
-                        // 주말 (wknd나 6~7)
-                        if (sort === dayCode || sort === 'wknd') isMatch = true;
-                    }
-
-                    // 버튼 일치하는 값 존재?
-                    if (isMatch) {
-                        btn.style.display = '';
-                        matchCount++;
-                    } else {
-                        btn.style.display = 'none';
-                    }
-                    });
-
-                    // 매칭버튼 없다면 스토어숨기기
-                    if (matchCount > 0) {
-                        storeDiv.style.display = '';
-                    } else {
-                        storeDiv.style.display = 'none';
-                    }
-                });
-            });
         }
-        // }
-        timeCreate();
+        catch (e) {
+            console.error("store list json파싱오류", e);
+        }
+
+        const storeContainer = document.getElementById('store-container');
+
+        if (!stores || stores.length === 0) {
+            return;
+        }
+        storeContainer.innerHTML = '';
+
+        console.log("forEach전 stores타입/내용:", typeof stores, stores);
+        
+        stores.forEach(store => {
+            const storeTableDiv = document.createElement('div');
+            storeTableDiv.className = 'store-table';
+            storeTableDiv.dataset.crm = store.id;
+
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'st-name';
+            const idDiv = document.createElement('div');
+            idDiv.className = 'st-id';
+            idDiv.dataset.crm = store.id;
+            
+            nameDiv.appendChild(document.createTextNode(store.store_name));
+            nameDiv.appendChild(idDiv);
+
+            const timeDiv = document.createElement('div');
+            timeDiv.className = 'st-time';
+            timeDiv.dataset.crm = store.id;
+
+            if (store.sto_time && Array.isArray(store.sto_time)) {
+            store.sto_time.forEach(time => {
+                const timeButton = document.createElement('button');
+                timeButton.className = `time-item-${store.id}`;
+                timeButton.type = 'button';
+                timeButton.id = 'time-style';
+                timeButton.dataset.crm = store.id;
+                timeButton.dataset.time = time;
+                timeButton.textContent = time;
+                timeDiv.appendChild(timeButton);
+                });
+            }
+
+            storeTableDiv.appendChild(nameDiv);
+            storeTableDiv.appendChild(timeDiv);
+            storeContainer.appendChild(storeTableDiv);
+        });
         hideTimes();
 
         
@@ -649,9 +507,9 @@
 
         // const storeData = JSON.parse(' store_list_json|escapejs|safe }');
         function findStoreDates(storeId) {
-            // console.log("고치기1", storeId)
-            // console.log("고치기2", stores)
-            // console.log("고치기3", stores.length)
+            console.log("고치기1", storeId)
+            console.log("고치기2", stores)
+            console.log("고치기3", stores.length)
             let companyDates = [];
 
             for (let i = 0; i < stores.length; i++) {

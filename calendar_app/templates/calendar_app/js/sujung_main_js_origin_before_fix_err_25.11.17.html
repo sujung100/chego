@@ -22,8 +22,6 @@
     let signs = document.querySelector('.signs');
     let guide = document.querySelector('.guide');
     let choiceDay = null;
-    // choiceDay함수 호출여부 저장
-    let exeChoiceDate = false;
     // let getDayCode = null;
 
 
@@ -133,7 +131,8 @@
         }
     }
 
-
+    // 호출여부 저장
+    let exeChoiceDate = false;
     // 날짜 선택
     function choiceDate(newDIV, e) {
         exeChoiceDate = true;
@@ -282,23 +281,45 @@
 
         // 날짜별 시간표시
         let dayCode = clickedDay.getAttribute('data-daycode');
+        // console.log("데이코드타입 찍어봐", typeof dayCode)
         console.log("데이코드 찍어봐", dayCode);
+        // getDayCode = dayCode;
         const sendingVal = dayCode;
         console.log("A실행");
         const event = new CustomEvent('sendingValue', {
             detail: sendingVal
         });
         document.dispatchEvent(event);
-  
+
+
+        // let choiceDay = document.querySelector('.choiceDay');
+        // const currentDay = getChioceDay();
+        // let dayCode = currentDay.getAttribute('data-daycode');
+
+        // console.log("커런트데이찍어봐", currentDay);
+        // if (dayCode === "3") {
+        //     console.log("데이코드3");
+        // }
+        
     }
 
+    // function getChioceDay() {
+    //     return document.querySelector('.choiceDay');
+    // }
+    
+    
 
 
     // 돔로드
     let stores = [];
+    document.addEventListener('DOMContentLoaded', function () {
 
-    
+        restoreSelectedDate2();
+        setUserDateValue();
+
         function timeCreate() {
+
+            // console.log("전달받은daycode값", getDayCode);
             // 기존 템플릿태그로 생성 -> 동적생성
             function passResult(dayCodeVals) {
                 console.log('B실행');
@@ -311,7 +332,9 @@
                     return null;
                 }
             }
+
             const dataElement = document.getElementById('store-list');
+            // console.log("데이터엘리먼트", dataElement);
             
             try {
                 if (dataElement && dataElement.textContent) {
@@ -351,7 +374,8 @@
                 timeDiv.className = 'st-time';
                 timeDiv.dataset.crm = store.id;
                 
-                // console.log("type_val_json찍어", store.type_val_json);
+                console.log("type_val_json찍어", store.type_val_json);
+                
                 
                 // type_val_json의 아이디와 store id비교
                 if (Array.isArray(store.type_val_json)) {
@@ -371,10 +395,66 @@
                                 }
                             });
                         }
+                        // const itemStoreId = item.store_id !== undefined && item.store_id !== null
+                        // ? String(item.store_id)
+                        // : null;
+                        // const currentStoreId = store.id !== undefined && store.id !== null
+                        // ? String(store.id)
+                        // : null;
+                    
+                        // if (itemStoreId && currentStoreId && itemStoreId === currentStoreId) {
+                        //     const timeVal = String(item.reservation_time);
+                        //     const timeButton = document.createElement('button');
+                        //     timeButton.className = `time-item-${store.id}`;
+                        //     timeButton.type = 'button';
+                        //     timeButton.id = 'time-style';
+                        //     timeButton.dataset.crm = store.id;
+                        //     timeButton.dataset.time = timeVal;
+                        //     // sorttype 데이터속성 추가
+                        //     if (item.sort_type !== null && item.sort_type !== undefined) {
+                        //         timeButton.dataset.sorttype = String(item.sort_type);
+                        //     }
+                        //     timeButton.textContent = timeVal;
+                        //     timeDiv.appendChild(timeButton);
+
+                        //      // 커스텀이벤트 sendingValue
+                        //     document.addEventListener('sendingValue', (event) => {
+                        //         console.log('C실행');
+                        //         const receivedData = event.detail;
+                        //         console.log('C받은값', receivedData);
+                        //         console.log('************');
+                                
+                        //         const dayNum = passResult(receivedData);
+                        //         console.log('C날짜값', dayNum);
+                        //         console.log('C비교값', timeButton.dataset.sorttype);
+                        //         if (dayNum === timeButton.dataset.sorttype) {
+                        //             console.log('동일');
+                        //         // } else {
+                        //         //     console.log('그외');
+                        //         //     timeButton.style.display = "none";
+                        //         //     storeTableDiv.style.display = "none";
+                        //         } else if (dayNum !== timeButton.dataset.sorttype) {
+                        //             console.log('★안동일');
+                        //             if (timeButton.dataset.crm === storeTableDiv.dataset.crm) {
+                        //                 console.log("☆삭제");
+                        //                 storeTableDiv.style.display = "none";
+                        //             }
+                        //         }
+                        //     });
+
+
+                        // }
+                    
+                //     });
+                // }
                 storeTableDiv.appendChild(nameDiv);
                 storeTableDiv.appendChild(timeDiv);
                 storeContainer.appendChild(storeTableDiv);
 
+
+               
+
+                
             });
 
         // daycode, sorttype 비교
@@ -423,6 +503,7 @@
                 });
             });
         }
+        // }
         timeCreate();
         hideTimes();
 
@@ -576,7 +657,7 @@
             for (let i = 0; i < stores.length; i++) {
                 if (stores[i].id === storeId) {
                     // store_list_json -> store_dates_json
-                    companyDates = stores[i].store_dates_json || [];
+                    companyDates = stores[i].store_dates_json;
                     // companyDates = JSON.parse(storeData[i].store_dates_json);
                     break;
                 }
@@ -585,57 +666,31 @@
             return companyDates;
         }
 
-        function parseDisableTimes(value) {
-            if(Array.isArray(value)) return value.slice();
-            if(value === null || value === undefined) return [];
-            if(typeof value === 'string') {
-                const s = value.trim();
-                if(s === '') return [];
-                
-                try {
-                    const parsed = json.parse(s);
-                    if (Array.isArray(parsed)) return parsed;
-                } catch (e) {
-
-                }
-                if (s.indexOf(',') !== -1){
-                    return s.split(',').map(x => x.trim()).filter(x => x !== '');
-                }
-                return [s];
-            }
-            return [String(value)];
-        }
-
         function updateDisabledTimes(storeId, selectedDate) {
-            let companyDates = findStoreDates(storeId) || [];
+            let companyDates = findStoreDates(storeId);
             let disableTimes = [];
 
             for (let i = 0; i < companyDates.length; i++) {
-                const cd = companyDates[i];
-                if (cd.user_date && cd.user_date.includes(selectedDate)) {
-                    const parsed = parseDisableTimes(cd.disable_time);
-                    console.log("에러부분", cd.disable_time);
-                    console.log("파스", parsed);
-                    disableTimes = disableTimes.concat(parsed);
+                if (companyDates[i].user_date && companyDates[i].user_date.includes(selectedDate)) {
+                    disableTimes = disableTimes.concat(JSON.parse(companyDates[i].disable_time));
                 }
             }
 
-            disableTimes = [...new Set(disableTimes.map(t => (t || '').trim()))];
-            const timeButtons = document.querySelectorAll(`.time-item-${storeId}`);
+            disableTimes = [...new Set(disableTimes)];
+            const timeButtons = document.querySelectorAll(`.time-item-${storeId}, .time-item-${selectedDate}`);
 
             for (let i = 0; i < timeButtons.length; i++) {
-                const btn = timeButtons[i];
-                const buttonTime = (btn.getAttribute("data-time") || '').trim();
+                const buttonTime = timeButtons[i].getAttribute("data-time");
                 if (disableTimes.includes(buttonTime)) {
-                    btn.disabled = true;
+                    timeButtons[i].disabled = true;
                     // 비활성버튼 css스타일 주기
-                    btn.classList.add('disabled-time');
-                    if (btn.classList.contains('green')) {
-                        btn.classList.remove('green');
+                    timeButtons[i].classList.add('disabled-time');
+                    if (timeButtons[i].classList.contains('green')) {
+                        timeButtons[i].classList.remove('green');
                     }
                 } else {
-                    btn.disabled = false;
-                    btn.classList.remove('disabled-time');
+                    timeButtons[i].disabled = false;
+                    timeButtons[i].classList.remove('disabled-time');
                 }
             }
         }
@@ -662,10 +717,6 @@
         }
 
 
-    // 돔로드
-    document.addEventListener('DOMContentLoaded', function () {
-        restoreSelectedDate2();
-        setUserDateValue();
     });
 
 

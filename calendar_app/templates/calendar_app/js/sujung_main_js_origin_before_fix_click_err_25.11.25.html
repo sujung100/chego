@@ -10,9 +10,8 @@
     let today = new Date(); // 페이지 로드한 날짜 저장
     today.setHours(0, 0, 0, 0); // 비교 편의를 위해 today의 시간을 초기화
 
-    // 오늘 날짜를 자동으로 선택값으로
-    // const nowdate = new Date().toISOString().substring(0, 10);
-    // document.getElementById("detail_user_date").value = nowdate;
+    const nowdate = new Date().toISOString().substring(0, 10);
+    document.getElementById("detail_user_date").value = nowdate;
 
     const prevCalendar_button = document.querySelector(".prevCalendar");
     const nextCalendar_button = document.querySelector(".nextCalendar");
@@ -300,6 +299,7 @@
         let dayCode = clickedDay.getAttribute('data-daycode');
         // console.log("데이코드 찍어봐", dayCode);
         const sendingVal = dayCode;
+        // console.log("A실행");
         const event = new CustomEvent('sendingValue', {
             detail: sendingVal
         });
@@ -468,11 +468,10 @@
 
                     storeTable.classList.add('selected');
 
-                    await calendarHandle(storeCRM);
-                    restoreChoiceDayCss();
                     // 기존 자리 25.11.20
                     // updateNextButton(e);
                     checkButtonState();
+                    await calendarHandle(storeCRM);
 
                 });
             });
@@ -506,20 +505,6 @@
         }
 
 
-        // choiceDay css스타일 복구
-        function restoreChoiceDayCss() {
-            const savedDate = document.getElementById('detail_user_date').value;
-            if (!savedDate) return;
-            const targetDiv = document.querySelector(`[data-date="${savedDate}"]`);
-            console.log("세이브데이트", savedDate);
-            console.log("타겟디브", targetDiv);
-            if (targetDiv) {
-                targetDiv.classList.add('choiceDay');
-                choiceDay = targetDiv;
-                console.log("선택날짜css복구", savedDate);
-            }
-        }
-
 
         // 다음버튼 보이기/숨기기
         let stoIdVal;
@@ -533,9 +518,9 @@
             const dateItem = document.getElementsByClassName('choiceDay');
             const hasGreenDay = dateItem.length > 0;
 
-            // console.log("초이스데이 있나?", dateItem);
-            // console.log("그데?", hasGreenDay);
-            // console.log("그타?", hasGreenTime);
+            console.log("초이스데이 있나?", dateItem);
+            console.log("그데?", hasGreenDay);
+            console.log("그타?", hasGreenTime);
             console.log("★★★★★★★");
             console.log("1. 날짜 선택:", hasGreenDay, "시간 선택:", hasGreenTime);
 
@@ -550,9 +535,8 @@
         // 매장만 선택시- 근데 변경해서 안쓸듯
         function updateNextButton(e) {
             const sungwoo = e.target.dataset.crm;
-            // 매장 ID 업데이트
             if (sungwoo) {
-                stoIdVal = sungwoo;
+                stoIdVal = sungwoo; // 매장 ID 업데이트
             }
             
             checkButtonState(); 

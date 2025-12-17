@@ -1361,6 +1361,15 @@ div#mainCalendar.visible .Calendar>tbody>tr>td>p {
 }
 
 
+/* 달력 갱신범위 css */
+.date-default-dark {
+  color: #343434;
+}
+.date-future-white {
+  color: #fff;
+}
+
+
 /******************** footer ********************/
 
 /**** footer-wrap ****/

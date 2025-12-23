@@ -326,9 +326,8 @@
         console.error("store list json파싱오류", e);
     }
 
-
-    //--- 달력 갱신시간 세팅(base_date / renewal_cycle) 시작
-
+    // 달력 갱신시간 세팅(base_date / renewal_cycle)
+    
     // YYYY-MM-DD -> Date
     function ymdToLocalDate(ymd) {
         if (!ymd) return null;
@@ -336,6 +335,7 @@
         if (parts.length !== 3 || parts.some(v => Number.isNaN(v))) return null;
         return new Date(parts[0], parts[1] - 1, parts[2]);
     }
+
 
     // //////
     // 날짜 비교(날짜 객체 기준)
@@ -524,7 +524,7 @@
         const base = extractYmd(rawBase);
         const cycle = store.renewal_cycle;
         if (!base) {
-            console.warn('base_date 없음/오류:', store.id, rawBase);
+            console.warn('base_date 없음/ 건너뜀:', store.id, rawBase);
             return;
         }
 
@@ -534,7 +534,7 @@
             // 최초 : base기준
             const initialApply = computeApplyDate(base, cycle);
             if (!initialApply) {
-            console.warn('초기applyDate없음/수동갱신 또는 오류', storeId, base, cycle);
+            console.warn('initial apply 계산 실패', storeId, base, cycle);
             return;
             }
             // prevApplyDate(이전값)는 없음
@@ -612,8 +612,7 @@
         applyColorToDates('.Calendar td p[data-date]', ranges, fixedToday);
 
     }
-    
-    //--- 달력 갱신시간 세팅(base_date / renewal_cycle) 끝
+    // ////////////////////
 
 
 

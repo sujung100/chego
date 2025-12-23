@@ -331,18 +331,14 @@
 		function dayOffSet () {
 	
 			setsContainers.forEach(container => {
-				container.addEventListener('click', function(event) {
+				container.addEventListener('click', function() {
 					const radioInput = this.querySelector('input[type="radio"]');
 					console.log("라디오인풋찍어", radioInput)
-					if (!radioInput) return;
-
+					sendDayOffVal = radioInput.value;
 					// console.log("라디오인풋값", sendDayOffVal)
-					
-					// if (radioInput) {
-						radioInput.checked = true;
-						sendDayOffVal = radioInput.value;
-						radioInput.dispatchEvent(new Event('change', { bubbles: true }));
 
+					if (radioInput) {
+						radioInput.checked = true;
 						setsContainers.forEach(con => {
 							const otherRadio = con.querySelector('input[type="radio"]');
 							if (otherRadio && otherRadio.checked) {
@@ -351,7 +347,7 @@
 								con.classList.remove('clickedset');
 							}
 						});
-					// }
+					}
 				});
 			});
 
@@ -1161,34 +1157,15 @@
 	});
 
 	// 무휴 클릭시 휴무일 비활성
-	const rangeSet = document.querySelector('.regular-set');
-	const inactiveBtns = document.querySelector('.whichday');
-	rangeSet.addEventListener('change', function(event) {
-		if (event.target.name === 'dayoff_set') {
-			const isNoBreak = document.querySelector('#no-off').checked;
-
-			if (isNoBreak) {
-				// 무휴일 때: 클릭 막고 슬래시 긋기
-				if (inactiveBtns) inactiveBtns.style.pointerEvents = 'none';
-				parentCon.forEach(btn => {
-					btn.classList.add('add-slash');
-					btn.classList.remove('clickedday');
-					const checkbox = btn.querySelector('input[type="checkbox"]');
-					if (checkbox) {
-						checkbox.checked = false;
-					}
-					sendHoliday.length = 0;
-					console.log("휴무일 초기화")
-				});
-			} else {
-				// 무휴 아닐 때: 다시 활성화
-				if (inactiveBtns) inactiveBtns.style.pointerEvents = 'auto';
-				parentCon.forEach(btn => {
-					btn.classList.remove('add-slash');
-				});
-			}
-		}
-	});
+	const NoBreak = document.querySelector('#no-off');
+	NoBreak.addEventListener('click', function(event) {
+		const inactiveBtns = document.querySelector('.whichday');
+		inactiveBtns.style.pointerEvents = 'none';
+		const eachBtns = document.querySelectorAll('.wh-days');
+		eachBtns.forEach(btn => {
+			btn.classList.add('add-slash');
+		});
+	} )
 	
 	const labelEventOnce = document.querySelectorAll('.wh-days > label');
 	labelEventOnce.forEach(label => {

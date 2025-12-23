@@ -18,6 +18,7 @@ from django.forms.models import model_to_dict
 
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from collections import defaultdict
 
 
 # 이름변경
@@ -183,8 +184,8 @@ class Idx_list(TemplateView):
             store_times = models.Store_times.objects.filter(store_id=store.pk)
             store_times_dict[store.pk] = store_times
         context['store_times_dict'] = store_times_dict
-        print("스토어타임즈딕트", store_times_dict)
-        print("스토어리스트", store_list)
+        # print("스토어타임즈딕트", store_times_dict)
+        # print("스토어리스트", store_list)
 
         pk = self.kwargs.get('pk')
         if pk:
@@ -205,29 +206,25 @@ class Idx_list(TemplateView):
         type_val = []
         for store in store_list:
             sto_time = models.Store_times.objects.filter(store_id=store.pk)
-            print("스토어찍어", sto_time.values('sort_type'))
+            # print("스토어찍어", sto_time.values('sort_type'))
             store_dates = []
             for dates in sto_time:
                 dates_info  = models.Reservation_user.objects.filter(
                 Q(store_id=store) &
                 Q(user_time=dates.reservation_time) 
                 )
-                print()
-                print()
-                print()
-                print("개별sortType찍어", dates.sort_type)
-                print()
-                print()
-                print()
+                # print()
+                # print("개별sortType찍어", dates.sort_type)
+                # print()
                 type_val.append ({
                     # dates.reservation_time: dates.sort_type
                     "store_id": store.pk,
                     "reservation_time": dates.reservation_time,
                     "sort_type": dates.sort_type
                 })
-                print("*************")
-                print("타입밸찍어", type_val)
-                print("*************")
+                # print("*************")
+                # print("타입밸찍어", type_val)
+                # print("*************")
 
                 hour_disabled_dates = {}
 
@@ -268,12 +265,39 @@ class Idx_list(TemplateView):
                 'store_dates_json': store_dates,
                 'type_val_json': type_val,
             })
-            print("전달데이터", final_data)
+            # print("전달데이터", final_data)
 
         # context['store_data'] = store_data
         # context['store_data_json'] = json.dumps(store_data, cls=DjangoJSONEncoder)
         # context['store_list_json'] = json.dumps(final_data, cls=DjangoJSONEncoder)
         context['store_list_json'] = final_data
+
+
+        # 휴무일 그룹화
+        stores_vals = models.Store.objects.values('id', 'store_name', 'dayoff_cycle', 'base_date')
+        store_info = {s['id']: s for s in stores_vals}
+
+        # store_id 기준으로 Dayoff 그룹화
+        dayoffs = models.Dayoff.objects.values('store_id', 'dayoff')
+        dayoff_map = defaultdict(list)
+        for d in dayoffs:
+            dayoff_map[d['store_id']].append(d['dayoff'])
+
+        # print("데이오프맵", dayoff_map)
+        # print()
+        
+        dayoff_info = []
+        for sid, info in store_info.items():
+            dayoff_info.append({
+                'id': sid,
+                'store_name': info['store_name'],
+                'dayoff_cycle': info['dayoff_cycle'],
+                'base_date': info['base_date'],
+                'dayoffs': dayoff_map.get(sid, []),
+            })
+        context['dayoff'] = dayoff_info
+        print("데이오프", dayoff_info)
+
         # 임시추가 25.10.13
         # context['store_dates_json'] = store_dates
         # print("콘텍스트찍기" , context)

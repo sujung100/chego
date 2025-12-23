@@ -915,17 +915,27 @@ span.numit {
   display: flex;
   flex-direction: column;
   /* line-height: calc(70px - 0.5rem); */
-  line-height: 70px;
+  /* line-height: 70px; */
   /* font-size: 1rem; */
   height: 70px;
 }
+
+.regular-set .sets:nth-child(1), .sets:nth-child(4), .sets:nth-child(5) {
+  line-height: 70px;
+}
+
 
 .regular-set .sets > input[type="radio"] {
   display: none;
 }
 
 .regular-set .sets label{
-  font-size: 1rem;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.regular-set .sets label span{
+  font-size: 0.6rem;
   text-align: center;
 }
 
@@ -942,12 +952,12 @@ span.numit {
 }
 
 .whichday .wh-days {
-  padding: 0.5rem 0.5rem 0 0.5rem;
+  padding: 0.5rem;
   border: 1px solid #e1e1e1;
   border-radius: 0.8rem;
   width: 50px;
   height: 50px;
-  line-height: calc(50px - 0.5rem);
+  line-height: 50px;
   transition: background-color 0.2s ease-in-out;
   text-align: center;
 }
@@ -967,6 +977,10 @@ span.numit {
 .clickedday {
   color: #fff;
   background-color: #333;
+}
+
+.add-slash {
+  background-image: linear-gradient(to top left, transparent calc(50% - 0.75px), #e1e1e1 50%, transparent calc(50% + 0.75px));
 }
 
 

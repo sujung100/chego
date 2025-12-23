@@ -508,10 +508,9 @@ class TestConsumer(AsyncWebsocketConsumer):
     async def handle_start_end_date(self, store, data):
         start_date = data.get("start_date")
         end_date = data.get("end_date")
-        set_date = data.get("set_date")
         if start_date is None or end_date is None:
             raise KnownError("INVALID_INPUT", fields=["start_date", "end_date"])
-        await self.svc_set_manual_period(store.pk, start_date, end_date, set_date)
+        await self.svc_set_manual_period(store.pk, start_date, end_date)
         return {"message": "변경되었습니다."}
 
     # 시간설정 - 시간값들 저장
@@ -562,13 +561,13 @@ class TestConsumer(AsyncWebsocketConsumer):
             store.save()
 
     @database_sync_to_async
-    def svc_set_manual_period(self, rsv_id, start_date, end_date, set_date):
+    def svc_set_manual_period(self, rsv_id, start_date, end_date):
         with transaction.atomic():
             store = get_object_or_404(rsv.Store, pk=rsv_id)
             store.start_rsv_possible = start_date
             store.end_rsv_possible = end_date
             store.renewal_cycle = None
-            store.base_date = set_date
+            store.base_date = None
             store.save()
 
     @database_sync_to_async

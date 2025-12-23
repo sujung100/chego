@@ -111,9 +111,9 @@
           console.log("수동찍힘");
           // selectAuto = null;
           radioVal = null;
-          todayDate = truncatedDate;
+          todayDate = null;
           console.log("자동 라디오버튼 선택값 없어야정상2", radioVal);
-          console.log("투데이데이트 추가", todayDate);
+          console.log("자동 라디오버튼 선택값 없어야정상3", todayDate);
           console.log("달력날짜 선택값2", selectedDates);
 
           // 유효성검사 - start, end 다들어갔는지(activate_calendar.js)
@@ -135,7 +135,7 @@
           if (activateResult) {
             console.log("활성화 온");
             // activatePost(activate_start, activate_end);
-            sendManualData(activate_start, activate_end, todayDate);
+            sendManualData(activate_start, activate_end);
           }
 
           // json리턴

@@ -82,11 +82,9 @@
                 // 요일코드
                 let jsDay = nowDay.getDay();
                 // 1~7 (월=1, 일=7)
-                let dayCode = (jsDay === 0) ? 7 : jsDay;
+                let dayCode = (jsDay === 0) ? 7 : jsDay;      
                 newDIV.setAttribute('data-date', formattedDate);
                 newDIV.setAttribute('data-daycode', String(dayCode));
-                // 추가 25.12.30
-                newDIV.setAttribute('data-store-id', calendar_id);
 
                 if (formattedDate === currentDate) {
                     newDIV.style = selectedStyle;
@@ -139,7 +137,6 @@
             }
             // resolve();
         // });
-        // //////////////////////////////////
         await resetCalPeriod(store_id);
     }
 
@@ -617,185 +614,6 @@
     }
     
     //--- 달력 갱신시간 세팅(base_date / renewal_cycle) 끝
-    
-
-
-    //--- 달력 휴무설정 세팅 시작
-    function startOfWeek(date) {
-        // 주의 시작일: 월 기준 -> diffToMon으로 월요일까지의 거리계산 -> 인자가 속한 월요일반환
-        const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-        const day = d.getDay(); // getDay:  0=Sun,1=Mon...
-        const diffToMon = (day === 0) ? -6 : (1 - day);
-        // console.log("일자", d)
-        // console.log("겟데이요일값", day)
-        // console.log("거리값", diffToMon)
-        d.setDate(d.getDate() + diffToMon);
-        d.setHours(0,0,0,0);
-        return d;
-    }
-    function calcWeekGap(baseYmd, targetYmd) {
-        // 주 차 계산
-        const base = ymdToLocalDate(baseYmd);
-        const target = ymdToLocalDate(targetYmd);
-        if (!base || !target) return null;
-        // 기준일과 타겟일의 월요일반환
-        const baseWeekStart = startOfWeek(base);
-        const targetWeekStart = startOfWeek(target);
-        const diffMs = targetWeekStart.getTime() - baseWeekStart.getTime();
-        // 주 차를 정수로(0이면 같은주)
-        return Math.floor(diffMs / (7 * 24 * 3600 * 1000));
-    }
-    // function isDateBefore(aYmd, bYmd) {
-    //     const a = ymdToLocalDate(aYmd); const b = ymdToLocalDate(bYmd);
-    //     if (!a || !b) return false;
-    //     return a.getTime() < b.getTime();
-    // }
-    function compareDate(aYmd, bYmd) {
-        // YYYY-MM-DD끼리 비교해서 앞, 같음여부 판단(T/F)
-        const a = ymdToLocalDate(aYmd); const b = ymdToLocalDate(bYmd);
-        if (!a || !b) return false;
-        return a.getTime() <= b.getTime();
-    }
-
-    // day string -> daycode mapping (mon..sun -> 1..7)
-    const DAY_MAP = { mon:1, tue:2, wed:3, thu:4, fri:5, sat:6, sun:7 };
-
-    // 데이터파싱
-    function readDayoffData() {
-        const el = document.getElementById('dayoff-data');
-        if (!el) {
-            console.warn('dayoff-data element not found');
-            return [];
-        }
-        try {
-            return JSON.parse(el.textContent || '[]');
-        } catch (e) {
-            console.error('dayoff data 파싱오류', e);
-            return [];
-        }
-    }
-
-    // storeId -> { base_date, dayoff_cycle, dayoffs: ['wed','thu'], store_name }
-    function mappingDayoff(dayoffArray) {
-        const map = new Map();
-        dayoffArray.forEach(s => {
-            const id = String(s.id);
-            const base = extractYmd(s.base_date);
-            const cycle = s.dayoff_cycle;
-            const dayoffs = Array.isArray(s.dayoffs) ? s.dayoffs.map(x => String(x).toLowerCase()) : [];
-            map.set(id, { base_date: base, dayoff_cycle: cycle, dayoffs: dayoffs, store_name: s.store_name });
-        });
-        return map;
-    }
-
-    // 날짜요소 휴무적용판단
-    function calcCycle(storeEntry, dateYmd, dateDaycode, todayYmd) {
-        if (!storeEntry) return false;
-        if (!storeEntry.base_date) return false;
-        const base = storeEntry.base_date;
-        const cycle = storeEntry.dayoff_cycle;
-        const dayoffs = storeEntry.dayoffs || [];
-
-        // 1) 기준일 이후?
-            // date < base -> 적용안함
-        if (!compareDate(base, dateYmd)) return false; 
-
-        // 2) 매장 휴무 요일에 포함?
-            // dateDaycode는 1..7, dayoffs는 ['mon','wed',...]
-        if (!dayoffs.length) return false;
-        const wantedCodes = new Set(dayoffs.map(d => DAY_MAP[d])).values ? new Set(dayoffs.map(d => DAY_MAP[d])) : new Set();
-        if (!wantedCodes.has(Number(dateDaycode))) return false;
-
-        // 3) 주기 판단
-        if (!cycle || cycle === '무휴') return false;
-
-        // 주 차 계산 (기준주, 타겟주)
-        const wi = calcWeekGap(base, dateYmd);
-        if (wi === null) return false;
-
-        // 기준일 포함 매주
-        if (cycle === '매주') {
-            return wi >= 0;
-        }
-        // 기준일 주부터 격주 (0,2,4...)
-        if (cycle === '이휴') {
-            return wi >= 0 && (wi % 2 === 0);
-        }
-        // 기준일 다음주부터 격주 weekIndex >=1, (weekIndex-1) even
-        if (cycle === '다휴') {
-            return wi >= 1 && ((wi - 1) % 2 === 0);
-        }
-        // 기타
-        return false;
-    }
-
-    // css적용
-    function dayoffCss(dateSelector, todayYmd) {
-        const raw = readDayoffData();
-        const map = mappingDayoff(raw);
-
-        const els = document.querySelectorAll(dateSelector);
-        if (!els) return;
-
-        els.forEach(el => {
-            const dt = el.getAttribute('data-date'); // YYYY-MM-DD
-            const dc = el.getAttribute('data-daycode'); // 1~7
-            const sid = el.getAttribute('data-store-id'); // storeId
-            if (!dt || !dc) return;
-
-            // 매장별 달력이면 sid로, 아니면 map의 모든 항목 검사
-            let apply = false;
-            // console.log("시드", sid);
-            if (sid) {
-                const entry = map.get(String(sid));
-                apply = calcCycle(entry, extractYmd(dt), Number(dc), todayYmd);
-            } else {
-                // 여러 매장 겹침 불가: map.values().next()로 첫 항목 사용
-                const entry = map.values().next().value;
-                apply = calcCycle(entry, extractYmd(dt), Number(dc), todayYmd);
-            }
-
-            // css
-            if (apply) {
-                el.style.color = '#343434';
-                el.classList.add('store-dayoff');
-            } else {
-                el.classList.remove('store-dayoff');
-            }
-        });
-    }
-
-    // MutationObserver
-    function observerDayoff(dateSelector, todayYmd) {
-        const container = document.querySelector('.Calendar') || document.body;
-        // 먼저 기존에 있는 요소들에 적용
-        dayoffCss(dateSelector, todayYmd);
-
-        // 옵저버: 자식 노드 추가 시 새 요소에 대해 처리
-        const observer = new MutationObserver((mutations) => {
-            for (const m of mutations) {
-            if (m.type !== 'childList' || m.addedNodes.length === 0) continue;
-            m.addedNodes.forEach(node => {
-                if (!(node instanceof Element)) return;
-                // node 자신이 날짜 셀인지, 또는 내부에 날짜 셀들이 있는지 처리
-                if (node.matches && node.matches(dateSelector)) {
-                // 한 요소 처리
-                dayoffCss(dateSelector, todayYmd); // 간단히 전체 다시 적용해도 무방
-                } else {
-                const inner = node.querySelectorAll && node.querySelectorAll(dateSelector);
-                if (inner && inner.length) dayoffCss(dateSelector, todayYmd);
-                }
-            });
-            }
-        });
-
-        observer.observe(container, { childList: true, subtree: true });
-        return observer;
-        // observer.disconnect(): 중지
-    }
-
-    //--- 달력 휴무설정 세팅 끝
-
 
 
 
@@ -1227,7 +1045,6 @@
     document.addEventListener('DOMContentLoaded', function () {
         restoreSelectedDate2();
         setUserDateValue();
-        observerDayoff('.Calendar td p', today);
     });
 
 

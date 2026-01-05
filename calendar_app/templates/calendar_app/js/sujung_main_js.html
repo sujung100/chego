@@ -1343,31 +1343,40 @@
             },
             body: json,
         })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('서버 오류');
-                }
+        .then(async response => {
+            let data;
+            try {
+                data = await response.json();
+            } catch (e) {
+                data = null;
+            }
+
+            if(!response.ok) {
+                const msg = (data && data.message) ? data.message : '서버오류';
+                alert(msg);
+                throw new Error(msg);
+            }
+            return data;
+        })
+        .then(data => {
+            if(data && data.status === 'success') {
                 localStorage.removeItem('selected_date');
                 console.log('localStorage 초기화됨');
-                console.log("response", response);
-                return response.json();
-            })
-            .then(data => {
-                if (data.status === 'success') {
-                    // 성공
-                    console.log(data.message);
-                    alert("성공적으로 예약되었습니다.")
-                    // location.reload();
+                // console.log('response data', data);
+                alert('성공적으로 예약되었습니다.');
 
-                } else {
-                    // 실패
-                    console.log(data.message);
-                }
-            })
-            .catch(error => {
-                console.log(error);
-                console.log("실패실패실패");
-            })
+            } else {
+                const msg = (data && data.message) ? data.message : '처리실패';
+                alert(msg);
+                // console.log(data);
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            if (!error.message) {
+                alert('에러발생. 다시 시도해주세요.');
+            }
+        });
     }
 
 

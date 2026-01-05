@@ -341,7 +341,23 @@ class Idx_list(TemplateView):
             store_id = data.get("selected_store2")
             reservation_date = data.get("detail_user_date")
             user_time = data.get("detail_user_time")
+            v_num_raw = data.get("v_num")
+
+            try:
+                visitor_num = int(v_num_raw)
+                if visitor_num < 0:
+                    raise ValueError
+            except (TypeError, ValueError):
+                return JsonResponse({'message': '잘못된 방문 인원',  'status': 'error'}),
+
             sto = get_object_or_404(models.Store, pk=store_id)
+
+            max_p = sto.max_people
+            if max_p is not None and visitor_num > max_p:
+                return JsonResponse({
+                    'message': f'최대 예약인원 초과: 최대 {max_p}명 (현재: {visitor_num})',
+                    'status': 'error'
+                }, status=400)
 
             existing_reservation = models.Reservation_user.objects.filter(
             store_id=sto, reservation_date=reservation_date, user_time=user_time
@@ -357,7 +373,8 @@ class Idx_list(TemplateView):
             rst_user.user_phone = data.get("detail_user_phone")
             rst_user.reservation_date = data.get("detail_user_date")
             rst_user.user_time = data.get("detail_user_time")
-            rst_user.visitor_num = int(data.get("v_num"))
+            # rst_user.visitor_num = int(data.get("v_num"))
+            rst_user.visitor_num = visitor_num
             rst_user.store_id = sto
 
             # 그냥 입력받은 password

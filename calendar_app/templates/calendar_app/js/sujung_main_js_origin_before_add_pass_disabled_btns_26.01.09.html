@@ -186,7 +186,7 @@
 
         for (let i = 0; i < allStoreIds.length; i++) {
             const storeId = allStoreIds[i];
-            addDisabledTimes(storeId, formattedDate);
+            updateDisabledTimes(storeId, formattedDate);
         }
 
         // 기존 자리 25.11.20
@@ -842,7 +842,7 @@
             timeDiv.className = 'st-time';
             timeDiv.dataset.crm = store.id;
 
-            // console.log("type_val_json찍어", store.type_val_json);
+            console.log("type_val_json찍어", store.type_val_json);
 
             // type_val_json의 아이디와 store id비교
             if (Array.isArray(store.type_val_json)) {
@@ -1128,9 +1128,6 @@
     // console.log('sId:', sId);
 
     // const storeData = JSON.parse(' store_list_json|escapejs|safe }');
-
-    
-    // json 불러오기
     function findStoreDates(storeId) {
         // console.log("고치기1", storeId)
         // console.log("고치기2", stores)
@@ -1150,103 +1147,62 @@
         return companyDates;
     }
 
-
-    // disableTimes 입력값 변환 ex) ['01:00']
-    function transformTime(value) {
-        if (Array.isArray(value)) return value.map(x => String(x).trim()).filter(Boolean);
-        if (value === null || value === undefined) return [];
-        if (typeof value === 'string') {
+    function parseDisableTimes(value) {
+        if(Array.isArray(value)) return value.slice();
+        if(value === null || value === undefined) return [];
+        if(typeof value === 'string') {
             const s = value.trim();
-            if (s === '') return [];
+            if(s === '') return [];
+            
             try {
-            const parsed = JSON.parse(s);
-            if (Array.isArray(parsed)) return parsed.map(x => String(x).trim()).filter(Boolean);
+                const parsed = json.parse(s);
+                if (Array.isArray(parsed)) return parsed;
             } catch (e) {
+
             }
-            if (s.indexOf(',') !== -1) {
-            return s.split(',').map(x => x.trim()).filter(Boolean);
+            if (s.indexOf(',') !== -1){
+                return s.split(',').map(x => x.trim()).filter(x => x !== '');
             }
             return [s];
         }
-        return [String(value).trim()];
+        return [String(value)];
     }
 
-
-    // 삭제된 시간값의 기존예약건 표시(추가생성 및 클래스추가)
-    function addDisabledTimes(storeId, selectedDate) {
-        console.log("addDisabledTimes 실행", storeId, selectedDate);
-        const companyDates = findStoreDates(storeId) || [];
+    function updateDisabledTimes(storeId, selectedDate) {
+        let companyDates = findStoreDates(storeId) || [];
         let disableTimes = [];
 
         for (let i = 0; i < companyDates.length; i++) {
             const cd = companyDates[i];
-            if (cd.hour_disabled_dates) {
-                let hd = cd.hour_disabled_dates;
-                // console.log("hd찍어", hd);
-
-                // hd가 문자열
-                if (typeof hd === 'string') {
-                    try { hd = JSON.parse(hd); } catch (e) {console.log("hd가 문자열"); }
-                }
-
-                // hd가 객체 & hd에 selectedDate값이 이름인 키가 존재하면
-                if (hd && typeof hd === 'object' && Object.prototype.hasOwnProperty.call(hd, selectedDate)) {
-                    const arr = hd[selectedDate] || [];
-                    // hd[selectedDate]를 transformTime해서 disableTimes에 추가
-                    disableTimes = disableTimes.concat(transformTime(arr));
-                    continue;
-                }
+            if (cd.user_date && cd.user_date.includes(selectedDate)) {
+                const parsed = parseDisableTimes(cd.disable_time);
+                // console.log("비활성시간1", cd.disable_time);
+                // console.log("비활성시간2", parsed);
+                disableTimes = disableTimes.concat(parsed);
+                // console.log("파스드", parsed);
             }
         }
-        disableTimes = [...new Set(disableTimes.map(t => (t || '').trim()))].filter(Boolean);
-        const parentEle = document.querySelector(`.st-time[data-crm="${storeId}"]`);
-        if (!parentEle) {
-            console.log('부모요소 없음 (storeId)', storeId);
-            return;
-        }
+        
+        disableTimes = [...new Set(disableTimes.map(t => (t || '').trim()))];
+        console.log("디스에이블타임즈", disableTimes);
+        const timeButtons = document.querySelectorAll(`.time-item-${storeId}`);
 
-        // addDisabledTimes로 만든 버튼들만 제거
-        const prevGen = parentEle.querySelectorAll('.disabled-time[data-gen="true"]');
-        prevGen.forEach(btn => btn.remove());
-
-        // 기존 시간 버튼
-        const timeButtons = parentEle.querySelectorAll(`.time-item-${storeId}`);
-        const existTimes = new Set();
-        timeButtons.forEach(btn => {
-            const t = (btn.getAttribute('data-time') || '').trim();
-            if (t) existTimes.add(t);
-        });
-
-        // 기존에 없는것만 생성
-        const createTimes = disableTimes.filter(time => !existTimes.has(time));
-        createTimes.forEach(time => {
-            const newBtn = document.createElement('button');
-            newBtn.classList.add(`time-item-${storeId}`);
-            newBtn.classList.add('disabled-time');
-            newBtn.type = 'button';
-            newBtn.dataset.gen = 'true';
-            newBtn.dataset.matchedDate = selectedDate;
-            newBtn.dataset.crm = storeId;
-            newBtn.dataset.time = time;
-            newBtn.textContent = time;
-            parentEle.appendChild(newBtn);
-        });
-
-        // disabled-time 버튼들 css적용
-        const createdTimeBtns = parentEle.querySelectorAll('.disabled-time');
-        for (let i = 0; i < createdTimeBtns.length; i++) {
-            const btn = createdTimeBtns[i];
-            const buttonTime = (btn.getAttribute('data-time') || '').trim();
+        for (let i = 0; i < timeButtons.length; i++) {
+            const btn = timeButtons[i];
+            const buttonTime = (btn.getAttribute("data-time") || '').trim();
             if (disableTimes.includes(buttonTime)) {
                 btn.disabled = true;
-            if (btn.classList.contains('green')) btn.classList.remove('green');
+                // 비활성버튼 css스타일 주기
+                btn.classList.add('disabled-time');
+                if (btn.classList.contains('green')) {
+                    btn.classList.remove('green');
+                }
             } else {
                 btn.disabled = false;
+                btn.classList.remove('disabled-time');
             }
         }
     }
-
-    
 
     function getAllStoreIds(stores) {
         let storeIds = [];
@@ -1263,10 +1219,10 @@
     // 상점 ID 목록 가져오기
     const allStoreIds = getAllStoreIds(stores);
     console.log("목록찍어봐", allStoreIds);
-    // 각 상점 ID에 대해 addDisabledTimes() 함수 호출하기
+    // 각 상점 ID에 대해 updateDisabledTimes() 함수 호출하기
     for (let i = 0; i < allStoreIds.length; i++) {
         const storeId = allStoreIds[i];
-        addDisabledTimes(storeId, sDate);
+        updateDisabledTimes(storeId, sDate);
     }
 
 

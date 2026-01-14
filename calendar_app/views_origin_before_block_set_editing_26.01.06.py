@@ -210,36 +210,44 @@ class Idx_list(TemplateView):
             store_dates = []
             for dates in sto_time:
                 dates_info  = models.Reservation_user.objects.filter(
-                Q(store_id=store)
-                # & Q(user_time=dates.reservation_time)
+                Q(store_id=store) &
+                Q(user_time=dates.reservation_time) 
                 )
-                # 메인 시간버튼 생성관여
+                # print()
+                # print("개별sortType찍어", dates.sort_type)
+                # print()
                 type_val.append ({
+                    # dates.reservation_time: dates.sort_type
                     "store_id": store.pk,
                     "reservation_time": dates.reservation_time,
                     "sort_type": dates.sort_type
                 })
-                # 메인 시간버튼 비활성css관여
+                # print("*************")
+                print("타입밸찍어", type_val)
+                # print("*************")
+
                 hour_disabled_dates = {}
 
                 for res in dates_info:
                     user_date = res.reservation_date
                     user_time = res.user_time
 
+                    # 일부 예약이 이미 비활성 시간에 추가된 경우 해당 시간을 추가하고, 그렇지 않은 경우 새로운 항목 생성
                     if user_date in hour_disabled_dates:
                         hour_disabled_dates[user_date].append(user_time)
                     else:
                         hour_disabled_dates[user_date] = [user_time]
-                # store_dates.append({
-                #     'hour_disabled_dates': hour_disabled_dates,
-                # })
+
+                store_dates.append({
+                    'hour_disabled_dates': hour_disabled_dates, # current_hour_reservations를 제거
+                })
+
                 user_dates = [info.reservation_date for info in dates_info]
                 store_dates.append({
-                'hour_disabled_dates': hour_disabled_dates,
                 'user_date': user_dates,
                 'disable_time': [info.user_time for info in dates_info ]
                 })
-                print("스토어데이츠", store_dates)
+                # print(store_dates)
             final_data.append({
                 'id': store.id,
                 'store_name': store.store_name,
@@ -276,10 +284,6 @@ class Idx_list(TemplateView):
         for d in dayoffs:
             dayoff_map[d['store_id']].append(d['dayoff'])
 
-        # print("스토어인포스", store_info)
-        # print()
-        # print("데이오프들", dayoffs)
-        # print()
         # print("데이오프맵", dayoff_map)
         # print()
         

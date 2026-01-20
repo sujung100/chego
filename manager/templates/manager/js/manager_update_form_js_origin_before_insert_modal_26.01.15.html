@@ -14,59 +14,6 @@
 	calcWidth();
 
 
-	// 모달 표시
-	function showModal(modalId = "modal-1", options = {}) {
-		const {
-			bodyText = [],
-			footerText = [],
-			onClose = null
-		} = options;
-
-		const modal = document.getElementById(modalId);
-		if (!modal) {
-			console.warn(`모달"${modalId}" 찾을수없음.`);
-			return;
-		}
-
-		// 모달 표시
-		modal.style.display = "block";
-
-		// 값을 배열로 통일
-		const toArray = v => Array.isArray(v) ? v : (v === undefined || v === null ? [] : [String(v)]);
-
-		// 각 컨테이너의 p들에 textContent로 안전하게 할당
-		function fillPs(containerSelector, values) {
-			const container = modal.querySelector(containerSelector);
-			if (!container) return;
-			const divs = Array.from(container.querySelectorAll("div"));
-			const vals = toArray(values);
-			for (let i = 0; i < divs.length; i++) {
-			divs[i].textContent = vals[i] !== undefined ? vals[i] : ""; // 값이 없으면 빈 문자열
-			}
-		}
-
-		fillPs(".modal-body", bodyText);
-		fillPs(".modal-footer", footerText);
-
-		// x버튼 닫기
-		const closeBtn = modal.querySelector(".close");
-		if (closeBtn) {
-			closeBtn.onclick = () => {
-			modal.style.display = "none";
-			if (typeof onClose === "function") onClose();
-			};
-		}
-
-		// 바깥 클릭 닫기
-		modal.onclick = (e) => {
-			if (e.target === modal) {
-			modal.style.display = "none";
-			if (typeof onClose === "function") onClose();
-			}
-		};
-	}
-
-
 	// 다음버튼 생성 이벤트
 	function createNextBtn(target_p) {
 		const existingBtnDisplay = target_p.querySelector('.btn-display');
@@ -461,7 +408,7 @@
 					// console.log("모든 처리 후/ 체인지세이브 (최종):", JSON.parse(JSON.stringify(changeSave))); 
 					saveVal = JSON.parse(JSON.stringify(changeSave));
 
-					// alert("변경되었습니다.");
+					alert("변경되었습니다.");
 					clearButton('attachBtns-timeBtsCon-same');
 					
 					setSectionData();
@@ -490,7 +437,7 @@
 					saveTimes(changeSave);
 					saveVal = JSON.parse(JSON.stringify(changeSave));
 					
-					// alert("변경되었습니다.");
+					alert("변경되었습니다.");
 					clearButton('attachBtns-timeBtsCon-wd');
 					clearButton('attachBtns-timeBtsCon-wknd');
 					
@@ -514,7 +461,7 @@
 						}
 						clearButton(`attachBtns-timeBtsCon-${i}`);
 					}
-					// alert("변경되었습니다.");
+					alert("변경되었습니다.");
 					console.log("모든 처리 후/ 체인지세이브 (최종):", JSON.parse(JSON.stringify(changeSave))); 
 					saveTimes(changeSave);
 					saveVal = JSON.parse(JSON.stringify(changeSave));
@@ -531,10 +478,7 @@
 					console.log("Null임")
 
 				}
-				showModal("modal-1", {
-					bodyText: ["정상적으로 변경되었습니다."],
-					footerText: ["시간표 추가/삭제 및 변경 시, 이미 존재하는 예약은 유지됩니다.", "(기존 예약내역 취소는 개별 일정 조율 후 예약조회 페이지를 이용해주세요.)"]
-				});
+				
 			});
 
 		});

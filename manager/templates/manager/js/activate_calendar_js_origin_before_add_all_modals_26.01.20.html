@@ -73,21 +73,6 @@
     
     // 휴무설정
     function sendDayoffData(dayOffCycle, dayoff) {
-
-      // 휴무일 안들어갔으면 F (휴무주기는 빈값이면 자동으로 매주선택)
-      // if (!dayoff?.length) {
-      //   console.warn("입력값 부족");
-      //   return false;
-      // }
-
-      const noHoliday = (dayOffCycle === "무휴");
-      const existHoliday = (Array.isArray(dayoff) && dayoff.length > 0);
-
-      if (!noHoliday && !existHoliday) {
-        console.warn("선택요일없음");
-        return false;
-      }
-
       if (updateSocket.readyState === WebSocket.OPEN) {
         updateSocket.send(JSON.stringify({
           "command": "dayoff_set",
@@ -95,11 +80,7 @@
           "dayoff": dayoff,
           "rsv_id": storeId,
         }));
-        // 데이터 전송 성공시 T
-        return true;
       }
-      // 소켓연결 오류시 F
-      return false;
     }
     
     // 인원설정

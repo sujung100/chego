@@ -1,0 +1,560 @@
+
+<script>
+  window.onload = function () {
+      // 웹 페이지가 로드되면 buildCalendar 실행
+    buildCalendar();
+    }
+
+  let nowMonth = new Date();  // 현재 달을 페이지를 로드한 날의 달로 초기화
+  let today = new Date();     // 페이지를 로드한 날짜를 저장
+  today.setHours(0, 0, 0, 0);    // 비교 편의를 위해 today의 시간을 초기화
+  // 달력 : 해당 달에 맞춰 테이블생성 -> 날짜 채워 넣음
+  const now_year = document.querySelector("#calYear");
+  const now_month = document.querySelector("#calMonth");
+  let selected_date = document.querySelector("#selected_date");
+  let disable_checkbox = document.querySelector(".rocker > input");
+  const rsv_start_end = document.querySelector(".rsv_start_end");
+  let rsv_start_end_yes = document.querySelector("#rsv_start_end_yes");
+  let rsv_start_end_no = document.querySelector("#rsv_start_end_no");
+  let choiceDay1 = document.getElementsByClassName("choiceDay");
+  let choiceDay2 = document.getElementsByClassName("choiceDay2");
+  let d_choiceDay = document.getElementsByClassName("d_choiceDay");
+  let disable_date_start = document.querySelector("#disable_date_start");
+  let disable_date_end = document.querySelector("#disable_date_end");
+  
+  var tabSelectors = document.querySelectorAll('.tab-selector'); // 탭 input
+  
+  let disableStartDate;
+  let disableEndDate;
+
+  // 달력 기간설정시
+  let lastOddChoice = null; // 마지막 홀수 번째 선택 저장
+  let lastEvenChoice = null; // 마지막 짝수 번째 선택 저장
+  let selectedCount = 0; // 선택 횟수 카운트
+  let lastDisabledDate = null; // 마지막 선택된 시작 날짜 (d_choiceDay)
+
+  
+  // 달력 재생성되도 유지할 값
+  let selectedDates = {
+    start: null, // d_choiceDay
+    end: null,   // choiceDay2
+    between: []  // between
+  };
+
+  const rsv_activate = document.querySelector("#rsv_activate");
+  
+
+	// 기간설정-01 자동수동 세팅
+	const toggleCheckbox = document.getElementById('toggle-checkbox');
+  const editmodeCheckbox = document.getElementById('editmode_checkbox');
+  const settingAuto = document.getElementById('setting-auto');
+  const settingManual = document.getElementById('setting-manual');
+	const completeButton = document.getElementById('complete-button');
+  let title_block = document.querySelector(".Calendar thead");
+  let clickedOnce = false;
+  toggleCheckbox.addEventListener('change', function() {
+      if (this.checked) {
+        // 수동
+        settingAuto.style.display = 'none';
+        settingManual.style.display = 'block';
+      } else {
+        // 자동
+        settingAuto.style.display = 'block';
+        settingManual.style.display = 'none';
+        
+        // 수동의 편집모드 끄기 25.04.10
+        if (title_block.classList.contains('change_mode')) {
+          disable_checkbox.checked = !disable_checkbox.checked;
+        }
+        checkF();
+
+      }
+      // 라디오 버튼 초기화
+      const radios = document.querySelectorAll('input[name="auto_set"]');
+      radios.forEach(radio => {
+          radio.checked = false;
+      });
+
+  });
+
+  // 선택완료 클릭시
+	completeButton.addEventListener('click', function() {
+        // 기간설정 -> 자동 -> 하위의 radio중 선택한게 있는지  
+        const selectedRadio = document.querySelector('input[name="auto_set"]:checked');
+        const radioValue = selectedRadio ? selectedRadio.value : null;
+        // 기간설정 -> 수동 선택
+        const selectManual = document.querySelector('input[class="checkbox-input"]:checked');
+
+        const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'long', timeZone: 'Asia/Seoul' };
+        const truncatedDate = today.toLocaleDateString('ko-KR', dateOptions).replace(/\. /g, '-').replace(/요일/, '');
+
+        console.log("라디오밸류", radioValue);
+
+        // 자동선택 후 radio까지 선택했을 때 전달값 : selectAuto
+        if (radioValue) {
+
+          // 자동 수동 선택값 저장 25.03.25
+          console.log("자동찍힘");
+          console.log("날짜 선택값 없어야정상", selectedDates);
+          let radioVal = radioValue;
+          let todayDate = truncatedDate;
+          // selectAuto도 후에 selectedDates랑 같이 db에 따로 저장되어야함
+          // 라디오(1주, 1달, 1년)선택값이랑 기준점이되는 오늘날짜(설정날짜)
+          console.log("라디오버튼 선택값2", radioVal);
+          console.log("라디오버튼 선택값3", todayDate);
+          sendAutoData(radioVal, todayDate);
+          
+        
+        // 수동선택시 전달값 : selectedDates
+        } else if (selectManual) {
+
+          console.log("수동찍힘");
+          // selectAuto = null;
+          radioVal = null;
+          todayDate = truncatedDate;
+          console.log("자동 라디오버튼 선택값 없어야정상2", radioVal);
+          console.log("투데이데이트 추가", todayDate);
+          console.log("달력날짜 선택값2", selectedDates);
+
+          // 유효성검사 - start, end 다들어갔는지(activate_calendar.js)
+          let activate_start = disable_date_start.textContent;
+          let activate_end = disable_date_end.textContent;
+          // between을 넣기는 비효율적인듯(db) 필요하면 나중에 프론트에서 계산해서 사용
+          // let activate_between = selectedDates.between;
+
+          console.log("액스", activate_start);
+          console.log("액앤", activate_end);
+          // console.log("액비", activate_between);
+          const validationResult = validateDates(activate_start, activate_end);
+          if (!validationResult.valid) {
+            const errorMessage = getErrorMessage(validationResult.errorType);
+            alert(errorMessage);
+            // return;
+          }
+          const activateResult = confirm("수정하시겠습니까?");
+          if (activateResult) {
+            console.log("활성화 온");
+            // activatePost(activate_start, activate_end);
+            sendManualData(activate_start, activate_end, todayDate);
+          }
+
+          // json리턴
+          // return selectedDates;
+          // selectedDates;
+        
+        // 미선택시
+        } else {
+          alert("옵션을 선택해주세요.");
+        }
+
+
+        // ///////////리턴 삭제하고 아래 코드 넣음 25.04.15
+        
+        let activeTabIndex = -1;
+        for (let i = 0; i < tabSelectors.length; i++) {
+          if (tabSelectors[i].checked) {
+            activeTabIndex = i;
+            break;
+          }
+        }
+
+        // 다음 탭으로 이동
+        if (activeTabIndex < tabSelectors.length - 1) {
+          tabSelectors[activeTabIndex + 1].checked = true; // 다음 탭 선택
+          
+          // trapez 스타일 업데이트 (선택된 탭에 'active' 클래스 추가, 나머지는 제거)
+          for (let i = 0; i < tabSelectors.length; i++) {
+              if (i === activeTabIndex + 1) {
+                  tabSelectors[i].classList.add('active');
+              } else {
+                  tabSelectors[i].classList.remove('active');
+              }
+          }
+        }
+
+    });
+
+
+  function buildCalendar() {
+    const userDates = JSON.parse('{{ user_dates_json | escapejs | safe }}');
+    let userDates1 = userDates.map(function (date) {
+      let parts = date.split("-");
+      return parts;
+    });
+
+    let firstDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth(), 1);     // 이번달 1일
+    let lastDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, 0);  // 이번달 마지막날
+
+    let tbody_Calendar = document.querySelector(".Calendar > tbody");
+    now_year.textContent = nowMonth.getFullYear();             // 연도 숫자 갱신
+    now_month.textContent = leftPad(nowMonth.getMonth() + 1);  // 월 숫자 갱신
+
+    while (tbody_Calendar.rows.length > 0) {                        // 이전 출력결과가 남아있는 경우 초기화
+      tbody_Calendar.deleteRow(tbody_Calendar.rows.length - 1);
+    }
+    let nowRow = tbody_Calendar.insertRow();        // 첫번째 행 추가           
+    for (let j = 0; j < firstDate.getDay(); j++) {  // 이번달 1일의 요일만큼
+      let nowColumn = nowRow.insertCell();        // 열 추가
+    }
+    for (let nowDay = firstDate; nowDay <= lastDate; nowDay.setDate(nowDay.getDate() + 1)) {   // day는 날짜를 저장하는 변수, 이번달 마지막날까지 증가시키며 반복
+      let nowColumn = nowRow.insertCell();        // 새 열을 추가하고
+      let newDIV = document.createElement("p");
+      newDIV.innerHTML = leftPad(nowDay.getDate());        // 추가한 열에 날짜 입력
+      let formattedDate = `${nowDay.getFullYear()}-${leftPad(nowDay.getMonth() + 1)}-${leftPad(nowDay.getDate())}`;
+      newDIV.setAttribute('data-date', formattedDate);     // 속성값에 연월일 값 추가 25.02.13
+
+      let dateStringArray = [nowDay.getFullYear().toString(), leftPad(nowMonth.getMonth() + 1), leftPad(nowDay.getDate())];
+      let rsv_count = countDateOccurrences(userDates, dateStringArray);
+      nowColumn.appendChild(newDIV);
+      let newDIV2 = document.createElement("div");
+      newDIV2.className = "rsv_check"
+
+      if (rsv_count > 0) {
+        // Display the count in newDiv2
+        newDIV2.innerHTML = rsv_count;
+      } else {
+        newDIV2.innerHTML = "";
+      }
+      nowColumn.appendChild(newDIV2);
+
+
+      if (nowDay.getDay() == 6) {                 // 토요일인 경우
+        nowRow = tbody_Calendar.insertRow();    // 새로운 행 추가
+      }
+      if (nowDay < today) {                       // 지난날인 경우
+        newDIV.className = "pastDay";
+      }
+      else if (nowDay.getFullYear() == today.getFullYear() && nowDay.getMonth() == today.getMonth() && nowDay.getDate() == today.getDate()) { // 오늘인 경우           
+        newDIV.className = "today";
+        newDIV.onclick = function () {
+          if (disable_checkbox.checked) {
+            choiceDate(this);
+          } else {
+            disableMode_choiceDate(this);
+          }
+        }
+      }
+      else {                                      // 미래인 경우
+        newDIV.className = "futureDay";
+        newDIV.onclick = function () {
+          if (disable_checkbox.checked) {
+            choiceDate(this);
+          } else {
+            disableMode_choiceDate(this);
+          }
+        }
+      }
+      // disableMode 모드일 때 달력생성
+      if (!disable_checkbox.checked) {
+        // console.log("false일때 적용 되냐");
+        newDIV.classList.add("unchecked");
+        rsv_start_end.style.display = "block";
+        // 시작날짜, 종료날짜가 존재할 때
+      } else {
+        rsv_start_end.style.display = "none";
+      }
+    }
+
+    // for문 빠져나옴
+    if (!disable_checkbox.checked) {
+      if(disable_date_start.textContent && disable_date_end.textContent){
+          console.log("둘 다 존재할때");
+        } else if (disable_date_start.textContent){
+          console.log("if(disable_date_start.valueate)", disable_date_start.textContent);
+        }
+    }
+    // 25.04.13 change -> click으로 수정
+    // disable_checkbox.addEventListener('change', function () {
+    disable_checkbox.addEventListener('click', function () {
+      disableMode();
+    });
+
+
+    
+    // 기존 선택 상태 복원
+    const year = nowMonth.getFullYear();
+    const month = leftPad(nowMonth.getMonth() + 1);
+
+    if (selectedDates) {
+        const currentSelection = selectedDates;
+        console.log("currentSelection", currentSelection);
+        
+        if (currentSelection.start) {
+          const startDay = currentSelection.start.split("-");
+          console.log("startTd 0", startDay[0]);
+          console.log("startTd 1", startDay[1]);
+          console.log("startTd 2", startDay[2]);
+          const startTd = findTdByDate(startDay[0], startDay[1], startDay[2]);
+          console.log("startTd찍어", startTd);
+          
+            if (startTd) {
+                const startP = startTd.querySelector('p');
+                startP.classList.add("d_choiceDay");
+                lastOddChoice = startP;
+            }
+        }
+
+        if (currentSelection.end) {
+            const endDay = currentSelection.end.split("-");
+            const endTd = findTdByDate(endDay[0], endDay[1], endDay[2]);
+            if (endTd) {
+                const endP = endTd.querySelector('p');
+                endP.classList.add("choiceDay2");
+                lastEvenChoice = endP;
+            }
+        }
+
+        currentSelection.between.forEach(date => {
+          console.log("date찍어봐라", date);
+          const betweenDay = date.split("-");
+          const betweenTd = findTdByDate(betweenDay[0], betweenDay[1], betweenDay[2]);
+          console.log("betweenTd찍어봐라", betweenTd);
+          if (betweenTd) {
+              const betweenP = betweenTd.querySelector('p');
+              console.log("P찍어봐라", betweenP);
+              if (betweenP) {
+                  betweenP.classList.add("between");
+              }
+          }
+        });
+     }
+     console.log("selectedDates", selectedDates)
+  }
+
+
+  function findTdByDate(year, month, day) {
+      const formattedDate = `${year}-${month}-${day}`;
+      console.log("formattedDate찍어봐", formattedDate);
+      const tds = document.querySelectorAll('tbody td');
+        for (let td of tds) {
+            const pTag = td.querySelectorAll('p');
+            for (let i = 0; i < pTag.length; i++) {
+              // console.log(pTag[i].getAttribute('data-date'));
+            }
+              if (pTag.length > 0 && pTag[0].getAttribute('data-date') === formattedDate) {
+                  return td;
+              }
+        }
+      return null; // 찾지 못한 경우
+  }
+
+  // 날짜 선택
+  function choiceDate(newDIV) {
+    let choiceDay1_0 = choiceDay1[0];
+    let choiceDay2_0 = choiceDay2[0];
+
+    if (choiceDay1_0) {                              // 기존에 선택한 날짜가 있으면
+      choiceDay1_0.classList.remove("choiceDay");  // 해당 날짜의 "choiceDay" class 제거
+    }
+
+    newDIV.classList.add("choiceDay");           // 선택된 날짜에 "choiceDay" class 추가
+    selected_date.value = [now_year.textContent, now_month.textContent, newDIV.textContent];
+    // console.log(selected_date);
+
+
+    if (updateSocket.readyState === WebSocket.OPEN) {
+      updateSocket.send(JSON.stringify({
+        "command": "selected_date",
+        "select_date": selected_date.value,
+      }));
+    }
+  }
+  
+
+  function disableMode_choiceDate(newDIV) {
+      console.log("disableMode_choiceDate 실행");
+      
+      let year = nowMonth.getFullYear();
+      let month = leftPad(nowMonth.getMonth() + 1);
+      let day = newDIV.textContent;
+      let disableMode_choice_date = `${year}-${month}-${day}`;
+
+      selectedCount++; // 선택 횟수 증가
+
+      // 홀수 번째 선택
+      if (selectedCount % 2 === 1) {
+          // 이전 홀수 선택이 있다면 클래스 제거
+          if (lastOddChoice) {
+              lastOddChoice.classList.remove("d_choiceDay");
+              removeBetweenClass();
+          }
+
+          // 기존 짝수 선택이 존재한다면 클래스 제거
+          if (lastEvenChoice) {
+              lastEvenChoice.classList.remove("choiceDay2"); // 기존 짝수 선택 클래스 제거
+              lastEvenChoice = null; // 마지막 짝수 선택 초기화
+          }
+
+          newDIV.classList.add("d_choiceDay"); // 현재 선택에 클래스 추가
+          lastOddChoice = newDIV; // 마지막 홀수 선택 업데이트
+          lastDisabledDate = disableMode_choice_date; // 시작 날짜 업데이트
+          disable_date_start.textContent = disableMode_choice_date; // 시작 날짜 설정
+
+           // 상태 업데이트
+          if (!selectedDates) {
+              selectedDates = {};
+          }
+          // if (!selectedDates[year][month]) {
+          //     selectedDates[year][month] = { start: null, end: null, between: [] };
+          // }
+          selectedDates.start = disableMode_choice_date;
+          selectedDates.end = null; // 초기화
+          selectedDates.between = []; // 초기화
+
+      } else { // 짝수 번째 선택
+          // 이전 짝수 선택이 있다면 클래스 제거
+          if (lastEvenChoice) {
+              lastEvenChoice.classList.remove("choiceDay2");
+          }
+
+          // 현재 선택 날짜가 마지막 선택된 시작 날짜보다 이전인지 확인
+          if (lastDisabledDate && disableMode_choice_date < lastDisabledDate) {
+              alert("이전 날짜를 종료 날짜로 선택할 수 없습니다.");
+              selectedCount--;
+              // console.log("선택횟수 출력", selectedCount);
+              return; // 이전 날짜 선택 방지
+          }
+
+          newDIV.classList.add("choiceDay2"); // 현재 선택에 클래스 추가
+          lastEvenChoice = newDIV; // 마지막 짝수 선택 업데이트
+          disable_date_end.textContent = disableMode_choice_date; // 종료 날짜 설정
+          
+          
+          // 선택된 td 요소 찾기
+          const startTd = lastOddChoice ? lastOddChoice.parentElement : null; // d_choiceDay 클래스가 있는 td
+          const endTd = lastEvenChoice.parentElement; // choiceDay2 클래스가 있는 td
+          
+          // 사이에 between 클래스 추가
+          if (startTd && endTd) {
+            addBetweenClass(selectedDates.start, disableMode_choice_date);
+            selectedDates.end = disableMode_choice_date; // 종료 날짜 업데이트
+        }
+    }
+
+      console.log("선택된 날짜:", disableMode_choice_date);
+      console.log("현재 홀수 선택:", lastOddChoice ? lastOddChoice.textContent : "없음");
+      console.log("현재 짝수 선택:", lastEvenChoice ? lastEvenChoice.textContent : "없음");
+      console.log("선택횟수 출력", selectedCount);
+  }
+
+  
+  function addBetweenClass(startDate, endDate) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    let currentDate = new Date(start);
+    currentDate.setDate(currentDate.getDate() + 1);
+
+    while (currentDate < end) {
+        const currentDay = leftPad(currentDate.getDate());
+        const currentMonth = leftPad(currentDate.getMonth() + 1);
+        const currentYear = currentDate.getFullYear();
+
+        // 해당 날짜에 해당하는 td 찾기
+        const td = findTdByDate(currentYear, currentMonth, currentDay);
+        if (td) {
+            const dayParagraph = td.querySelector('p');
+            if (dayParagraph) {
+                dayParagraph.classList.add("between"); // between 클래스 추가
+            }
+        }
+
+        // between 배열에 추가
+        selectedDates.between.push(`${currentYear}-${currentMonth}-${currentDay}`);
+
+        currentDate.setDate(currentDate.getDate() + 1); // 다음 날짜로 이동
+    }
+  }
+
+  function removeBetweenClass() {
+      const betweenElements = document.querySelectorAll('.between');
+      betweenElements.forEach(element => {
+          element.classList.remove('between'); // between 클래스 제거
+      });
+  }
+
+  // 이전달 버튼 클릭
+  function prevCalendar() {
+    nowMonth = new Date(nowMonth.getFullYear(), nowMonth.getMonth() - 1, nowMonth.getDate());   // 현재 달을 1 감소
+    buildCalendar();    // 달력 다시 생성
+  }
+  // 다음달 버튼 클릭
+  function nextCalendar() {
+    nowMonth = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, nowMonth.getDate());   // 현재 달을 1 증가
+    buildCalendar();    // 달력 다시 생성
+  }
+
+  // input값이 한자리 숫자인 경우 앞에 '0' 붙혀주는 함수
+  function leftPad(value) {
+    if (value < 10) {
+      value = "0" + value;
+      return value;
+    }
+    return value;
+  }
+
+
+  function countDateOccurrences(datesArray, singleDate) {
+    let dateString = singleDate.join('-');
+    return datesArray.reduce((rsv_count, date) =>
+      (date === dateString) ? ++rsv_count : rsv_count,
+      0);
+  }
+
+
+
+  // 편집모드 켜기
+  function checkT() {
+    let unchecked_elements = document.querySelectorAll(".pastDay, .today, .futureDay");
+    let change_visble = document.querySelector(".edit_mode");
+    let title_block = document.querySelector(".Calendar thead");
+
+    change_visble.classList.add("unchecked2");
+    title_block.classList.add("change_mode");
+    unchecked_elements.forEach(function (element) {
+      // console.log(element);
+      element.classList.add("unchecked");
+      rsv_start_end.style.display = "block";
+    });
+  }
+
+  // 편집모드 끄기
+  function checkF() {
+    let unchecked_elements = document.querySelectorAll(".pastDay, .today, .futureDay");
+    let change_visble = document.querySelector(".edit_mode");
+    let title_block = document.querySelector(".Calendar thead");
+
+    console.log('체크박스 꺼짐');
+    unchecked_elements.forEach(function (element) {
+      element.classList.remove("choiceDay2");
+      element.classList.remove("d_choiceDay");
+      element.classList.remove("between");
+
+      element.classList.remove("unchecked");
+      change_visble.classList.remove("unchecked2");
+      title_block.classList.remove("change_mode");
+      rsv_start_end.style.display = "none";
+    });
+    // off버튼 클릭시 start/ end/ between 값 초기화
+    selectedDates = {};
+    console.log("오프시 배열은?", selectedDates);
+    disable_date_start.textContent = ''
+    disable_date_end.textContent = ''
+    // location.reload();
+  }
+
+
+  async function disableMode() {
+    let unchecked_elements = document.querySelectorAll(".pastDay, .today, .futureDay");
+    let change_visble = document.querySelector(".edit_mode");
+    let title_block = document.querySelector(".Calendar thead");
+    console.log("disableMode 실행");
+    if (!disable_checkbox.checked) {
+      checkT();
+    }
+    else {
+      checkF();
+    }
+  }
+
+</script>

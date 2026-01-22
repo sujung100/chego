@@ -383,11 +383,6 @@
 		// 휴무설정 - 정기휴무 지정
 		function dayOffSet () {
 	
-			const initialChecked = document.querySelector('input[name="dayoff_set"]:checked');
-			if (initialChecked) {
-				sendDayOffVal = initialChecked.value;
-			}
-
 			setsContainers.forEach(container => {
 				container.addEventListener('click', function(event) {
 					const radioInput = this.querySelector('input[type="radio"]');
@@ -427,27 +422,10 @@
 		
 		// 휴무설정값 저장
 		const hoilsetButton = document.querySelector('#hoilset-button');
-		hoilsetButton.addEventListener('click', async function(event){
+		hoilsetButton.addEventListener('click', function(event){
 			console.log("정기휴무값", sendDayOffVal)
 			console.log("휴무요일값", sendHoliday);
-			// sendDayoffData(sendDayOffVal, sendHoliday);
-			let finalHoliday = sendDayOffVal === "무휴" ? [] : sendHoliday;
-			try {
-				const result = await sendDayoffData(sendDayOffVal, sendHoliday);
-				if (result === true) {
-					showModal("modal-1", {
-						bodyText: ["정상적으로 변경되었습니다."],
-						footerText: ["", ""]
-					});
-				// } else if (result === false) {
-				// 	alert("필수 입력 항목을 전부 입력해주세요.");
-				} else {
-					// console.log("왜 에러?");
-					alert("휴무 설정을 확인해주세요. (매주/격주 선택시 휴무일 필수 선택)")
-				}
-			} catch (error) {
-				console.error("오류발생:", error);
-			}
+			sendDayoffData(sendDayOffVal, sendHoliday);
 		});
 
 

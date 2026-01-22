@@ -439,7 +439,6 @@
 						bodyText: ["정상적으로 변경되었습니다."],
 						footerText: ["", ""]
 					});
-					switchTab();
 				// } else if (result === false) {
 				// 	alert("필수 입력 항목을 전부 입력해주세요.");
 				} else {
@@ -558,7 +557,6 @@
 					bodyText: ["정상적으로 변경되었습니다."],
 					footerText: ["시간표 추가/삭제 및 변경 시, 이미 존재하는 예약은 유지됩니다.", "(기존 예약내역 취소는 개별 일정 조율 후 예약조회 페이지를 이용해주세요.)"]
 				});
-				switchTab();
 			});
 
 		});
@@ -1285,25 +1283,12 @@
 	const maxPeople = document.querySelector('#maxpeople');
 	const maxTeam = document.querySelector('#per1hour');
 	const numsetButton = document.querySelector('#numset-button');
-	numsetButton.addEventListener('click', async function() {
+	numsetButton.addEventListener('click', function() {
 		const numMaxPeople = Number(maxPeople.value);
 		const numMaxTeam = Number(maxTeam.value);
 		console.log("출력1", numMaxPeople);
 		console.log("출력2", numMaxTeam);
-		// sendMaxNumData(numMaxPeople, numMaxTeam);
-			try {
-				const result = await sendMaxNumData(numMaxPeople, numMaxTeam);
-				if (result === true) {
-					showModal("modal-1", {
-						bodyText: ["정상적으로 변경되었습니다."],
-						footerText: ["", ""]
-					});
-				} else {
-					alert("필수 입력 항목을 전부 입력해주세요.")
-				}
-			} catch (error) {
-				console.error("오류발생:", error);
-			}
+		sendMaxNumData(numMaxPeople, numMaxTeam);
 	});
 
 

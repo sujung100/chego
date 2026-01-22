@@ -42,32 +42,6 @@
   };
 
   const rsv_activate = document.querySelector("#rsv_activate");
-
-
-  // 탭 전환
-  function switchTab() {
-    let activeTabIndex = -1;
-      for (let i = 0; i < tabSelectors.length; i++) {
-        if (tabSelectors[i].checked) {
-          activeTabIndex = i;
-          break;
-        }
-      }
-
-      // 다음 탭으로 이동
-      if (activeTabIndex < tabSelectors.length - 1) {
-        tabSelectors[activeTabIndex + 1].checked = true; // 다음 탭 선택
-        
-        // trapez 스타일 업데이트 (선택된 탭에 'active' 클래스 추가, 나머지는 제거)
-        for (let i = 0; i < tabSelectors.length; i++) {
-            if (i === activeTabIndex + 1) {
-                tabSelectors[i].classList.add('active');
-            } else {
-                tabSelectors[i].classList.remove('active');
-            }
-        }
-      }
-  }
   
 
 	// 기간설정-01 자동수동 세팅
@@ -104,18 +78,21 @@
   });
 
   // 선택완료 클릭시
-	completeButton.addEventListener('click', async function() {
+	completeButton.addEventListener('click', function() {
         // 기간설정 -> 자동 -> 하위의 radio중 선택한게 있는지  
         const selectedRadio = document.querySelector('input[name="auto_set"]:checked');
         const radioValue = selectedRadio ? selectedRadio.value : null;
         // 기간설정 -> 수동 선택
         const selectManual = document.querySelector('input[class="checkbox-input"]:checked');
+
         const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'long', timeZone: 'Asia/Seoul' };
         const truncatedDate = today.toLocaleDateString('ko-KR', dateOptions).replace(/\. /g, '-').replace(/요일/, '');
+
         console.log("라디오밸류", radioValue);
 
         // 자동선택 후 radio까지 선택했을 때 전달값 : selectAuto
         if (radioValue) {
+
           // 자동 수동 선택값 저장 25.03.25
           console.log("자동찍힘");
           console.log("날짜 선택값 없어야정상", selectedDates);
@@ -125,23 +102,7 @@
           // 라디오(1주, 1달, 1년)선택값이랑 기준점이되는 오늘날짜(설정날짜)
           console.log("라디오버튼 선택값2", radioVal);
           console.log("라디오버튼 선택값3", todayDate);
-          // sendAutoData(radioVal, todayDate);
-
-          try {
-            const result = await sendAutoData(radioVal, todayDate);
-            if (result === true) {
-              showModal("modal-1", {
-                bodyText: ["정상적으로 변경되었습니다."],
-                footerText: ["", ""]
-              });
-              switchTab();
-            } else {
-              // 임시
-              alert("항목을 선택해주세요.")
-            }
-          } catch (error) {
-            console.error("오류발생:", error);
-          }
+          sendAutoData(radioVal, todayDate);
           
         
         // 수동선택시 전달값 : selectedDates
@@ -165,34 +126,16 @@
           console.log("액앤", activate_end);
           // console.log("액비", activate_between);
           const validationResult = validateDates(activate_start, activate_end);
-          
           if (!validationResult.valid) {
             const errorMessage = getErrorMessage(validationResult.errorType);
             alert(errorMessage);
             // return;
-          // }
-          
-          // }else if (activateResult) {
-          }else if (validationResult.valid) {
+          }
+          const activateResult = confirm("수정하시겠습니까?");
+          if (activateResult) {
             console.log("활성화 온");
-            const activateResult = confirm("수정하시겠습니까?");
             // activatePost(activate_start, activate_end);
-            // sendManualData(activate_start, activate_end, todayDate);
-            try {
-              const result = await sendManualData(activate_start, activate_end, todayDate);
-              if (result === true) {
-                showModal("modal-1", {
-                  bodyText: ["정상적으로 변경되었습니다."],
-                  footerText: ["", ""]
-                });
-                switchTab();
-              } else {
-                // 임시
-                console.log("오류");
-              }
-            } catch (error) {
-              console.error("오류발생:", error);
-            }
+            sendManualData(activate_start, activate_end, todayDate);
           }
 
           // json리턴
@@ -204,31 +147,30 @@
           alert("옵션을 선택해주세요.");
         }
 
-        
 
         // ///////////리턴 삭제하고 아래 코드 넣음 25.04.15
         
-        // let activeTabIndex = -1;
-        // for (let i = 0; i < tabSelectors.length; i++) {
-        //   if (tabSelectors[i].checked) {
-        //     activeTabIndex = i;
-        //     break;
-        //   }
-        // }
+        let activeTabIndex = -1;
+        for (let i = 0; i < tabSelectors.length; i++) {
+          if (tabSelectors[i].checked) {
+            activeTabIndex = i;
+            break;
+          }
+        }
 
-        // // 다음 탭으로 이동
-        // if (activeTabIndex < tabSelectors.length - 1) {
-        //   tabSelectors[activeTabIndex + 1].checked = true; // 다음 탭 선택
+        // 다음 탭으로 이동
+        if (activeTabIndex < tabSelectors.length - 1) {
+          tabSelectors[activeTabIndex + 1].checked = true; // 다음 탭 선택
           
-        //   // trapez 스타일 업데이트 (선택된 탭에 'active' 클래스 추가, 나머지는 제거)
-        //   for (let i = 0; i < tabSelectors.length; i++) {
-        //       if (i === activeTabIndex + 1) {
-        //           tabSelectors[i].classList.add('active');
-        //       } else {
-        //           tabSelectors[i].classList.remove('active');
-        //       }
-        //   }
-        // }
+          // trapez 스타일 업데이트 (선택된 탭에 'active' 클래스 추가, 나머지는 제거)
+          for (let i = 0; i < tabSelectors.length; i++) {
+              if (i === activeTabIndex + 1) {
+                  tabSelectors[i].classList.add('active');
+              } else {
+                  tabSelectors[i].classList.remove('active');
+              }
+          }
+        }
 
     });
 

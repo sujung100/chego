@@ -3,7 +3,7 @@
   
     function getErrorMessage(errorType) {
       const errorMessages = {
-        "startDateMissing": "편집 모드를 키고 예약 활성화 시작일을 선택해 주세요.",
+        "startDateMissing": "예약 활성화 시작일을 선택해 주세요.",
         "endDateMissing": "예약 활성화 종료일을 선택해 주세요.",
         "dateNotSelected": "예약 날짜를 선택해 주세요."
   
@@ -36,11 +36,6 @@
     
     // 기간설정 - 자동선택
     function sendAutoData(radioVal, today) {
-      if (!radioVal) {
-        console.warn("갱신주기 미선택");
-        return false;
-      }
-
       if (updateSocket.readyState === WebSocket.OPEN) {
         updateSocket.send(JSON.stringify({
           "command": "rsv_renewal_cycle",
@@ -48,18 +43,11 @@
           "set_date": today,
           "rsv_id": storeId,
         }));
-        return true;
       }
-      return false;
     }
 
     // 기간설정 - 수동선택(달력값)
     function sendManualData(start, end, today) {
-      if (!start || !end) {
-        console.warn("시작/종료 미선택");
-        return false;
-      }
-
       if (updateSocket.readyState === WebSocket.OPEN) {
         updateSocket.send(JSON.stringify({
           "command": "start_end_date",
@@ -68,9 +56,7 @@
           "set_date": today,
           "rsv_id": storeId,
         }));
-        return true;
       }
-      return false;
     }
 
 
@@ -87,6 +73,13 @@
     
     // 휴무설정
     function sendDayoffData(dayOffCycle, dayoff) {
+
+      // 휴무일 안들어갔으면 F (휴무주기는 빈값이면 자동으로 매주선택)
+      // if (!dayoff?.length) {
+      //   console.warn("입력값 부족");
+      //   return false;
+      // }
+
       const noHoliday = (dayOffCycle === "무휴");
       const existHoliday = (Array.isArray(dayoff) && dayoff.length > 0);
 
@@ -111,11 +104,6 @@
     
     // 인원설정
     function sendMaxNumData(maxPeople, maxTeam) {
-      if (maxPeople <=0 || maxTeam <= 0) {
-        console.warn("입력값 부족");
-        return false;
-      }
-
       if (updateSocket.readyState === WebSocket.OPEN) {
         updateSocket.send(JSON.stringify({
           "command": "num_set",
@@ -123,9 +111,7 @@
           "max_team": maxTeam,
           "rsv_id": storeId,
         }));
-        return true;
       }
-      return false;
     }
 
 

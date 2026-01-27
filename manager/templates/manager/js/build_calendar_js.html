@@ -47,26 +47,26 @@
   // 탭 전환
   function switchTab() {
     let activeTabIndex = -1;
-      for (let i = 0; i < tabSelectors.length; i++) {
-        if (tabSelectors[i].checked) {
-          activeTabIndex = i;
-          break;
-        }
+    for (let i = 0; i < tabSelectors.length; i++) {
+      if (tabSelectors[i].checked) {
+        activeTabIndex = i;
+        break;
       }
+    }
 
-      // 다음 탭으로 이동
-      if (activeTabIndex < tabSelectors.length - 1) {
-        tabSelectors[activeTabIndex + 1].checked = true; // 다음 탭 선택
-        
-        // trapez 스타일 업데이트 (선택된 탭에 'active' 클래스 추가, 나머지는 제거)
-        for (let i = 0; i < tabSelectors.length; i++) {
-            if (i === activeTabIndex + 1) {
-                tabSelectors[i].classList.add('active');
-            } else {
-                tabSelectors[i].classList.remove('active');
-            }
-        }
+    // 다음 탭으로 이동
+    if (activeTabIndex < tabSelectors.length - 1) {
+      tabSelectors[activeTabIndex + 1].checked = true; // 다음 탭 선택
+      
+      // trapez 스타일 업데이트 (선택된 탭에 'active' 클래스 추가, 나머지는 제거)
+      for (let i = 0; i < tabSelectors.length; i++) {
+          if (i === activeTabIndex + 1) {
+              tabSelectors[i].classList.add('active');
+          } else {
+              tabSelectors[i].classList.remove('active');
+          }
       }
+    }
   }
   
 

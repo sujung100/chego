@@ -40,7 +40,6 @@ from django.db.models import F, Func, Value, CharField
 from django.db.models.functions import Replace
 
 from django.http import HttpResponseForbidden
-from urllib.parse import urlencode
 
 
 ADMIN_USERS = { "admin" : True,}
@@ -408,18 +407,13 @@ class Total_Reservation_Check(LoginRequiredMixin, UpdateView):
                 rsv.Reservation_user.objects.filter(id__in=rsv_ids, store_id=store.pk).delete()
 
                 # POST 요청 시 입력값을 가져오기
-                # input1 = request.POST.get('input1', '')
-                # input2 = request.POST.get('input2', '')
-                # input3 = request.POST.get('input3', '')
-                input1 = self.request.GET.get('name', '')
-                input2 = self.request.GET.get('phone', '')
-                input3 = self.request.GET.get('kw', '')
-                qs = urlencode({'name': input1, 'phone': input2, 'kw': input3})
-                print("찍어봐아아아", qs)
+                input1 = request.POST.get('input1', '')
+                input2 = request.POST.get('input2', '')
+                input3 = request.POST.get('input3', '')
 
                 # 쿼리 매개변수로 입력값을 전달하여 리다이렉트
-                # return redirect(f"{reverse('store_detail')}?input1={input1}&input2={input2}&input3={input3}", pk=store.pk)
-                return redirect(reverse('store_detail', kwargs={'pk': store.pk}) + '?' + qs)
+                return redirect(f"{reverse('input_view')}?input1={input1}&input2={input2}&input3={input3}", pk=store.pk)
+
                 
 
                 # 10.21 수정

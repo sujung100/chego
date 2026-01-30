@@ -1,0 +1,516 @@
+
+<script>
+
+const checkboxes = document.querySelectorAll('input[type="checkbox"][name="del-rsv"]');
+const deleteButton = document.querySelector('.del-bt');
+let selected = []; // 선택된 체크박스 저장
+
+
+// (예약삭제) 체크박스 상태 변경 시
+checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+        if (checkbox.checked) {
+            // 중복 체크 방지
+            if (!selected.includes(checkbox)) {
+                selected.push(checkbox);
+            }
+        } else {
+            // 체크 해제된 경우 배열에서 제거
+            selected = selected.filter(item => item !== checkbox);
+        }
+        // console.log('선택된 체크박스:', selected.map(cb => cb.value));
+    });
+});
+
+// (예약삭제) 삭제 버튼 클릭 시
+deleteButton.addEventListener('click', function() {
+    if (selected.length > 0) {
+        event.preventDefault();
+        submitSelected(selected); // 선택된 체크박스 배열을 인자로 전달
+    } else {
+        // console.log('선택된 체크박스가 없습니다.');
+    }
+});
+
+
+
+
+
+  let resizer; 
+  // 달력 js
+  let clickedInputs = [];
+
+  window.onload = function () { 
+    buildCalendar(); // 웹 페이지가 로드되면 buildCalendar 실행
+    // fetchReservation(); // fetch로 예약정보 불러오기
+
+    // align_boxes > checkbox의 검색옵션(이름, 전화번호, 날짜) 체크박스 선택시 효과
+		const checkboxes = document.querySelectorAll('.align_boxes input[type="checkbox"]');
+		checkboxes.forEach(checkbox => {
+      checkbox.checked = true;  // 모든 체크박스 체크
+      var inputId = checkbox.getAttribute('data-input-id');
+      var input = document.getElementById(inputId);
+      // clickedInputs 배열에 추가
+      if (!clickedInputs.includes(inputId)) {
+          clickedInputs.push(inputId);
+      }
+      input.addEventListener('focus', function() {
+				var label = this.nextElementSibling;  // 검색 input의 label 선택
+				label.style.top = '-20px';
+				label.style.left = '0';
+				label.style.color = '#03e9f4';
+				label.style.fontSize = '12px';
+			});
+			input.addEventListener('blur', function () {
+				var label = this.nextElementSibling;  // 검색 input의 label 선택
+				if (!this.value) {
+					label.style.top = '0';
+					label.style.left = '0';
+					label.style.color = '#bbb';
+					label.style.fontSize = '16px';
+				}
+			});
+      // input.focus();
+		});
+
+  }
+
+
+  let nowMonth = new Date();  // 현재 달을 페이지를 로드한 날의 달로 초기화
+  let today = new Date();     // 페이지를 로드한 날짜를 저장
+  today.setHours(0, 0, 0, 0);    // 비교 편의를 위해 today의 시간을 초기화
+
+  // 달력 생성 : 해당 달에 맞춰 테이블을 만들고, 날짜를 채워 넣는다.
+  const now_year = document.querySelector("#calYear");
+  const now_month = document.querySelector("#calMonth");
+
+  const store_item2 = document.querySelector(".store_item2");
+  const clicked_rsv = document.querySelector(".clicked_rsv");
+  // console.log("store_item2", store_item2);
+
+  // url에서 store id값 잘라오면 안되는 이유 = 1) 배포시에 문제.. 2)페이지네이션 쿼리
+  // const location111 = window.location;
+  // console.log("록", location111);
+  // const yeah = location111.pathname.toString()
+  // console.log("예", yeah);
+  // const yeah2 = yeah.split('/').reverse()[0]
+  // console.log("이거", yeah2);
+  let store_id = "{{ store.pk }}"
+  // console.log("store_id", store_id);
+
+
+
+
+  let selected_date = document.querySelector("#selected_date");
+  function buildCalendar() {
+
+    const userDates = JSON.parse('{{ user_dates_json | escapejs | safe }}');
+    // console.log("유저 데이터 찍히냐?", userDates);
+
+    let userDates1 = userDates.map(function (date) {
+      let parts = date.split("-");
+      return parts;
+    });
+    // console.log("분리 되냐?", userDates);
+
+    let firstDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth(), 1);     // 이번달 1일
+    let lastDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, 0);  // 이번달 마지막날
+
+    let tbody_Calendar = document.querySelector(".Calendar > tbody");
+    // document.getElementById("calYear").innerText = nowMonth.getFullYear();             // 연도 숫자 갱신
+    // document.getElementById("calMonth").innerText = leftPad(nowMonth.getMonth() + 1);  // 월 숫자 갱신
+    
+    now_year.textContent = nowMonth.getFullYear();             // 연도 숫자 갱신
+    now_month.textContent = leftPad(nowMonth.getMonth() + 1);  // 월 숫자 갱신
+
+
+    // console.log(document.getElementById("calYear").innerText);
+    // console.log(document.getElementById("calMonth").innerText);
+
+    while (tbody_Calendar.rows.length > 0) {                        // 이전 출력결과가 남아있는 경우 초기화
+      tbody_Calendar.deleteRow(tbody_Calendar.rows.length - 1);
+    }
+
+    let nowRow = tbody_Calendar.insertRow();        // 첫번째 행 추가           
+
+    for (let j = 0; j < firstDate.getDay(); j++) {  // 이번달 1일의 요일만큼
+      let nowColumn = nowRow.insertCell();        // 열 추가
+    }
+
+    for (let nowDay = firstDate; nowDay <= lastDate; nowDay.setDate(nowDay.getDate() + 1)) {   // day는 날짜를 저장하는 변수, 이번달 마지막날까지 증가시키며 반복  
+
+      let nowColumn = nowRow.insertCell();        // 새 열을 추가하고
+
+
+      let newDIV = document.createElement("p");
+      newDIV.innerHTML = leftPad(nowDay.getDate());        // 추가한 열에 날짜 입력
+
+      // 추가 03.04
+      newDIV.onclick = function () { 
+        choiceDate(this); 
+        // clickedDate(this); 
+      };
+
+      // console.log(newDIV.innerText);
+
+      // Check if this date is in userDates
+      let dateStringArray = [nowDay.getFullYear().toString(), leftPad(nowMonth.getMonth() + 1), leftPad(nowDay.getDate())];
+
+      let rsv_count = countDateOccurrences(userDates, dateStringArray);
+      // console.log("Reservation count for " + dateStringArray.join("-") + ": " + rsv_count);
+      // let dayOfWeek = nowDay.getDay();
+
+      // // 월요일부터 목요일까지 오른쪽 간격 설정
+      // if (dayOfWeek >= 0 && dayOfWeek <= 4) {
+      //   nowColumn.style.paddingRight = "10px";
+      // }
+
+      // // 금요일 양쪽 간격 설정
+      // if (dayOfWeek === 5) {
+      //   nowColumn.style.paddingRight = "10px";
+      // }
+
+      nowColumn.appendChild(newDIV);
+
+      let newDIV2 = document.createElement("div");
+      newDIV2.className = "rsv_check"
+      // newDIV2.innerHTML = "되";
+      if (rsv_count > 0) {
+        // Display the count in newDiv2
+        newDIV2.innerHTML = rsv_count;
+      } else {
+        newDIV2.innerHTML = "";
+      }
+      nowColumn.appendChild(newDIV2);
+
+
+      if (nowDay.getDay() == 6) {                 // 토요일인 경우
+        nowRow = tbody_Calendar.insertRow();    // 새로운 행 추가
+      }
+
+      if (nowDay < today) {                       // 지난날인 경우
+        newDIV.className = "pastDay";
+      }
+      else if (nowDay.getFullYear() == today.getFullYear() && nowDay.getMonth() == today.getMonth() && nowDay.getDate() == today.getDate()) { // 오늘인 경우           
+        newDIV.className = "today";
+        newDIV.onclick = function () { choiceDate(this); }
+      }
+      else {                                      // 미래인 경우
+        newDIV.className = "futureDay";
+        newDIV.onclick = function () { choiceDate(this); }
+      }
+    }
+  }
+
+  
+  
+  // // 수정 03.03 => 삭제 03.07 fetch말고 웹소켓으로 가져오는걸로 수정
+  // let reservationsData = null;
+  // // 비동기 -> json으로 보낸 데이터 가져오기
+  // async function fetchReservation() {
+  //       let storeId = "{{ store_id }}";
+  //       // const response = await fetch(`sung/api/schedules/${storeId}/`);  
+  //       const baseUrl = window.location.origin;
+  //       const response = await fetch(`${baseUrl}/manager/sung/api/schedules/${storeId}/`);
+  //       // const jsongogo = await response.json();
+  //       // console.log("제이슨", jsongogo);
+  //       // reservationsData = await response.json();
+  //       if (response.ok) {
+  //         // reservationsData = await response.json();
+  //         const data = await response.json();
+  //         // console.log("데이터찍어봐", data);
+  //         // reservationsData = data.results;  // 배열을 할당
+  //         reservationsData = data;
+  //         // console.log("reservationsData전역변수값", reservationsData);
+  //         // fetchReservation 함수가 완료되면 clickedDate 함수를 다시 호출
+  //         // (비동기 함수 실행 -> 비동기 함수가 데이터를 다 가져오기전에 clickedDate가 실행되어 undefined가 찍히는 문제를 해결하기위함)
+  //         // clickedDate();
+  //       } else {
+  //         // 에러출력
+  //         console.error('Server response:', response.statusText);
+  //       }
+  //     }
+
+  // // 날짜 선택
+  // function choiceDate(newDIV) {
+  //   console.log("1실행되나");
+  //   if (document.getElementsByClassName("choiceDay")[0]) {                              // 기존에 선택한 날짜가 있으면
+  //     document.getElementsByClassName("choiceDay")[0].classList.remove("choiceDay");  // 해당 날짜의 "choiceDay" class 제거
+  //   }
+  //   newDIV.classList.add("choiceDay");           // 선택된 날짜에 choiceDay class 추가
+  //   clickedDate(newDIV);
+
+  // }
+
+  
+  // 날짜 선택
+  function choiceDate(newDIV) {
+    if (document.getElementsByClassName("choiceDay")[0]) {                              // 기존에 선택한 날짜가 있으면
+      document.getElementsByClassName("choiceDay")[0].classList.remove("choiceDay");  // 해당 날짜의 "choiceDay" class 제거
+    }
+    newDIV.classList.add("choiceDay");           // 선택된 날짜에 "choiceDay" class 추가
+        
+    // 달력 날짜 클릭했을때, 기존 조회된 데이터 지워지도록
+    // console.log("store_item2", store_item2);
+    while(clicked_rsv.firstChild){
+      clicked_rsv.removeChild(clicked_rsv.firstChild);
+    }
+    
+    // selected_date.value = [now_year.textContent, now_month.textContent, newDIV.textContent];
+    selected_date_list = [now_year.textContent, now_month.textContent, newDIV.textContent];
+    // console.log(selected_date);
+    
+
+    if (detailSocket.readyState === WebSocket.OPEN){
+      detailSocket.send(JSON.stringify({
+        "command" : "selected_date",
+        "select_date" : selected_date_list,
+        "store_id" : store_id
+      }));
+    }
+
+    // const nextSibling = resizer.nextElementSibling.querySelector(".content");
+    
+    // const elem = document.querySelector(".resizer")
+    // resizable(elem);
+    // document.querySelectorAll(".resizer").forEach(function (ele) {
+    //   resizable(ele);
+    // });
+    // console.log("넥스트시블링찍어봐", nextSibling);
+    // console.log("실행됐다");
+  }
+
+  // click => 삭제 03.07 fetch말고 웹소켓으로 가져오는걸로 수정
+  // function clickedDate(newDIV) {
+  //     // 수정 03.03
+  //     // if (!newDIV) {
+  //     //   console.log("날짜미클릭");
+  //     //   return;
+  //     // }
+  //     console.log("2실행되나");
+  //     // console.log("전역", reservationsData);  //- 나중삭제하기
+  //     // newDIV.addEventListener("click", function () {
+  //       if (reservationsData) {
+  //         const selectedYear = nowMonth.getFullYear().toString();
+  //         const selectedMonth = leftPad(nowMonth.getMonth() + 1);
+  //         const selectedDay = newDIV.innerText;
+  //         const selectedDate = `${selectedYear}-${selectedMonth}-${selectedDay}`;
+
+  //         const matchedReservations = reservationsData.filter(reservation => reservation.reservation_date === selectedDate);
+  //         console.log("최종", selectedDate);
+  //         console.log("해당예약출력", matchedReservations);
+  //       } else {
+  //         console.log("reservationsData없음");
+  //       }
+  //     // });
+  //   }
+  
+
+  // 이전달 버튼 클릭
+  function prevCalendar() {
+    nowMonth = new Date(nowMonth.getFullYear(), nowMonth.getMonth() - 1, nowMonth.getDate());   // 현재 달을 1 감소
+    buildCalendar();    // 달력 다시 생성
+  }
+  // 다음달 버튼 클릭
+  function nextCalendar() {
+    nowMonth = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, nowMonth.getDate());   // 현재 달을 1 증가
+    buildCalendar();    // 달력 다시 생성
+  }
+
+  // input값이 한자리 숫자인 경우 앞에 '0' 붙혀주는 함수
+  function leftPad(value) {
+    if (value < 10) {
+      value = "0" + value;
+      return value;
+    }
+    return value;
+  }
+
+  // function countDateOccurrences(datesArray, singleDate) {
+  //   return datesArray.reduce((rsv_count, date) =>
+  //     (date[0] === singleDate[0] && date[1] === singleDate[1] && date[2] === singleDate[2]) ? ++rsv_count : rsv_count, 0
+  //   );
+  // }
+
+  function countDateOccurrences(datesArray, singleDate) {
+    let dateString = singleDate.join('-');
+    return datesArray.reduce((rsv_count, date) =>
+      (date === dateString) ? ++rsv_count : rsv_count,
+      0);
+  }
+  
+
+/////   화면 리사이즈
+function resizable(ele) {
+  resizer = ele;
+  const direction = resizer.getAttribute("data-direction");
+  // const prevSibling = resizer.previousElementSibling.querySelector(".content");
+  const prevSibling = resizer.previousElementSibling;
+  // if (prevSibling && prevSibling.querySelector(".content")) {
+  //   // prevSibling.querySelector(".content") 코드 실행
+  // }
+  const nextSibling = resizer.nextElementSibling.querySelector(".content");
+  // console.log("넥시", nextSibling);
+
+  let x = 0;
+  let y = 0;
+  let prevSiblingHeight = 0;
+
+  const mouseDownHandler = function (e) {
+    // const prevSibling = resizer.previousElementSibling;
+    // console.log("찍어봐라", prevSibling);
+    if (!prevSibling) {
+      // 이전 형제 요소가 없거나 .content 요소가 없는 경우 처리 로직
+      // console.log("실행됨1");
+      return;
+    }
+    else {
+    // console.log("실행됨2");
+    x = e.clientX;
+    y = e.clientY;
+    const rect = prevSibling.getBoundingClientRect();
+    prevSiblingHeight = rect.height;
+    prevSiblingWidth = rect.width;
+
+    document.addEventListener("mousemove", mouseMoveHandler);
+    document.addEventListener("mouseup", mouseUpHandler);
+    }
+  };
+
+  const mouseMoveHandler = function (e) {
+    const dy = e.clientY - y;
+    // console.log("사이즈조절", dy);
+
+    if (direction === "vertical") {
+      const h =
+        ((prevSiblingHeight + dy) * 100) /
+        resizer.parentNode.getBoundingClientRect().height;
+      prevSibling.style.height = `${h}%`;
+      // console.log("찍어봐라2", prevSibling.style.height);
+    }
+
+    const cursor = "row-resize";
+    resizer.style.cursor = cursor;
+    document.body.style.cursor = cursor;
+
+    prevSibling.style.userSelect = "none";
+    prevSibling.style.pointerEvents = "none";
+
+    nextSibling.style.userSelect = "none";
+    nextSibling.style.pointerEvents = "none";
+  };
+
+  const mouseUpHandler = function () {
+    resizer.style.removeProperty("cursor");
+    document.body.style.removeProperty("cursor");
+
+    prevSibling.style.removeProperty("user-select");
+    prevSibling.style.removeProperty("pointer-events");
+
+    nextSibling.style.removeProperty("user-select");
+    nextSibling.style.removeProperty("pointer-events");
+
+    document.removeEventListener("mousemove", mouseMoveHandler);
+    document.removeEventListener("mouseup", mouseUpHandler);
+  };
+
+  resizer.addEventListener("mousedown", mouseDownHandler);
+};
+
+  document.querySelectorAll(".resizer").forEach(function (ele) {
+    resizable(ele);
+  });
+
+
+  // 미니북 클릭 이벤트
+  const pageFlipElement = document.getElementById('page-flip');
+  let isPageFlipped = false;
+  pageFlipElement.addEventListener('click', () => {
+      isPageFlipped = !isPageFlipped;
+      pageFlipElement.classList.toggle('page-flipped', isPageFlipped);
+  });
+
+
+  // 예약 검색 check박스, input 이벤트
+  // var clickedInputs = [];
+
+	function toggleInput(id, checked) {
+		var input = document.getElementById(id);
+    var label2 = document.querySelector(`label[for='${id}']`)
+		if (checked) {
+			if (!clickedInputs.includes(id)) {
+				clickedInputs.push(id);
+			}
+			
+			input.removeAttribute('disabled');
+			input.style.display = '';  // display 값을 초기 상태로 되돌림
+      label2.style.display = ''; 
+      
+			input.focus();
+      // console.log("clickedInputs찍어", clickedInputs);
+
+		} else {
+			input.setAttribute('disabled', 'disabled');
+			input.style.display = 'none';  // display: none; 적용
+			input.style.right = '';
+      label2.style.display = 'none'; 
+			var index = clickedInputs.indexOf(id);
+			if (index !== -1) {
+				clickedInputs.splice(index, 1);
+			}
+		}
+	}
+
+	// 체크박스 클릭 시 toggleInput 함수 호출
+	document.querySelectorAll('.align_boxes input[type="checkbox"]').forEach(function (checkbox) {
+		checkbox.addEventListener('click', function () {
+      if (checkbox.closest('.align_boxes')) {
+        toggleInput(checkbox.getAttribute('data-input-id'), checkbox.checked);
+
+        // enabledSiblingCount 계산
+        var enabledSiblingCount = 0;
+        var siblings = Array.from(checkbox.parentNode.children);
+        siblings.forEach(function (sibling) {
+          if (!sibling.disabled && sibling.tagName === 'INPUT' && sibling.type === 'checkbox' && sibling.checked) {
+            enabledSiblingCount++;
+          }
+        });
+
+        // 체크박스 클릭에 따른 조정
+        if (enabledSiblingCount === 3) {
+          document.getElementById(clickedInputs[0]).style.right = '20rem';
+          document.getElementById(clickedInputs[1]).style.right = '12rem';
+          document.getElementById(clickedInputs[2]).style.right = '4rem';
+        } else if (enabledSiblingCount === 2) {
+          document.getElementById(clickedInputs[0]).style.right = '12rem';
+          document.getElementById(clickedInputs[1]).style.right = '4rem';
+        } else if (enabledSiblingCount === 1) {
+          document.getElementById(clickedInputs[0]).style.right = '4rem';
+        }
+      }
+		});
+	});
+
+  // (예약삭제) 선택된 체크박스 배열을 인자로 전달받아 -> hidden으로 보냄 
+  function submitSelected(checkboxes) {
+      const form = document.getElementById('reservationForm');
+      const selectedIds = checkboxes.map(cb => cb.value)
+
+
+      // 새로운 hidden 입력 추가 - 선택한 input들의 아이디값들을 전달
+      selectedIds.forEach(id => {
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'rsv_ids';
+        hiddenInput.value = id;
+        form.appendChild(hiddenInput);
+      });
+      // console.log(selectedIds);
+      // 폼 제출
+      form.submit();
+    
+  }
+
+
+      
+</script>

@@ -955,9 +955,7 @@ a:active {
   text-align: center; */
   display: flex;
   justify-content: space-between;
-  /* width: 100%; */
-  gap: 40px;
-  align-items: center;
+  width: 100%;
   /* border: 1px solid red; */
 
 }
@@ -967,24 +965,11 @@ a:active {
   text-align: center; */
   /* display: flex; */
   /* justify-content: space-between; */
+
+  display: block;
   /* height: 100px;
   line-height: 100px;
   white-space: nowrap; */
-  /* display: block; */
-  text-align: center;
-  min-width: 80px;
-  max-width: 120px;
-  box-sizing: border-box;
-  align-items: center;
-  flex: 1 1 100%;
-}
-
-.content1 .head_user span:first-child{
-  text-align: left;
-}
-
-.content1 .head_user span:last-child{
-  text-align: right;
 }
 
 .content1 .head_user .side {
@@ -1022,31 +1007,6 @@ a:active {
 .content1 .store_item2 .user-info {
   display: flex;
   justify-content: space-between;
-  /* flex-grow: 1; */
-  gap: 40px;
-  align-items: center;
-}
-
-.content1 .store_item2 .user-info div {
-  /* width: 100%; */
-  /* flex-shrink: 0; */
-  /* justify-content: center; */
-  text-align: center;
-  min-width: 80px;
-  max-width: 120px;
-  box-sizing: border-box;
-  align-items: center;
-  flex: 1 1 100%;
-}
-
-.content1 .store_item2 .user-info div:first-child {
-  text-align: left;
-}
-
-.content1 .store_item2 .user-info div:last-child {
-  /* justify-content: right; */
-  text-align: right;
-  flex-shrink: 5;
 }
 
 .content1 .store_item3 {

@@ -562,97 +562,97 @@ class AdminChat2(ListView):
 
 
 # 기본 예약조회
-# class ManagerStoreUpdateView(LoginRequiredMixin, FormView):
-#     template_name = 'manager/manager_operate.html'
-#     form_class = ManagerUpdateForm
-#     store_form_class = StoreUpdateForm
+class ManagerStoreUpdateView(LoginRequiredMixin, FormView):
+    template_name = 'manager/manager_operate.html'
+    form_class = ManagerUpdateForm
+    store_form_class = StoreUpdateForm
 
-#     # 권한설정
-#     def dispatch(self, request, *args, **kwargs):
-#         self.manager = get_object_or_404(rsv.Manager, pk=kwargs['pk'])
-#         self.store = get_object_or_404(rsv.Store, pk=kwargs['store_id'])
+    # 권한설정
+    def dispatch(self, request, *args, **kwargs):
+        self.manager = get_object_or_404(rsv.Manager, pk=kwargs['pk'])
+        self.store = get_object_or_404(rsv.Store, pk=kwargs['store_id'])
         
-#         # 조건3개
-#         if request.user.is_authenticated and request.user == self.manager.user and self.manager.user == self.store.owner:
-#             return super(ManagerStoreUpdateView, self).dispatch(request, *args, **kwargs)
-#         else:
-#             raise PermissionDenied
+        # 조건3개
+        if request.user.is_authenticated and request.user == self.manager.user and self.manager.user == self.store.owner:
+            return super(ManagerStoreUpdateView, self).dispatch(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
 
 
-#     def get_context_data(self, **kwargs):
-#         context = super(ManagerStoreUpdateView, self).get_context_data(**kwargs)
-#         context['form'] = ManagerUpdateForm(instance=self.manager)
-#         context['form_store'] = StoreUpdateForm(instance=self.store)
-#         context['manager'] = self.manager
-#         context['store'] = self.store
+    def get_context_data(self, **kwargs):
+        context = super(ManagerStoreUpdateView, self).get_context_data(**kwargs)
+        context['form'] = ManagerUpdateForm(instance=self.manager)
+        context['form_store'] = StoreUpdateForm(instance=self.store)
+        context['manager'] = self.manager
+        context['store'] = self.store
 
 
-#         name = self.request.GET.get('name')
-#         phone = self.request.GET.get('phone')
-#         kw = self.request.GET.get('kw')
+        name = self.request.GET.get('name')
+        phone = self.request.GET.get('phone')
+        kw = self.request.GET.get('kw')
         
-#         date_filter = Q()
-#         if kw:
-#             try:
-#                 datetime.strptime(kw, '%Y-%m-%d')
-#                 date_filter = Q(reservation_date__icontains=kw)
-#             except ValueError:
-#                 try:
-#                     datetime.strptime(kw, '%Y-%m')
-#                     date_filter = Q(reservation_date__icontains=kw)
-#                 except ValueError:
-#                     date_filter = Q(reservation_date__startswith=kw)
+        date_filter = Q()
+        if kw:
+            try:
+                datetime.strptime(kw, '%Y-%m-%d')
+                date_filter = Q(reservation_date__icontains=kw)
+            except ValueError:
+                try:
+                    datetime.strptime(kw, '%Y-%m')
+                    date_filter = Q(reservation_date__icontains=kw)
+                except ValueError:
+                    date_filter = Q(reservation_date__startswith=kw)
                     
-#         phone_without_hyphen = phone.replace("-", "") if phone else None
+        phone_without_hyphen = phone.replace("-", "") if phone else None
 
-#         reservations = rsv.Reservation_user.objects.annotate(
-#             user_phone_without_hyphen=Replace('user_phone', Value('-'), Value(''), output_field=CharField())
-#         ).filter(
-#             Q(user_name__icontains=name) if name else Q(),
-#             Q(user_phone_without_hyphen__icontains=phone_without_hyphen) if phone else Q(),
-#             date_filter if kw else Q(),
-#             store_id=self.store
-#         ).distinct()
+        reservations = rsv.Reservation_user.objects.annotate(
+            user_phone_without_hyphen=Replace('user_phone', Value('-'), Value(''), output_field=CharField())
+        ).filter(
+            Q(user_name__icontains=name) if name else Q(),
+            Q(user_phone_without_hyphen__icontains=phone_without_hyphen) if phone else Q(),
+            date_filter if kw else Q(),
+            store_id=self.store
+        ).distinct()
 
-#         paginator = Paginator(reservations, 10)
-#         page_number = self.request.GET.get('page')
-#         page_obj = paginator.get_page(page_number)
+        paginator = Paginator(reservations, 10)
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
 
-#         context['page_obj'] = page_obj
-#         context['kw'] = kw
+        context['page_obj'] = page_obj
+        context['kw'] = kw
 
-#         print("전체 콘텍스트 출력: ", context)
+        print("전체 콘텍스트 출력: ", context)
 
-#         return context
+        return context
 
-#     def form_valid(self, form):
-#         manager_form = form
-#         store_form = self.store_form_class(self.request.POST, instance=self.store)
+    def form_valid(self, form):
+        manager_form = form
+        store_form = self.store_form_class(self.request.POST, instance=self.store)
 
-#         if manager_form.is_valid() and store_form.is_valid():
-#             manager_form.save()
-#             store_form.save()
-#             return HttpResponseRedirect(reverse('success_page'))
-#         else:
-#             return self.form_invalid(form)
+        if manager_form.is_valid() and store_form.is_valid():
+            manager_form.save()
+            store_form.save()
+            return HttpResponseRedirect(reverse('success_page'))
+        else:
+            return self.form_invalid(form)
 
-#     def form_invalid(self, form):
-#         context = super(ManagerStoreUpdateView, self).get_context_data()
-#         context['form'] = form
-#         context['form_store'] = self.store_form_class(self.request.POST, instance=self.store)
-#         return self.render_to_response(context)
+    def form_invalid(self, form):
+        context = super(ManagerStoreUpdateView, self).get_context_data()
+        context['form'] = form
+        context['form_store'] = self.store_form_class(self.request.POST, instance=self.store)
+        return self.render_to_response(context)
 
 
 
-# class Test123(LoginRequiredMixin, UpdateView):
-#     model = rsv.Store
-#     form_class = UpdateForm
-#     template_name = 'manager/manager_update_form.html'
+class Test123(LoginRequiredMixin, UpdateView):
+    model = rsv.Store
+    form_class = UpdateForm
+    template_name = 'manager/manager_update_form.html'
 
-#     def get_object(self, queryset=None):
-#         # self.kwargs에서 'store_id' 값을 가져와서 객체 조회
-#         store_id = self.kwargs.get('store_id')
-#         return get_object_or_404(rsv.Store, pk=store_id)
+    def get_object(self, queryset=None):
+        # self.kwargs에서 'store_id' 값을 가져와서 객체 조회
+        store_id = self.kwargs.get('store_id')
+        return get_object_or_404(rsv.Store, pk=store_id)
     
 
 
@@ -800,57 +800,57 @@ class Update(LoginRequiredMixin, UpdateView):
     
     # post요청 삭제 -> 웹소켓으로 db저장하도록 수정
 
-# 달력 테스트
+
 # @method_decorator(csrf_exempt, name="dispatch")
-# class NewTest1(View):
-#     template_name = "manager/test_sung1.html"
-#     # template_name = "manager/manager_store_detail.html"
-#     def setup_variables(self, store_id):
-#         # 공통으로 사용되는 변수들을 설정합니다.
-#         if not hasattr(self, 'store'):
-#             self.store = get_object_or_404(rsv.Store, id=store_id)
-#         if not hasattr(self, 'store_time'):
-#             self.store_time = rsv.Store_times.objects.filter(store_id=store_id)
-#         if not hasattr(self, 'user_time'):
-#             self.user_time = rsv.Reservation_user.objects.filter(store_id=store_id)
+class NewTest1(View):
+    template_name = "manager/test_sung1.html"
+    # template_name = "manager/manager_store_detail.html"
+    def setup_variables(self, store_id):
+        # 공통으로 사용되는 변수들을 설정합니다.
+        if not hasattr(self, 'store'):
+            self.store = get_object_or_404(rsv.Store, id=store_id)
+        if not hasattr(self, 'store_time'):
+            self.store_time = rsv.Store_times.objects.filter(store_id=store_id)
+        if not hasattr(self, 'user_time'):
+            self.user_time = rsv.Reservation_user.objects.filter(store_id=store_id)
 
-#     def get(self, request, store_id, *args, **kwargs):
-#         self.setup_variables(store_id)
+    def get(self, request, store_id, *args, **kwargs):
+        self.setup_variables(store_id)
 
-#         if not request.user.is_authenticated or request.user.id != self.store.owner_id:
-#             return HttpResponseForbidden("접근 권한이 없습니다.")
+        if not request.user.is_authenticated or request.user.id != self.store.owner_id:
+            return HttpResponseForbidden("접근 권한이 없습니다.")
         
-#         dates_list = [date.reservation_date for date in self.user_time]
-#         print("DT리스트", dates_list)
+        dates_list = [date.reservation_date for date in self.user_time]
+        print("DT리스트", dates_list)
         
-#         context = {
-#             "user_dates_json": json.dumps(dates_list, cls=DjangoJSONEncoder),
-#             "username": request.user.username
-#         }
+        context = {
+            "user_dates_json": json.dumps(dates_list, cls=DjangoJSONEncoder),
+            "username": request.user.username
+        }
 
-#         return render(request, self.template_name, context)
+        return render(request, self.template_name, context)
     
-#     def post(self, request, store_id, *args, **kwargs):
-#         self.setup_variables(store_id)
+    def post(self, request, store_id, *args, **kwargs):
+        self.setup_variables(store_id)
 
-#         if not request.user.is_authenticated or request.user.id != self.store.owner_id:
-#             return JsonResponse({"message": "접근 권한이 없습니다."}, status=403)
+        if not request.user.is_authenticated or request.user.id != self.store.owner_id:
+            return JsonResponse({"message": "접근 권한이 없습니다."}, status=403)
 
-#         try:
-#             data = json.loads(request.body)
-#             self.store.start_rsv_possible = data.get("activate_date_start")
-#             self.store.end_rsv_possible = data.get("activate_date_end")
-#             self.store.full_clean()
-#             self.store.save()
-#         except json.JSONDecodeError:
-#             return JsonResponse({"message": "유효하지 않은 JSON 형식입니다."}, status=400)
-#         except ValidationError as e:
-#             # 유효성 검사 실패 시 에러
-#             error_message = str(e)
-#             return HttpResponse(error_message, status=400)
+        try:
+            data = json.loads(request.body)
+            self.store.start_rsv_possible = data.get("activate_date_start")
+            self.store.end_rsv_possible = data.get("activate_date_end")
+            self.store.full_clean()
+            self.store.save()
+        except json.JSONDecodeError:
+            return JsonResponse({"message": "유효하지 않은 JSON 형식입니다."}, status=400)
+        except ValidationError as e:
+            # 유효성 검사 실패 시 에러
+            error_message = str(e)
+            return HttpResponse(error_message, status=400)
 
 
-#         return JsonResponse({"message": "성공적으로 처리되었습니다."}, status=200)
+        return JsonResponse({"message": "성공적으로 처리되었습니다."}, status=200)
 
 
 

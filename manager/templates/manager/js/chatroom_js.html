@@ -42,6 +42,7 @@
       // { name: "user", url: weStart + loc3 + userName + "/" },
       { name: "manager", url: weStart + loc.host + loc.pathname + loc.search },
     ];
+    console.log("엔드포인트", endpoints);
     Notification.requestPermission().then(function (permission) {
       console.log('Permission:', permission);
     });

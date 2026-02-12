@@ -120,6 +120,15 @@ ol, ul{
   height: 200px;
 }
 
+.input-boxs #sample6_postcode {
+  cursor: pointer;
+  /* pointer-events: none; */
+}
+
+.input-boxs input[type="button"] {
+  cursor: pointer;
+}
+
 .rsv_test{
   width:100%;
   height:100%;

@@ -16,21 +16,25 @@
         <div class="content1">
           <div class="section1">
             <div class="home">
-              <a href="/manager">
+              <a href="/manager/sung/">
                 <button type="button">홈</button>
               </a>
             </div>
             <div class="input-boxs">
               <form action="" method="post">{% csrf_token %}
-                <h1>타임테이블 추가</h1>
+                <h1>매장 등록</h1>
                 <table>
       
                   <br>
-                  <label for="store_name">업체명</label>
-                  <input type="text" name="store_name" id="store_name">
+                  <!-- <label for="store_name">업체명</label> -->
+                  <input type="text" name="store_name" id="store_name" placeholder="매장명">
                   <br>
-                  <label for="address">주소</label>
-                  <input type="text" name="address" id="address">
+                  <!-- <input type="text" name="address" id="address"> -->
+                  <input type="text" onclick="sample6_execDaumPostcode()" id="sample6_postcode" placeholder="우편번호" name="sample6_postcode">
+                  <input type="button" onclick="sample6_execDaumPostcode()" value="우편번호 찾기"><br>
+                  <input type="text" id="sample6_address" placeholder="주소" name="sample6_address"><br>
+                  <input type="text" id="sample6_detailAddress" placeholder="상세주소" name="sample6_detailAddress">
+                  <input type="text" id="sample6_extraAddress" placeholder="참고항목" name="sample6_extraAddress">
                   <br>
                   <label for="select_time1">예약시간</label>
                   <input type="time" name="select_time[]" id="select_time1">
@@ -64,92 +68,10 @@
       </div>
 
   </div>
-  
-
+  <!-- 카카오 우편번호 api -->
+  <script src="//t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  {% include "manager/js/manager_write_js.html" %}
+  {% include "manager/js/add_adress_js.html" %}
 </body>
 
 </html>
-<script>
-  let myPlus = document.getElementById("plus");
-  let selectTime = document.getElementById("select_time");
-  let box = document.getElementById("plus_box");
-  let num = 2
-
-  // function roundToNearestHalfHour(timeStr) {
-  //   const timeArr = timeStr.split(':');
-  //   const minutes = parseInt(timeArr[1]);
-
-  //   if (minutes < 30) {
-  //     timeArr[1] = '00';
-  //   } else {
-  //     timeArr[1] = '30';
-  //   }
-
-  //   return timeArr.join(':');
-  // }
-
-  function validateTime(timeInput) {
-    let minValue = timeInput.getAttribute('min');
-    let value = timeInput.value;
-
-    // value = roundToNearestHalfHour(value);
-    // timeInput.value = value;
-    if (minValue && value < minValue) {
-      // Show an alert if the input value is less than the min value
-      alert("시간은 이전 시간 이후로 설정해 주세요.");
-      // Set the input value to the minimum value
-      timeInput.value = minValue;
-    }
-  }
-
-  myPlus.addEventListener("click", function () {
-    let newPlus = document.createElement("button");
-    let newMinus = document.createElement("button");
-    let newLine1 = document.createElement("br");
-
-    let newInput = document.createElement("input");
-    let prevInput = document.getElementById("select_time" + (num - 1));
-
-    // console.log(prevInput.value)
-    newInput.type = "time";
-    newInput.min = prevInput.value;
-    // newInput.step = "1800";
-    newInput.name = "select_time[]";
-    newInput.id = "select_time" + num;
-
-    newInput.onchange = function () {
-      validateTime(newInput)
-    };
-
-    newPlus.type = "button";
-    newPlus.textContent = "추가";
-    newPlus.id = "plus" + num;
-
-    newPlus.addEventListener("click", myPlus.click.bind(myPlus));
-
-    newMinus.type = "button";
-    newMinus.textContent = "삭제";
-    newMinus.id = "minus" + num;
-
-    newMinus.addEventListener("click", function () {
-      const idNum = this.id.replace("minus", "");
-
-      const plusToRemove = document.getElementById("plus" + idNum);
-      const minusToRemove = document.getElementById("minus" + idNum);
-      const newInputRemove = document.getElementById("select_time" + idNum);
-
-      newInputRemove.remove();
-      // plusToRemove.remove();
-      minusToRemove.remove();
-      newLine1.remove();
-    });
-
-    box.appendChild(newInput);
-    // box.appendChild(newPlus);
-    box.appendChild(newMinus);
-    box.appendChild(newLine1);
-
-    num += 1
-  });
-
-</script>

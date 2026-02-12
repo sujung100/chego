@@ -476,7 +476,14 @@ def write(request):
         sto = rsv.Store()
         # print(atc.title)
         sto.store_name = request.POST["store_name"]
-        sto.address = request.POST["address"]
+        # sto.address = request.POST["address"]
+        # 주소
+        addr = request.POST.get("sample6_address", "")
+        detail = request.POST.get("sample6_detailAddress")
+        extra = request.POST.get("sample6_extraAddress")
+        full_address = " ".join(filter(None, [addr, detail, extra]))
+        
+        sto.address = full_address
         sto.owner = request.user
         sto.save()
 

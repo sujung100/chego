@@ -1,65 +1,122 @@
 <script>
-  let myPlus = document.getElementById("plus");
-  let selectTime = document.getElementById("select_time");
-  let box = document.getElementById("plus_box");
-  let num = 2
+    const txt = document.querySelector('.ad_text');
+    const sideEle = document.querySelector('#sample6_postcode');
+    const originTxt = txt.value;
+    const searchIcon =  document.querySelector('.search_icon');
+    console.log("찍어봐라", originTxt);
 
-  function validateTime(timeInput) {
-    let minValue = timeInput.getAttribute('min');
-    let value = timeInput.value;
+    // id, 스토어명
+    const stores = {{ stores_json|safe }};
+    console.log("스토어", stores);
+    const storesContainer = document.querySelector('.stores');
+    let lastClicked = null;
+    let selectedStoreId = null;
 
-    if (minValue && value < minValue) {
-      alert("시간은 이전 시간 이후로 설정해 주세요.");
-      timeInput.value = minValue;
+    // 기본 url (파라미터 안붙은)
+    const urlSample1 = document.getElementById('click1').getAttribute('href');
+    const urlSample2 = document.getElementById('click2').getAttribute('href');
+    const urlSample3 = document.getElementById('click3').getAttribute('href');
+
+
+    // 우편번호 찾기버튼 사이즈조정
+    function resizeText() {
+        const width = sideEle.offsetWidth;
+        const txtWidth = txt.offsetWidth;
+        if (!txt) return;
+
+
+        if (width <= 300) {
+            txt.value = '찾기';
+            if (txtWidth <= 55 && txt.value == '찾기') {
+                txt.style.padding = '0.3rem';
+            } else if (txtWidth <= 35 && txt.value == '찾기') {
+                txt.value = '';
+                searchIcon.style.display = 'block';
+            }
+        }
+        else {
+            if (txt.value.trim() !== originTxt) {
+                txt.value = originTxt;
+                console.log("걸리나");
+            }
+        }
+        console.log("돼?");
     }
-  }
+    resizeText();
 
-  myPlus.addEventListener("click", function () {
-    let newPlus = document.createElement("button");
-    let newMinus = document.createElement("button");
-    let newLine1 = document.createElement("br");
+    window.addEventListener('resize', resizeText);
+    window.addEventListener('load', resizeText);
 
-    let newInput = document.createElement("input");
-    let prevInput = document.getElementById("select_time" + (num - 1));
-
-    // console.log(prevInput.value)
-    newInput.type = "time";
-    newInput.min = prevInput.value;
-    // newInput.step = "1800";
-    newInput.name = "select_time[]";
-    newInput.id = "select_time" + num;
-
-    newInput.onchange = function () {
-      validateTime(newInput);
-    };
-
-    newPlus.type = "button";
-    newPlus.textContent = "추가";
-    newPlus.id = "plus" + num;
-
-    newPlus.addEventListener("click", myPlus.click.bind(myPlus));
-
-    newMinus.type = "button";
-    newMinus.textContent = "삭제";
-    newMinus.id = "minus" + num;
-
-    newMinus.addEventListener("click", function () {
-      const idNum = this.id.replace("minus", "");
-
-      const plusToRemove = document.getElementById("plus" + idNum);
-      const minusToRemove = document.getElementById("minus" + idNum);
-      const newInputRemove = document.getElementById("select_time" + idNum);
-
-      newInputRemove.remove();
-      minusToRemove.remove();
-      newLine1.remove();
+    // 홈바 클릭값 저장 + 모달열기
+    const buttonsABC = ['click1', 'click2', 'click3'];
+    buttonsABC.forEach(id => {
+      document.getElementById(id).addEventListener('click', (e) => {
+        e.preventDefault();
+        lastClicked = id;
+        const modal = document.getElementById('modal');
+        if (modal.classList.contains('hideModal')) {
+            modal.classList.remove('hideModal');
+        }
+      });
     });
 
-    box.appendChild(newInput);
-    box.appendChild(newMinus);
-    box.appendChild(newLine1);
+    // 스토어 정보 가져와서 버튼생성
+    function createStoreBtns() {
+        storesContainer.innerHTML = '';
+        stores.forEach(([id, store_name]) => {
+            const btn = document.createElement('button');
+            btn.setAttribute('data-id', id);
+            btn.textContent = store_name;
+            btn.addEventListener('click', () => {
+                selectedStoreId = id;
+                console.log("선택매장아이디", selectedStoreId);
+                Array.from(storesContainer.children).forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+            });
+            storesContainer.appendChild(btn);
+        });
+    }
 
-    num += 1
-  });
+    document.addEventListener('DOMContentLoaded', createStoreBtns);
 
+
+    // 이동 버튼 클릭시 페이지이동(store_id전송 -> pk)
+    document.getElementById('sendInfo').addEventListener('click', () => {
+        if (!lastClicked) {
+        alert('이동할 홈 메뉴를 클릭하세요.');
+        return;
+        }
+        if ((lastClicked === 'click1' || lastClicked === 'click2') && !selectedStoreId) {
+        alert('설정으로 이동할 상점을 선택하세요.');
+        return;
+        }
+        let targetUrl = '';
+        if (lastClicked === 'click1') {
+        // 템플릿에 쿼리파라미터 넣어야하는곳은 임의숫자 0을 임시로 넣어놈
+        targetUrl = urlSample1.replace('/0/', `/${selectedStoreId}/`);
+        } else if (lastClicked === 'click2') {
+        targetUrl = urlSample2.replace('/0/', `/${selectedStoreId}/`);
+        } else if (lastClicked === 'click3') {
+        targetUrl = urlSample3;
+        }
+
+        window.location.href = targetUrl;
+    });
+
+
+    const modal = document.getElementById('modal');
+    const modalContent = modal.querySelector('div');
+    const closeBtn = modal.querySelector('.modal-close');
+
+    closeBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        modal.classList.add('hideModal');
+    });
+
+    // 모달 바깥 클릭닫기
+    modal.addEventListener('click', function(e) {
+        if (!modalContent.contains(e.target)) {
+            modal.classList.add('hideModal');
+        }
+    });
 </script>

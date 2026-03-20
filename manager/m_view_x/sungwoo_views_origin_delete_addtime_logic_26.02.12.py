@@ -470,26 +470,13 @@ class UserLoginView(LoginView):
     template_name = "manager/manager_login.html"
     success_url = reverse_lazy("index")  
 
-
-
-class Write(View):
-    def get(self, request):
-        current_user = request.user
-
-        if current_user.is_authenticated:
-            stores = list(rsv.Store.objects.filter(owner=current_user, store_name__isnull=False).values_list('id', 'store_name'))
-            print("스토어들", stores)
-            context = {
-                "stores_json" : mark_safe(json.dumps(stores)),
-            }
-            return render(request, 'manager/manager_write.html', context)
-        else:
-            raise PermissionDenied
-
-    def post(self, request, *args, **kwargs):
+def write(request):
+   
+    if request.method == 'POST':
         sto = rsv.Store()
         # print(atc.title)
         sto.store_name = request.POST["store_name"]
+        # sto.address = request.POST["address"]
         # 주소
         addr = request.POST.get("sample6_address", "")
         detail = request.POST.get("sample6_detailAddress")
@@ -498,36 +485,30 @@ class Write(View):
 
         sto.address = full_address
         sto.owner = request.user
-        print("사용자", request.user)
         sto.save()
+
+        
+        # selectTime = request.POST.getlist("select_time[]")
+        # sort_value = request.POST.get("sort_set")
+        # for time in selectTime:
+        #     # print(time)
+        #     sts = rsv.Store_times()
+        #     sts.store_id = sto
+        #     sts.reservation_time = time
+        #     if sort_value == "none":
+        #         print("선택 안 함")
+        #         sts.sort_type = None
+        #     else:
+        #         print("선택함")
+        #         sts.sort_type = sort_value
+        #     print(f"sts.sort_type: {sts.sort_type}")
+        #     sts.save()
 
     # 폼재전송 방지용 PRG패턴 post -> redirect -> get
         return redirect('write')
-
-
-# def write(request):
-   
-#     if request.method == 'POST':
-#         sto = rsv.Store()
-#         # print(atc.title)
-#         sto.store_name = request.POST["store_name"]
-#         # 주소
-#         addr = request.POST.get("sample6_address", "")
-#         detail = request.POST.get("sample6_detailAddress")
-#         extra = request.POST.get("sample6_extraAddress")
-#         full_address = " ".join(filter(None, [addr, detail, extra]))
-
-#         sto.address = full_address
-#         sto.owner = request.user
-#         print("사용자", request.user)
-#         sto.save()
-
-
-#     # 폼재전송 방지용 PRG패턴 post -> redirect -> get
-#         return redirect('write')
-#     else:
-#         # GET 요청 처리 (폼을 보여주는 경우)
-#         return render(request, 'manager/manager_write.html')
+    else:
+        # GET 요청 처리 (폼을 보여주는 경우)
+        return render(request, 'manager/manager_write.html')
 
 
 def test_chat(request):

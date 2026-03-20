@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'manager/css/manager_write.css' %}?after">
+  <title>타임테이블 추가</title>
+  
+</head>
+
+<body>
+  <div id="wrap">
+      <div class="box1">
+        <div class="content1">
+          <div class="section1">
+            <div class="home">
+              <a href="/manager/sung/">
+                <button type="button">홈</button>
+              </a>
+            </div>
+            <div class="input-boxs">
+              <form action="" method="post">{% csrf_token %}
+                <h1>매장 등록</h1>
+                <table>
+      
+                  <br>
+                  <!-- <label for="store_name">업체명</label> -->
+                  <input type="text" name="store_name" id="store_name" placeholder="매장명">
+                  <br>
+                  <!-- <input type="text" name="address" id="address"> -->
+                  <input type="text" onclick="sample6_execDaumPostcode()" id="sample6_postcode" placeholder="우편번호" name="sample6_postcode">
+                  <input type="button" onclick="sample6_execDaumPostcode()" value="우편번호 찾기"><br>
+                  <input type="text" id="sample6_address" placeholder="주소" name="sample6_address"><br>
+                  <input type="text" id="sample6_detailAddress" placeholder="상세주소" name="sample6_detailAddress">
+                  <input type="text" id="sample6_extraAddress" placeholder="참고항목" name="sample6_extraAddress">
+                  <br>
+                  <label for="select_time1">예약시간</label>
+                  <input type="time" name="select_time[]" id="select_time1">
+                  <button type="button" id="plus">&#43;</button>
+                  <div id="plus_box"></div>
+                  <label for="sort_set">구분</label>
+                  <select name="sort_set" id="sort_set">
+                    <option value="none">선택 안 함</option>
+                    <option value="wd">평일</option>
+                    <option value="wknd">주말</option>
+                    <option value="mon">월</option>
+                    <option value="tue">화</option>
+                    <option value="wed">수</option>
+                    <option value="thu">목</option>
+                    <option value="fri">금</option>
+                  </select>
+                  <!-- {{form} {% csrf_token %  -->
+                </table>
+                <button type="submit" class="confirm">확인</button>
+              </form>
+              <div class="side">
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="box2">
+        <div class="content2">
+        </div>
+      </div>
+
+  </div>
+  <!-- 카카오 우편번호 api -->
+  <script src="//t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  {% include "manager/js/manager_write_js.html" %}
+  {% include "manager/js/add_adress_js.html" %}
+</body>
+
+</html>

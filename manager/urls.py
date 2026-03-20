@@ -58,7 +58,8 @@ urlpatterns = [
   # 회원 로그인 페이지 - 사장님 로그인
   path("sung/",sungwoo_views.ManagerStoreList.as_view(), name="index"),
   # 타임테이블 추가 - 페이지관리자가 사장님추가
-  path("write/",sungwoo_views.write, name="write"),
+  # path("write/",sungwoo_views.write, name="write"),
+  path("write/",sungwoo_views.Write.as_view(), name="write"),
   # 로그인 화면
   path("login/",sungwoo_views.UserLoginView.as_view(),name="login"),
   # 회원가입 화면

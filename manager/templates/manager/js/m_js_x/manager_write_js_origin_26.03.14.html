@@ -1,0 +1,79 @@
+<script>
+    const txt = document.querySelector('.ad_text');
+    const sideEle = document.querySelector('#sample6_postcode');
+    const originTxt = txt.value;
+    const searchIcon =  document.querySelector('.search_icon');
+    console.log("찍어봐라", originTxt);
+
+    // id, 스토어명
+    const stores = {{ stores_json|safe }};
+    console.log("스토어", stores);
+    const storesContainer = document.querySelector('.stores');
+
+    // 스토어 정보 가져와서 버튼생성
+    function createStoreBtns() {
+            storesContainer.innerHTML = '';
+            stores.forEach(store => {
+                const [id, store_name] = store;
+                const btn = document.createElement('button');
+                btn.setAttribute('data-id', id);
+                btn.textContent = store_name;
+                storesContainer.appendChild(btn);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', createStoreBtns);
+
+
+    // 우편번호 찾기버튼 사이즈조정
+    function resizeText() {
+        const width = sideEle.offsetWidth;
+        const txtWidth = txt.offsetWidth;
+        if (!txt) return;
+
+
+        if (width <= 300) {
+            txt.value = '찾기';
+            if (txtWidth <= 55 && txt.value == '찾기') {
+                txt.style.padding = '0.3rem';
+            } else if (txtWidth <= 35 && txt.value == '찾기') {
+                txt.value = '';
+                searchIcon.style.display = 'block';
+            }
+        }
+        else {
+            if (txt.value.trim() !== originTxt) {
+                txt.value = originTxt;
+                console.log("걸리나");
+            }
+        }
+        console.log("돼?");
+    }
+    resizeText();
+
+    window.addEventListener('resize', resizeText);
+    window.addEventListener('load', resizeText);
+
+
+    // 이동 버튼 클릭시 페이지이동(store_id전송 -> pk)
+    let lastClicked = null;
+    const buttonsABC = ['click1', 'click2', 'click3'];
+    buttonsABC.forEach(id => {
+      document.getElementById(id).addEventListener('click', () => {
+        event.preventDefault();
+        lastClicked = id;
+        const modal = document.getElementById('modal');
+        if (modal.classList.contains('hideModal')) {
+            modal.classList.remove('hideModal');
+        }
+      });
+    });
+
+    document.getElementById('sendInfo').addEventListener('click', () => {
+      if (lastClicked) {
+        alert(`마지막으로 클릭한 버튼: ${lastClicked}`);
+      } else {
+        alert('미클릭');
+      }
+    });
+</script>

@@ -56,7 +56,7 @@
                   <input type="text" id="sample6_detailAddress" placeholder="상세주소" name="sample6_detailAddress" required>
                   <input type="text" onclick="sample6_execDaumPostcode()" id="sample6_extraAddress" placeholder="참고항목" name="sample6_extraAddress">
                 </div>
-                <button type="submit" class="confirm">확인</button>
+                <button type="submit" class="confirm">추가</button>
               </form>
               <!-- <div class="side">
                 
@@ -73,6 +73,16 @@
           </div>
           <button id="sendInfo">이동</button>
         </div>
+      </div>
+      <div class="userInfo">
+        <img class="profile_img" src="{% static 'manager/img/person.png' %}" alt="이미지">
+        <span>{{ request.user.username }}님, 안녕하세요</span>
+        <a href="/manager/logout">
+          <button id="nav_button2" class="nav_button2" type="button">
+            <img class="logout" src="{% static 'manager/img/modeoff.png' %}" alt="로그아웃">
+            <!-- <img class="logout" src=" static 'manager/img/turn-off (1).png' " alt="로그아웃"> -->
+          </button>
+        </a>
       </div>
 
   </div>

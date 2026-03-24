@@ -75,6 +75,9 @@ urlpatterns = [
   # 채팅
   path("sung/admin_chat2/", sungwoo_views.AdminChat2.as_view(), name="admin_chat2"),
 
+  # 로그아웃
+  path('logout/', auth_views.LogoutView.as_view(next_page="index"), name='logout'),
+
 
 # 비동기
   path("sung/api/store-times/", sungwoo_views.StoreTimesView.as_view(), name='store_times'),

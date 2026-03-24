@@ -4,8 +4,6 @@
     const originTxt = txt.value;
     const searchIcon =  document.querySelector('.search_icon');
     console.log("찍어봐라", originTxt);
-    // 애니메이션 동작중여부
-    let isAnimating = false;
 
     // id, 스토어명
     const stores = {{ stores_json|safe }};
@@ -52,17 +50,14 @@
     // 홈바 클릭값 저장 + 모달열기
     const buttonsABC = ['click1', 'click2', 'click3'];
     buttonsABC.forEach(id => {
-        const btn = document.getElementById(id);
-        if (btn) {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                lastClicked = id;
-                
-                if (modal.classList.contains('hideModal')) {
-                    openTv();
-                }
-            });
+      document.getElementById(id).addEventListener('click', (e) => {
+        e.preventDefault();
+        lastClicked = id;
+        const modal = document.getElementById('modal');
+        if (modal.classList.contains('hideModal')) {
+            modal.classList.remove('hideModal');
         }
+      });
     });
 
     // 스토어 정보 가져와서 버튼생성
@@ -112,114 +107,16 @@
     const modal = document.getElementById('modal');
     const modalContent = modal.querySelector('div');
     const closeBtn = modal.querySelector('.modal-close');
-    const topDiv = document.getElementById('topDiv');
-    const bottomDiv = document.getElementById('bottomDiv');
 
-    // x눌러 닫기
     closeBtn.addEventListener('click', function(e) {
         e.preventDefault();
-        // modal.classList.add('hideModal');
-        closeTv();
+        modal.classList.add('hideModal');
     });
 
     // 모달 바깥 클릭닫기
     modal.addEventListener('click', function(e) {
-        if (e.target === modal) { 
-            closeTv();
+        if (!modalContent.contains(e.target)) {
+            modal.classList.add('hideModal');
         }
     });
-    
-    // TV켜짐 - 모달열기
-    function openTv() {
-        // 동작중 재동작에러방지
-        if (isAnimating) return;
-        isAnimating = true;
-
-        // 초기셋
-        modal.classList.remove('hideModal');
-        topDiv.style.height = "50%";
-        bottomDiv.style.height = "50%";
-        
-        // 가로선처럼
-        modalContent.style.width = "0%";
-        modalContent.style.height = "2px";
-        modalContent.style.padding = "0";
-        modalContent.style.overflow = "hidden";
-        modalContent.style.opacity = "1";
-
-        // 가로선 -> 양옆퍼짐
-        const lineAnim = modalContent.animate([
-            { width: "0%", left: "50%", transform: "translate(-50%, -50%)" },
-            { width: "600px", left: "50%", transform: "translate(-50%, -50%)" }
-        ], {
-            duration: 400,
-            easing: 'ease-out',
-            fill: 'forwards'
-        });
-
-        lineAnim.onfinish = () => {
-            // 위아래 검은막 개방
-            topDiv.animate([{ height: "50%" }, { height: "0%" }], { duration: 400, fill: 'forwards' });
-            bottomDiv.animate([{ height: "50%" }, { height: "0%" }], { duration: 400, fill: 'forwards' });
-
-            // 가로선 -> 모달창 확장
-            modalContent.animate([
-                { height: "2px", padding: "0" },
-                { height: "auto", padding: "2rem 5rem 5rem 5rem" }
-            ], {
-                duration: 300,
-                easing: 'ease-out',
-                fill: 'forwards'
-            });
-            isAnimating = false;
-        };
-    }
-
-    // TV꺼짐 - 모달닫기
-    function closeTv() {
-        // 동작중 재동작에러방지
-        if (isAnimating) return;
-        isAnimating = true;
-
-        // 위아래 검은막 닫기
-        const topAnim = topDiv.animate([
-            { height: "0%" },
-            { height: "50%" }
-        ], { duration: 400, fill: 'forwards', easing: 'ease-in' });
-
-        const bottomAnim = bottomDiv.animate([
-            { height: "0%" },
-            { height: "50%" }
-        ], { duration: 400, fill: 'forwards', easing: 'ease-in' });
-
-        // 막이닫히는시점에
-        bottomAnim.onfinish = () => {
-            // 모달 -> 가로선
-            modalContent.style.overflow = "hidden";
-            
-            const shrinkHeight = modalContent.animate([
-                { height: "auto", padding: "2rem 5rem 5rem 5rem" },
-                { height: "2px", padding: "0" }
-            ], {
-                duration: 300,
-                fill: 'forwards'
-            });
-
-            shrinkHeight.onfinish = () => {
-                // 가로선 -> 중앙 점
-                const shrinkWidth = modalContent.animate([
-                    { width: "600px", left: "50%", transform: "translate(-50%, -50%)" },
-                    { width: "0%", left: "50%", transform: "translate(-50%, -50%)" }
-                ], {
-                    duration: 300,
-                    fill: 'forwards'
-                });
-
-                shrinkWidth.onfinish = () => {
-                    modal.classList.add('hideModal');
-                    isAnimating = false;
-                };
-            };
-        };
-    }
 </script>

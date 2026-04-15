@@ -1,0 +1,129 @@
+{% include "manager/js/reconnecting-websocket.html" %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'manager/css/test_room.css' %}">
+  <title>TEST ROOM</title>
+</head>
+
+<body>
+
+
+  <!-- <textarea id="chat-log" cols="100" rows="20"></textarea><br>
+  <input id="chat-message-input" type="text" size="100"><br>
+  <input id="chat-message-submit" type="button" value="Send">
+  {{ room_name|json_script:"room-name" }} -->
+  <div class="message"></div>
+
+  <div class="chat-widget" id="chatWidget">
+
+    <!-- chat toggle -->
+    <input id="chat-widget-toggle" class="chat-widget-toggle" type="checkbox">
+
+
+
+    <div class="chat-box">
+      <!-- chat user info     -->
+      <div class="chat-avatar-box">
+        <img class="chat-avatar"
+          src="https://cdn.pixabay.com/photo/2017/08/30/17/27/business-woman-2697954_960_720.jpg" />
+      </div>
+
+      <div class="chat-message-box">
+        <!--  chat header -->
+        <div class="chat-header">
+          <h1 class="chat-title">
+            <span class="chat-title-primary">{{ username }}</span>
+            <span class="chat-title-sub">CEO</span>
+          </h1>
+        </div>
+
+        <!--   chat message  -->
+        <div id="chat-messages" class="chat-messages">
+          <div class="chat-messages-content">
+            <ul id="chat-log">
+              <!-- {% for message in messages %}
+                <li class="chat-message {% if message.author_id == request.user.id %}-sent{% else %}-replies{% endif %}">
+                  <div class="chat-message-text">
+                    <p>
+                      {{ message.content }}
+                    </p>
+                  </div>
+                </li>
+              {% endfor %} -->
+              <li class="chat-message -replies">
+                <div class="chat-message-avatar">
+                  <img src="https://cdn.pixabay.com/photo/2017/08/30/17/27/business-woman-2697954_960_720.jpg" alt=""
+                    class="chat-avatar -small">
+                </div>
+                <div class="chat-message-text">
+                  <p>
+                    무엇을 도와드릴까요?
+                  </p>
+                </div>
+              </li>
+
+
+              <li class="chat-message -sent">
+                <div class="chat-message-text">
+                  <p>
+                    여기에 쓰면 되냐
+                  </p>
+                </div>
+              </li>
+
+            </ul>
+          </div>
+        </div>
+
+        <!-- chat input box  -->
+        <div class="chat-form-box">
+          <div class="chat-form" id="chat-form" name="chat-form">
+            <input id="chat-message-input" class="chat-form-input" type="text" placeholder="Type your message....">
+            <button id="chat-message-submit" title="send message" type="submit" class="chat-form-button">
+              <!-- <button title="chat-message-submit" type="submit" class="chat-form-button"> -->
+              <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="535.5px" height="535.5px"
+                viewBox="0 0 535.5 535.5" style="enable-background:new 0 0 535.5 535.5;">
+                <polygon points="0,497.25 535.5,267.75 0,38.25 0,216.75 382.5,267.75 0,318.75" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- chat open button -->
+    <label title="open chat" for="chat-widget-toggle" class="chat-widget-button chat-open-button">
+      <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 60 60"
+        style="enable-background:new 0 0 60 60;" xml:space="preserve">
+        <g>
+          <path
+            d="M54.072,2.535L19.93,2.465c-3.27,0-5.93,2.66-5.93,5.93v3.124l26.065-0.054c4.377,0,7.935,3.557,7.935,7.929v21.142   c0,0.634-0.083,1.248-0.224,1.84l3.484,3.833c0.193,0.213,0.464,0.327,0.74,0.327c0.121,0,0.243-0.021,0.36-0.067   c0.386-0.148,0.64-0.52,0.64-0.933v-10h1.07c3.27,0,5.93-2.66,5.93-5.93V8.465C60,5.195,57.34,2.535,54.072,2.535z" />
+          <path
+            d="M40.069,13.465L5.93,13.535c-3.27,0-5.93,2.66-5.93,5.93v21.141c0,3.27,2.66,5.93,5.929,5.93H12v10   c0,0.413,0.254,0.784,0.639,0.933c0.118,0.046,0.24,0.067,0.361,0.067c0.276,0,0.547-0.114,0.74-0.327l9.704-10.675l16.626-0.068   c3.27,0,5.93-2.66,5.93-5.93V19.394C46,16.124,43.34,13.465,40.069,13.465z M12,34.449c-2.206,0-4-1.794-4-4s1.794-4,4-4   s4,1.794,4,4S14.206,34.449,12,34.449z M23,34.449c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S25.206,34.449,23,34.449z    M34,34.449c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S36.206,34.449,34,34.449z" />
+        </g>
+      </svg>
+    </label>
+
+    <!-- chat close button -->
+    <label title="close chat" for="chat-widget-toggle" class="chat-widget-button chat-close-button">
+      <svg xmlns="http://www.w3.org/2000/svg" width="64" version="1.1" height="64" viewBox="0 0 64 64"
+        enable-background="new 0 0 64 64">
+        <g>
+          <path fill="#1D1D1B"
+            d="M28.941,31.786L0.613,60.114c-0.787,0.787-0.787,2.062,0,2.849c0.393,0.394,0.909,0.59,1.424,0.59   c0.516,0,1.031-0.196,1.424-0.59l28.541-28.541l28.541,28.541c0.394,0.394,0.909,0.59,1.424,0.59c0.515,0,1.031-0.196,1.424-0.59   c0.787-0.787,0.787-2.062,0-2.849L35.064,31.786L63.41,3.438c0.787-0.787,0.787-2.062,0-2.849c-0.787-0.786-2.062-0.786-2.848,0   L32.003,29.15L3.441,0.59c-0.787-0.786-2.061-0.786-2.848,0c-0.787,0.787-0.787,2.062,0,2.849L28.941,31.786z" />
+        </g>
+      </svg>
+    </label>
+  </div>
+  <!-- {{ room_name|json_script:"room-name" }} -->
+
+</body>
+
+</html>
+
+{% include "manager/js/chatroom_js.html" %}

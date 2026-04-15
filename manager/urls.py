@@ -66,6 +66,9 @@ urlpatterns = [
   path("signup/",sungwoo_views.UserSignUpView.as_view(),name="signup"),
   # 회원가입 완료화면
   path("signup/done/",sungwoo_views.UserCreateDoneTV.as_view(),name="signup_done"),
+  # 로그아웃
+  path('logout/', auth_views.LogoutView.as_view(next_page="index"), name='logout'),
+
 
   # 예약가능시간 추가 - 사장님이 개인업체 시간표 열어둠 / pk값 하나떼버림
   path('sung/update/<int:store_id>/', sungwoo_views.Update.as_view(), name='update3'),
@@ -75,11 +78,10 @@ urlpatterns = [
   # 채팅
   path("sung/admin_chat2/", sungwoo_views.AdminChat2.as_view(), name="admin_chat2"),
 
-  # 로그아웃
-  path('logout/', auth_views.LogoutView.as_view(next_page="index"), name='logout'),
-
 
 # 비동기
+  path("sung/api/todos/", sungwoo_views.TodoAPI.as_view(), name='todo_api'),
+  # path("sung/api/todos/save/", sungwoo_views.ManagerStoreList.as_view(), name='save_all'),
   path("sung/api/store-times/", sungwoo_views.StoreTimesView.as_view(), name='store_times'),
   path("sung/api/reservation_false/", sungwoo_views.Reservation_Details.as_view(), name="reservation_details"),
   path("sung/api/reservation_id/<int:rsv_id>/", sungwoo_views.Reservation_Details.as_view(), name="reservation_id"),

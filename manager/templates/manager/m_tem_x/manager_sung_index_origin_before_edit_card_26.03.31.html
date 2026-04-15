@@ -6,24 +6,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{% static 'manager/css/manager_sung_index.css' %}?after">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
   <title>Manager</title>
 </head>
 
 <body>
-  <div id="wrap">{% csrf_token %}
+  <div id="wrap">
     <div class="box1">
       <div class="content1">
-        <div class="navi-wrap">
-          <div class="home">
-            <a href="{% url 'index' %}"><span class="material-symbols-outlined">home</span></a>
-            <a href="{% url 'write' %}"><span class="material-symbols-outlined">add_business</span></a>
-            <!-- url 끝에 0 : js 쿼리파라미터 치환용 임의숫자 -->
-            <a href="{% url 'update3' 0 %}" id="click1"><span class="material-symbols-outlined">more_time</span></a>
-            <a href="{% url 'store_detail' 0 %}" id="click2"><span class="material-symbols-outlined">lists</span></a>
-            <a href="{% url 'admin_chat2' %}" id="click3"><span class="material-symbols-outlined">forum</span></a>
-          </div>
-        </div>
         {% if request.user.is_authenticated %}
         <div class="cont_box1">
 
@@ -90,7 +79,7 @@
 
           <div id="svg_noti" class="recent">
 
-            <svg style="display: none;">
+            <svg display="none">
               <symbol id="clock" viewBox="0 0 32 32">
                 <circle r="15" cx="16" cy="16" fill="none" stroke="currentColor" stroke-width="2" />
                 <polyline points="16,7 16,16 23,16" fill="none" stroke="currentColor" stroke-width="2"
@@ -130,32 +119,6 @@
               </symbol>
             </svg>
           </div>
-
-          <div class="app_wrap">
-            <div class="app" id="app">
-                <div class="title">체크리스트</div>
-                <form class="form" id="todo-form">
-                  <input class="input form__input" id="todo-input" placeholder="할 일을 입력하세요..." />
-                  <button class="blue_btn form__submit-btn" type="submit">추가</button>
-                </form>
-
-                <ol class="todo-list" id="todo-list"></ol>
-
-                <div class="filters">
-                    <button class="blue_btn filters__btn" data-filter="all">전체</button>
-                    <button class="blue_btn filters__btn" data-filter="complete">완료</button>
-                    <button class="blue_btn filters__btn" data-filter="incomplete">진행중</button>
-                    <!-- <button class="save_btn" id="save-btn">저장하기</button> -->
-                    <button class="save_btn" id="save-btn">
-                      <div class="button-outer">
-                        <div class="button-inner">
-                          <span>저장하기</span>
-                        </div>
-                      </div>
-                    </button>
-                </div>
-            </div>
-        </div>
         </div>
 
         <!-- <a href="/manager/write">
@@ -182,16 +145,6 @@
     </div>
     {% endif %}
   </div>
-  <div class="userInfo">
-        <img class="profile_img" src="{% static 'manager/img/person.png' %}" alt="이미지">
-        <span>{{ request.user.username }}님, 안녕하세요</span>
-        <a href="/manager/logout">
-          <button id="nav_button2" class="nav_button2" type="button">
-            <img class="logout" src="{% static 'manager/img/modeoff.png' %}" alt="로그아웃">
-            <!-- <img class="logout" src=" static 'manager/img/turn-off (1).png' " alt="로그아웃"> -->
-          </button>
-        </a>
-      </div>
   <div class="box2">
     <div class="content2">
       {% if request.user.is_authenticated %}
@@ -251,8 +204,8 @@
 
       {% endif %}
     </div>
+    
   </div>
-  
   </div>
 
 

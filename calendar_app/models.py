@@ -118,3 +118,8 @@ class Store_times(models.Model):
     times_cdate = models.DateTimeField(auto_now_add = True)
     times_mdate = models.DateTimeField(auto_now = True)
     sort_type = models.CharField(max_length=4, null=True)
+
+
+class Todo(models.Model):
+    text = models.CharField(max_length=255)
+    complete = models.BooleanField(default=False)

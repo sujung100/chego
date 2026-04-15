@@ -1,37 +1,33 @@
 {% include "manager/js/reconnecting-websocket.html" %}
 <script>
   let nc = null;
-
-  const ownerName = "{{ username|safe }}";
-  const sto_json = JSON.parse('{{ sto_json|safe }}');
-  console.log("스토어정보", sto_json);
-
+  window.addEventListener("DOMContentLoaded", () => {
+    nc = new NotificationCenter();
+  });
 
   document.addEventListener('DOMContentLoaded', function () {
-    nc = new NotificationCenter();
 
     // 초기 상태 설정
     updateStyles(c2, c3, c1);
 
+
+
     if (store_name.length >= 1) {
       updateElement("c1", store_name[0], store_id[0]);
     }
+
     if (store_name.length >= 2) {
       updateElement("c2", store_name[1], store_id[1]);
     }
+
     if (store_name.length >= 3) {
       updateElement("c3", store_name[2], store_id[2]);
     }
+    // Click events
+
     if (c1) c1.addEventListener('click', handleElementClick);
     if (c2) c2.addEventListener('click', handleElementClick);
     if (c3) c3.addEventListener('click', handleElementClick);
-
-    applyFixedColors();
-
-    fetchTodos();
-    const allBtn = document.querySelector('[data-filter="all"]');
-    if (allBtn) allBtn.classList.add('active');
-
   });
 
   class NotificationCenter {
@@ -61,7 +57,6 @@
       const id = this.random(0, 2 ** 32, true).toString(16);
       // console.log(id);
       const message = this.messages[this.currentMessageIndex];
-      console.log("메세지", message)
       const note = new Notification({
         id: `note-${id}`,
         icon: message.icon,
@@ -478,398 +473,57 @@
     });
   }
 
-  // sto_json.forEach(item => {
-  //   console.log(`ID: ${item.store_name}, 타입: ${typeof item.store_name}`);
-  // });
-  // const getAddr = sto_json.find(item => item.store_name == store_name);
-  // console.log("@@@@", store_name);
-  //   if (getAddr) {
-  //       const sampleValue = getAddr.address;
-  //       console.log(sampleValue);
-  //   } else {
-  //       console.log("해당값x");
-  //   }
 
 
   function updateElement(elementClassName, storeName, storeId) {
-
 
     let element = document.querySelector("." + elementClassName);
     while (element.firstChild) {
       element.removeChild(element.firstChild);
     }
+    // console.log(storeId);
 
     let storeidBox = document.createElement("div");
     storeidBox.className = elementClassName + "_storeId";
 
+    let newStoreBox = document.createElement("div");
+    newStoreBox.className = elementClassName + "_store_box1";
 
-    let storeCon = document.createElement("div");
-    storeCon.className = elementClassName + "_card_container";
+    let newStoreBox2 = document.createElement("div");
+    newStoreBox2.className = elementClassName + "_store_box2";
 
-    let bg_layer = document.createElement("div");
-    bg_layer.className = "bg_layer";
-    let bg_card = document.createElement("div");
-    bg_card.className = "bg_card";
+    let newStoreName = document.createElement("div");
+    newStoreName.className = "store_name";
+    newStoreName.textContent = storeName;
 
-    let md_layer = document.createElement("div");
-    md_layer.className = "md_layer";
-    let md_circle = document.createElement("div");
-    md_circle.className = "md_circle";
+    let newStoreIn = document.createElement('div');
+    newStoreIn.className = 'store_in';
+    // newStoreIn.dataset.url = storeId;
 
-    let cont_layer = document.createElement("div");
-    cont_layer.className = "cont_layer";
-    let info_box = document.createElement("div");
-    info_box.className = "info_box";
-    let st_name = document.createElement("span");
-    st_name.className = "st_name";
-    st_name.textContent = storeName;
-    
-    let desc = document.createElement("span");
-    // 최상단에서 view에서 받아온 json
-    const sto_target = sto_json.find(item => item.store_name == storeName);
-      if (sto_target) {
-        const getAddr = sto_target.address;
-        console.log(getAddr);
-        desc.className = "desc";
-        desc.textContent = getAddr;
-      } else {
-        console.log("해당값x");
-      }
-      
-    
-    let small_text = document.createElement("div");
-    small_text.className = "small_text";
-    // let s_txt = document.createElement("span");
-    // s_txt.className = "s_txt";
-    // s_txt.textContent = ownerName;
+    let inputButton = document.createElement('input');
+    inputButton.type = 'button';
+    inputButton.value = '들어가기';
 
-    // bottom text부터 만들기 
-    let bottom_text = document.createElement("div");
-    bottom_text.className = "bottom_text";
-    let labels = document.createElement("div");
-    labels.className = "labels";
-    let store_in = document.createElement("div");
-    store_in.className = "store_in";
-    let label1 = document.createElement("span");
-    label1.className = "label";
-    label1.textContent = "들어";
-    let label2 = document.createElement("span");
-    label2.className = "label";
-    label2.textContent = "가기";
 
-    let in_icon = document.createElement("span");
-    in_icon.className = "material-symbols-outlined";
-    in_icon.textContent = "chevron_right";
-
-    
     element.appendChild(storeidBox);
     storeidBox.innerText = storeId;
     storeidBox.style.display = "none";
 
-    element.appendChild(storeCon);
-    storeCon.appendChild(bg_layer);
-    storeCon.appendChild(md_layer);
-    storeCon.appendChild(cont_layer);
+    element.appendChild(newStoreBox);
+    element.appendChild(newStoreBox2);
 
+    newStoreBox.appendChild(newStoreName);
+    newStoreBox.appendChild(newStoreIn);
 
-    bg_layer.appendChild(bg_card);
-    md_layer.appendChild(md_circle);
-    cont_layer.appendChild(info_box);
-    cont_layer.appendChild(bottom_text);
-    
-    
-    info_box.appendChild(st_name);
-    info_box.appendChild(desc);
-    info_box.appendChild(small_text);
-    
-    // small_text.appendChild(s_txt);
-    
-    bottom_text.appendChild(labels);
-    bottom_text.appendChild(store_in);
-    
-    labels.appendChild(label1);
-    labels.appendChild(label2);
-    
-    store_in.appendChild(in_icon);
-    
-
-    // 이 하위 무시하고 일단 위에 구조 만들어보기
-    // let newStoreBox = document.createElement("div");
-    // newStoreBox.className = elementClassName + "_store_box1";
-
-    // let newStoreName = document.createElement("div");
-    // newStoreName.className = "store_name";
-    // newStoreName.textContent = storeName;
-
-    // let newStoreIn = document.createElement('div');
-    // newStoreIn.className = 'store_in';
-    // // newStoreIn.dataset.url = storeId;
-
-    // let inputButton = document.createElement('input');
-    // inputButton.type = 'button';
-    // inputButton.value = '들어가기';
-
-
-    // element.appendChild(storeidBox);
-    // storeidBox.innerText = storeId;
-    // storeidBox.style.display = "none";
-
-    // element.appendChild(newStoreBox);
-    // // element.appendChild(newStoreBox2);
-
-    // newStoreBox.appendChild(newStoreName);
-    // newStoreBox.appendChild(newStoreIn);
-
-    // newStoreIn.appendChild(inputButton);
+    newStoreIn.appendChild(inputButton);
 
     element.classList.add('flex_column');
     element.style.border = 'none';
 
-    store_in.addEventListener('click', function () {
+    newStoreIn.addEventListener('click', function () {
       location.href = `/manager/sung/${storeId}/`; // Django URL pattern
     });
   }
-
-
-
-  //  기존
-  // function updateElement(elementClassName, storeName, storeId) {
-
-  //   let element = document.querySelector("." + elementClassName);
-  //   while (element.firstChild) {
-  //     element.removeChild(element.firstChild);
-  //   }
-  //   // console.log(storeId);
-
-  //   let storeidBox = document.createElement("div");
-  //   storeidBox.className = elementClassName + "_storeId";
-
-  //   let newStoreBox = document.createElement("div");
-  //   newStoreBox.className = elementClassName + "_store_box1";
-
-  //   // let newStoreBox2 = document.createElement("div");
-  //   // newStoreBox2.className = elementClassName + "_store_box2";
-
-  //   let newStoreName = document.createElement("div");
-  //   newStoreName.className = "store_name";
-  //   newStoreName.textContent = storeName;
-
-  //   let newStoreIn = document.createElement('div');
-  //   newStoreIn.className = 'store_in';
-  //   // newStoreIn.dataset.url = storeId;
-
-  //   let inputButton = document.createElement('input');
-  //   inputButton.type = 'button';
-  //   inputButton.value = '들어가기';
-
-
-  //   element.appendChild(storeidBox);
-  //   storeidBox.innerText = storeId;
-  //   storeidBox.style.display = "none";
-
-  //   element.appendChild(newStoreBox);
-  //   // element.appendChild(newStoreBox2);
-
-  //   newStoreBox.appendChild(newStoreName);
-  //   newStoreBox.appendChild(newStoreIn);
-
-  //   newStoreIn.appendChild(inputButton);
-
-  //   element.classList.add('flex_column');
-  //   element.style.border = 'none';
-
-  //   newStoreIn.addEventListener('click', function () {
-  //     location.href = `/manager/sung/${storeId}/`; // Django URL pattern
-  //   });
-  // }
-
-  // 카드 컬러 조합(col1,2 유사색으로)
-  const themeConfig = {
-    '.c1_card_container': { h: 228, s: 100, l: 64 },
-    '.c2_card_container': { h: 204, s: 100, l: 55 },
-    '.c3_card_container': { h: 196, s: 100, l: 50 }
-  };
-  
-
-  function applyFixedColors() {
-    for (const [selector, base] of Object.entries(themeConfig)) {
-      const card = document.querySelector(selector);
-      if (!card) continue;
-
-      const col1 = `hsl(${base.h}, ${base.s}%, ${base.l}%)`;
-      const col2 = `hsl(${(base.h + 20) % 360}, ${base.s}%, ${base.l - 10}%)`;
-      // const brightfix = `hsl(${(base.h + 180) % 360}, 80%, ${base.l}%)`;
-
-      card.style.setProperty('--col1', col1);
-      card.style.setProperty('--col2', col2);
-      // card.style.setProperty('--brightfix', brightfix);
-    }
-  }
-
-
-  // to do list 할일 리스트
-  
-  const API_BASE_URL = '/manager/sung/api/todos/'; 
-
-  let todos = []; // 로컬 상태 전역 관리
-  let visibility = 'all';
-
-  // DOM 요소
-  const todoForm = document.getElementById('todo-form');
-  const todoInput = document.getElementById('todo-input');
-  const todoList = document.getElementById('todo-list');
-  const filterBtns = document.querySelectorAll('.filters__btn');
-  const saveBtn = document.getElementById('save-btn');
-
-
-  // document.querySelector('[data-filter="all"]').classList.add('active');
-
-  // --- 1. 초기 데이터 로드 (GET) ---
-  async function fetchTodos() {
-      try {
-        // GET 요청을 보냅니다 (API_BASE_URL은 '/manager/sung/api/todos/')
-        const response = await fetch(API_BASE_URL); 
-        
-        if (response.ok) {
-            const data = await response.json();
-            console.log("DB에서 불러온 데이터:", data);
-            
-            // 1. 서버에서 받은 데이터를 전역 변수 todos에 덮어씌웁니다.
-            todos = data; 
-            
-            // 2. 화면을 다시 그립니다.
-            render(); 
-        } else {
-            console.error("데이터 로드 실패:", response.status);
-        }
-    } catch (error) {
-        console.error("네트워크 에러:", error);
-    }
-  }
-
-  // --- 2. 로컬 추가 (서버 요청 X) ---
-  function addTodo(text) {
-      const newTodo = {
-          id: Date.now(), // 임시 ID (서버 저장 시 DB ID로 교체됨)
-          text: text,
-          complete: false
-      };
-      todos.push(newTodo);
-      console.log("투두1", todos);
-      render();
-  }
-
-  // --- 3. 로컬 토글 및 삭제 ---
-  function toggleTodo(id) {
-      todos = todos.map(todo => 
-          todo.id === id ? { ...todo, complete: !todo.complete } : todo
-      );
-      console.log("투두2", todos);
-      render();
-  }
-
-  function deleteTodo(id) {
-      todos = todos.filter(todo => todo.id !== id);
-      console.log("투두3", todos);
-      render();
-  }
-
-  // --- 4. 전체 저장 (POST - Save 버튼 클릭 시) ---
-  async function saveTodos() {
-      try {
-          const response = await fetch(`${API_BASE_URL}`, {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-                  'X-CSRFToken': getCookie('csrftoken') // Django 보안용
-              },
-              body: JSON.stringify({ todos: todos })
-          });
-          console.log("찍어봐", todos);
-
-          if (response.ok) {
-              alert('DB에 성공적으로 저장되었습니다!');
-              // 저장 후 서버의 최신 ID가 부여된 데이터를 다시 가져옴
-              fetchTodos(); 
-          } else {
-              alert('저장에 실패했습니다.');
-          }
-      } catch (error) {
-          console.error('저장 에러:', error);
-      }
-  }
-
-  // --- 5. 렌더링 ---
-  function render() {
-      todoList.innerHTML = '';
-      
-      const filtered = todos.filter(t => {
-          if (visibility === 'complete') return t.complete;
-          if (visibility === 'incomplete') return !t.complete;
-          return true;
-      });
-
-      filtered.forEach(todo => {
-          const li = document.createElement('li');
-          li.className = `todo-list__item ${todo.complete ? 'complete' : ''}`;
-          
-          li.innerHTML = `
-              <span class="todo-list__item-content" style="cursor:pointer">${todo.text}</span>
-              <button class="todo-list__item-remove"><span class="material-symbols-outlined">delete</span></button>
-          `;
-
-          li.querySelector('.todo-list__item-content').onclick = () => toggleTodo(todo.id);
-          li.querySelector('.todo-list__item-remove').onclick = () => deleteTodo(todo.id);
-
-          todoList.appendChild(li);
-      });
-  }
-
-  // --- 6. 이벤트 바인딩 ---
-  todoForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const text = todoInput.value.trim();
-      if (text) {
-          addTodo(text);
-          todoInput.value = '';
-      }
-  });
-
-  // filterBtns.forEach(btn => {
-  //     btn.onclick = () => {
-  //         visibility = btn.getAttribute('data-filter');
-  //         render();
-  //     };
-  // });
-
-  filterBtns.forEach(btn => {
-      btn.onclick = () => {
-          filterBtns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          visibility = btn.getAttribute('data-filter');
-          render();
-      };
-  });
-
-
-  saveBtn.addEventListener('click', saveTodos);
-
-  // CSRF 토큰 함수
-  function getCookie(name) {
-      let cookieValue = null;
-      if (document.cookie && document.cookie !== '') {
-          const cookies = document.cookie.split(';');
-          for (let i = 0; i < cookies.length; i++) {
-              const cookie = cookies[i].trim();
-              if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                  break;
-              }
-          }
-      }
-      return cookieValue;
-  }
-
 
 
 </script>

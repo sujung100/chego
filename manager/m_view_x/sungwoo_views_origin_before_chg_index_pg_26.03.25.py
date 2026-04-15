@@ -21,7 +21,6 @@ from django.core.paginator import Paginator
 from django.core import serializers
 from collections import defaultdict
 from django.utils.safestring import mark_safe
-from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -55,23 +54,17 @@ def production_current_user(request):
     if not current_user.is_authenticated:
         return JsonResponse([], safe=False)
 
-# class ManagerStoreList(LoginRequiredMixin, ListView, LoginView, FormView):
-class ManagerStoreList(LoginRequiredMixin, ListView):
+class ManagerStoreList(LoginRequiredMixin, ListView, LoginView, FormView):
     model = rsv.Store
     template_name = "manager/manager_sung_index.html"
     form_class = AuthenticationForm
     success_url = reverse_lazy("index")
     login_url = reverse_lazy("login")
 
-    # def get(self, request):
-    #     todos = rsv.Todo.objects.all().values('id', 'text', 'complete')
-    #     return JsonResponse(list(todos), safe=False, status=200)
-
     def get_queryset(self):
         current_user = self.request.user
         if current_user.is_authenticated:
-            # manager = rsv.Store.objects.filter(owner=current_user, store_name__isnull=False)[:3]
-            manager = rsv.Store.objects.filter(owner=current_user, store_name__isnull=False)
+            manager = rsv.Store.objects.filter(owner=current_user, store_name__isnull=False)[:3]
         else:
             manager = rsv.Store.objects.none()
         return manager
@@ -95,12 +88,9 @@ class ManagerStoreList(LoginRequiredMixin, ListView):
             messages = models.Message.all_messages(current_user.username)
             context["rsvs"] = rsvs
             context["messages"] = messages
-            sto_info = list(rsv.Store.objects.filter(owner=current_user).values('store_name', 'address'))
-            sto_json = json.dumps(sto_info)
-            context["sto_json"] = sto_json
         return context
     
-    # 얘 나중에 빼도되나 확인-- post요청 딱히 보내고있지않음 (투두리스트는 아래의 TodoAPI의 post에서 수행)
+    
     def post(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             if request.method == 'POST':
@@ -123,37 +113,11 @@ class ManagerStoreList(LoginRequiredMixin, ListView):
                 
                 # POST 처리 완료 시 리디렉션
                 return HttpResponseRedirect(self.success_url)
+            
+
         return self.get(request, *args, **kwargs)
     
-
-class TodoAPI(LoginRequiredMixin, View):
-    def get(self, request, *args, **kwargs):
-        todos = rsv.Todo.objects.all().values('id', 'text', 'complete')
-        return JsonResponse(list(todos), safe=False)
-
-    def post(self, request, *args, **kwargs):
-        try:
-            data = json.loads(request.body)
-            todo_list = data.get('todos', [])
-
-            # 1. 기존 데이터를 지웁니다. 
-            # (실제 서비스라면 .filter(user=request.user).delete() 처럼 본인 것만 지워야 합니다)
-            rsv.Todo.objects.all().delete()
-
-            # 2. 새로 저장합니다.
-            new_todo_objs = []
-            for item in todo_list:
-                new_todo_objs.append(rsv.Todo(
-                    text=item['text'],
-                    complete=item.get('complete', False)
-                    # 여기서 id는 넣지 않습니다. DB가 새로 부여하도록 합니다.
-                ))
-            
-            rsv.Todo.objects.bulk_create(new_todo_objs)
-            return JsonResponse({'status': 'success'})
-        except Exception as e:
-            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
-    
+ 
 
 class StoreTimesView(View):
     def get(self, request):

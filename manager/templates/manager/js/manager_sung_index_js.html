@@ -8,6 +8,9 @@
 
 
   document.addEventListener('DOMContentLoaded', function () {
+    
+    buildCalendar(); // 달력생성
+
     nc = new NotificationCenter();
 
     // 초기 상태 설정
@@ -22,6 +25,11 @@
     if (store_name.length >= 3) {
       updateElement("c3", store_name[2], store_id[2]);
     }
+
+    if (store_id.length >= 1) {
+      nc.storeManager.handleClick(store_id[0]);
+    }
+
     if (c1) c1.addEventListener('click', handleElementClick);
     if (c2) c2.addEventListener('click', handleElementClick);
     if (c3) c3.addEventListener('click', handleElementClick);
@@ -34,6 +42,149 @@
 
   });
 
+  // 달력시작
+  
+  let nowMonth = new Date();  // 현재 달을 페이지를 로드한 날의 달로 초기화
+  let today = new Date();     // 페이지를 로드한 날짜를 저장
+  today.setHours(0, 0, 0, 0);    // 비교 편의를 위해 today의 시간을 초기화
+
+  // 달력 생성 : 해당 달에 맞춰 테이블을 만들고, 날짜를 채워 넣는다.
+  const now_year = document.querySelector("#calYear");
+  const now_month = document.querySelector("#calMonth");
+
+  // const store_item2 = document.querySelector(".store_item2");
+  // const clicked_rsv = document.querySelector(".clicked_rsv");
+  // console.log("store_item2", store_item2);
+
+  // url에서 store id값 잘라오면 안되는 이유 = 1) 배포시에 문제.. 2)페이지네이션 쿼리
+  // const location111 = window.location;
+  // console.log("록", location111);
+  // const yeah = location111.pathname.toString()
+  // console.log("예", yeah);
+  // const yeah2 = yeah.split('/').reverse()[0]
+  // console.log("이거", yeah2);
+  // console.log("store_id", store_id);
+
+  function buildCalendar() {
+    console.log("왜 실행안돼?")
+
+    let firstDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth(), 1);     // 이번달 1일
+    let lastDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, 0);  // 이번달 마지막날
+
+    let tbody_Calendar = document.querySelector(".Calendar > tbody");
+    // document.getElementById("calYear").innerText = nowMonth.getFullYear();             // 연도 숫자 갱신
+    // document.getElementById("calMonth").innerText = leftPad(nowMonth.getMonth() + 1);  // 월 숫자 갱신
+    
+    now_year.textContent = nowMonth.getFullYear();             // 연도 숫자 갱신
+    now_month.textContent = leftPad(nowMonth.getMonth() + 1);  // 월 숫자 갱신
+
+
+    // console.log(document.getElementById("calYear").innerText);
+    // console.log(document.getElementById("calMonth").innerText);
+
+    while (tbody_Calendar.rows.length > 0) {                        // 이전 출력결과가 남아있는 경우 초기화
+      tbody_Calendar.deleteRow(tbody_Calendar.rows.length - 1);
+    }
+
+    let nowRow = tbody_Calendar.insertRow();        // 첫번째 행 추가           
+
+    for (let j = 0; j < firstDate.getDay(); j++) {  // 이번달 1일의 요일만큼
+      let nowColumn = nowRow.insertCell();        // 열 추가
+    }
+
+    for (let nowDay = firstDate; nowDay <= lastDate; nowDay.setDate(nowDay.getDate() + 1)) {   // day는 날짜를 저장하는 변수, 이번달 마지막날까지 증가시키며 반복  
+      let nowColumn = nowRow.insertCell();        // 새 열을 추가하고
+
+
+      let newDIV = document.createElement("p");
+      newDIV.innerHTML = leftPad(nowDay.getDate());        // 추가한 열에 날짜 입력
+
+      // 추가 03.04
+      newDIV.onclick = function () { 
+        // choiceDate(this); 
+        // clickedDate(this); 
+      };
+
+      // console.log(newDIV.innerText);
+
+      // Check if this date is in userDates
+      let dateStringArray = [nowDay.getFullYear().toString(), leftPad(nowMonth.getMonth() + 1), leftPad(nowDay.getDate())];
+
+      // let rsv_count = countDateOccurrences(userDates, dateStringArray);
+      // console.log("Reservation count for " + dateStringArray.join("-") + ": " + rsv_count);
+      // let dayOfWeek = nowDay.getDay();
+
+      // // 월요일부터 목요일까지 오른쪽 간격 설정
+      // if (dayOfWeek >= 0 && dayOfWeek <= 4) {
+      //   nowColumn.style.paddingRight = "10px";
+      // }
+
+      // // 금요일 양쪽 간격 설정
+      // if (dayOfWeek === 5) {
+      //   nowColumn.style.paddingRight = "10px";
+      // }
+
+      nowColumn.appendChild(newDIV);
+
+      // let newDIV2 = document.createElement("div");
+      // newDIV2.className = "rsv_check"
+      // newDIV2.innerHTML = "되";
+      // if (rsv_count > 0) {
+      //   // Display the count in newDiv2
+      //   newDIV2.innerHTML = rsv_count;
+      // } else {
+      //   newDIV2.innerHTML = "";
+      // }
+      // nowColumn.appendChild(newDIV2);
+
+
+      if (nowDay.getDay() == 6) {                 // 토요일인 경우
+        nowRow = tbody_Calendar.insertRow();    // 새로운 행 추가
+      }
+
+      if (nowDay < today) {                       // 지난날인 경우
+        newDIV.className = "pastDay";
+      }
+      else if (nowDay.getFullYear() == today.getFullYear() && nowDay.getMonth() == today.getMonth() && nowDay.getDate() == today.getDate()) { // 오늘인 경우           
+        newDIV.className = "today";
+        newDIV.onclick = function () {
+          // choiceDate(this); 
+
+        }
+      }
+      else {                                      // 미래인 경우
+        newDIV.className = "futureDay";
+        newDIV.onclick = function () {
+          // choiceDate(this); 
+
+        }
+      }
+    }
+  }
+  
+  // 이전달 버튼 클릭
+  function prevCalendar() {
+    nowMonth = new Date(nowMonth.getFullYear(), nowMonth.getMonth() - 1, nowMonth.getDate());   // 현재 달을 1 감소
+    buildCalendar();    // 달력 다시 생성
+  }
+  // 다음달 버튼 클릭
+  function nextCalendar() {
+    nowMonth = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, nowMonth.getDate());   // 현재 달을 1 증가
+    buildCalendar();    // 달력 다시 생성
+  }
+  // input값이 한자리 숫자인 경우 앞에 '0' 붙혀주는 함수
+  function leftPad(value) {
+    if (value < 10) {
+      value = "0" + value;
+      return value;
+    }
+    return value;
+  }
+
+
+  // 달력끝
+
+
   class NotificationCenter {
     constructor(storeId) {
       this.items = [];
@@ -41,6 +192,9 @@
       this.storeManager = new StoreManager(storeId); // Create an instance of StoreManager
       this.currentMessageIndex = 0;
       this.killTimeout = null;
+
+      // 수정함 - 캐시저장 추가
+      this.storeDataCache = {};
 
       // this.spawnNotes(3);
     }
@@ -75,9 +229,13 @@
       note.el.style.transform = `translateY(${transY}%)`;
       // note.el.addEventListener("click", this.killNote.bind(this, note.id));
       // this.items.push(note);
-      note.el.addEventListener("click", () => {
-        nc.killNote(note.id);
-        nc.spawnNotes();
+      // 수정함
+      // note.el.addEventListener("click", () => {
+      //   nc.killNote(note.id);
+      note.el.addEventListener("click", (e) => {
+        nc.killNote(note.id, e);
+        // 수정함- 삭제
+        // nc.spawnNotes();
       });
 
       nc.items.push(note);
@@ -107,7 +265,11 @@
 
         this.killTimeout = setTimeout(() => {
           this.itemsToKill.forEach(itemToKill => {
-            document.body.removeChild(itemToKill.el);
+            // 수정함
+            // document.body.removeChild(itemToKill.el);
+            if (itemToKill.el && itemToKill.el.parentNode) {
+              itemToKill.el.parentNode.removeChild(itemToKill.el);
+            }
 
             const left = this.items.filter(item => item.id !== itemToKill.id);
             this.items = [...left];
@@ -259,33 +421,61 @@
     } catch (error) {
       console.error('Error:', error);
 
-      // Return an empty array in case of error
       return [];
     }
   }
+
+  // class StoreManager {
+  //   constructor(storeId = null) {
+  //     this.storeId = storeId;
+  //     this.storeData = null;
+  //     // Add other properties if needed
+  //   }
+
+  //   async handleClick(inputStoreId) {
+  //     this.storeId = inputStoreId;
+  //     console.log("현재 선택된 스토어 ID 변경됨:", this.storeId);
+  //     let newData = await fetchStoreData(this.storeId);
+
+  //     console.log(newData);
+
+  //     if (nc) { // Check if the NotificationCenter instance exists
+  //       nc.messages = newData;
+  //       nc.currentMessageIndex = nc.messages.length - 1;
+
+  //       // 수정함 - 추가
+  //       const reservation_card = document.querySelector("#reservation-info");
+  //       if (reservation_card) reservation_card.innerHTML = "";
+
+  //       nc.clearNotes(); // Remove existing notifications
+  //       // nc.spawnNotes(3); 
+  //       // console.log("이건 nc", nc);
+  //       setTimeout(() => {
+  //         nc.spawnNotes(3);
+  //       }, 0);
+  //     }
+  //   }
+
+  // }
 
   class StoreManager {
     constructor(storeId = null) {
       this.storeId = storeId;
       this.storeData = null;
-      // Add other properties if needed
     }
 
     async handleClick(inputStoreId) {
       this.storeId = inputStoreId;
+      
+      // 알림창(Notification) 처리
       let newData = await fetchStoreData(this.storeId);
-
-      console.log(newData);
-
-      if (nc) { // Check if the NotificationCenter instance exists
+      if (nc) {
         nc.messages = newData;
-        nc.currentMessageIndex = nc.messages.length - 1;
-        nc.clearNotes(); // Remove existing notifications
-        // nc.spawnNotes(3); 
-        // console.log("이건 nc", nc);
-        setTimeout(() => {
-          nc.spawnNotes(3);
-        }, 0);
+        nc.clearNotes();
+        setTimeout(() => nc.spawnNotes(3), 0);
+
+        // 모달 예약내역 그리기
+        renderReservationCards(this.storeId);
       }
     }
 
@@ -325,7 +515,6 @@
 
 
 
-  // 만약 최대 zIndex 값을 가진 요소가 있다면 recent_f 함수를 적용합니다.
 
   function validateTime(timeInput) {
     let minValue = timeInput.getAttribute('min');
@@ -334,9 +523,7 @@
     // value = roundToNearestHalfHour(value);
     // timeInput.value = value;
     if (minValue && value < minValue) {
-      // Show an alert if the input value is less than the min value
       alert("시간은 이전 시간 이후로 설정해 주세요.");
-      // Set the input value to the minimum value
       timeInput.value = minValue;
     }
   }
@@ -398,6 +585,8 @@
   // });
 
 
+  
+  // 카드 시작
   const store_json = JSON.parse('{{ store_json | escapejs | safe }}');
   const store_name = [];
   // console.log(store_json);
@@ -727,17 +916,15 @@
   // --- 1. 초기 데이터 로드 (GET) ---
   async function fetchTodos() {
       try {
-        // GET 요청을 보냅니다 (API_BASE_URL은 '/manager/sung/api/todos/')
+        // GET 요청
         const response = await fetch(API_BASE_URL); 
         
         if (response.ok) {
             const data = await response.json();
             console.log("DB에서 불러온 데이터:", data);
             
-            // 1. 서버에서 받은 데이터를 전역 변수 todos에 덮어씌웁니다.
             todos = data; 
             
-            // 2. 화면을 다시 그립니다.
             render(); 
         } else {
             console.error("데이터 로드 실패:", response.status);

@@ -42,6 +42,112 @@ body {
   --colfix: #222;
 }
 
+
+/*************** 달력 시작 ***************/
+
+.content3 {
+  justify-content: center;
+  margin: 0 auto;
+  height: 60%;
+}
+
+.Calendar {
+  /* width:100%; */
+  width:98%;
+  /* max-width: 340px; */
+  /* min-height: 100%; */
+  /* height:100%; */
+  text-align: center;
+  border-collapse: separate;
+  border-spacing: 15px 0;
+  table-layout:fixed;
+  padding: 1rem;
+  margin: 2rem 0;
+}
+
+
+.Calendar thead {
+  width:100%;
+  height:20%;
+}
+
+.Calendar>thead>tr>td {
+  font-size: x-small;
+}
+
+.Calendar>tbody>tr>td {
+  width: 14.28%; /* 테이블의 총 너비/7 = 각 요일의 너비로 동일하게 설정 */
+  height:auto;
+  box-sizing: border-box; /* 패딩, 경계선이 요소의 크기에 포함 */
+}
+
+.Calendar>thead>tr:first-child>td {
+  font-family: 'Questrial', sans-serif;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.Calendar>thead>tr:last-child>td {
+  font-family: 'Questrial', sans-serif;
+  font-weight: 600; 
+}
+
+
+
+.Calendar>tbody>tr>td>p {
+  margin:0 auto;
+  /* border:2px solid lightsalmon; */
+  font-family: 'Montserrat', sans-serif;
+  width: 100%;
+  height: auto;
+  border-radius: 1rem;
+  transition-duration: .2s;
+  line-height: 150%;
+  padding: 0.2rem;
+  /* margin: 5%; */
+  display: block;
+  text-align: center;
+}        
+.Calendar>tbody>tr>td>div.rsv_check {
+  width: 100%;
+  color:green;
+  font-size:0.8rem;
+  font-weight: bold;
+  padding: 0.2rem;
+}        
+
+.pastDay {
+  /* width:50%; */
+  /* height:15%; */
+  color: lightgray;
+}
+
+.today {
+  background-color: #F5D042;            
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.futureDay {
+  /* background-color: #FFFFFF; */
+  cursor: pointer;
+}
+.futureDay:hover{
+  background:#eee;
+}
+
+.futureDay.choiceDay,
+.today.choiceDay {
+  background: #0A174E;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/*************** 달력 끝 ***************/
+
+
 /* //수정시작/////////////////////////////////////// */
 
 #wrap {
@@ -74,7 +180,9 @@ body {
 
   /* backdrop-filter: blur(20px); */
   /* background-color: rgba(255, 255, 255, 0.5); */
-  background-color: rgb(194 199 204);;
+  /* background-color: rgb(194 199 204); */
+  /* background-color: transparent; */
+  background-color: rgba(0, 0, 0, 0.12);
   box-shadow: inset 0px 2px 0px rgba(255, 255, 255, .75), inset 0px 0px 2px rgba(255, 255, 255, .7), 0px 0px 1px rgba(0, 0, 0, .3);
   border: 1px solid #fff;
   border-radius: 20px;
@@ -83,12 +191,12 @@ body {
   /* border-radius: 2%; */
   /* border:5px solid #000; */
   /* width: 100%; */
-  /* backdrop-filter: blur(10px); */
+  backdrop-filter: blur(30px);
   /* opacity: 0.7; */
   /* box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px; */
 }
 
-.box1 .content1 .navi-wrap {
+.box1 .navi-wrap {
   /* width: 100%; */
   /* background-color: rgba(255,255,255,0.6); */
   text-align: center;
@@ -96,10 +204,11 @@ body {
   position: fixed;
   /* top: 25%;
   left: -12%; */
+  /* background-color: rgb(194 199 204); */
   top: 35%;
   left: 4%;
-  backdrop-filter: blur(20px);
-  background-color: rgb(194 199 204);
+  backdrop-filter: blur(30px);
+  background-color: transparent;
   box-shadow: inset 0px 2px 0px rgba(255, 255, 255, .75), inset 0px 0px 2px rgba(255, 255, 255, .7), 0px 0px 1px rgba(0,0,0, .3);
   border:1px solid #fff;
   border-radius: 20px;
@@ -512,13 +621,16 @@ svg {
     position: absolute;
     inset: 0;
     padding: 4px;
-    background-color: var(--col1);
+    /* background-color: var(--col1); */
+    background-color: rgb(255 255 255 / 79%);
   }
 
   .bg_card {
     width: 100%;
     height: 100%;
-    background-color: var(--colfix);
+    /* background-color: var(--colfix); */
+    /* background-color: rgba(198, 203, 212, 0.702); */
+    background-color: rgba(159, 165, 177, 0.7);
     border-radius: 0.75rem; /* 12px */
     border-top-right-radius: 100px;
     border-bottom-right-radius: 40px;
@@ -540,7 +652,9 @@ svg {
     width: 8rem; /* 128px */
     height: 8rem;
     border-radius: 50%;
-    background: linear-gradient(to top right, var(--col2), var(--brightfix));
+    /* background: linear-gradient(to top right, var(--col2), var(--brightfix)); */
+    /* background: linear-gradient(to top right, var(--col2), var(--brightfix)); */
+    background: linear-gradient(to top right, hsl(0deg 0% 100% / 0%), #ffffff);
     animation: spin 12s linear infinite;
   }
 
@@ -567,9 +681,11 @@ svg {
     /* flex-col: column; */
     flex-direction: column;
     border-radius: 0.75rem;
-    background-color: rgba(249, 250, 251, 0.1); /* gray-50/10 */
+    /* background-color: rgba(249, 250, 251, 0.1); */
+    background-color: rgba(249, 250, 251, 0.3);
     backdrop-filter: blur(16px);
-    color: #e5e7eb; /* gray-200 */
+    /* color: #e5e7eb;  */
+    color: #fff;
     /* font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; */
   }
 
@@ -581,7 +697,8 @@ svg {
   .desc, .s_txt {
     font-size: 0.75rem;
     /* color: #d4deef; */
-    color: #c5c5c5;
+    /* color: #c5c5c5; */
+    color: #676464;
   }
 
   .small_text {
@@ -648,6 +765,11 @@ svg {
   flex-direction: column;
 }
 
+.cont_box2 .top_flex {
+  display: flex;
+  flex-direction: row;
+}
+
 .add-form {
   width: 100%;
   height: auto;
@@ -668,12 +790,55 @@ svg {
 
 .cont_box2 #svg_noti {
   /* width:100%; */
-  width:350px;
-  height: 70%;
-  padding-top: 1rem;
-  margin: 0 auto;
+  /* padding-top: 1rem; */
+  /* margin: 0 auto; */
+  /* width:350px;
+  height: 70%; */
+  width: 150px;
+  height: 150px;
+  padding: 1rem 0;
+  margin: 3rem 0;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+  background-color: rgba(255, 255, 255, 0.44);
+  transition: background-color var(--transDur), color var(--transDur);
+  border-radius: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.5);
+  border-left: 1px solid rgba(255, 255, 255, 0.5);
+  /* overflow-y: scroll; */
   /* height:100%; */
+
+  /* 스크롤바 적용시 사라짐방지 */
+  min-height: 0;
+  flex-shrink: 0;
+  overflow-y: auto;
+  /* x축 스크롤바 자동생성방지 */
+  overflow-x: hidden;
+
+  /* 스크롤바 포함 전체영역 모서리자름 */
+  -webkit-mask-image: radial-gradient(circle, white 100%, black 100%);
+  mask-image: paint(some-paint-worklet);
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
 }
+
+#svg_noti::-webkit-scrollbar {
+  width: 10px;
+}
+
+#svg_noti::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#svg_noti::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+#svg_noti::-webkit-scrollbar-thumb:hover {
+  /* background: #aaa; */
+}
+
 
 /* 새로운 예약 시작 */
 
@@ -683,14 +848,15 @@ svg {
   top: 1.5em;
   right: 1.5em;
   /* width: 18.75em; */
-  width: 100%;
+  /* width: 100%; */
+  width: 120px;
   /* max-width: calc(100% - 3em); */
   /* max-width: calc(100% - 0.3rem); */
   transition: transform 0.15s ease-out;
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
-  margin: 0.6rem 0 0.6rem 0;
+  margin: 0.6rem 0;
   /* margin: 0.6rem; */
   /* margin: 1rem; */
   /* padding: 1rem; */
@@ -722,19 +888,19 @@ svg {
 
 .notification__box {
   animation: flyIn 0.3s ease-out;
-  background-color: rgba(255, 255, 255, 0.44);
+  /* background-color: rgba(255, 255, 255, 0.44); */
   /* border-radius: 0.75em; */
   height: 4em;
-  transition:
+  /* transition:
     background-color var(--transDur),
-    color var(--transDur);
+    color var(--transDur); */
 
   /* box-shadow: 20px 20px 50px rgba(0,0,0,0.5); */
-  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+  /* box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2); */
   border-radius: 3rem;
-  border-top:1px solid rgba(255,255,255,0.5);
-  border-left:1px solid rgba(255,255,255,0.5);
-  backdrop-filter: blur(5px);
+  /* border-top:1px solid rgba(255,255,255,0.5);
+  border-left:1px solid rgba(255,255,255,0.5); */
+  /* backdrop-filter: blur(5px); */
   transform-style: preserve-3d;
   transform: perspective(800px) 
 }
@@ -752,7 +918,8 @@ svg {
 .notification__icon {
   flex-shrink: 0;
   margin-right: 0.75em;
-  width: 2em;
+  /* width: 2em; */
+  width: 18px;
   height: 2em;
 }
 
@@ -772,7 +939,7 @@ svg {
 
 .notification__text-subtitle {
   font-size: 0.6em;
-  opacity: 0.75;
+  /* opacity: 0.75; */
 }
 
 .notification__btns {

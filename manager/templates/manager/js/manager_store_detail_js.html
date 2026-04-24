@@ -105,7 +105,7 @@ deleteButton.addEventListener('click', function() {
   function buildCalendar() {
 
     const userDates = JSON.parse('{{ user_dates_json | escapejs | safe }}');
-    // console.log("유저 데이터 찍히냐?", userDates);
+    console.log("유저 데이터 찍히냐?", userDates);
 
     let userDates1 = userDates.map(function (date) {
       let parts = date.split("-");

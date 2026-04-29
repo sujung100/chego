@@ -13,10 +13,8 @@
 
     nc = new NotificationCenter();
 
-    // 기존 - 초기 상태 설정
-    // updateStyles(c2, c3, c1);
-    // 수정 - 초기로드 카드 순서변경
-    updateStyles(c3, c2, c1);
+    // 초기 상태 설정
+    updateStyles(c2, c3, c1);
 
     if (store_name.length >= 1) {
       updateElement("c1", store_name[0], store_id[0]);
@@ -27,10 +25,6 @@
     if (store_name.length >= 3) {
       updateElement("c3", store_name[2], store_id[2]);
     }
-
-    // 초기로딩시 첫 스토어로 차트생성
-    const initialStoreId = c1.querySelector("[class$='_storeId']").textContent;
-    updateStoreChart(initialStoreId);
 
     if (store_id.length >= 1) {
       nc.storeManager.handleClick(store_id[0]);
@@ -46,37 +40,30 @@
     const allBtn = document.querySelector('[data-filter="all"]');
     if (allBtn) allBtn.classList.add('active');
 
-
-    const notiBtn = document.getElementById("noti");
-    if (notiBtn) {
-      notiBtn.addEventListener("click", function() {
-        // 모달열기
-        const modal = document.querySelector("#open-modal");
-        if (modal) {
-          modal.style.display = "flex";
-        }
-
-        // 현재 선택된 스토어 아이디로 카드 렌더링
-        if (nc && nc.storeManager && nc.storeManager.storeId) {
-          console.log("현재 스토어의 예약 내역을 엽니다:", nc.storeManager.storeId);
-          renderCards(nc.storeManager.storeId);
-        } else {
-          alert("선택된 스토어가 없습니다.");
-        }
-      });
-    }
-
   });
 
   // 달력시작
+  
   let nowMonth = new Date();  // 현재 달을 페이지를 로드한 날의 달로 초기화
   let today = new Date();     // 페이지를 로드한 날짜를 저장
   today.setHours(0, 0, 0, 0);    // 비교 편의를 위해 today의 시간을 초기화
 
-  // 달력 생성 : 해당 달에 맞게 테이블 생성 -> 날짜채움
+  // 달력 생성 : 해당 달에 맞춰 테이블을 만들고, 날짜를 채워 넣는다.
   const now_year = document.querySelector("#calYear");
   const now_month = document.querySelector("#calMonth");
 
+  // const store_item2 = document.querySelector(".store_item2");
+  // const clicked_rsv = document.querySelector(".clicked_rsv");
+  // console.log("store_item2", store_item2);
+
+  // url에서 store id값 잘라오면 안되는 이유 = 1) 배포시에 문제.. 2)페이지네이션 쿼리
+  // const location111 = window.location;
+  // console.log("록", location111);
+  // const yeah = location111.pathname.toString()
+  // console.log("예", yeah);
+  // const yeah2 = yeah.split('/').reverse()[0]
+  // console.log("이거", yeah2);
+  // console.log("store_id", store_id);
 
   function buildCalendar() {
     console.log("왜 실행안돼?")
@@ -119,10 +106,36 @@
       };
 
       // console.log(newDIV.innerText);
+
+      // Check if this date is in userDates
       let dateStringArray = [nowDay.getFullYear().toString(), leftPad(nowMonth.getMonth() + 1), leftPad(nowDay.getDate())];
+
+      // let rsv_count = countDateOccurrences(userDates, dateStringArray);
+      // console.log("Reservation count for " + dateStringArray.join("-") + ": " + rsv_count);
+      // let dayOfWeek = nowDay.getDay();
+
+      // // 월요일부터 목요일까지 오른쪽 간격 설정
+      // if (dayOfWeek >= 0 && dayOfWeek <= 4) {
+      //   nowColumn.style.paddingRight = "10px";
+      // }
+
+      // // 금요일 양쪽 간격 설정
+      // if (dayOfWeek === 5) {
+      //   nowColumn.style.paddingRight = "10px";
+      // }
 
       nowColumn.appendChild(newDIV);
 
+      // let newDIV2 = document.createElement("div");
+      // newDIV2.className = "rsv_check"
+      // newDIV2.innerHTML = "되";
+      // if (rsv_count > 0) {
+      //   // Display the count in newDiv2
+      //   newDIV2.innerHTML = rsv_count;
+      // } else {
+      //   newDIV2.innerHTML = "";
+      // }
+      // nowColumn.appendChild(newDIV2);
 
 
       if (nowDay.getDay() == 6) {                 // 토요일인 경우
@@ -167,67 +180,230 @@
     }
     return value;
   }
+
+
   // 달력끝
 
 
   // 알림생성, 삭제, 갯수조절
   class NotificationCenter {
-    constructor() {
-      this.storeDataCache = {}; // 각 스토어별 예약 데이터
-      this.storeManager = new StoreManager(); // 스토어 변경 감지
+    constructor(storeId) {
+      this.items = [];
+      this.itemsToKill = [];
+      this.storeManager = new StoreManager(storeId); // Create an instance of StoreManager
+      this.currentMessageIndex = 0;
+      this.killTimeout = null;
+
+      // 수정함 - 캐시저장 추가
+      this.storeDataCache = {};
+
+      // this.spawnNotes(3);
     }
 
-    // 알림창x / 데이터만 캐시에 저장
-    addMessageToCache(rsvdata) {
-      const dataArray = Array.isArray(rsvdata) ? rsvdata : [rsvdata];
-      dataArray.forEach(item => {
-        const sId = String(item.store_id);
-        if (!this.storeDataCache[sId]) this.storeDataCache[sId] = [];
-        
-        // 중복체크 후 저장
-        if (!this.storeDataCache[sId].find(d => d.id === item.id)) {
-          this.storeDataCache[sId].push(item);
-        }
-      });
-      updateNoti();
-      // 모달이 열려있다면 즉시 새로고침
-      const modal = document.querySelector("#open-modal");
-      if (modal && modal.style.display === "flex") {
-        renderCards(this.storeManager.storeId);
+    async init() {
+      // console.log(this.messages);
+
+      await this.storeManager.handleClick();
+      if (this.messages && Array.isArray(this.messages)) {
+        this.spawnNotes(3);
       }
     }
+    spawnNote() {
+      console.log('Current state of messages:', this.messages);
 
-    // 캐시비우기
-    clearCache(storeId) {
-      if (storeId) delete this.storeDataCache[storeId];
-      else this.storeDataCache = {};
+      if (!this.messages || !Array.isArray(this.messages)) return;
+
+      const id = this.random(0, 2 ** 32, true).toString(16);
+      // console.log(id);
+      const message = this.messages[this.currentMessageIndex];
+      console.log("메세지", message)
+      const note = new Notification({
+        id: `note-${id}`,
+        icon: message.icon,
+        title: message.title,
+        subtitle: message.subtitle,
+        actions: message.actions
+      });
+      // console.log(note);
+      const transY = 1 * this.items.length;
+
+      note.el.style.transform = `translateY(${transY}%)`;
+      // note.el.addEventListener("click", this.killNote.bind(this, note.id));
+      // this.items.push(note);
+      // 수정함
+      // note.el.addEventListener("click", () => {
+      //   nc.killNote(note.id);
+      note.el.addEventListener("click", (e) => {
+        nc.killNote(note.id, e);
+        // 수정함- 삭제
+        // nc.spawnNotes();
+      });
+
+      nc.items.push(note);
+
+      // Increment the current message index for the next call
+      if (this.currentMessageIndex > 0) {
+        --this.currentMessageIndex;
+      }else {
+        this.currentMessageIndex = this.messages.length -1;
+      }
+    }
+    spawnNotes(amount) {
+      let count = typeof amount === "number" ? amount : this.random(1, 5, true);
+
+      while (count--)
+        this.spawnNote();
+    }
+    killNote(id, e) {
+      const note = this.items.find(item => item.id === id);
+      const tar = e.target;
+
+      if (note && tar.getAttribute("data-dismiss") === id) {
+        note.el.classList.add("notification--out");
+        this.itemsToKill.push(note);
+
+        clearTimeout(this.killTimeout);
+
+        this.killTimeout = setTimeout(() => {
+          this.itemsToKill.forEach(itemToKill => {
+            // 수정함
+            // document.body.removeChild(itemToKill.el);
+            if (itemToKill.el && itemToKill.el.parentNode) {
+              itemToKill.el.parentNode.removeChild(itemToKill.el);
+            }
+
+            const left = this.items.filter(item => item.id !== itemToKill.id);
+            this.items = [...left];
+          });
+
+          this.itemsToKill = [];
+
+          if (!this.items.length)
+            this.spawnNotes();
+          else
+            this.spawnNotes(this.random(0, 1, true));
+
+          // this.shiftNotes();
+        }, note.killTime);
+      }
+    }
+    shiftNotes() {
+      this.items.forEach((item, i) => {
+        const transY = 100 * i;
+        // item.el.style.transform = `translateY(${transY}%)`;
+      });
+    }
+    random(min, max, round = false) {
+      const percent = crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32;
+      const relativeValue = (max - min) * percent;
+
+      return min + (round === true ? Math.round(relativeValue) : +relativeValue.toFixed(2));
+    }
+
+    clearNotes() {
+      const parent = document.getElementById("svg_noti");
+      this.items.forEach(note => {
+        parent.removeChild(note.el);
+      });
+      this.items = [];
     }
   }
 
-
-  // 새로운 예약알림 보이기/숨기기
-  function updateNoti() {
-    const notiBtn = document.getElementById("noti");
-    if (!notiBtn || !nc || !nc.storeManager.storeId) return;
-
-    // 문자열로 타입통일
-    const currentId = String(nc.storeManager.storeId);
-    const currentStoreData = nc.storeDataCache[currentId] || [];
-
-    // 지금 선택된 스토어에 데이터가 1개라도 있으면 보임
-    if (currentStoreData.length > 0) {
-      notiBtn.style.display = "flex";
-    } else {
-      notiBtn.style.display = "none";
+  // 알림창 개별 구조 생성
+  class Notification {
+    constructor(args) {
+      this.args = args;
+      this.el = null;
+      this.id = null;
+      this.killTime = 300;
+      this.init(args);
     }
-    console.log(`체크 중인 ID: ${currentId}, 데이터 개수: ${currentStoreData.length}`);
+    init(args) {
+      const { id, icon, title, subtitle, actions } = args;
+      const block = "notification";
+      const parent = document.getElementById("svg_noti");
+      const xmlnsSVG = "http://www.w3.org/2000/svg";
+      const xmlnsUse = "http://www.w3.org/1999/xlink";
+
+      const note = this.newEl("div");
+      note.id = id;
+      note.className = block;
+      parent.insertBefore(note, parent.lastElementChild);
+
+      const box = this.newEl("div");
+      box.className = `${block}__box`;
+      note.appendChild(box);
+
+      const content = this.newEl("div");
+      content.className = `${block}__content`;
+      box.appendChild(content);
+
+      const _icon = this.newEl("div");
+      _icon.className = `${block}__icon`;
+      content.appendChild(_icon);
+
+      const iconSVG = this.newEl("svg", xmlnsSVG);
+      iconSVG.setAttribute("class", `${block}__icon-svg`);
+      iconSVG.setAttribute("role", "img");
+      iconSVG.setAttribute("aria-label", icon);
+      iconSVG.setAttribute("width", "32px");
+      iconSVG.setAttribute("height", "32px");
+      _icon.appendChild(iconSVG);
+
+      const iconUse = this.newEl("use", xmlnsSVG);
+      iconUse.setAttributeNS(xmlnsUse, "href", `#${icon}`);
+      iconSVG.appendChild(iconUse);
+
+      const text = this.newEl("div");
+      text.className = `${block}__text`;
+      content.appendChild(text);
+
+      const _title = this.newEl("div");
+      _title.className = `${block}__text-title`;
+      _title.textContent = title;
+      text.appendChild(_title);
+
+      if (subtitle) {
+        const _subtitle = this.newEl("div");
+        _subtitle.className = `${block}__text-subtitle`;
+        _subtitle.textContent = subtitle;
+        text.appendChild(_subtitle);
+      }
+
+      const btns = this.newEl("div");
+      btns.className = `${block}__btns`;
+      box.appendChild(btns);
+
+      actions.forEach(action => {
+        const btn = this.newEl("button");
+        btn.className = `${block}__btn`;
+        btn.type = "button";
+        btn.setAttribute("data-dismiss", id);
+
+        const btnText = this.newEl("span");
+        btnText.className = `${block}__btn-text`;
+        btnText.textContent = action;
+
+        btn.appendChild(btnText);
+        btns.appendChild(btn);
+      });
+
+      this.el = note;
+      this.id = note.id;
+    }
+    newEl(elName, NSValue) {
+      if (NSValue)
+        return document.createElementNS(NSValue, elName);
+      else
+        return document.createElement(elName);
+    }
   }
 
 
   // api로 데이터불러오기
   async function fetchStoreData(storeId) {
     if (!storeId) {
-      console.warn('스토어id없음');
+      console.warn('storeId is not defined. Skipping fetch.');
       return [];
     }
 
@@ -253,6 +429,38 @@
     }
   }
 
+  // class StoreManager {
+  //   constructor(storeId = null) {
+  //     this.storeId = storeId;
+  //     this.storeData = null;
+  //     // Add other properties if needed
+  //   }
+
+  //   async handleClick(inputStoreId) {
+  //     this.storeId = inputStoreId;
+  //     console.log("현재 선택된 스토어 ID 변경됨:", this.storeId);
+  //     let newData = await fetchStoreData(this.storeId);
+
+  //     console.log(newData);
+
+  //     if (nc) { // Check if the NotificationCenter instance exists
+  //       nc.messages = newData;
+  //       nc.currentMessageIndex = nc.messages.length - 1;
+
+  //       // 수정함 - 추가
+  //       const reservation_card = document.querySelector("#reservation-info");
+  //       if (reservation_card) reservation_card.innerHTML = "";
+
+  //       nc.clearNotes(); // Remove existing notifications
+  //       // nc.spawnNotes(3); 
+  //       // console.log("이건 nc", nc);
+  //       setTimeout(() => {
+  //         nc.spawnNotes(3);
+  //       }, 0);
+  //     }
+  //   }
+
+  // }
 
   // 데이터 전달
   class StoreManager {
@@ -262,77 +470,56 @@
     }
 
     async handleClick(inputStoreId) {
-      // 현재 선택된 스토어 ID 업데이트
-      const targetId = String(inputStoreId);
-      this.storeId = targetId;
-      console.log(`스토어 전환: ${targetId}`);
-
-      // 새로운 스토어데이터(예약 목록 등) 가져오기
-      try {
-        let newData = await fetchStoreData(targetId);
-        
-        if (this.storeId !== targetId) {
-          console.log(`[요청 무시] 현재 ID(${this.storeId})가 요청 ID(${targetId})와 다름`);
-          return;
-        }
-
-        if (nc) {
-          // 가져온 데이터를 캐시에 저장 (+중복제거)
-          nc.addMessageToCache(newData);
-          
-          // 카드 새로고침 & 모달 예약 내역 갱신
-          renderCards(targetId);
-          updateNoti();
-          updateStoreChart(this.storeId);
-        }
-      } catch (error) {
-        console.error("데이터를 가져오는 중 오류 발생:", error);
-      }
+      this.storeId = inputStoreId;
       
+      // 알림창(Notification) 처리
+      let newData = await fetchStoreData(this.storeId);
+      if (nc) {
+        nc.messages = newData;
+        nc.clearNotes();
+        setTimeout(() => nc.spawnNotes(3), 0);
+
+        // 모달 예약내역 그리기
+        renderReservationCards(this.storeId);
+      }
     }
+
   }
 
-  // 카드 전환 이벤트
   function handleElementClick() {
-    // 클릭된 카드 ID
-    const idElement = this.querySelector("[class$='_storeId']");
-    if (!idElement) return;
-    const clickedStoreId = idElement.textContent;
-    
-    // 데이터 업데이트
-    if (clickedStoreId && nc && nc.storeManager) {
-      nc.storeManager.handleClick(clickedStoreId);
+    const currentTransform = this.style.transform;
+
+    if (currentTransform === `translate(${translateX}, ${translateY1}) ${scale_value1} ${rotate_value1}`) {
+      changeSlides(true);
     }
 
-    // 클릭된 카드에 따른 화면 전환
-    const isUp = this.style.transform.includes(translateY2); // 위쪽에 있나?
-    const isDown = this.style.transform.includes(translateY1); // 아래쪽에 있나?
-
-    // 중앙 카드 클릭 ->  아무것도 하지 않음
-    if (!isUp && !isDown) {
-      console.log("이미 중앙에 있는 스토어입니다.");
-      return; 
+    if (currentTransform === `translate(${translateX}, ${translateY2}) ${scale_value1} ${rotate_value2}`) {
+      changeSlides(false);
     }
 
-    // 클릭한 카드에 맞춰 나머지 두개 카드 배치
-    if (this === c1) {
-      // c1클릭: c1-센터, c3-위, c2-아래(순서 조정 가능)
-      updateStyles(c3, c2, c1);
-    } else if (this === c2) {
-      // c2클릭: c2-센터, c1-위, c3-아래
-      updateStyles(c1, c3, c2);
-    } else if (this === c3) {
-      // c3클릭: c3-센터, c2-위, c1-아래
-      updateStyles(c2, c1, c3);
+    let clickedStoreId = this.querySelector("[class$='_storeId']").textContent;
+
+    // let myStoreManager = new StoreManager(clickedStoreId);
+    // myStoreManager.handleClick(clickedStoreId);
+    if (clickedStoreId) {
+      if (nc && nc.storeManager) { // Check if the NotificationCenter instance and its storeManager property exist
+        nc.storeManager.handleClick(clickedStoreId);
+        // nc.spawnNotes(3);
+      }
+    } else {
+      console.log("없어");
+      pass;
     }
   }
 
-
-  // 여기 없애도 될듯?
   let myPlus = document.getElementById("plus");
   let selectTime = document.getElementById("select_time");
   let box = document.getElementById("plus_box");
   let num = 2
+
+
+
+
 
   function validateTime(timeInput) {
     let minValue = timeInput.getAttribute('min');
@@ -396,23 +583,40 @@
     num += 1
   });
 
+  // document.querySelectorAll('.store_in').forEach(function (div) {
+  //   div.addEventListener('click', function () {
+  //     location.href = div.dataset.url;
+  //   });
+  // });
+
+
   
   // 카드 시작
   const store_json = JSON.parse('{{ store_json | escapejs | safe }}');
   const store_name = [];
+  // console.log(store_json);
+  // console.log("제이슨 잘 넘어오냐", store_json);
   for (let i = 0; i < store_json.length; i++) {
     const json_name = store_json[i]["store_name"];
     store_name.push(json_name);
   }
 
   const store_id = store_json.map(function (item) { return item.id });
+  // console.log(store_id);
+  // console.log(typeof (store_id));
+  // console.log(store_name);
+
   const idsString = JSON.stringify(store_id);
+  // console.log(idsString);
+  // console.log(typeof (idsString));
 
   let flag = 0;
 
   let c1 = document.querySelector('.c1');
   let c2 = document.querySelector('.c2');
   let c3 = document.querySelector('.c3');
+
+
 
   const translateX = '-20px';
   const translateY1 = '50px';
@@ -422,29 +626,67 @@
   const rotate_value2 = "rotate(-5deg)";
 
 
-  // 카드 배치
   function updateStyles(up, down, center) {
+
     if (up && down && center) {
-      // 위로 보냄
       up.style.transform = `translate(${translateX}, ${translateY2}) ${scale_value1} ${rotate_value2}`;
       up.style.zIndex = 1;
       up.style.opacity = 0.5;
 
-      // 아래로 보냄
       down.style.transform = `translate(${translateX}, ${translateY1}) ${scale_value1} ${rotate_value1}`;
       down.style.zIndex = 1;
       down.style.opacity = 0.5;
 
-      // 중앙으로 가져옴
       center.style.transform = 'translate(0, 0) scale(1)';
       center.style.zIndex = 2;
       center.style.opacity = '1';
     }
   }
 
+  async function changeSlides(isNext) {
+    return new Promise(resolve => {
+      if (isNext) {
+        if (flag === 0) {
+          updateStyles(c1, c2, c3);
+          flag = 1;
+        } else if (flag === 1) {
+          updateStyles(c3, c1, c2);
+          flag = 2;
+        } else if (flag === 2) {
+          updateStyles(c2, c3, c1);
+          flag = 0;
+        }
+      } else {
+        if (flag === 0) {
+          updateStyles(c2, c3, c1);
+          flag = 1;
+        } else if (flag === 1) {
+          updateStyles(c3, c1, c2);
+          flag = 2;
+        } else if (flag === 2) {
+          updateStyles(c1, c2, c3);
+          flag = 0;
+        }
+      }
+      setTimeout(resolve, 0);
+    });
+  }
 
-  // 카드 요소 생성
+  // sto_json.forEach(item => {
+  //   console.log(`ID: ${item.store_name}, 타입: ${typeof item.store_name}`);
+  // });
+  // const getAddr = sto_json.find(item => item.store_name == store_name);
+  // console.log("@@@@", store_name);
+  //   if (getAddr) {
+  //       const sampleValue = getAddr.address;
+  //       console.log(sampleValue);
+  //   } else {
+  //       console.log("해당값x");
+  //   }
+
+
   function updateElement(elementClassName, storeName, storeId) {
+
 
     let element = document.querySelector("." + elementClassName);
     while (element.firstChild) {
@@ -543,6 +785,36 @@
     labels.appendChild(label2);
     
     store_in.appendChild(in_icon);
+    
+
+    // 이 하위 무시하고 일단 위에 구조 만들어보기
+    // let newStoreBox = document.createElement("div");
+    // newStoreBox.className = elementClassName + "_store_box1";
+
+    // let newStoreName = document.createElement("div");
+    // newStoreName.className = "store_name";
+    // newStoreName.textContent = storeName;
+
+    // let newStoreIn = document.createElement('div');
+    // newStoreIn.className = 'store_in';
+    // // newStoreIn.dataset.url = storeId;
+
+    // let inputButton = document.createElement('input');
+    // inputButton.type = 'button';
+    // inputButton.value = '들어가기';
+
+
+    // element.appendChild(storeidBox);
+    // storeidBox.innerText = storeId;
+    // storeidBox.style.display = "none";
+
+    // element.appendChild(newStoreBox);
+    // // element.appendChild(newStoreBox2);
+
+    // newStoreBox.appendChild(newStoreName);
+    // newStoreBox.appendChild(newStoreIn);
+
+    // newStoreIn.appendChild(inputButton);
 
     element.classList.add('flex_column');
     element.style.border = 'none';
@@ -554,6 +826,57 @@
 
 
 
+  //  기존
+  // function updateElement(elementClassName, storeName, storeId) {
+
+  //   let element = document.querySelector("." + elementClassName);
+  //   while (element.firstChild) {
+  //     element.removeChild(element.firstChild);
+  //   }
+  //   // console.log(storeId);
+
+  //   let storeidBox = document.createElement("div");
+  //   storeidBox.className = elementClassName + "_storeId";
+
+  //   let newStoreBox = document.createElement("div");
+  //   newStoreBox.className = elementClassName + "_store_box1";
+
+  //   // let newStoreBox2 = document.createElement("div");
+  //   // newStoreBox2.className = elementClassName + "_store_box2";
+
+  //   let newStoreName = document.createElement("div");
+  //   newStoreName.className = "store_name";
+  //   newStoreName.textContent = storeName;
+
+  //   let newStoreIn = document.createElement('div');
+  //   newStoreIn.className = 'store_in';
+  //   // newStoreIn.dataset.url = storeId;
+
+  //   let inputButton = document.createElement('input');
+  //   inputButton.type = 'button';
+  //   inputButton.value = '들어가기';
+
+
+  //   element.appendChild(storeidBox);
+  //   storeidBox.innerText = storeId;
+  //   storeidBox.style.display = "none";
+
+  //   element.appendChild(newStoreBox);
+  //   // element.appendChild(newStoreBox2);
+
+  //   newStoreBox.appendChild(newStoreName);
+  //   newStoreBox.appendChild(newStoreIn);
+
+  //   newStoreIn.appendChild(inputButton);
+
+  //   element.classList.add('flex_column');
+  //   element.style.border = 'none';
+
+  //   newStoreIn.addEventListener('click', function () {
+  //     location.href = `/manager/sung/${storeId}/`; // Django URL pattern
+  //   });
+  // }
+
   // 카드 컬러 조합(col1,2 유사색으로)
   const themeConfig = {
     '.c1_card_container': { h: 228, s: 100, l: 64 },
@@ -561,7 +884,7 @@
     '.c3_card_container': { h: 196, s: 100, l: 50 }
   };
   
-  // 색상 고정
+
   function applyFixedColors() {
     for (const [selector, base] of Object.entries(themeConfig)) {
       const card = document.querySelector(selector);
@@ -578,76 +901,8 @@
   }
 
 
-  // 시계
-  function updateClock() {
-    const now = new Date();
-
-    let hours = now.getHours();
-    const minutes = now.getMinutes();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-
-    // 12시간제
-    hours = hours % 12;
-    hours = hours ? hours : 12; // 0이면 12로
-
-    // 두 자리 맞추기
-    const hh = String(hours).padStart(2, '0');
-    const mm = String(minutes).padStart(2, '0');
-
-    document.getElementById('clock').textContent = `${hh}:${mm} ${ampm}`;
-  }
-  // 최초 실행
-  updateClock();
-  // 1초마다 업데이트
-  setInterval(updateClock, 1000);
-
-
-  // 차트 생성
-  const rsvMonthData = JSON.parse('{{ rsv_month_json|safe }}');
-  let myChart = null;
-
-  function updateStoreChart(storeId) {
-    const ctx = document.getElementById('storeMonthlyChart').getContext('2d');
-
-    // 현재스토어만
-    const filteredData = rsvMonthData.filter(item => String(item.store_id) === String(storeId));
-
-    const labels = filteredData.map(item => item.res_month);
-    const counts = filteredData.map(item => item.total_count);
-
-    // 기존차트 없애기
-    if (myChart) {
-      myChart.destroy();
-    }
-
-    // 새차트
-    myChart = new Chart(ctx, {
-      type: 'line', // 'line'으로 변경 가능
-      data: {
-        labels: labels,
-        datasets: [{
-          label: '월별 예약 추이(3개월)',
-          data: counts,
-          backgroundColor: 'rgba(54, 162, 235, 0.5)',
-          borderColor: 'rgba(54, 162, 235, 1)',
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: { stepSize: 1 }
-          }
-        }
-      }
-    });
-  }
-
-
-
   // to do list 할일 리스트
+  
   const API_BASE_URL = '/manager/sung/api/todos/'; 
 
   let todos = []; // 로컬 상태 전역 관리

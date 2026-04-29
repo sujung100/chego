@@ -49,7 +49,6 @@ body {
   justify-content: center;
   margin: 0 auto;
   height: 60%;
-  width: 65%;
 }
 
 .Calendar {
@@ -84,9 +83,8 @@ body {
 
 .Calendar>thead>tr:first-child>td {
   font-family: 'Questrial', sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   font-weight: bold;
-  /* font-weight: 500; */
 }
 
 .Calendar>thead>tr:last-child>td {
@@ -790,94 +788,60 @@ svg {
   max-height: 50%;
 }
 
-.cont_box2 .alerts{
-  display: flex;
-  flex-direction: column;
-  width: 35%;
-  margin-top: 3rem;
-}
-
-.alerts > div {
+.cont_box2 #svg_noti {
   /* width:100%; */
   /* padding-top: 1rem; */
   /* margin: 0 auto; */
   /* width:350px;
   height: 70%; */
-
-  /* 수정 */
-  /* width: 35%; */
-  /* margin: 3rem 0; */
-  /* padding: 1rem 0; */
-  height: 15px;
-  padding: 0.8rem 0;
-  margin: 0.4rem 0;
+  width: 150px;
+  height: 150px;
+  padding: 1rem 0;
+  margin: 3rem 0;
   box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
-  /* background-color: rgba(255, 255, 255, 0.44); */
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.44);
   transition: background-color var(--transDur), color var(--transDur);
   border-radius: 1.5rem;
   border-top: 1px solid rgba(255, 255, 255, 0.5);
   border-left: 1px solid rgba(255, 255, 255, 0.5);
+  /* overflow-y: scroll; */
+  /* height:100%; */
+
+  /* 스크롤바 적용시 사라짐방지 */
+  min-height: 0;
+  flex-shrink: 0;
+  overflow-y: auto;
+  /* x축 스크롤바 자동생성방지 */
+  overflow-x: hidden;
+
+  /* 스크롤바 포함 전체영역 모서리자름 */
+  -webkit-mask-image: radial-gradient(circle, white 100%, black 100%);
+  mask-image: paint(some-paint-worklet);
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
 }
 
-.alerts > div:last-child {
-  height: 85px;
-  padding: none;
+#svg_noti::-webkit-scrollbar {
+  width: 10px;
 }
 
-
-.alerts > div > div {
-  display: flex;
-  margin: 0 auto;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  height: 16px;
-  gap: 6px;
+#svg_noti::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.alerts > div > div:last-child {
-  height: 100%;
+#svg_noti::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
-.alerts > div > .bell-wrap > .bell {
-  /* 종 아이콘 */
-  font-size: 20px;
-  color: #F5D042;
-  display: inline-block;
-  transform-origin: 50% 0%;
-  font-variation-settings:
-  'FILL' 1,'wght' 400
+#svg_noti::-webkit-scrollbar-thumb:hover {
+  /* background: #aaa; */
 }
-
-/* 차트 */
-.chart-container {
-  width: 100%;
-  height: 100%;
-}
-
-
-/* 애니메이션 */
-.bell {
-  animation: bell-ring 2s infinite;
-}
-@keyframes bell-ring {
-  0%   { transform: rotate(0deg); }
-  15%  { transform: rotate(15deg); }
-  30%  { transform: rotate(-12deg); }
-  45%  { transform: rotate(10deg); }
-  60%  { transform: rotate(-6deg); }
-  75%  { transform: rotate(3deg); }
-  100% { transform: rotate(0deg); }
-}
-
-.clock-wrap > div {
-  font-weight: 500;
-}
-
 
 
 /* 새로운 예약 시작 */
+
 .notification {
   /* padding-bottom: 0.75em; */
   /* position: fixed; */

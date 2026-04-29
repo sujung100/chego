@@ -6,8 +6,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{% static 'manager/css/manager_sung_index.css' %}?after">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL,wght,GRAD,opsz@0..1,100..700,-50..200,20..48" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
   <title>Manager</title>
 </head>
 
@@ -90,7 +89,7 @@
           </section>
 
           <div class="top_flex">
-            <!-- <div id="svg_noti" class="recent">
+            <div id="svg_noti" class="recent">
               <div><span class="material-symbols-outlined">notifications_active</span>새 예약</div>
               <svg style="display: none;">
                 <symbol id="clock" viewBox="0 0 32 32">
@@ -131,24 +130,6 @@
                     stroke-linecap="round" />
                 </symbol>
               </svg>
-            </div> -->
-            <div class="alerts">
-              <div id="noti">
-                <div class="bell-wrap">
-                  <span class="material-symbols-outlined bell">notifications</span>
-                  <div>새로운 예약</div>
-                </div>
-              </div>
-              <div id="timenoti">
-                <div class="clock-wrap">
-                  <div id="clock"></div>
-                </div>
-              </div>
-              <div id="chartnoti">
-                <div class="chart-container">
-                  <canvas id="storeMonthlyChart"></canvas>
-                </div>
-              </div>
             </div>
             <!-- 달력추가 -->
             <div class="content3">
@@ -182,7 +163,7 @@
 
           <div class="app_wrap">
             <div class="app" id="app">
-                <div class="title">Tasks</div>
+                <div class="title">체크리스트</div>
                 <form class="form" id="todo-form">
                   <input class="input form__input" id="todo-input" placeholder="할 일을 입력하세요..." />
                   <button class="blue_btn form__submit-btn" type="submit">추가</button>

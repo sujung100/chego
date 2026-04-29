@@ -21,16 +21,13 @@ from django.core.paginator import Paginator
 from django.core import serializers
 from collections import defaultdict
 from django.utils.safestring import mark_safe
-from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.db.models import Q, Count
-from django.db.models.functions import Substr
+from django.db.models import Q
 from . import models
 
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
 
 from .forms import ManagerUpdateForm, StoreUpdateForm, UpdateForm, TotalReservationForm
 
@@ -95,33 +92,6 @@ class ManagerStoreList(LoginRequiredMixin, ListView):
         context['store_json'] = json.dumps(manager_list_dicts, cls=DjangoJSONEncoder)
 
         if current_user.is_authenticated:
-            
-            # 3개월 차트 
-            today = timezone.now().date()
-            target_months = [(today - relativedelta(months=i)).strftime('%Y-%m') for i in range(3)]
-            month_filter = Q()
-            for month in target_months:
-                month_filter |= Q(reservation_date__startswith=month)
-
-            rsv_stats_queryset = rsv.Reservation_user.objects.filter(
-                store_id__owner=current_user 
-            ).filter(
-                month_filter 
-            ).annotate(
-                res_month=Substr('reservation_date', 1, 7)
-            ).values(
-                'store_id', 'res_month'
-            ).annotate(
-                total_count=Count('id')
-            ).order_by('store_id', 'res_month')
-
-            # 월 예약수 - 스토어기준
-            stats_list = list(rsv_stats_queryset)
-            context["rsv_month_json"] = json.dumps(stats_list, cls=DjangoJSONEncoder)
-            
-            print(f"타겟월: {target_months}")
-            print(f"결과 갯수: {rsv_stats_queryset.count()}")
-
             rsvs = rsv.Reservation_user.objects.all().order_by("-reservation_date")
             messages = models.Message.all_messages(current_user.username)
             context["rsvs"] = rsvs

@@ -1,0 +1,336 @@
+<script>
+  // Notification.requestPermission().then(function (permission) {
+  //   console.log('Permission:', permission);
+  // });
+  // new Notification("Hello, world!",{
+  //   body : "This is a notification."
+  // });
+
+  ntfIcon = document.querySelector(".notification-icon:nth-of-type(2)");
+  ntfIcon_count = document.querySelector(".notification-icon:nth-of-type(2) > .num-count");
+  modal = document.querySelector("#open-modal");
+  function clickReserVaTion() {
+    ntfIcon.addEventListener("click", function () {
+      console.log("클릭 이벤트 되냐");
+      // window.location.hash = "open-modal";
+      modal.style.display = "flex";
+      ntfIcon_count.style.display = "none";
+    });
+    window.addEventListener("click", function () {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    })
+
+  }
+  clickReserVaTion();
+
+  async function pageStart(socket) {
+    let rsvFetch = await fetch("api/reservation_false/");
+    let rsvDetailsData = await rsvFetch.json();
+    // console.table("콘솔태이블", rsvDetailsData);
+    console.log("페이지스타트", rsvDetailsData);
+    console.log("페이지스타트", rsvDetailsData.length);
+    if (rsvDetailsData.length !== 0) {
+      ntfIcon_count.style.display = "flex";
+      ntfIcon_count.textContent = rsvDetailsData.length
+    }
+    rsvNotification(socket, rsvDetailsData);
+  }
+
+  async function reserVationDetails(socket, data) {
+    // console.log("모달 스크립트");
+    let reservationId = data.content;
+    console.log("나와라", reservationId);
+    // console.log("reserVationDetails", reservationId);
+    let rsvFetch = await fetch(`api/reservation_id/${reservationId}`);
+    // console.log(rsvFetch);
+    let rsvdata2 = await rsvFetch.json();
+    // console.log(rsvdata);
+    if (rsvdata2.rsv_check !== 0) {
+      ntfIcon_count.style.display = "flex";
+      ntfIcon_count.textContent = rsvdata2.rsv_check
+    }
+    rsvNotification(socket, rsvdata2);
+  }
+
+  // async function rsvNotification(rsvdata) {
+
+  //   console.log("노티피레져베이션");
+  //   const reservation_card = document.querySelector("#reservation-info");
+  //   // console.log("rsvdata", rsvdata);
+
+
+  //   for (let i = 0; i < rsvdata.length; i++) {
+  //     let rsvInfo = rsvdata[i];
+  //     let card = document.createElement("div");
+  //     card.classList.add("card");
+  //     console.log("포문1", rsvInfo);
+  //     for (let key in rsvInfo) {
+  //       console.log("포문2", key);
+  //       let cardP = document.createElement("p");
+  //       cardP.textContent = `${key} : ${rsvInfo[key]}`;
+  //       card.appendChild(cardP);
+  //     }
+  //     reservation_card.appendChild(card);
+  //   }
+
+
+  // }
+
+  // 수정전
+  // async function rsvNotification(socket, rsvdata) {
+
+  //   // console.log("노티피레져베이션");
+  //   const reservation_card = document.querySelector("#reservation-info");
+
+  //   // console.log("배열", rsvdata);
+  //   if (Array.isArray(rsvdata)) {
+  //     console.log("배열", rsvdata);
+      
+  //     for (let i = 0; i < rsvdata.length; i++) {
+  //       let rsvInfo = rsvdata[i];
+  //       let card = document.createElement("div");
+  //       card.classList.add("card");
+  //       card.dataset.rid = rsvInfo.id;
+  //       // console.log(rsvInfo);
+  //       console.log("배열로 생성되냐");
+  //       for (let key in rsvInfo) {
+
+  //         let cardP = document.createElement("p");
+  //         cardP.textContent = `${key} : ${rsvInfo[key]}`;
+  //         card.appendChild(cardP);
+  //       }
+  //       reservation_card.appendChild(card);
+  //       card.addEventListener("click", function () {
+  //         rsvIsRead1(socket, rsvInfo.id);
+  //         this.remove();
+  //       });
+  //     }
+  //   }
+  //   else {
+  //     console.log("객체", rsvdata);
+
+
+  //     let card = document.createElement("div");
+  //     card.classList.add("card");
+  //     card.dataset.rid = rsvdata.id;
+  //     for (let key in rsvdata) {
+
+  //       // console.log("키", key);
+  //       let cardP = document.createElement("p");
+  //       cardP.textContent = `${key} : ${rsvdata[key]}`;
+  //       card.appendChild(cardP);
+  //     }
+  //     reservation_card.appendChild(card);
+  //     card.addEventListener("click", function () {
+  //       rsvIsRead1(socket, rsvdata.id);
+  //       this.remove();
+  //     });
+  //   }
+  // }
+
+  // // 수정후
+  // async function rsvNotification(socket, rsvdata) {
+  //   const reservation_card = document.querySelector("#reservation-info");
+    
+  //   // 현재 NotificationCenter가 관리하는 스토어 ID 가져오기
+  //   const currentActiveStoreId = nc.storeManager.storeId;
+
+  //   // 데이터를 배열로 표준화 (한 개든 여러 개든 동일한 로직 처리를 위해)
+  //   const dataArray = Array.isArray(rsvdata) ? rsvdata : [rsvdata];
+
+  //   console.log("찍1", currentActiveStoreId);
+  //   console.log("찍2", dataArray);
+
+  //   dataArray.forEach(rsvInfo => {
+  //     console.log("찍3", dataArray);
+  //     // [핵심 필터] 서버 데이터의 store_id와 현재 활성화된 storeId가 다르면 생성하지 않음
+  //     // (데이터 타입이 다를 수 있으니 == 로 비교하거나 Number()를 씌워줍니다)
+  //     if (String(rsvInfo.store_id) !== String(currentActiveStoreId)) {
+  //       console.log(`스토어 불일치: 현재(${currentActiveStoreId}) != 데이터(${rsvInfo.store_id})`);
+  //       return; // 이번 루프는 건너뜁니다.
+  //     }
+
+  //     // --- 여기서부터 카드 생성 로직 ---
+  //     let card = document.createElement("div");
+  //     card.classList.add("card");
+  //     card.dataset.rid = rsvInfo.id;
+      
+  //     // 데이터 표시 로직 (id, user_name, store_id 등)
+  //     for (let key in rsvInfo) {
+  //       let cardP = document.createElement("p");
+  //       cardP.textContent = `${key} : ${rsvInfo[key]}`;
+  //       card.appendChild(cardP);
+  //     }
+
+  //     reservation_card.appendChild(card);
+
+  //     card.addEventListener("click", function () {
+  //       rsvIsRead1(socket, rsvInfo.id);
+  //       this.remove();
+  //     });
+  //   });
+  // }
+
+  // 수정후2
+  // async function rsvNotification(socket, rsvdata) {
+  //   // 데이터 배열로
+  //   const dataArray = Array.isArray(rsvdata) ? rsvdata : [rsvdata];
+  //   if (dataArray.length === 0) return;
+
+  //   // store_id를 확인-> 캐시 저장
+  //   dataArray.forEach(item => {
+  //     const sId = String(item.store_id);
+  //     if (!nc.storeDataCache[sId]) {
+  //       nc.storeDataCache[sId] = [];
+  //     }
+  //     // 중복 방지 (이미ID있으면 추가x)
+  //     if (!nc.storeDataCache[sId].find(existing => existing.id === item.id)) {
+  //       nc.storeDataCache[sId].push(item);
+  //     }
+  //   });
+
+  //   renderReservationCards(nc.storeManager.storeId);
+  // }
+
+  // 수정중
+  // async function rsvNotification(socket, rsvdata) {
+  //   const dataArray = Array.isArray(rsvdata) ? rsvdata : [rsvdata];
+    
+  //   dataArray.forEach(item => {
+  //     const sId = String(item.store_id);
+  //     if (!nc.storeDataCache[sId]) nc.storeDataCache[sId] = [];
+      
+  //     if (!nc.storeDataCache[sId].find(d => d.id === item.id)) {
+  //       nc.storeDataCache[sId].push(item);
+  //     }
+  //   });
+
+  //   // [추가] 모달이 현재 열려있다면 즉시 새로고침
+  //   const modal = document.querySelector("#open-modal");
+  //   if (modal && modal.style.display === "flex") {
+  //     renderReservationCards(nc.storeManager.storeId);
+  //   }
+
+  //   const hasCurrentStoreUpdate = dataArray.some(item => String(item.store_id) === String(currentStoreId));
+
+  //   if (hasCurrentStoreUpdate) {
+  //     // 현재 보고 있는 스토어에 새 예약이 왔으므로 카드 목록 다시 그리기
+  //     renderReservationCards(currentStoreId);
+      
+  //     // 알림 버튼(noti) 가시성 업데이트
+  //     updateNotiVisibility();
+  //   } else {
+  //     // 다른 스토어의 예약이 온 경우, 버튼 가시성만 전체적으로 체크하거나
+  //     // 현재 스토어 기준이므로 아무 작업도 하지 않음 (이미 캐시에는 저장됨)
+  //     updateNotiVisibility();
+  //   }
+  // }
+  
+
+  //수정
+  async function rsvNotification(socket, rsvdata) {
+    // 1. 변수 정의 (에러 해결 핵심: 비교하기 전에 반드시 선언!)
+    const currentStoreId = nc.storeManager.storeId; 
+    const dataArray = Array.isArray(rsvdata) ? rsvdata : [rsvdata];
+
+    // 2. 데이터 저장 (캐시 업데이트)
+    dataArray.forEach(item => {
+      const sId = String(item.store_id);
+      if (!nc.storeDataCache[sId]) nc.storeDataCache[sId] = [];
+      
+      // 중복 데이터 방지
+      if (!nc.storeDataCache[sId].find(d => d.id === item.id)) {
+        nc.storeDataCache[sId].push(item);
+      }
+    });
+
+    // 3. 현재 스토어에 해당하는 업데이트가 있는지 확인
+    const hasCurrentStoreUpdate = dataArray.some(item => String(item.store_id) === String(currentStoreId));
+
+    // 4. UI 업데이트 로직 (모달 및 알림 버튼)
+    if (hasCurrentStoreUpdate) {
+      // 현재 스토어의 예약이 들어왔다면 모달 내부 카드를 다시 그림
+      renderReservationCards(currentStoreId);
+    }
+
+    // 5. 알림 버튼(noti) 표시 여부 결정
+    // (이 함수 내부에서 현재 스토어 ID를 기준으로 체크하도록 설계했으므로 호출만 하면 됩니다)
+    updateNotiVisibility();
+  }
+
+
+  // 활성스토어 화면비우고 데이터추가
+  function renderReservationCards(storeId) {
+    const reservation_card = document.querySelector("#reservation-info");
+    if (!reservation_card) return;
+
+    reservation_card.innerHTML = "";
+
+    const cachedData = nc.storeDataCache[String(storeId)] || [];
+    
+    cachedData.forEach(rsvInfo => {
+      let card = document.createElement("div");
+      card.classList.add("card");
+      card.dataset.rid = rsvInfo.id;
+
+    const displayFields = {
+      'user_name': '예약자명',
+      'user_phone': '연락처',
+      'reservation_date': '예약일',
+      'user_time': '예약시간',
+      'visitor_num': '방문인원'
+    };
+
+      Object.keys(displayFields).forEach(key => {
+        // 데이터가 존재할 때만 생성
+        if (rsvInfo[key] !== undefined) {
+          let cardP = document.createElement("p");
+          cardP.textContent = `${displayFields[key]} : ${rsvInfo[key]}`;
+          if (key === 'visitor_num') cardP.textContent += "명";
+
+          card.appendChild(cardP);
+        }
+      });
+      
+      reservation_card.appendChild(card);
+
+      // 클릭 -> 읽음처리 + 캐시삭제
+      card.addEventListener("click", function () {
+        rsvIsRead1(socket, rsvInfo.id); // socket은 전역 혹은 인자로 관리
+        this.remove();
+        const sId = String(storeId);
+        
+        nc.storeDataCache[sId] = nc.storeDataCache[sId].filter(d => d.id !== rsvInfo.id);
+        updateNotiVisibility();
+      });
+    });
+  }
+
+  async function rsvNotiCount() {
+    // pass;
+  }
+
+  function rsv_count_none(element) {
+    element.style.display = "none";
+  }
+  function rsv_count_flex(element) {
+    element.style.display = "flex";
+  }
+
+
+
+  function rsvIsRead1(socket, data) {
+    if (socket.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify({
+        "command": "RSV_mark_as_read",
+        "rsv_id": data,
+      }));
+
+    }
+  }
+  function rsvIsRead2(element) {
+    // pass;
+  }
+</script>

@@ -34,42 +34,8 @@
   let manager_webSockets = {};
   // let chatSocket;
 
-  // 수정전
-  // async function accessAllChannels() {
-  //   let endpoints = [
-  //     // { name: "chat", url: weStart + loc2 + userName + "/" },
-  //     { name: "chat", url: weStart + loc.host + loc.pathname + loc.search + "admin_chat2/" + userName + "/" },
-  //     // { name: "user", url: weStart + loc3 + userName + "/" },
-  //     { name: "manager", url: weStart + loc.host + loc.pathname + loc.search },
-  //   ];
-  //   console.log("엔드포인트", endpoints);
-  //   Notification.requestPermission().then(function (permission) {
-  //     console.log('Permission:', permission);
-  //   });
-  //   for (let ept of endpoints) {
-  //     let webSocket = new ReconnectingWebSocket(ept.url);
-  //     manager_webSockets[ept.name] = webSocket;
-  //     webSocket.onopen = function (e) {
-  //       console.log(webSocket.url);
-  //       console.log('Web socket opened successfully');
-  //     };
-  //   }
-
-  //   manager_webSockets["chat"].addEventListener("message", function (e) {
-  //     eventListeners["chat"] = handleOnMessage1(manager_webSockets["chat"], e);
-  //   });
-    
-  //   manager_webSockets["manager"].addEventListener("message", function(e){
-  //     eventListeners["nonotification"] = handleOnMessage2(manager_webSockets["manager"], e);
-  //   });
-
-  //   resetChatSoket = await manager_webSockets["chat"];
-  //   document.addEventListener("DOMContentLoaded", function () {
-  //     pageStart(manager_webSockets.manager);
-  //   });
-  // }
-
   async function accessAllChannels() {
+
     let endpoints = [
       // { name: "chat", url: weStart + loc2 + userName + "/" },
       { name: "chat", url: weStart + loc.host + loc.pathname + loc.search + "admin_chat2/" + userName + "/" },
@@ -80,33 +46,52 @@
     Notification.requestPermission().then(function (permission) {
       console.log('Permission:', permission);
     });
+    // if (Notification.permission === 'granted') {
+    //   console.log("예약API실행되니");
+    //   new Notification("새로운 예약이 추가 되었습니다.", {
+    //     body: "예약 내용을 확인해주세요."
+    //   });
+    // }
+    // console.log("어디서 찍히냐 Notification.permission",Notification.permission);
     for (let ept of endpoints) {
-      // let webSocket = new ReconnectingWebSocket(ept.url);
-      manager_webSockets[ept.name] = new ReconnectingWebSocket(ept.url);;
-      manager_webSockets[ept.name].onopen = function (e) {
-        console.log(`${ept.name} socket opened`);
+      // if (manager_webSockets[chat]) {
+      //   continue;
+      // }
+      let webSocket = new ReconnectingWebSocket(ept.url);
+      manager_webSockets[ept.name] = webSocket;
+      // console.log(ept.name);
+
+      webSocket.onopen = function (e) {
+        console.log(webSocket.url);
+        console.log('Web socket opened successfully');
       };
+      // webSocket.onmessage = function(e){
+      //   console.log(ept.name);
+      //   handleOnMessage(webSocket,e);
+      // };
+
+      // webSocket.onclose = function (e) {
+      //   console.error('Socket closed unexpectedly');
+      // };
     }
 
-    manager_webSockets["chat"].onmessage = (e) => handleOnMessage1(manager_webSockets["chat"], e);
-    manager_webSockets["manager"].onmessage = (e) => handleOnMessage2(manager_webSockets["manager"], e);
+    manager_webSockets["chat"].addEventListener("message", function (e) {
+      // handleOnMessage(manager_webSockets["chat"], e);
+      eventListeners["chat"] = handleOnMessage1(manager_webSockets["chat"], e);
+    });
+    
+    manager_webSockets["manager"].addEventListener("message", function(e){
+      eventListeners["nonotification"] = handleOnMessage2(manager_webSockets["manager"], e);
+    });
 
-    accessAllChannels();
-
-    // DOMContentLoaded가 이미 지났을 수도 있으므로 체크 후 실행
-    // if (document.readyState === "loading") {
-    //   document.addEventListener("DOMContentLoaded", () => pageStart());
-    // } else {
-    //   pageStart();
-    // }
-
+    resetChatSoket = await manager_webSockets["chat"];
+    // MessageSendShortcut();
     document.addEventListener("DOMContentLoaded", function () {
-      // 소켓이 생성될 때까지 아주 잠시 기다린 후 실행하거나, 
-      // pageStart 내부에서 소켓 존재 여부를 체크하도록 설계
-      setTimeout(() => pageStart(), 100); 
+      // console.log(manager_webSockets);
+      pageStart(manager_webSockets.manager);
     });
   }
-  
+  accessAllChannels();
   // console.log(reserVationDetails());
   // pageStart();
   let notificationPermission = Notification.permission;

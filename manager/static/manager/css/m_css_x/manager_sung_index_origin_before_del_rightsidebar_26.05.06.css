@@ -155,55 +155,31 @@ body {
 
 #wrap {
   width: 90%;
-  /* height: 100vh; */
+  height: 100vh;
   display: flex;
   margin: 0 auto;
   position:relative;
-
-  /* ///////////////////////////////////// */
-
-  align-items: stretch;
-  min-height: 100vh;
-  /* 추가 */
-  justify-content: center;
-  align-items: center;
   /* display: grid; */
   /* grid-template-columns: 4fr 2fr; */
   /* grid-template-rows: auto; */
   /* position: relative; */
 }
 
-.box_wrap {
-  display: flex;
-  width: 100%;
-  align-items: stretch;
-}
-
-/* .box1, .box2 {
-  height: 100%; 
-} */
 
 .box1 {
   /* background-color: #000; */
   /* justify-content: end; */
-  /* width: 70%; */
-  width: calc(70% - 20px);
   display: flex;
-  justify-content: flex-end;
-  /* justify-content: center; */
-  /* width: 100%; */
-}
-/* /////////////////////////// */
-.box1 .content1 {
+  justify-content: center;
   width: 100%;
-  transform: translateX(20px);
-  /* width: 90%; */
+}
+
+.box1 .content1 {
+  width: 90%;
   /* height: 80%; */
   display: flex;
-  /* align-self: center; */
+  align-self: center;
   border-radius: 20px;
-  /* 추가 */
-  /* padding: 20px; */
 
   /* backdrop-filter: blur(20px); */
   /* background-color: rgba(255, 255, 255, 0.5); */
@@ -862,7 +838,6 @@ svg {
   align-items: center;
   height: 16px;
   gap: 6px;
-  flex-direction: column;
 }
 
 .alerts > div > div:last-child {
@@ -883,12 +858,9 @@ svg {
 /* 차트 */
 .chart-container {
   width: 100%;
-  /* height: 100%; */
+  height: 100%;
 }
-.chart-container > div {
-  font-size: 0.8rem;
-  margin-top: 1.2rem;
-}
+
 
 /* 애니메이션 */
 .bell {
@@ -1081,211 +1053,22 @@ svg {
 
 /* 새로운 예약 끝 */
 
-/* 수정중 ******************************/
 .box2 {
-  width: 30%;
   display: flex;
-  position: relative;
-  /* 추가 */
-  /* align-self: stretch; */
   /* position:relative; */
 }
 
-/* .box2 .content2 {
-  position:relative;
-  width: 80%;
-  margin: 3rem 0;
-  border-radius: 0 20px 20px 0;
-  backdrop-filter: blur(30px);
-  background-color: rgba(0, 0, 0, 0.2);
-  z-index: 0;
-}
-.box2 .content2::after {
-  content: "";
-  width: 10px;
-  height: 100%;
-  backdrop-filter: blur(30px);
-  background-color: rgba(0, 0, 0, 0.2);
-  position: absolute;
-  top: -20px;
-  left: -20px;
-  z-index: -1;
-} */
-
-/* absolute제거 */
-/* .box2 .content2 {
-  position:absolute;;
-  width: 30%;
-  height: 87%;
-  margin: 3rem 0;
-  border-radius: 0 20px 20px 0;
-  top: -2px;
-  backdrop-filter: blur(30px);
-  background-color: rgba(0, 0, 0, 0.3);
-  z-index: -1;
-  right: 20px;
-} */
-
 .box2 .content2 {
   
-  /* backdrop-filter: blur(10px); */
+  backdrop-filter: blur(10px);
+  position:relative;
   /* top:50%; */
-  /* height: 80%; */
-  /* align-self: center;  */
-  /* justify-content: center; */
-  /* align-items: center; */
-  /* border: 1px solid #fff; */
-  /* position:absolute;; */
-  position: absolute; /* 공중에 띄워서 box2 크기만큼 꽉 채우기 */
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  min-height: 100%;
-  /* height: 100%; */
-  /* margin: 3rem 0; */
-  margin: 0;
-  border-radius: 0 20px 20px 0;
-  backdrop-filter: blur(30px);
-  background-color: rgba(0, 0, 0, 0.35);
-  /* transform: translateX(-20px); */
-  z-index: -1;
-  /* top: -2px;
-  right: 20px; */
-}
-
-.box2 .side_wrap {
-  position: relative;
-  width: 100%;
-  z-index: 5;
-  /* margin-left: 20px; */
-  pointer-events: auto;
-}
-.side_wrap .t_chart {
-  margin-top: 2rem;
-  height: 250x;
-  pointer-events: auto;
-  /* transform: translateX(-20px); */
-}
-.side_wrap .l_chart {
-  margin-top: 1.2rem;
-  height: 250px;
-  pointer-events: auto;
-  /* transform: translateX(-20px); */
-}
-.t_chart canvas {
-  margin: 0 1.2rem 0 2.4rem;
-  border-radius: 1.5rem;
-  background-color: #9a9ea1;
-  border-top: 1px solid rgba(255, 255, 255, 0.5);
-  border-left: 1px solid rgba(255, 255, 255, 0.5);
-}
-.l_chart canvas {
-  margin: 0 1.2rem 0 2.4rem;
-  border-radius: 1.5rem;
-  background-color: #9a9ea1;
-  border-top: 1px solid rgba(255, 255, 255, 0.5);
-  border-left: 1px solid rgba(255, 255, 255, 0.5);
-}
-#leadChartInfo {
-  /* margin: 0 1.2rem 0 2.4rem; */
-  /* text-align: center; */
-  font-size: 0.8rem;
-}
-/* .sub_title {
-  font-size: 14px;
-}
-.sub_txt {
-  font-size: 0.8rem;
-  margin: 1.2rem 1.2rem 2rem 2.4rem;
-  border-radius: 1.5rem;
-  background-color: #9a9ea1;
-  border-top: 1px solid rgba(255, 255, 255, 0.5);
-  border-left: 1px solid rgba(255, 255, 255, 0.5);
-}
-.content2 .side_wrap .t_chart > div{
-  font-size: 0.8rem;
-  text-align: center;
-  margin-bottom: 1.2rem;
-}
-.content2 .side_wrap .l_chart > div {
-  font-size: 0.8rem;
-  text-align: center;
-} */
-
-/* 데이터 기반 매장운영 제안 - 분석통계 */
-.sub_txt {
-  line-height: 1.8;
-  font-size: 0.8rem;
-  margin: 1.2rem 1.2rem 2rem 2.4rem;
-  color: #444;
-  /* css 숫자 카운터 초기화 0부터시작 - 카운터명numCount */
-  counter-reset: numCount; 
-  border-radius: 1.5rem;
-  background-color: #9a9ea1;
-  border-top: 1px solid rgba(255, 255, 255, 0.5);
-  border-left: 1px solid rgba(255, 255, 255, 0.5);
-}
-
-.sub_txt .sub_title {
-  /* margin-left: 2rem; */
-  font-size: 0.8rem;
-  /* font-weight: bold; */
-  /* margin-bottom: 1rem; */
-  margin: 0.4rem 0 1rem 1rem;
-  color: #111;
-}
-
-.analysis-item {
-  position: relative;
-  margin-bottom: 1rem;
-  display: flex;
-  flex-direction: column;
-}
-
-.analysis-item .item_title {
-  font-weight: bold;
-  color: #111;
-  display: inline-flex;
+  width: 80%;
+  height: 80%;
+  align-self: center; 
+  justify-content: center;
   align-items: center;
-  gap: 8px;
-}
-
-/* css 숫자 카운터 */
-.analysis-item .item_title::before {
-  counter-increment: numCount;
-  content: counter(numCount);
-  
-  background-color: #64767c;
-  color: #06B7F1;
-  font-size: 0.6rem;
-  font-weight: bold;
-  text-align: center;
-  
-  width: 1rem;
-  height: 1rem;
-  line-height: 1rem;
-  border-radius: 50%;
-  
-  display: inline-block;
-  flex-shrink: 0;
-}
-
-.analysis-item .item_content {
-  margin-left: calc(1rem + 8px); /* 카운터크기+갭 */
-  margin-top: 0.2rem;
-  /* font-size: 0.7rem; */
-  color: #000;
-}
-
-.analysis-item .item_tip {
-  /* font-size: 0.7rem; */
-  /* color: #666; */
-}
-
-.analysis-item .highlight-val {
-  color: #000;
-  font-weight: bold;
+  border-radius: 3%;
 }
 
 /* 로그인 시작 */
@@ -1593,8 +1376,7 @@ button {
 .blue_btn {
   color: #4d4d4d;
   /* padding: 0.7em 1.7em; */
-  /* padding: 0.6em 1.5em; */
-  padding: 0.6em 0.8em;
+  padding: 0.6em 1.5em;
   /* font-size: 18px; */
   font-size: 13px;
   /* border-radius: 0.5em; */

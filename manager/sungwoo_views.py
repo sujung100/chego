@@ -96,7 +96,7 @@ class ManagerStoreList(LoginRequiredMixin, ListView):
 
         if current_user.is_authenticated:
             
-            # 3개월 차트 
+            # 3개월 예약추이 차트 
             today = timezone.now().date()
             target_months = [(today - relativedelta(months=i)).strftime('%Y-%m') for i in range(3)]
             month_filter = Q()
@@ -121,6 +121,7 @@ class ManagerStoreList(LoginRequiredMixin, ListView):
             
             print(f"타겟월: {target_months}")
             print(f"결과 갯수: {rsv_stats_queryset.count()}")
+            print("월예약수", context["rsv_month_json"])
 
             rsvs = rsv.Reservation_user.objects.all().order_by("-reservation_date")
             messages = models.Message.all_messages(current_user.username)
@@ -129,6 +130,57 @@ class ManagerStoreList(LoginRequiredMixin, ListView):
             sto_info = list(rsv.Store.objects.filter(owner=current_user).values('store_name', 'address'))
             sto_json = json.dumps(sto_info)
             context["sto_json"] = sto_json
+
+            # 시간대 차트
+            # 시간대별 예약 건수(user_time 그룹화)
+            time_stats = (
+                rsv.Reservation_user.objects
+                .values('store_id', 'user_time')
+                .annotate(count=Count('id'))
+                .order_by('user_time')
+            )
+            time_chart_raw = list(time_stats)
+            context['time_chart_raw'] = json.dumps(time_chart_raw)
+            # context['time_labels'] = json.dumps([item['user_time'] for item in time_stats])
+            # context['time_data'] = json.dumps([item['count'] for item in time_stats])
+            # print("타임라벨", context['time_labels'])
+            # print("타임데이터", context['time_data'])
+            print()
+            print("타임데이터", context['time_chart_raw'])
+            print()
+
+            # 리드타임 차트
+            all_reservations = rsv.Reservation_user.objects.all()
+            lead_chart_raw = []
+            
+            for r in all_reservations:
+                if not r.reservation_date or not r.date:
+                    continue
+                    
+                try:
+                    # [중요] DB에 저장된 reservation_date 문자열의 포맷에 맞게 수정하세요.
+                    # 예: "2026-05-18" -> "%Y-%m-%d" / "2026.05.18" -> "%Y.%m.%d"
+                    rsv_date = datetime.strptime(r.reservation_date.strip(), "%Y-%m-%d").date()
+                    create_date = r.date.date() # DateTimeField를 Date 객체로 변환
+                    
+                    # 실제 방문일 - 예약 등록일 (며칠 전 예약했는지 계산)
+                    lead_day = (rsv_date - create_date).days
+                    
+                    # 오늘 등록해서 오늘 방문하는 경우 등 예외 처리
+                    if lead_day < 0: 
+                        lead_day = 0
+                        
+                    lead_chart_raw.append({
+                        'store_id': r.store_id_id,
+                        'lead_day': lead_day # 💡 숫자로 전달하여 JS에서 구간 분류를 처리합니다.
+                    })
+                except Exception as e:
+                    # 날짜 형식이 안 맞아서 에러가 나는 데이터는 스킵
+                    continue
+
+            context['time_chart_raw'] = json.dumps(list(time_stats)) # 기존 데이터
+            context['lead_chart_raw'] = json.dumps(lead_chart_raw)   # 신규 리드타임 데이터
+        
         return context
     
     # 얘 나중에 빼도되나 확인-- post요청 딱히 보내고있지않음 (투두리스트는 아래의 TodoAPI의 post에서 수행)

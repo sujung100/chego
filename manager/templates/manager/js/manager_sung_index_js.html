@@ -31,6 +31,8 @@
     // 초기로딩시 첫 스토어로 차트생성
     const initialStoreId = c1.querySelector("[class$='_storeId']").textContent;
     updateStoreChart(initialStoreId);
+    drawTimeChart2(initialStoreId);
+    drawLeadChart3(initialStoreId);
 
     if (store_id.length >= 1) {
       nc.storeManager.handleClick(store_id[0]);
@@ -284,6 +286,8 @@
           renderCards(targetId);
           updateNoti();
           updateStoreChart(this.storeId);
+          drawTimeChart2(this.storeId);
+          drawLeadChart3(this.storeId);
         }
       } catch (error) {
         console.error("데이터를 가져오는 중 오류 발생:", error);
@@ -602,7 +606,7 @@
   setInterval(updateClock, 1000);
 
 
-  // 차트 생성
+  // 차트1 생성
   const rsvMonthData = JSON.parse('{{ rsv_month_json|safe }}');
   let myChart = null;
 
@@ -634,14 +638,351 @@
         }]
       },
       options: {
-        responsive: true,
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: { stepSize: 1 }
+      responsive: true,
+          maintainAspectRatio: false, // 부모크기에 맞춤
+          plugins: {
+            // 라벨숨기기 - 나중에 true해도됨
+            legend: {
+              display: false
+            },
+            // 마우스 올렸을때 툴팁나오게
+            tooltip: {
+              enabled: true
+            }
+          },
+          scales: {
+            x: {
+              ticks: {
+                callback: function (val, index) {
+                  const fullDate = this.getLabelForValue(val);
+                  const month = fullDate.split('-')[1];
+                  return parseInt(month) + '월';
+                }
+              },
+              grid: {
+                display: false // X축숨김
+              }
+            },
+            y: {
+              beginAtZero: true,
+              ticks: {
+                stepSize: 1,
+                callback: function(value) {
+                  return value + '건'; // y축 숫자에 "건" 추가
+                }
+               },
+              grid: {
+                color: 'rgba(200, 200, 200, 0.2)' // Y축연하게
+              }
+            }
           }
         }
-      }
+    });
+  }
+
+
+  // 차트2 생성
+  const serverRawData =  JSON.parse('{{ time_chart_raw|safe }}') ; 
+  let timeChart = null;
+
+  function drawTimeChart2(storeId) {
+    const ctx = document.getElementById('timeChart').getContext('2d');
+
+    console.log("캔버스 엘리먼트 확인:", ctx);
+
+    if (!ctx) {
+        console.error("HTML에 id가 'timeChart'인 canvas 엘리먼트가 없습니다.");
+        return;
+    }
+    // const context = ctx.getContext('2d');
+    // let filtered;
+
+    // 현재스토어만
+    const filtered = serverRawData
+      .filter(item => item.store_id == storeId)
+      .map(item => ({ label: item.user_time, value: item.count }));
+    
+    console.log("뜨냐", filtered);
+    // 인원수 기준 내림차순
+    filtered.sort((a, b) => b.value - a.value);
+
+    let countToExtract = 3; // 기본값은 3개씩
+    if (filtered.length >= 6) {
+        countToExtract = 3; // 6개 이상이면 상위3, 하위3 (총 6개)
+    } else if (filtered.length >= 4) {
+        countToExtract = 2; // 4~5개면 상위2, 하위2 (총 4개)
+    } else {
+        countToExtract = 1; // 3개 이하로 너무 적으면 상위1, 하위1 (총 2개)
+    }
+
+    if (filtered.length > 0) {
+      // 이미 filtered가 내림차순 정렬(b.value - a.value)되어 있으므로:
+      const maxVal = filtered[0].value;
+      const minVal = filtered[filtered.length - 1].value;
+
+      // 공동 1등, 공동 꼴등 시간대 배열로 모두 수집 ['14시', '15시']
+      const peakTimes = filtered.filter(item => item.value === maxVal).map(item => item.label);
+      const minTimes = filtered.filter(item => item.value === minVal).map(item => item.label);
+
+      document.getElementById('peakTimeTxt').innerText = peakTimes.join(', ');
+      document.getElementById('minTimeTxt').innerText = minTimes.join(', ');
+    } else {
+      document.getElementById('peakTimeTxt').innerText = "-시";
+      document.getElementById('minTimeTxt').innerText = "-시";
+    }
+
+    const topX = filtered.slice(0, countToExtract);          // 상위 N개
+    const bottomX = filtered.slice(-countToExtract);       // 하위 N개
+    
+    // 만약 데이터가 너무 적어서 상위와 하위가 같은 데이터를 가리키는 중복을 방지 (예: 데이터가 1개뿐일 때)
+    let finalFilteredData = Array.from(new Set([...topX, ...bottomX]));
+
+    // 상위3, 하위3 추출
+    // const top3 = filtered.slice(0, 3);
+    // const bottom3 = filtered.slice(-3);
+    // let finalFilteredData = [...top3, ...bottom3];
+
+    
+    // 최종 라벨, 데이터
+    const finalLabels = finalFilteredData.map(item => item.label);
+    const finalData = finalFilteredData.map(item => item.value);
+
+    // 상위=파랑 / 하위=회색
+    const numItems = finalFilteredData.length;
+    const half = Math.ceil(numItems / 2);
+    
+    const dynamicColors = [];
+    for (let i = 0; i < numItems; i++) {
+        if (i < half) {
+            dynamicColors.push('rgba(54, 162, 235, 0.7)'); // 앞쪽 절반=상위(파랑)
+        } else {
+            dynamicColors.push('rgba(0, 0, 0, 0.2)');      // 뒤쪽 절반=하위(회색)
+        }
+    }
+    
+    console.log("총★", finalFilteredData);
+    console.log("라데★", finalLabels);
+    console.log("라카★", finalData);
+
+    // 기존차트있으면 제거
+    if (timeChart) {
+      timeChart.destroy();
+    }
+    
+    timeChart = new Chart(ctx, {
+        type: 'bar', // 세로막대
+        data: {
+            labels: finalLabels,
+            datasets: [{
+              data: finalData,   // 필터링된 6개
+              backgroundColor: dynamicColors,  // 동적으로 결정
+              borderWidth: 0,
+              barThickness: 30,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            // 기존 스타일 유지 (그리드, 타이틀, 범례 제거)
+            plugins: {
+                title: {
+                  display: true,
+                  text: '    시간대별 예약 밀집도(최다/최소)',
+                  color: '#000000',
+                  align: 'start',
+                  font: {
+                    size: 14,
+                    weight: 'normal',
+                  },
+                  padding: {
+                    top: 10,
+                    bottom: 30
+                  }
+                },
+                // title: { display: false },
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.raw + '명'; // 툴팁에 "명" 추가
+                        }
+                    }
+                    // enabled: true
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    // border: { display: false }
+                    ticks: {
+                      color: '#000000', // 검정색 고정
+                    }
+                },
+                y: {
+                    grid: { display: false },
+                    // border: { display: false },
+                    ticks: {
+                        // display: false, // y축 숫자 숨기기
+                        stepSize: 1,
+                        color: '#000000',
+                        callback: function(value) {
+                            return value + '명'; // y축 숫자에 "명" 추가
+                        }
+                    }
+                }
+            }
+        }
+    });
+  }
+  
+
+  // 차트3 생성
+  const leadRawData = JSON.parse('{{ lead_chart_raw|safe }}'); 
+  // let leadChart = null;
+  if (typeof leadChart === 'undefined') {
+    var leadChart = null; 
+  }
+
+  function drawLeadChart3(storeId) {
+    const canvasElement = document.getElementById('leadChart');
+    const infoDiv = document.getElementById('leadChartInfo');
+    
+    if (!canvasElement) return;
+
+    // 해당 스토어 데이터 필터링
+    const storeData = leadRawData.filter(item => item.store_id == storeId);
+
+    // 5가지 구간 분류를 위한 초기화
+    const segments = {
+        '당일': 0,
+        '1~2일 전': 0,
+        '3~4일 전': 0,
+        '5~6일 전': 0,
+        '7일+ 전': 0
+    };
+
+    // 데이터를 돌며 구간별로 카운트 가산
+    storeData.forEach(item => {
+        const day = item.lead_day;
+        if (day === 0) segments['당일']++;
+        else if (day >= 1 && day <= 2) segments['1~2일 전']++;
+        else if (day >= 3 && day <= 4) segments['3~4일 전']++;
+        else if (day >= 5 && day <= 6) segments['5~6일 전']++;
+        else if (day >= 7) segments['7일+ 전']++;
+    });
+
+    // 총 예약 건수 계산
+    const totalCount = Object.values(segments).reduce((a, b) => a + b, 0);
+
+    // 데이터미존재시 예외 처리
+    if (totalCount === 0) {
+        if (leadChart) { leadChart.destroy(); leadChart = null; }
+        infoDiv.innerHTML = "예약 데이터가 없습니다.";
+        return;
+    }
+
+    // 차트에 넣을 라벨/ 데이터 배열
+    const finalLabels = Object.keys(segments);
+    const finalData = Object.values(segments);
+
+    // sub_txt분석글용 min/max
+    let maxVal = -1;
+    let maxLabel = '';
+    finalLabels.forEach((label, index) => {
+        if (finalData[index] > maxVal) {
+            maxVal = finalData[index];
+            maxLabel = label;
+        }
+    });
+
+    // 하단 div에 문구 주입
+    // infoDiv.innerHTML = `예약일: 방문 <span style="font-weight: bold;">${maxLabel}</span> 예약多`;
+
+   
+    const leadTimeSpan = document.getElementById('leadTimeTxt');
+    const leadActionSpan = document.getElementById('leadTimeActionTxt');
+
+    if (maxLabel === '당일 예약') {
+      leadTimeSpan.innerText = "당일 직전 예약";
+      leadActionSpan.innerText = "당일 오전 또는 실시간 알림톡";
+    } else {
+      const cleanLabel = maxLabel.replace(' 전', ''); // "1~2일" 형태로 정제
+      leadTimeSpan.innerText = maxLabel; // "1~2일 전"
+      leadActionSpan.innerText = cleanLabel + " 전 집중 광고"; // "1~2일 전 집중 광고"
+    }
+
+    // 기존차트 제거
+    if (leadChart) {
+        leadChart.destroy();
+    }
+    
+    
+    // 도넛 차트 생성
+    leadChart = new Chart(canvasElement, {
+        type: 'doughnut',
+        data: {
+            labels: finalLabels,
+            datasets: [{
+                data: finalData,   
+                backgroundColor: [
+                    '#767F9E', // 당일
+                    '#36A2EB', // 1~2일 전
+                    '#EFECE3', // 3~4일 전
+                    '#8FABD4', // 5~6일 전
+                    '#AED6CF'  // 7일+ 전
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false // 선에 딱 안맞아도 마우스 인식하게
+            },
+            plugins: {
+                title: {
+                  display: true,
+                  text: '    예약 리드타임',
+                  color: '#000000',
+                  font: {
+                    size: 14,
+                    weight: 'normal',
+                  },
+                  align: 'start',
+                  padding: {
+                    top: 10,
+                    bottom: 10
+                  },
+                },
+                // title: { display: false },
+                // 범례
+                legend: { 
+                    display: true, 
+                    position: 'left',
+                    labels: {
+                        padding: 6,
+                        color: '#000000',
+                        font: {
+                          size: 12,
+                        }
+                    }
+                },
+                tooltip: {
+                    enabled: true, // 내장툴팁 켜기
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    position: 'nearest',
+                    callbacks: {
+                        label: function(context) {
+                            return ` ${context.label}: ${context.raw}건`;
+                        }
+                    }
+                }
+            },
+        }
     });
   }
 

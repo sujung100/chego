@@ -25,28 +25,7 @@
   }
   clickReserVaTion();
 
-  // 기존
-  // async function pageStart(socket) {
-  //   let rsvFetch = await fetch("api/reservation_false/");
-  //   let rsvDetailsData = await rsvFetch.json();
-  //   // console.table("콘솔태이블", rsvDetailsData);
-  //   console.log("페이지스타트", rsvDetailsData);
-  //   console.log("페이지스타트", rsvDetailsData.length);
-  //   if (rsvDetailsData.length !== 0) {
-  //     ntfIcon_count.style.display = "flex";
-  //     ntfIcon_count.textContent = rsvDetailsData.length
-  //   }
-  //   rsvNotification(socket, rsvDetailsData);
-  // }
-
-  async function pageStart() {
-
-    const socket = manager_webSockets.manager; 
-    if (!socket) {
-      console.error("Manager socket is not initialized yet");
-      return;
-    }
-
+  async function pageStart(socket) {
     let rsvFetch = await fetch("api/reservation_false/");
     let rsvDetailsData = await rsvFetch.json();
     // console.table("콘솔태이블", rsvDetailsData);
@@ -142,18 +121,8 @@
 
       // 클릭 -> 읽음처리 + 캐시삭제
       card.addEventListener("click", function () {
-        
-        // 수정중
-        // rsvIsRead1(socket, rsvInfo.id);
-        // this.remove();
-        
-        const socket = manager_webSockets.manager;
-        if (socket && socket.readyState === WebSocket.OPEN) {
-          rsvIsRead1(socket, rsvInfo.id);
-        }
+        rsvIsRead1(socket, rsvInfo.id);
         this.remove();
-
-
         const sId = String(storeId);
         
         nc.storeDataCache[sId] = nc.storeDataCache[sId].filter(d => d.id !== rsvInfo.id);

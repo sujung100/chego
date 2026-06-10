@@ -893,20 +893,7 @@ svg {
   'FILL' 1,'wght' 400
 }
 
-.alerts > div > .bell-wrap {
-  font-size: 0.9rem;
-  flex-direction: row;
-}
-
-/* #noti {
-  display: none;
-} */
-
 /* 차트 */
-/* #chartnoti {
-  height: 200px;
-} */
-
 .chart-container {
   width: 100%;
   /* height: 100%; */
@@ -1485,13 +1472,14 @@ svg {
   align-items: center;
 }
 
-/* 
+
 .content2 .con2_nav .notification-icon {
   position: relative;
   width:2rem;
   height:auto;
   display:flex;
   justify-content: center;
+  /* margin-right: 1em; */
   border-radius: 5px;
   background: #ecf0f1;
 }
@@ -1499,17 +1487,20 @@ svg {
 .content2 .con2_nav .notification-icon:nth-of-type(1) i {
   background-image:linear-gradient(300deg, #acccea, #6495ed);
   background-clip: text;
+  /* -webkit-background-clip: text; */
   -webkit-text-fill-color: transparent;
 }
 
 .content2 .con2_nav .notification-icon:nth-of-type(2) i {
   background-image:linear-gradient(300deg, #fff9ab, #00b8ff);
   background-clip: text;
+  /* -webkit-background-clip: text; */
   -webkit-text-fill-color: transparent;
   cursor: pointer;
-} */
+}
 
-/* .bell-wrap > .num-count{
+.content2 .con2_nav .notification-icon .num-count{
+  /* visibility:hidden; */
   position: absolute;
   user-select: none;
   cursor: default;
@@ -1525,62 +1516,6 @@ svg {
   top: -0.33rem;
   right: -0.66rem;
   box-sizing: border-box;
-} */
-
-.bell-wrap {
-  position: relative;
-}
-
-.bell-wrap > .num-count {
-    position: absolute;
-    user-select: none;
-    cursor: default;
-    font-size: 0.2rem;
-    background: #e74c3c;
-    width: 0.4rem;
-    height: 0.4rem;
-    color: #ecf0f1;
-    display: inline-flex;
-    border-radius: 50%;
-    top: -0.2rem;
-    left: 0.7rem;
-    box-sizing: border-box;
-}
-
-.mail {
-  margin-right: 0.6rem;
-}
-
-.mail > .num-count {
-    position: absolute;
-    user-select: none;
-    cursor: default;
-    font-size: 0.4rem;
-    background: #e74c3c;
-    width: 0.6rem;
-    height: 0.6rem;
-    color: #ecf0f1;
-    display: inline-flex;
-    border-radius: 50%;
-    top: -0.2rem;
-    left: 0.7rem;
-    box-sizing: border-box;
-}
-
-.bell-wrap > .num-count {
-    position: absolute;
-    user-select: none;
-    cursor: default;
-    font-size: 0.4rem;
-    background: #e74c3c;
-    width: 0.6rem;
-    height: 0.6rem;
-    color: #ecf0f1;
-    display: inline-flex;
-    border-radius: 50%;
-    top: -0.2rem;
-    left: 0.7rem;
-    box-sizing: border-box;
 }
 
 .num-count-start {

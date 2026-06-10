@@ -14,10 +14,6 @@
 <body>
   <div id="wrap">{% csrf_token %}
     <div class="userInfo">
-      <div class="mail">
-        <i class="material-icons dp48">email</i>
-        <span class="num-count"></span>
-      </div>
       <img class="profile_img" src="{% static 'manager/img/person.png' %}" alt="이미지">
       <span>{{ request.user.username }}님, 안녕하세요</span>
       <a href="/manager/logout">
@@ -141,7 +137,6 @@
                 <div id="noti">
                   <div class="bell-wrap">
                     <span class="material-symbols-outlined bell">notifications</span>
-                    <span class="num-count"></span>
                     <div>새로운 예약</div>
                   </div>
                 </div>
@@ -156,13 +151,8 @@
                     <canvas id="storeMonthlyChart"></canvas>
                   </div>
                 </div>
-                
               </div>
-
-              
-
               <!-- 달력추가 -->
-               
               <div class="content3">
                   <table class="Calendar">
                     <thead>
@@ -188,10 +178,7 @@
                     </tbody>
                   </table>
                 </div>
-
-
             </div>
-            
       
             <div class="app_wrap">
               <div class="app" id="app">

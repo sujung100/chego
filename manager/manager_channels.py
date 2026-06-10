@@ -151,8 +151,13 @@ class CheckConsumer(AsyncWebsocketConsumer):
     
 
     async def mark_as_read(self, rsvuser_id):
-        rsv_read = await sync_to_async(rsv.Reservation_user.objects.get, thread_sensitive=True)(id=rsvuser_id)
-        await sync_to_async(rsv_read.rsv_check, thread_sensitive=True)()
+        try:
+            rsv_read = await sync_to_async(rsv.Reservation_user.objects.get, thread_sensitive=True)(id=rsvuser_id)
+            await sync_to_async(rsv_read.rsv_check, thread_sensitive=True)()
+            print(f"정상처리완료 {rsvuser_id}")
+        except Exception as e: 
+            print("에러빌생")
+            
 
     async def send_chat_messages(self, message):
         await self.channel_layer.group_send(
@@ -267,9 +272,21 @@ class ManagerConsumer(AsyncWebsocketConsumer):
             await self.get_reservation_dates(selected_date_list, store_id)
             
 
+    # async def mark_as_read(self, rsvuser_id):
+    #     rsv_read = await sync_to_async(rsv.Reservation_user.objects.get, thread_sensitive=True)(id=rsvuser_id)
+    #     await sync_to_async(rsv_read.rsv_check, thread_sensitive=True)()
+    
+
     async def mark_as_read(self, rsvuser_id):
-        rsv_read = await sync_to_async(rsv.Reservation_user.objects.get, thread_sensitive=True)(id=rsvuser_id)
-        await sync_to_async(rsv_read.rsv_check, thread_sensitive=True)()
+        try:
+            rsv_read = await sync_to_async(rsv.Reservation_user.objects.get, thread_sensitive=True)(id=rsvuser_id)
+            await sync_to_async(rsv_read.rsv_check, thread_sensitive=True)()
+
+            await sync_to_async(rsv_read.save, thread_sensitive=True)()
+            print(f" 성공: {rsvuser_id}번 예약 읽음 처리 및 DB 저장 완료!")
+            
+        except Exception as e:
+                print(f" 실패: 읽음 처리 중 에러 발생 -> {e}")
     
 
 
@@ -655,6 +672,7 @@ class TestConsumer(AsyncWebsocketConsumer):
     async def mark_as_read(self, rsvuser_id):
         rsv_read = await sync_to_async(rsv.Reservation_user.objects.get, thread_sensitive=True)(id=rsvuser_id)
         await sync_to_async(rsv_read.rsv_check, thread_sensitive=True)()
+        
 
     async def send_chat_messages(self, message):
         await self.channel_layer.group_send(

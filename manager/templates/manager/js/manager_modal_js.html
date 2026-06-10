@@ -6,8 +6,8 @@
   //   body : "This is a notification."
   // });
 
-  ntfIcon = document.querySelector(".notification-icon:nth-of-type(2)");
-  ntfIcon_count = document.querySelector(".notification-icon:nth-of-type(2) > .num-count");
+  ntfIcon = document.querySelector(".bell");
+  ntfIcon_count = document.querySelector(".bell ~ .num-count");
   modal = document.querySelector("#open-modal");
   function clickReserVaTion() {
     ntfIcon.addEventListener("click", function () {
@@ -54,7 +54,7 @@
     console.log("페이지스타트", rsvDetailsData.length);
     if (rsvDetailsData.length !== 0) {
       ntfIcon_count.style.display = "flex";
-      ntfIcon_count.textContent = rsvDetailsData.length
+      ntfIcon_count.textContent = rsvDetailsData.length;
     }
     rsvNotification(socket, rsvDetailsData);
   }
@@ -140,22 +140,80 @@
       
       reservation_card.appendChild(card);
 
+      // 기존5.29
       // 클릭 -> 읽음처리 + 캐시삭제
+      // card.addEventListener("click", function () {
+        
+      //   // 수정중
+      //   // rsvIsRead1(socket, rsvInfo.id);
+      //   // this.remove();
+        
+      //   const socket = manager_webSockets.manager;
+      //   if (socket && socket.readyState === WebSocket.OPEN) {
+      //     rsvIsRead1(socket, rsvInfo.id);
+      //   }
+      //   this.remove();
+
+
+      //   const sId = String(storeId);
+        
+      //   nc.storeDataCache[sId] = nc.storeDataCache[sId].filter(d => d.id !== rsvInfo.id);
+      //   updateNoti();
+      // });
+
+      // // 수정중5.29
+      // card.addEventListener("click", function () {
+        
+      //   // 수정중
+      //   // rsvIsRead1(socket, rsvInfo.id);
+      //   // this.remove();
+        
+      //   console.log("[Click] 전체 소켓 객체 상태:", manager_webSockets);
+      //   const socket = manager_webSockets ? manager_webSockets.manager : null;
+        
+      //   if (socket) {
+      //     // 소켓 객체는 존재하나 readyState가 판단 유보일 때를 위해 로그 확인
+      //     console.log("[Click] 매니저 소켓 readyState 상태:", socket.readyState);
+          
+      //     // 라이브러리에 따라 다를 수 있으므로 readyState가 1(OPEN)이거나 
+      //     // 혹은 객체가 존재하면 일단 발송을 시도하도록 조건을 변경해 봅니다.
+      //     if (socket.readyState === 1 || socket.readyState === undefined || socket.readyState === WebSocket.OPEN) {
+      //       rsvIsRead1(socket, rsvInfo.id);
+      //     } else {
+      //       console.warn("[Click] 소켓이 연결 상태(OPEN)가 아닙니다. 현재 상태:", socket.readyState);
+      //     }
+      //   } else {
+      //     console.error("[Click] manager_webSockets.manager 객체를 찾을 수 없습니다.");
+      //   }
+
+      //   // 화면에서 지우고 캐시 필터링하는 로직 (기존 유지)
+      //   this.remove();
+      //   const sId = String(storeId);
+      //   nc.storeDataCache[sId] = nc.storeDataCache[sId].filter(d => d.id !== rsvInfo.id);
+      //   updateNoti();
+      // });
+
+      // 수정중6.03
       card.addEventListener("click", function () {
+        // 이제 전역 변수 manager_webSockets가 비어있지 않고 꽉 차있습니다.
+        console.log("[Click] 현재 전역 소켓 상태:", manager_webSockets);
         
-        // 수정중
-        // rsvIsRead1(socket, rsvInfo.id);
-        // this.remove();
+        const socket = manager_webSockets ? manager_webSockets.manager : null;
         
-        const socket = manager_webSockets.manager;
-        if (socket && socket.readyState === WebSocket.OPEN) {
-          rsvIsRead1(socket, rsvInfo.id);
+        if (socket) {
+          console.log("[Click] 매니저 소켓 readyState:", socket.readyState);
+          if (socket.readyState === 1 || socket.readyState === WebSocket.OPEN) {
+            rsvIsRead1(socket, rsvInfo.id);
+          } else {
+            console.warn("[Click] 소켓 상태가 OPEN이 아닙니다.");
+          }
+        } else {
+          console.error("[Click] 전역 manager_webSockets에서 manager를 찾을 수 없습니다.");
         }
+
+        // 화면 제거 및 캐시 필터링 (기존 유지)
         this.remove();
-
-
         const sId = String(storeId);
-        
         nc.storeDataCache[sId] = nc.storeDataCache[sId].filter(d => d.id !== rsvInfo.id);
         updateNoti();
       });

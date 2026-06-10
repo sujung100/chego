@@ -1,7 +1,6 @@
 {% include "manager/js/reconnecting-websocket.html" %}
 <script>
-  // 수정중 06.04
-  // let nc = null;
+  let nc = null;
 
   const ownerName = "{{ username|safe }}";
   const sto_json = JSON.parse('{{ sto_json|safe }}');
@@ -10,11 +9,9 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     
-    
-    nc = new NotificationCenter();
-    
-    accessAllChannels();
     buildCalendar(); // 달력생성
+
+    nc = new NotificationCenter();
 
     // 기존 - 초기 상태 설정
     // updateStyles(c2, c3, c1);
@@ -32,10 +29,10 @@
     }
 
     // 초기로딩시 첫 스토어로 차트생성
-    // const initialStoreId = c1.querySelector("[class$='_storeId']").textContent;
-    // updateStoreChart(initialStoreId);
-    // drawTimeChart2(initialStoreId);
-    // drawLeadChart3(initialStoreId);
+    const initialStoreId = c1.querySelector("[class$='_storeId']").textContent;
+    updateStoreChart(initialStoreId);
+    drawTimeChart2(initialStoreId);
+    drawLeadChart3(initialStoreId);
 
     if (store_id.length >= 1) {
       nc.storeManager.handleClick(store_id[0]);
@@ -184,8 +181,6 @@
 
     // 알림창x / 데이터만 캐시에 저장
     addMessageToCache(rsvdata) {
-      console.log("[Cache] 캐시에 추가하려는 데이터:", rsvdata);
-
       const dataArray = Array.isArray(rsvdata) ? rsvdata : [rsvdata];
       dataArray.forEach(item => {
         const sId = String(item.store_id);
@@ -196,7 +191,6 @@
           this.storeDataCache[sId].push(item);
         }
       });
-      console.log("[Cache] 현재 전체 캐시 상태:", this.storeDataCache);
       updateNoti();
       // 모달이 열려있다면 즉시 새로고침
       const modal = document.querySelector("#open-modal");
@@ -215,32 +209,20 @@
 
   // 새로운 예약알림 보이기/숨기기
   function updateNoti() {
-    // console.log("노티있어요");
     const notiBtn = document.getElementById("noti");
-    
-    if (!notiBtn) return;
-
-    // if (!notiBtn || !nc || !nc.storeManager.storeId) return;
-    if (!nc || !nc.storeManager || !nc.storeManager.storeId) {
-      notiBtn.style.display = "none";
-      return;
-    }
+    if (!notiBtn || !nc || !nc.storeManager.storeId) return;
 
     // 문자열로 타입통일
     const currentId = String(nc.storeManager.storeId);
     const currentStoreData = nc.storeDataCache[currentId] || [];
-    
-    console.log(`[updateNoti] 현재 스토어: ${currentId}, 캐시된 데이터 개수: ${currentStoreData.length}개`);
 
     // 지금 선택된 스토어에 데이터가 1개라도 있으면 보임
     if (currentStoreData.length > 0) {
-      console.log("-> 알림 버튼 활성화 (flex)");
       notiBtn.style.display = "flex";
     } else {
-      console.log("-> 데이터가 없어 숨김 유지 (none)");
       notiBtn.style.display = "none";
     }
-    // console.log(`체크 중인 ID: ${currentId}, 데이터 개수: ${currentStoreData.length}`);
+    console.log(`체크 중인 ID: ${currentId}, 데이터 개수: ${currentStoreData.length}`);
   }
 
 
@@ -255,46 +237,16 @@
       const response = await fetch(`api/store-times/?store_id=${storeId}`);
       const data = await response.json();
 
-      console.log("[fetchStoreData] 서버가 준 원본 객체 리스트:", data[0]);
+      let dataResult = data[0].map((item) => {
+        return [item.user_name, item.user_phone, item.reservation_date, item.user_time];
+      });
 
-      return data[0].map((item, index) => {
-        const realDbId = item.id || item.rsv_id || item.pk; 
-      
-        if (!realDbId) {
-          console.error("서버 데이터에 고유 ID 필드 없음! item 구조:", item);
-        }
-      
-
-      // 수정전
-      // let dataResult = data[0].map((item) => {
-      //   return [item.user_name, item.user_phone, item.reservation_date, item.user_time];
-      // });
-      // return dataResult.map(element => ({
-      //   icon: "up",
-      //   title: "새로운 예약",
-      //   subtitle: element,
-      //   actions: ["확인"]
-      // }));
-
-      // 수정중
-      // return data[0].map((item, index) => ({
-      return {
-        // 기존 알림창/모달 UI용 데이터
+      return dataResult.map(element => ({
         icon: "up",
         title: "새로운 예약",
-        subtitle: [item.user_name, item.user_phone, item.reservation_date, item.user_time],
-        actions: ["확인"],
-
-        // 로직 처리(캐시, 읽음 처리)를 위해 원본 데이터의 키값들을 그대로 살려서 동봉
-        id: item.id || `rsv-${Date.now()}-${index}`, // 고유 ID가 없다면 임시 부여
-        store_id: String(storeId),
-        user_name: item.user_name,
-        user_phone: item.user_phone,
-        reservation_date: item.reservation_date,
-        user_time: item.user_time,
-        visitor_num: item.visitor_num || 1 // 혹시 데이터에 있으면 가져오고 없으면 1명 기본값
-      };
-    });
+        subtitle: element,
+        actions: ["확인"]
+      }));
 
     } catch (error) {
       console.error('Error:', error);
@@ -320,7 +272,6 @@
       // 새로운 스토어데이터(예약 목록 등) 가져오기
       try {
         let newData = await fetchStoreData(targetId);
-        console.log("서버에서 방금 받아온 원본 데이터:", newData);
         
         if (this.storeId !== targetId) {
           console.log(`[요청 무시] 현재 ID(${this.storeId})가 요청 ID(${targetId})와 다름`);
@@ -652,7 +603,7 @@
   // 최초 실행
   updateClock();
   // 1초마다 업데이트
-  setInterval(updateClock, 60000);
+  setInterval(updateClock, 1000);
 
 
   // 차트1 생성
@@ -986,8 +937,6 @@
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            // maintainAspectRatio: true,
-            aspectRatio: 1.8,
             interaction: {
                 mode: 'index',
                 intersect: false // 선에 딱 안맞아도 마우스 인식하게
@@ -1017,9 +966,7 @@
                         color: '#000000',
                         font: {
                           size: 12,
-                        },
-                        boxWidth: 12,
-                        boxHeight: 12,
+                        }
                     }
                 },
                 tooltip: {

@@ -238,6 +238,31 @@ class TodoAPI(LoginRequiredMixin, View):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
     
 
+# 기존
+# class StoreTimesView(View):
+#     def get(self, request):
+#         current_user = request.user
+
+#         if current_user.is_authenticated:
+#             stores = rsv.Store.objects.filter(owner=current_user, store_name__isnull=False)[:3]
+
+#             query_dict = QueryDict(request.META['QUERY_STRING'])
+#             requested_store_id = query_dict.get('store_id', None)
+
+#             data = []
+#             for store in stores:
+#                 if requested_store_id is not None and str(store.id) != requested_store_id:
+#                     continue
+                
+#                 rsv_users = rsv.Reservation_user.objects.filter(store_id=store)
+#                 data.append([model_to_dict(rsv_user) for rsv_user in rsv_users])
+
+#             return JsonResponse(data, safe=False)
+#         else:
+#             return JsonResponse([], safe=False)
+
+
+# 수정중 26.06.09
 class StoreTimesView(View):
     def get(self, request):
         current_user = request.user
@@ -253,7 +278,7 @@ class StoreTimesView(View):
                 if requested_store_id is not None and str(store.id) != requested_store_id:
                     continue
                 
-                rsv_users = rsv.Reservation_user.objects.filter(store_id=store)
+                rsv_users = rsv.Reservation_user.objects.filter(store_id=store, reservation_check=False)
                 data.append([model_to_dict(rsv_user) for rsv_user in rsv_users])
 
             return JsonResponse(data, safe=False)
@@ -378,12 +403,12 @@ class Reservation_Details(View):
         else:
             # print(user_id)
             rsv_model = rsv.Reservation_user.objects.defer("pwhash").filter(store_id__owner_id=user_id, reservation_check=False)
-            print("Reservation_Details 엘스", rsv_model)
+            # print("Reservation_Details 엘스", rsv_model)
             rsv_dict = [model_to_dict(r) for r in rsv_model]
             for r in rsv_dict:
                 r.pop("pwhash", None)
                 r["rsv_check"] = self.rsv_check(user_id)
-            print("엘스", rsv_dict)
+            # print("엘스", rsv_dict)
             return JsonResponse(rsv_dict, safe=False)
 
 
@@ -518,7 +543,7 @@ class Total_Reservation_Check(LoginRequiredMixin, UpdateView):
             if request.method == 'POST':
                  # 전달받은 rsv_ids를 리스트로 변환
                 rsv_ids = request.POST.getlist('rsv_ids')
-                print("Requested rsv_ids찍어봐라:", rsv_ids)
+                # print("Requested rsv_ids찍어봐라:", rsv_ids)
 
                 # rsv_ids를 정수형으로 변환
                 rsv_ids = [int(id) for id in rsv_ids]
@@ -531,7 +556,7 @@ class Total_Reservation_Check(LoginRequiredMixin, UpdateView):
                 input2 = self.request.GET.get('phone', '')
                 input3 = self.request.GET.get('kw', '')
                 qs = urlencode({'name': input1, 'phone': input2, 'kw': input3})
-                print("찍어봐아아아", qs)
+                # print("찍어봐아아아", qs)
 
                 # 쿼리 매개변수로 입력값을 전달하여 리다이렉트
                 # return redirect(f"{reverse('store_detail')}?input1={input1}&input2={input2}&input3={input3}", pk=store.pk)
@@ -597,7 +622,7 @@ class Write(View):
 
         if current_user.is_authenticated:
             stores = list(rsv.Store.objects.filter(owner=current_user, store_name__isnull=False).values_list('id', 'store_name'))
-            print("스토어들", stores)
+            # print("스토어들", stores)
             context = {
                 "stores_json" : mark_safe(json.dumps(stores)),
             }
@@ -833,7 +858,7 @@ class Update(LoginRequiredMixin, UpdateView):
 
 
     def get_context_data(self, **kwargs):
-        print("여긴 되냐")
+        # print("여긴 되냐")
         store_id = self.kwargs.get('store_id')
         self.setup_variables(store_id)
         
@@ -842,19 +867,19 @@ class Update(LoginRequiredMixin, UpdateView):
 
         # URL에서 store_id값 가져오기
         requested_store_id = self.kwargs.get('store_id')
-        print("requested_store_id", requested_store_id)
+        # print("requested_store_id", requested_store_id)
         # print("찍어보자1", requested_store_id)
 
         # 해당 store_id를 가진 Store 객체 찾기
         # Store테이블의 id값찾기 (url에서 가져온 store_id값과 일치하는)
         # store = get_object_or_404(rsv.Store, pk=requested_store_id)
         store = get_object_or_404(rsv.Store, pk=requested_store_id)
-        print("여긴가3")
+        # print("여긴가3")
 
         if store:
             context['store'] = store
             dates_list = [date.reservation_date for date in self.user_time]
-            print("데이트리스트", dates_list)
+            # print("데이트리스트", dates_list)
 
             # Store의 owner(User 객체)와 연결된 Manager 찾기
             manager_of_the_store = rsv.Manager.objects.filter(user=store.owner).first()
@@ -862,8 +887,8 @@ class Update(LoginRequiredMixin, UpdateView):
             
             if manager_of_the_store:
                 context['manager'] = manager_of_the_store
-                print("스토어찍어", store)
-                print("스토어네임찍어", store.store_name)
+                # print("스토어찍어", store)
+                # print("스토어네임찍어", store.store_name)
 
             # Store의 pk값과 Store_times의 store_id값과 일치하는 Store_times 가져오기
             # sort_type : 매니저 시간설정 옵션 (null - 모든요일 동일)
@@ -879,22 +904,22 @@ class Update(LoginRequiredMixin, UpdateView):
             # context['wknd_time_objects'] = wknd_time_objects
             context['wknd_time_objects'] = json.dumps(list(wknd_time_objects.values('reservation_time')), cls=DjangoJSONEncoder)
 
-            print("찍어보자3", sto_time_objects)
-            print("찍어보자3-1", sto_time_objects.values)
-            print("찍어보자3-2", wknd_time_objects)
-            print("찍어보자3-3", wknd_time_objects.values)
-            print("찍어보자3-4", wknd_time_objects)
-            print("찍어보자3-5", wknd_time_objects.values)
+            # print("찍어보자3", sto_time_objects)
+            # print("찍어보자3-1", sto_time_objects.values)
+            # print("찍어보자3-2", wknd_time_objects)
+            # print("찍어보자3-3", wknd_time_objects.values)
+            # print("찍어보자3-4", wknd_time_objects)
+            # print("찍어보자3-5", wknd_time_objects.values)
             
             sto_time_values_list  = {
                 'store_id': store.pk,
                 'sto_time': list(sto_time_objects.values()),
             }
 
-            print()
-            print("찍어보자4 ", sto_time_values_list)
-            print("찍어보자4길이 ", len(sto_time_objects))
-            print()
+            # print()
+            # print("찍어보자4 ", sto_time_values_list)
+            # print("찍어보자4길이 ", len(sto_time_objects))
+            # print()
 
             # 예약 정보 가져오기
             # Reservation_user
@@ -940,7 +965,7 @@ class Update(LoginRequiredMixin, UpdateView):
             context["username"] = request.user.username
             print()
             print()
-            print("콘텍스트    ", context)
+            # print("콘텍스트    ", context)
         return context
     
     # post요청 삭제 -> 웹소켓으로 db저장하도록 수정

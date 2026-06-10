@@ -4,6 +4,11 @@
   //   pageStart();
   // });
   // const roomName = JSON.parse(document.getElementById('room-name').textContent);
+  
+  // 수정중 06.04
+  let nc = null;
+  let manager_webSockets = {};
+
   let room_name_source = {}
   let userName = "{{ username|escapejs }}";
   let adminUsers = "{{ adminusers|escapejs }}";
@@ -16,7 +21,7 @@
   // let data = null;
   // console.log(data);
 
-  let numCount = document.querySelector(".notification-icon:nth-of-type(1) > .num-count");
+  let numCount = document.querySelector(".mail > .num-count");
   // console.log(numCount);
   numCount.classList.add("num-count-start");
 
@@ -31,7 +36,7 @@
     weStart = "wss://"
   }
 
-  let manager_webSockets = {};
+  // let manager_webSockets = {};
   // let chatSocket;
 
   // 수정전
@@ -77,34 +82,45 @@
       { name: "manager", url: weStart + loc.host + loc.pathname + loc.search },
     ];
     console.log("엔드포인트", endpoints);
+
+    manager_webSockets = {};
+
+    // if (!window.nc) window.nc = {}; 
+
     Notification.requestPermission().then(function (permission) {
       console.log('Permission:', permission);
     });
+
     for (let ept of endpoints) {
-      // let webSocket = new ReconnectingWebSocket(ept.url);
-      manager_webSockets[ept.name] = new ReconnectingWebSocket(ept.url);;
-      manager_webSockets[ept.name].onopen = function (e) {
-        console.log(`${ept.name} socket opened`);
+      let webSocket = new ReconnectingWebSocket(ept.url);
+      manager_webSockets[ept.name] = webSocket;
+      webSocket.onopen = function (e) {
+        console.log(ept.name + ' Web socket opened successfully');
       };
+
+      // let webSocket = new ReconnectingWebSocket(ept.url);
+      // manager_webSockets[ept.name] = new ReconnectingWebSocket(ept.url);;
+      // manager_webSockets[ept.name].onopen = function (e) {
+      //   console.log(`${ept.name} socket opened`);
+      // };
     }
-
-    manager_webSockets["chat"].onmessage = (e) => handleOnMessage1(manager_webSockets["chat"], e);
-    manager_webSockets["manager"].onmessage = (e) => handleOnMessage2(manager_webSockets["manager"], e);
-
-    accessAllChannels();
-
-    // DOMContentLoaded가 이미 지났을 수도 있으므로 체크 후 실행
-    // if (document.readyState === "loading") {
-    //   document.addEventListener("DOMContentLoaded", () => pageStart());
-    // } else {
-    //   pageStart();
-    // }
-
-    document.addEventListener("DOMContentLoaded", function () {
-      // 소켓이 생성될 때까지 아주 잠시 기다린 후 실행하거나, 
-      // pageStart 내부에서 소켓 존재 여부를 체크하도록 설계
-      setTimeout(() => pageStart(), 100); 
+    manager_webSockets["chat"].addEventListener("message", function (e) {
+      eventListeners["chat"] = handleOnMessage1(nc.manager_webSockets["chat"], e);
     });
+    
+    manager_webSockets["manager"].addEventListener("message", function(e){
+      eventListeners["nonotification"] = handleOnMessage2(nc.manager_webSockets["manager"], e);
+    });
+
+    resetChatSoket = manager_webSockets["chat"];
+    
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", function () {
+        pageStart(manager_webSockets.manager);
+      });
+    } else {
+      pageStart(manager_webSockets.manager);
+    }
   }
   
   // console.log(reserVationDetails());
@@ -197,7 +213,7 @@
   }
 
   function handleUserSocket(data) {
-    let rsv_numCount = document.querySelector(".notification-icon:nth-of-type(2) > .num-count");
+    let rsv_numCount = document.querySelector(".bell > .num-count");
     reserVationDetails(data);
     console.log("새로운 예약이 생성 되었습니다.")
   }

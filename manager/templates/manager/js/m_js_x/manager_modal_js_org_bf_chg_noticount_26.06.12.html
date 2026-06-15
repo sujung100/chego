@@ -68,14 +68,9 @@
     // console.log(rsvFetch);
     let rsvdata2 = await rsvFetch.json();
     // console.log(rsvdata);
-
-    // if (rsvdata2.rsv_check !== 0) {
-    //   ntfIcon_count.style.display = "flex";
-    //   ntfIcon_count.textContent = rsvdata2.rsv_check;
-    // }
-
-    if (nc) {
-      nc.addMessageToCache(rsvdata2);
+    if (rsvdata2.rsv_check !== 0) {
+      ntfIcon_count.style.display = "flex";
+      ntfIcon_count.textContent = rsvdata2.rsv_check;
     }
     rsvNotification(socket, rsvdata2);
   }

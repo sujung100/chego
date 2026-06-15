@@ -217,14 +217,12 @@
   function updateNoti() {
     // console.log("노티있어요");
     const notiBtn = document.getElementById("noti");
-    const ntfIcon_count = document.querySelector(".bell ~ .num-count");
     
     if (!notiBtn) return;
 
     // if (!notiBtn || !nc || !nc.storeManager.storeId) return;
     if (!nc || !nc.storeManager || !nc.storeManager.storeId) {
       notiBtn.style.display = "none";
-      if (ntfIcon_count) ntfIcon_count.style.display = "none";
       return;
     }
 
@@ -238,18 +236,9 @@
     if (currentStoreData.length > 0) {
       console.log("-> 알림 버튼 활성화 (flex)");
       notiBtn.style.display = "flex";
-
-      if (ntfIcon_count) {
-        ntfIcon_count.style.display = "flex";
-        ntfIcon_count.textContent = currentStoreData.length; // 캐시 개수로 숫자 매칭
-      }
     } else {
       console.log("-> 데이터가 없어 숨김 유지 (none)");
       notiBtn.style.display = "none";
-      if (ntfIcon_count) {
-        ntfIcon_count.style.display = "none";
-        ntfIcon_count.textContent = "0";
-      }
     }
     // console.log(`체크 중인 ID: ${currentId}, 데이터 개수: ${currentStoreData.length}`);
   }

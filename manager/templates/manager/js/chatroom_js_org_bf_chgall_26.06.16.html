@@ -1,0 +1,350 @@
+{% include "manager/js/reconnecting-websocket.html" %}
+<script>
+  // document.addEventListener("DOMContentLoaded", function () {
+  //   pageStart();
+  // });
+  // const roomName = JSON.parse(document.getElementById('room-name').textContent);
+  
+  // 수정중 06.04
+  let nc = null;
+  let manager_webSockets = {};
+
+  let room_name_source = {}
+  let userName = "{{ username|escapejs }}";
+  let adminUsers = "{{ adminusers|escapejs }}";
+  // console.log(userName);
+  // console.log(adminUsers);
+  room_name_source["user"] = userName;
+  room_name_source["admin"] = adminUsers;
+  room_name = Object.values(room_name_source).join('.');
+  // console.log("이거니?",room_name);
+  // let data = null;
+  // console.log(data);
+
+  let numCount = document.querySelector(".mail > .num-count");
+  // console.log(numCount);
+  numCount.classList.add("num-count-start");
+
+  const loc = window.location;
+  // console.log(loc);
+  // const loc2 = "127.0.0.1:8000/manager/sung/admin_chat2/";
+  // const loc3 = "127.0.0.1:8000/calendar_app/";
+  // const loc2 = "port-0-chego-2aat2clujod5fm.sel5.cloudtype.app/manager/sung/admin_chat2/";
+  // const loc3 = "port-0-chego-2aat2clujod5fm.sel5.cloudtype.app/calendar_app/";
+  let weStart = "ws://";
+  if (loc.protocol === "https:") {
+    weStart = "wss://"
+  }
+
+  // let manager_webSockets = {};
+  // let chatSocket;
+
+  // 수정전
+  // async function accessAllChannels() {
+  //   let endpoints = [
+  //     // { name: "chat", url: weStart + loc2 + userName + "/" },
+  //     { name: "chat", url: weStart + loc.host + loc.pathname + loc.search + "admin_chat2/" + userName + "/" },
+  //     // { name: "user", url: weStart + loc3 + userName + "/" },
+  //     { name: "manager", url: weStart + loc.host + loc.pathname + loc.search },
+  //   ];
+  //   console.log("엔드포인트", endpoints);
+  //   Notification.requestPermission().then(function (permission) {
+  //     console.log('Permission:', permission);
+  //   });
+  //   for (let ept of endpoints) {
+  //     let webSocket = new ReconnectingWebSocket(ept.url);
+  //     manager_webSockets[ept.name] = webSocket;
+  //     webSocket.onopen = function (e) {
+  //       console.log(webSocket.url);
+  //       console.log('Web socket opened successfully');
+  //     };
+  //   }
+
+  //   manager_webSockets["chat"].addEventListener("message", function (e) {
+  //     eventListeners["chat"] = handleOnMessage1(manager_webSockets["chat"], e);
+  //   });
+    
+  //   manager_webSockets["manager"].addEventListener("message", function(e){
+  //     eventListeners["nonotification"] = handleOnMessage2(manager_webSockets["manager"], e);
+  //   });
+
+  //   resetChatSoket = await manager_webSockets["chat"];
+  //   document.addEventListener("DOMContentLoaded", function () {
+  //     pageStart(manager_webSockets.manager);
+  //   });
+  // }
+
+  async function accessAllChannels() {
+    let endpoints = [
+      // { name: "chat", url: weStart + loc2 + userName + "/" },
+      { name: "chat", url: weStart + loc.host + loc.pathname + loc.search + "admin_chat2/" + userName + "/" },
+      // { name: "user", url: weStart + loc3 + userName + "/" },
+      { name: "manager", url: weStart + loc.host + loc.pathname + loc.search },
+    ];
+    console.log("엔드포인트", endpoints);
+
+    manager_webSockets = {};
+
+    // if (!window.nc) window.nc = {}; 
+
+    Notification.requestPermission().then(function (permission) {
+      console.log('Permission:', permission);
+    });
+
+    for (let ept of endpoints) {
+      let webSocket = new ReconnectingWebSocket(ept.url);
+      manager_webSockets[ept.name] = webSocket;
+      webSocket.onopen = function (e) {
+        console.log(ept.name + ' Web socket opened successfully');
+      };
+
+      // let webSocket = new ReconnectingWebSocket(ept.url);
+      // manager_webSockets[ept.name] = new ReconnectingWebSocket(ept.url);;
+      // manager_webSockets[ept.name].onopen = function (e) {
+      //   console.log(`${ept.name} socket opened`);
+      // };
+    }
+    manager_webSockets["chat"].addEventListener("message", function (e) {
+      eventListeners["chat"] = handleOnMessage1(nc.manager_webSockets["chat"], e);
+    });
+    
+    manager_webSockets["manager"].addEventListener("message", function(e){
+      eventListeners["nonotification"] = handleOnMessage2(nc.manager_webSockets["manager"], e);
+    });
+
+    resetChatSoket = manager_webSockets["chat"];
+    
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", function () {
+        pageStart(manager_webSockets.manager);
+      });
+    } else {
+      pageStart(manager_webSockets.manager);
+    }
+  }
+  
+  // console.log(reserVationDetails());
+  // pageStart();
+  let notificationPermission = Notification.permission;
+  // console.log("dddddd", notificationPermission);
+
+
+
+  // async function handleReservationEvent(){
+
+  // }
+  // console.log(manager_webSockets);
+  // const endpoint = weStart + loc.host + loc.pathname + loc.search;
+  let chatWidgetToggle = document.querySelector('#chat-widget-toggle');
+  // console.log(chatWidgetToggle);
+  let isOpen = false;
+
+  function checkChat() {
+    // console.log("resetChatSoket", resetChatSoket);
+    if (!chatWidgetToggle.checked) {
+      console.log("채팅방 닫힘");
+      return openChat();
+    }
+    else {
+      console.log("채팅방 열림");
+      return closeChat();
+    }
+  }
+
+  function openChat() {
+    isOpen = true;
+    resetChatSoket.addEventListener("message", handleChatEvent);
+    // chatSocket.removeEventListener("message", handleChatEvent);
+  }
+  function closeChat() {
+    isOpen = false;
+    resetChatSoket.removeEventListener("message", handleChatEvent);
+    // chatSocket.addEventListener("message", handleChatEvent);
+  }
+  // checkChat();
+
+
+
+  let eventCount = 0;
+  function handleChatEvent(event) {
+    numCount.classList.remove("num-count-start");
+    eventCount++;
+    const data = JSON.parse(event.data);
+    const notification = data.message;
+
+    const numCountElement = document.querySelector(".num-count");
+    numCountElement.textContent = eventCount;
+  }
+
+  chatWidgetToggle.addEventListener("change", checkChat);
+
+
+  // let chatSocket = manager_webSockets["chat"];
+  let managerSocket = manager_webSockets["user"];
+  // console.log("유저소켓", managerSocket.url);
+
+  function handleChatSocket(data) {
+    console.log("핸들소켓");
+    const message = data["message"];
+    const author = message["author"];
+    const msgListTag = document.createElement("li");
+    const msgDiv = document.createElement("div");
+    msgDiv.className = "chat-message-text";
+    // msgListTag.className = "chat-message";
+    const pTag = document.createElement("p");
+    pTag.textContent = message.content;
+    const chatMsg = document.querySelector("#chat-messages");
+    const chatLog = document.querySelector("#chat-log");
+    const isScrolledToBottom = chatMsg.scrollHeight - chatMsg.clientHeight <= chatMsg.scrollTop + 1;
+    if (author == userName) {
+      msgListTag.className = "chat-message -sent";
+    } else {
+      msgListTag.className = "chat-message -replies";
+    }
+    // document.querySelector('#chat-log').value += (data.message + '\n');
+    msgListTag.appendChild(msgDiv);
+    msgDiv.appendChild(pTag);
+    chatLog.appendChild(msgListTag);
+
+    if (isScrolledToBottom) {
+      chatMsg.scrollTop = chatMsg.scrollHeight;
+    }
+
+  }
+
+  function handleUserSocket(data) {
+    let rsv_numCount = document.querySelector(".bell > .num-count");
+    reserVationDetails(data);
+    console.log("새로운 예약이 생성 되었습니다.")
+  }
+
+  let resetChatSoket = null;
+  let eventListeners = {};
+
+  async function handleOnMessage1(socket, e) {
+    // console.log("이게 2번 실행 되는거냐");
+    // eventListeners["chat"] = handleOnMessage1;
+
+    // resetChatSoket = socket;
+    modalContent = document.querySelector(".modal-content");
+    const data = await JSON.parse(e.data);
+
+    handleChatSocket(data);
+
+  }
+
+  async function handleOnMessage2(socket, e) {
+    // console.log("이게 2번 실행 되는거냐");
+    // eventListeners["nonotification"] = handleOnMessage2;
+    const data = await JSON.parse(e.data);
+    if (data.command === "new_message") {
+      return;
+    }
+    // pageStart(manager_webSockets["manager"]);
+    reserVationDetails(manager_webSockets["manager"], data);
+
+    let noti1 = new Notification("새로운 예약이 추가 되었습니다.", {
+      body: "예약 내용을 확인해주세요."
+    });
+    setTimeout(() => {
+      noti1.close();
+    }, 2000);
+
+  }
+
+
+
+
+
+  // document.querySelector('#chat-message-input').focus();
+  // document.querySelector('#chat-message-input').onkeyup = function (e) {
+  //   if (e.keyCode === 13) {  // enter, return
+  //     document.querySelector('#chat-message-submit').click();
+  //     // console.log("엔터키");
+  //   }
+  // };
+
+  // document.querySelector('#chat-message-submit').onclick = function (e) {
+  //   const messageInputDom = document.querySelector('#chat-message-input');
+  //   const message = messageInputDom.value;
+  //   const send_data = {
+  //     "command": "new_message",
+  //     "message": message,
+  //     "from": userName,
+  //   };
+  //   const send_data_json = JSON.stringify(send_data);
+  //   for (let key in manager_webSockets) {
+  //     if (key == "chat" || key == "manager") {
+  //       chatSocket = manager_webSockets[key];
+  //       if (chatSocket.readyState === WebSocket.OPEN) {
+  //         chatSocket.send(send_data_json);
+  //       }
+  //     }
+  //   }
+
+  //   messageInputDom.value = '';
+  //   chatSocket.addEventListener("message", function (e) {
+  //       console.log("챗소켓전송");
+  //       handleOnMessage(chatSocket, e);
+  //     });
+  // };
+
+  function SendMessage() {
+
+
+    const messageInputDom = document.querySelector("#chat-message-input");
+    const message = messageInputDom.value;
+    // const chatSocket = my_webSockets[currentChatRoom];
+    const send_data = {
+      "command": "new_message",
+      "message": message,
+      "from": userName,
+    }
+
+    const send_data_json = JSON.stringify(send_data);
+    // console.log("resetChatSoket", resetChatSoket);
+    if (resetChatSoket.readyState === WebSocket.OPEN) {
+      resetChatSoket.send(send_data_json);
+    } else {
+      console.error('WebSocket is not open or no WebSocket for chatroom: ' + chatSocket);
+    }
+
+
+    messageInputDom.value = '';
+    // console.log("센드메세지 챗룸핸들러");
+
+    // resetChatSoket.addEventListener("message", function (e) {
+    //   console.log("챗소켓전송");
+    //   // console.log("eventListeners", eventListeners);
+    //   handleOnMessage(resetChatSoket, e);
+    // });
+    // if (eventListeners["chat"]) {
+    //   console.log("eventListeners", eventListeners);
+    //   resetChatSoket.removeEventListener("message", eventListeners["chat"]);
+    // }
+
+    if (!eventListeners["chat"]) {
+      console.log("이게 실행 되는거냐");
+      eventListeners["chat"] = function (e) {
+        handleOnMessage1(resetChatSoket, e);
+      };
+      // resetChatSoket.addEventListener("message", eventListeners["chat"]);
+    }
+  }
+
+  function MessageSendShortcut() {
+
+    document.querySelector("#chat-message-input").focus();
+    document.querySelector("#chat-message-input").onkeyup = function (e) {
+      if (e.keyCode === 13) {  // enter, return
+        e.preventDefault();
+        // document.querySelector('#chat-message-submit').click();
+        SendMessage();
+      }
+    };
+    document.querySelector("#chat-message-submit").onclick = function (e) {
+      SendMessage();
+    };
+  }
+  MessageSendShortcut();
+</script>

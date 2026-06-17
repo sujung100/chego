@@ -74,202 +74,104 @@
   });
 
   // 달력시작
-  // let nowMonth = new Date();  // 현재 달을 페이지를 로드한 날의 달로 초기화
-  // let today = new Date();     // 페이지를 로드한 날짜를 저장
-  // today.setHours(0, 0, 0, 0);    // 비교 편의를 위해 today의 시간을 초기화
+  let nowMonth = new Date();  // 현재 달을 페이지를 로드한 날의 달로 초기화
+  let today = new Date();     // 페이지를 로드한 날짜를 저장
+  today.setHours(0, 0, 0, 0);    // 비교 편의를 위해 today의 시간을 초기화
 
-  // // 달력 생성 : 해당 달에 맞게 테이블 생성 -> 날짜채움
-  // const now_year = document.querySelector("#calYear");
-  // const now_month = document.querySelector("#calMonth");
-
-
-  // function buildCalendar() {
-  //   console.log("왜 실행안돼?")
-
-  //   let firstDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth(), 1);     // 이번달 1일
-  //   let lastDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, 0);  // 이번달 마지막날
-
-  //   let tbody_Calendar = document.querySelector(".Calendar > tbody");
-  //   // document.getElementById("calYear").innerText = nowMonth.getFullYear();             // 연도 숫자 갱신
-  //   // document.getElementById("calMonth").innerText = leftPad(nowMonth.getMonth() + 1);  // 월 숫자 갱신
-    
-  //   now_year.textContent = nowMonth.getFullYear();             // 연도 숫자 갱신
-  //   now_month.textContent = leftPad(nowMonth.getMonth() + 1);  // 월 숫자 갱신
-
-
-  //   // console.log(document.getElementById("calYear").innerText);
-  //   // console.log(document.getElementById("calMonth").innerText);
-
-  //   while (tbody_Calendar.rows.length > 0) {                        // 이전 출력결과가 남아있는 경우 초기화
-  //     tbody_Calendar.deleteRow(tbody_Calendar.rows.length - 1);
-  //   }
-
-  //   let nowRow = tbody_Calendar.insertRow();        // 첫번째 행 추가           
-
-  //   for (let j = 0; j < firstDate.getDay(); j++) {  // 이번달 1일의 요일만큼
-  //     let nowColumn = nowRow.insertCell();        // 열 추가
-  //   }
-
-  //   for (let nowDay = firstDate; nowDay <= lastDate; nowDay.setDate(nowDay.getDate() + 1)) {   // day는 날짜를 저장하는 변수, 이번달 마지막날까지 증가시키며 반복  
-  //     let nowColumn = nowRow.insertCell();        // 새 열을 추가하고
-
-
-  //     let newDIV = document.createElement("p");
-  //     newDIV.innerHTML = leftPad(nowDay.getDate());        // 추가한 열에 날짜 입력
-
-  //     // 추가 03.04
-  //     newDIV.onclick = function () { 
-  //       // choiceDate(this); 
-  //       // clickedDate(this); 
-  //     };
-
-  //     // console.log(newDIV.innerText);
-  //     let dateStringArray = [nowDay.getFullYear().toString(), leftPad(nowMonth.getMonth() + 1), leftPad(nowDay.getDate())];
-
-  //     nowColumn.appendChild(newDIV);
-
-
-
-  //     if (nowDay.getDay() == 6) {                 // 토요일인 경우
-  //       nowRow = tbody_Calendar.insertRow();    // 새로운 행 추가
-  //     }
-
-  //     if (nowDay < today) {                       // 지난날인 경우
-  //       newDIV.className = "pastDay";
-  //     }
-  //     else if (nowDay.getFullYear() == today.getFullYear() && nowDay.getMonth() == today.getMonth() && nowDay.getDate() == today.getDate()) { // 오늘인 경우           
-  //       newDIV.className = "today";
-  //       newDIV.onclick = function () {
-  //         // choiceDate(this); 
-
-  //       }
-  //     }
-  //     else {                                      // 미래인 경우
-  //       newDIV.className = "futureDay";
-  //       newDIV.onclick = function () {
-  //         // choiceDate(this); 
-
-  //       }
-  //     }
-  //   }
-  // }
-  
-  // // 이전달 버튼 클릭
-  // function prevCalendar() {
-  //   nowMonth = new Date(nowMonth.getFullYear(), nowMonth.getMonth() - 1, nowMonth.getDate());   // 현재 달을 1 감소
-  //   buildCalendar();    // 달력 다시 생성
-  // }
-  // // 다음달 버튼 클릭
-  // function nextCalendar() {
-  //   nowMonth = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, nowMonth.getDate());   // 현재 달을 1 증가
-  //   buildCalendar();    // 달력 다시 생성
-  // }
-  // // input값이 한자리 숫자인 경우 앞에 '0' 붙혀주는 함수
-  // function leftPad(value) {
-  //   if (value < 10) {
-  //     value = "0" + value;
-  //     return value;
-  //   }
-  //   return value;
-  // }
-  let nowMonth = new Date();   // 현재 표시 중인 달
-  let today = new Date();      // 오늘 날짜
-  today.setHours(0, 0, 0, 0);  // 비교 편의를 위해 시간 초기화
-  let selectedDate = null;     // 사용자가 클릭해서 선택한 날짜
-
-  // 일정이 있는 날짜 (점으로 표시). 'YYYY-MM-DD' 형식의 문자열을 채워서 사용
-  // 예: let events = ["2026-06-07", "2026-06-15", "2026-06-24"];
-  let events = [];
-
+  // 달력 생성 : 해당 달에 맞게 테이블 생성 -> 날짜채움
   const now_year = document.querySelector("#calYear");
   const now_month = document.querySelector("#calMonth");
-  const dayGrid = document.querySelector("#dayGrid");
 
-  // input값이 한자리 숫자인 경우 앞에 '0' 붙여주는 함수
-  function leftPad(value) {
-    return value < 10 ? "0" + value : value;
-  }
 
-  // 날짜를 'YYYY-MM-DD' 문자열로 변환 (events 비교용)
-  function formatDate(date) {
-    return date.getFullYear() + "-" + leftPad(date.getMonth() + 1) + "-" + leftPad(date.getDate());
-  }
-
-  // 달력 생성: 테이블 대신 div 그리드로 날짜를 채움
   function buildCalendar() {
-    let firstDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth(), 1);       // 이번달 1일
-    let lastDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, 0);    // 이번달 마지막날
-    let prevLastDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth(), 0);    // 이전달 마지막날
+    console.log("왜 실행안돼?")
 
-    now_year.textContent = nowMonth.getFullYear();              // 연도 숫자 갱신
-    now_month.textContent = leftPad(nowMonth.getMonth() + 1);   // 월 숫자 갱신
+    let firstDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth(), 1);     // 이번달 1일
+    let lastDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, 0);  // 이번달 마지막날
 
-    dayGrid.innerHTML = "";   // 이전 출력결과 초기화
+    let tbody_Calendar = document.querySelector(".Calendar > tbody");
+    // document.getElementById("calYear").innerText = nowMonth.getFullYear();             // 연도 숫자 갱신
+    // document.getElementById("calMonth").innerText = leftPad(nowMonth.getMonth() + 1);  // 월 숫자 갱신
+    
+    now_year.textContent = nowMonth.getFullYear();             // 연도 숫자 갱신
+    now_month.textContent = leftPad(nowMonth.getMonth() + 1);  // 월 숫자 갱신
 
-    // 1. 이번달 1일 요일만큼 이전달 날짜로 앞칸 채우기
-    const leadingCount = firstDate.getDay();
-    for (let i = leadingCount; i > 0; i--) {
-      dayGrid.appendChild(createDayCell(prevLastDate.getDate() - i + 1, true));
+
+    // console.log(document.getElementById("calYear").innerText);
+    // console.log(document.getElementById("calMonth").innerText);
+
+    while (tbody_Calendar.rows.length > 0) {                        // 이전 출력결과가 남아있는 경우 초기화
+      tbody_Calendar.deleteRow(tbody_Calendar.rows.length - 1);
     }
 
-    // 2. 이번달 날짜 채우기
-    for (let d = 1; d <= lastDate.getDate(); d++) {
-      let nowDay = new Date(nowMonth.getFullYear(), nowMonth.getMonth(), d);
-      dayGrid.appendChild(createDayCell(d, false, nowDay));
+    let nowRow = tbody_Calendar.insertRow();        // 첫번째 행 추가           
+
+    for (let j = 0; j < firstDate.getDay(); j++) {  // 이번달 1일의 요일만큼
+      let nowColumn = nowRow.insertCell();        // 열 추가
     }
 
-    // 3. 마지막 주를 7칸으로 맞추기 위해 다음달 날짜로 뒷칸 채우기
-    const totalCells = leadingCount + lastDate.getDate();
-    const trailingCount = (7 - (totalCells % 7)) % 7;
-    for (let i = 1; i <= trailingCount; i++) {
-      dayGrid.appendChild(createDayCell(i, true));
+    for (let nowDay = firstDate; nowDay <= lastDate; nowDay.setDate(nowDay.getDate() + 1)) {   // day는 날짜를 저장하는 변수, 이번달 마지막날까지 증가시키며 반복  
+      let nowColumn = nowRow.insertCell();        // 새 열을 추가하고
+
+
+      let newDIV = document.createElement("p");
+      newDIV.innerHTML = leftPad(nowDay.getDate());        // 추가한 열에 날짜 입력
+
+      // 추가 03.04
+      newDIV.onclick = function () { 
+        // choiceDate(this); 
+        // clickedDate(this); 
+      };
+
+      // console.log(newDIV.innerText);
+      let dateStringArray = [nowDay.getFullYear().toString(), leftPad(nowMonth.getMonth() + 1), leftPad(nowDay.getDate())];
+
+      nowColumn.appendChild(newDIV);
+
+
+
+      if (nowDay.getDay() == 6) {                 // 토요일인 경우
+        nowRow = tbody_Calendar.insertRow();    // 새로운 행 추가
+      }
+
+      if (nowDay < today) {                       // 지난날인 경우
+        newDIV.className = "pastDay";
+      }
+      else if (nowDay.getFullYear() == today.getFullYear() && nowDay.getMonth() == today.getMonth() && nowDay.getDate() == today.getDate()) { // 오늘인 경우           
+        newDIV.className = "today";
+        newDIV.onclick = function () {
+          // choiceDate(this); 
+
+        }
+      }
+      else {                                      // 미래인 경우
+        newDIV.className = "futureDay";
+        newDIV.onclick = function () {
+          // choiceDate(this); 
+
+        }
+      }
     }
   }
-
-  // 날짜 한 칸(cell)을 만들어 반환
-  function createDayCell(dateNum, isOutside, dateObj) {
-    let cell = document.createElement("div");
-    cell.className = "day-cell";
-    cell.textContent = dateNum;
-
-    if (isOutside) {                       // 이전/다음 달 날짜는 회색으로, 클릭 불가
-      cell.classList.add("outside");
-      return cell;
-    }
-
-    if (dateObj.getTime() === today.getTime()) {                          // 오늘인 경우
-      cell.classList.add("today");
-    } else if (selectedDate && dateObj.getTime() === selectedDate.getTime()) {  // 선택된 날짜인 경우
-      cell.classList.add("selected");
-    }
-
-    if (events.includes(formatDate(dateObj))) {   // 일정이 있는 날짜면 점 표시 추가
-      let dot = document.createElement("div");
-      dot.className = "event-dot";
-      cell.appendChild(dot);
-    }
-
-    cell.onclick = function () {
-      selectedDate = dateObj;
-      buildCalendar();   // 선택 상태를 반영하기 위해 다시 그리기
-    };
-
-    return cell;
-  }
-
+  
   // 이전달 버튼 클릭
   function prevCalendar() {
-    nowMonth = new Date(nowMonth.getFullYear(), nowMonth.getMonth() - 1, 1);
-    buildCalendar();
+    nowMonth = new Date(nowMonth.getFullYear(), nowMonth.getMonth() - 1, nowMonth.getDate());   // 현재 달을 1 감소
+    buildCalendar();    // 달력 다시 생성
   }
-
   // 다음달 버튼 클릭
   function nextCalendar() {
-    nowMonth = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, 1);
-    buildCalendar();
+    nowMonth = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, nowMonth.getDate());   // 현재 달을 1 증가
+    buildCalendar();    // 달력 다시 생성
   }
-
- 
+  // input값이 한자리 숫자인 경우 앞에 '0' 붙혀주는 함수
+  function leftPad(value) {
+    if (value < 10) {
+      value = "0" + value;
+      return value;
+    }
+    return value;
+  }
   // 달력끝
 
 
@@ -802,21 +704,6 @@
             // 라벨숨기기 - 나중에 true해도됨
             legend: {
               display: false
-            },
-
-            title: {
-              display: true,
-              text: '    3개월간 예약 추이',
-              color: '#000000',
-              align: 'start',
-              font: {
-                size: 14,
-                weight: 'normal',
-              },
-              padding: {
-                top: 10,
-                bottom: 30
-              }
             },
             // 마우스 올렸을때 툴팁나오게
             tooltip: {

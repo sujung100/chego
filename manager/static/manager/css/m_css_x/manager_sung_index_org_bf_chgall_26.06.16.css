@@ -48,136 +48,22 @@ body {
 .content3 {
   justify-content: center;
   margin: 0 auto;
-  /* height: 60%; */
-  height: 200px;
-  /* width: 65%; */
+  height: 60%;
+  width: 65%;
 }
 
-/*  */
-.calendar-card {
-  /* width: 114px; */
-  margin: 0.4rem 0;
-  background: #fff;
-  border: 1px solid #f3f4f6;
-  border-radius: 10px;
-  padding: 5px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-}
-
-/* 상단 헤더 (연도 + 월/이전/다음 버튼, 폭이 좁아 세로로 쌓음) */
-.calendar-header {
-  display: flex;
-  /* flex-direction: column; */
-  flex-direction: row;
-  justify-content: space-around;
-  align-items: center;
-  margin-bottom: 4px;
-}
-.calendar-year {
-  font-size: 8px;
-  font-weight: 600;
-  color: #9ca3af;
-  margin-bottom: 2px;
-}
-.calendar-nav {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
-.nav-btn {
-  background: none;
-  border: none;
-  padding: 0;
-  font-size: 8px;
-  line-height: 1;
-  color: #9ca3af;
-  cursor: pointer;
-}
-.nav-btn:hover {
-  color: #000;
-}
-.calendar-label {
-  font-size: 9px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-/* 요일 행 */
-.weekday-row {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  text-align: center;
-  font-size: 6px;
-  font-weight: 700;
-  color: #9ca3af;
-  margin-bottom: 3px;
-}
-
-/* 날짜 그리드 */
-.alerts > div > .day-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  row-gap: 3px;
-  text-align: center;
-  font-size: 7px;
-}
-
-.day-cell {
-  position: relative;
-  padding: 1px 0;
-  border-radius: 3px;
-  cursor: pointer;
-}
-.day-cell:hover {
-  background: #f9fafb;
-}
-
-/* 이전/다음 달의 날짜 (회색, 클릭 비활성) */
-.day-cell.outside {
-  color: #d1d5db;
-  cursor: default;
-}
-.day-cell.outside:hover {
-  background: none;
-}
-
-/* 오늘 날짜 */
-.day-cell.today {
-  background: #000;
-  color: #fff;
-  font-weight: 500;
-}
-.day-cell.today:hover {
-  background: #000;
-}
-
-/* 선택된 날짜 */
-.day-cell.selected {
-  font-weight: 700;
-  color: #000;
-  border: 1px solid #000;
-}
-
-/* 일정이 있는 날짜의 점 표시 */
-.event-dot {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 2px;
-  height: 2px;
-  border-radius: 50%;
-  background: #B8C3FF;
-}
-
-/* 기존달력
 .Calendar {
+  /* width:100%; */
   width:98%;
+  /* max-width: 340px; */
+  /* min-height: 100%; */
+  /* height:100%; */
   text-align: center;
   border-collapse: separate;
+  /* border-spacing: 15px 0; */
   table-layout:fixed;
   padding: 1rem;
+  /* margin: 2rem 0; */
   margin: 1rem 0;
 }
 
@@ -192,15 +78,16 @@ body {
 }
 
 .Calendar>tbody>tr>td {
-  width: 14.28%;
+  width: 14.28%; /* 테이블의 총 너비/7 = 각 요일의 너비로 동일하게 설정 */
   height:auto;
-  box-sizing: border-box;
+  box-sizing: border-box; /* 패딩, 경계선이 요소의 크기에 포함 */
 }
 
 .Calendar>thead>tr:first-child>td {
   font-family: 'Questrial', sans-serif;
   font-size: 1.2rem;
   font-weight: bold;
+  /* font-weight: 500; */
 }
 
 .Calendar>thead>tr:last-child>td {
@@ -212,12 +99,15 @@ body {
 
 .Calendar>tbody>tr>td>p {
   margin:0 auto;
+  /* border:2px solid lightsalmon; */
   font-family: 'Montserrat', sans-serif;
   width: 100%;
   height: auto;
   border-radius: 1rem;
   transition-duration: .2s;
   line-height: 150%;
+  /* padding: 0.2rem; */
+  /* margin: 5%; */
   display: block;
   text-align: center;
 }        
@@ -230,6 +120,8 @@ body {
 }        
 
 .pastDay {
+  /* width:50%; */
+  /* height:15%; */
   color: lightgray;
 }
 
@@ -241,6 +133,7 @@ body {
 }
 
 .futureDay {
+  /* background-color: #FFFFFF; */
   cursor: pointer;
 }
 .futureDay:hover{
@@ -253,7 +146,7 @@ body {
   color: #fff;
   font-weight: 600;
   cursor: pointer;
-} */
+}
 
 /*************** 달력 끝 ***************/
 
@@ -915,7 +808,6 @@ svg {
 .cont_box2 .top_flex {
   display: flex;
   flex-direction: row;
-  height: 45%;
 }
 
 .add-form {
@@ -955,22 +847,6 @@ svg {
   /* width: 35%; */
   /* margin: 3rem 0; */
   /* padding: 1rem 0; */
-  /* background-color: rgba(255, 255, 255, 0.44); */
-
-
-  /* height: 15px;
-  padding: 0.8rem 0;
-  margin: 0.4rem 0;
-  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
-  background-color: rgba(255, 255, 255, 0.5);
-  transition: background-color var(--transDur), color var(--transDur);
-  border-radius: 1.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.5);
-  border-left: 1px solid rgba(255, 255, 255, 0.5); */
-}
-
-#noti,
-#timenoti {
   height: 15px;
   padding: 0.8rem 0;
   margin: 0.4rem 0;
@@ -983,13 +859,15 @@ svg {
   border-left: 1px solid rgba(255, 255, 255, 0.5);
 }
 
-/* .alerts > div:last-child {
+.alerts > div:last-child {
+  /* height: 85px; */
+  /* height: 140px; */
   height: 120px;
+  /* padding: 0; */
   text-align: center;
-} */
+}
 
-#noti > div > div,
-#timenoti > div > div {
+.alerts > div > div {
   display: flex;
   margin: 0 auto;
   flex-direction: row;
@@ -1000,35 +878,22 @@ svg {
   flex-direction: column;
 }
 
-/* .alerts > div > div {
-  display: flex;
-  margin: 0 auto;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  height: 16px;
-  gap: 6px;
-  flex-direction: column;
-} */
-
-/* .alerts > div > div:last-child {
+.alerts > div > div:last-child {
   height: 100%;
-} */
+  /* height: 85%; */
+}
 
 .alerts > div > .bell-wrap > .bell {
   /* 종 아이콘 */
   font-size: 20px;
   color: #F5D042;
   display: inline-block;
-  padding-right: 6px;
   transform-origin: 50% 0%;
   font-variation-settings:
   'FILL' 1,'wght' 400
 }
 
 .alerts > div > .bell-wrap {
-  display: flex;
-  margin: 0 auto;
   font-size: 0.9rem;
   flex-direction: row;
 }
@@ -1041,14 +906,15 @@ svg {
 /* #chartnoti {
   height: 200px;
 } */
-/* 
+
 .chart-container {
   width: 100%;
+  /* height: 100%; */
 }
 .chart-container > div {
   font-size: 0.8rem;
   margin-top: 1.2rem;
-} */
+}
 
 /* 애니메이션 */
 .bell {
@@ -1321,35 +1187,13 @@ svg {
   /* margin-left: 20px; */
   pointer-events: auto;
 }
-
-.side_wrap .c_chart {
-  /* margin: 1.2rem 1.2rem 2rem 2.4rem; */
-  /* height: 200px; */
-  height: 165px;
-  border-radius: 1.5rem;
-  margin: 2rem 1.2rem 0 2.4rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.5);
-  border-left: 1px solid rgba(255, 255, 255, 0.5);
-  background-color: #9a9ea1;
-  overflow: hidden;
-}
-.chart-container {
-  width: 98%;
-  /* padding: 1rem;
-  margin: 1rem 0; */
-  /* height: 190px; */
-  height: 165px;
-}
 .side_wrap .t_chart {
-  /* margin-top: 2rem; */
-  /* height: 250x; */
-  height: 165px;
-  margin-top: 1.2rem;
+  margin-top: 2rem;
+  height: 250x;
   pointer-events: auto;
   /* transform: translateX(-20px); */
 }
 .side_wrap .l_chart {
-  height: 165px;
   margin-top: 1.2rem;
   /* height: 250px; */
   pointer-events: auto;
@@ -1374,11 +1218,6 @@ svg {
   /* text-align: center; */
   font-size: 0.8rem;
 }
-
-/* .chart-container > div {
-  font-size: 0.8rem;
-} */
-
 /* .sub_title {
   font-size: 14px;
 }
@@ -1401,6 +1240,14 @@ svg {
 } */
 
 /* 데이터 기반 매장운영 제안 - 분석통계 */
+.sub_style {
+  border-radius: 1.5rem;
+  margin: 1.2rem 1.2rem 2rem 2.4rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.5);
+  border-left: 1px solid rgba(255, 255, 255, 0.5);
+  background-color: #9a9ea1;
+  overflow: hidden;
+}
 .sub_txt {
   line-height: 1.8;
   font-size: 0.8rem;
@@ -1408,11 +1255,9 @@ svg {
   /* css 숫자 카운터 초기화 0부터시작 - 카운터명numCount */
   counter-reset: numCount; 
  
-  height: 300px;
+  height: 200px;
   overflow-y: scroll;
   box-sizing: border-box;
-  padding: 0.4rem 0;
-  margin: 0 1rem 0 0;
 }
 
 .sub_txt::-webkit-scrollbar{
@@ -1790,14 +1635,13 @@ svg {
   display: flex;
   /* justify-content: center; */
   /* align-items: center; */
-  /* height: 100%; */
-  height: 55%;
+  height: 100%;
   font-size: 0.8rem;
 }
 
 .app {
   /* width: 350px; */
-  /* width: 90%; */
+  width: 100%;
   /* height: 250px; */
   height: 52vh;
   height: 85%;
@@ -1816,8 +1660,7 @@ svg {
   box-shadow: inset 0px 2px 0px rgba(255, 255, 255, .75), inset 0px 0px 2px rgba(255, 255, 255, .7), 0px 0px 1px rgba(0, 0, 0, .3);
   border: 1px solid #fff;
   border-radius: 20px;
-  margin-top: 2rem;
-  /* margin: 0 1rem 2rem 0; */
+  margin: 0 1rem 2rem 0;
   /* margin-bottom: 2rem; */
   /* min-width: 350px; */
   /* width: 400px; */
@@ -1829,9 +1672,9 @@ svg {
 }
 
 .title {
-  font-size: 0.8rem;
+  /* font-size: 1rem; */
   color: #4d4d4d;
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.8rem;
   /* font-weight: bold; */
 }
 
@@ -1862,18 +1705,15 @@ button {
 
 
 .blue_btn {
-  /* width: 60px; */
-  /* min-width: 50px; */
-  /* padding: 0.2rem 0.6rem; */
-  padding: 0.2rem;
+  width: 60px;
+  padding: 0.2rem 0.6rem;
   color: #4d4d4d;
   /* padding: 0.7em 1.7em; */
   /* padding: 0.6em 1.5em; */
   /* padding: 0.6em 0.8em; */
   /* padding: 0 1rem; */
   /* font-size: 18px; */
-  /* font-size: 10px; */
-  font-size: 0.6rem;
+  font-size: 13px;
   /* border-radius: 0.5em; */
   border-radius: 2em;
   background: #e8e8e8;
@@ -2079,7 +1919,7 @@ button {
 /* 끝 */
 
 .form {
-  /* width: 94%; */
+  width: 94%;
   /* height: 30px; */
   display: flex;
   /* margin-bottom: 0.6rem; */
@@ -2108,10 +1948,8 @@ button {
 
 .form__input {
   flex: 1;
-  font-size: 0.6rem;
   border: none;
-  /* padding: 0.2rem 1rem; */
-  padding: 0 0.8rem;
+  padding: 0.2rem 1rem;
   margin: 0 0.4rem 0 0;
   border-radius: 1rem;
   /* padding: 0.75em 1.5em;
@@ -2140,7 +1978,6 @@ button {
 
 .todo-list {
   width: 100%;
-  font-size: 0.7rem;
   flex: 1;
   overflow-y: auto;
   list-style: none;
@@ -2171,8 +2008,7 @@ button {
   /* color: #06b7f1; */
   color: #4d4d4d;
   /* padding: 0.4rem 1rem; */
-  /* padding: 0.2rem 1rem; */
-  padding: 0 0.8rem;
+  padding: 0.2rem 1rem;
 }
 
 .todo-list__item.complete .todo-list__item-content {
@@ -2182,31 +2018,24 @@ button {
 
 .todo-list__item-remove {
   /* color: #06b7f1; */
-  /* font-size: 1rem; */
   color: #aaa;
-  font-size: 0.6rem;
+  font-size: 1rem;
   background: none;
   border: none;
-}
-
-.todo-list__item-remove > .material-symbols-outlined {
-  font-size: 1.2rem;
 }
 
 .filters {
   width: 100%;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   /* padding: 1rem 0 0 0; */
   padding: 0.6rem 0 0 0;
   /* border-top: 1px solid #eee; */
 }
 
 .btn_right {
-  /* width: 260px; */
-  /* width: 90%; */
-  /* padding: 0 0 0.2rem 0; */
-  width: 100%;
+  width: 260px;
+  padding: 0 0 0.2rem 0;
   display: flex;
   justify-content: flex-end;
 }

@@ -1,0 +1,252 @@
+<script>
+  // Notification.requestPermission().then(function (permission) {
+  //   console.log('Permission:', permission);
+  // });
+  // new Notification("Hello, world!",{
+  //   body : "This is a notification."
+  // });
+
+  ntfIcon = document.querySelector(".bell");
+  ntfIcon_count = document.querySelector(".bell ~ .num-count");
+  modal = document.querySelector("#open-modal");
+  function clickReserVaTion() {
+    ntfIcon.addEventListener("click", function () {
+      console.log("클릭 이벤트 되냐");
+      // window.location.hash = "open-modal";
+      modal.style.display = "flex";
+      ntfIcon_count.style.display = "none";
+    });
+    window.addEventListener("click", function () {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    })
+
+  }
+  clickReserVaTion();
+
+  // 기존
+  // async function pageStart(socket) {
+  //   let rsvFetch = await fetch("api/reservation_false/");
+  //   let rsvDetailsData = await rsvFetch.json();
+  //   // console.table("콘솔태이블", rsvDetailsData);
+  //   console.log("페이지스타트", rsvDetailsData);
+  //   console.log("페이지스타트", rsvDetailsData.length);
+  //   if (rsvDetailsData.length !== 0) {
+  //     ntfIcon_count.style.display = "flex";
+  //     ntfIcon_count.textContent = rsvDetailsData.length
+  //   }
+  //   rsvNotification(socket, rsvDetailsData);
+  // }
+
+  async function pageStart() {
+
+    const socket = manager_webSockets.manager; 
+    if (!socket) {
+      console.error("Manager socket is not initialized yet");
+      return;
+    }
+
+    let rsvFetch = await fetch("api/reservation_false/");
+    let rsvDetailsData = await rsvFetch.json();
+    // console.table("콘솔태이블", rsvDetailsData);
+    console.log("페이지스타트", rsvDetailsData);
+    console.log("페이지스타트", rsvDetailsData.length);
+    if (rsvDetailsData.length !== 0) {
+      ntfIcon_count.style.display = "flex";
+      ntfIcon_count.textContent = rsvDetailsData.length;
+    }
+    rsvNotification(socket, rsvDetailsData);
+  }
+
+  async function reserVationDetails(socket, data) {
+    // console.log("모달 스크립트");
+    let reservationId = data.content;
+    console.log("나와라", reservationId);
+    // console.log("reserVationDetails", reservationId);
+    let rsvFetch = await fetch(`api/reservation_id/${reservationId}`);
+    // console.log(rsvFetch);
+    let rsvdata2 = await rsvFetch.json();
+    // console.log(rsvdata);
+
+    // if (rsvdata2.rsv_check !== 0) {
+    //   ntfIcon_count.style.display = "flex";
+    //   ntfIcon_count.textContent = rsvdata2.rsv_check;
+    // }
+
+    if (nc) {
+      nc.addMessageToCache(rsvdata2);
+    }
+    rsvNotification(socket, rsvdata2);
+  }
+
+
+  // 예약 데이터 업데이트
+  async function rsvNotification(socket, rsvdata) {
+    const currentStoreId = nc.storeManager.storeId; 
+    const dataArray = Array.isArray(rsvdata) ? rsvdata : [rsvdata];
+
+    // 데이터 저장 (캐시 업데이트)
+    dataArray.forEach(item => {
+      const sId = String(item.store_id);
+      if (!nc.storeDataCache[sId]) nc.storeDataCache[sId] = [];
+      
+      // 데이터 중복방지
+      if (!nc.storeDataCache[sId].find(d => d.id === item.id)) {
+        nc.storeDataCache[sId].push(item);
+      }
+    });
+
+    // 현재 스토어에 업데이트있나 확인
+    const hasCurrentStoreUpdate = dataArray.some(item => String(item.store_id) === String(currentStoreId));
+
+    // 모달 내부 카드 업데이트
+    if (hasCurrentStoreUpdate) {
+      renderCards(currentStoreId);
+    }
+
+    // 알림 업데이트
+    updateNoti();
+  }
+
+
+  // 활성스토어 화면비우고 데이터추가
+  function renderCards(storeId) {
+    const reservation_card = document.querySelector("#reservation-info");
+    if (!reservation_card) return;
+
+    reservation_card.innerHTML = "";
+
+    const cachedData = nc.storeDataCache[String(storeId)] || [];
+    
+    cachedData.forEach(rsvInfo => {
+      let card = document.createElement("div");
+      card.classList.add("card");
+      card.dataset.rid = rsvInfo.id;
+
+    const displayFields = {
+      'user_name': '예약자명',
+      'user_phone': '연락처',
+      'reservation_date': '예약일',
+      'user_time': '예약시간',
+      'visitor_num': '방문인원'
+    };
+
+      Object.keys(displayFields).forEach(key => {
+        // 데이터가 존재할 때만 생성
+        if (rsvInfo[key] !== undefined) {
+          let cardP = document.createElement("p");
+          cardP.textContent = `${displayFields[key]} : ${rsvInfo[key]}`;
+          if (key === 'visitor_num') cardP.textContent += "명";
+
+          card.appendChild(cardP);
+        }
+      });
+      
+      reservation_card.appendChild(card);
+
+      // 기존5.29
+      // 클릭 -> 읽음처리 + 캐시삭제
+      // card.addEventListener("click", function () {
+        
+      //   // 수정중
+      //   // rsvIsRead1(socket, rsvInfo.id);
+      //   // this.remove();
+        
+      //   const socket = manager_webSockets.manager;
+      //   if (socket && socket.readyState === WebSocket.OPEN) {
+      //     rsvIsRead1(socket, rsvInfo.id);
+      //   }
+      //   this.remove();
+
+
+      //   const sId = String(storeId);
+        
+      //   nc.storeDataCache[sId] = nc.storeDataCache[sId].filter(d => d.id !== rsvInfo.id);
+      //   updateNoti();
+      // });
+
+      // // 수정중5.29
+      // card.addEventListener("click", function () {
+        
+      //   // 수정중
+      //   // rsvIsRead1(socket, rsvInfo.id);
+      //   // this.remove();
+        
+      //   console.log("[Click] 전체 소켓 객체 상태:", manager_webSockets);
+      //   const socket = manager_webSockets ? manager_webSockets.manager : null;
+        
+      //   if (socket) {
+      //     // 소켓 객체는 존재하나 readyState가 판단 유보일 때를 위해 로그 확인
+      //     console.log("[Click] 매니저 소켓 readyState 상태:", socket.readyState);
+          
+      //     // 라이브러리에 따라 다를 수 있으므로 readyState가 1(OPEN)이거나 
+      //     // 혹은 객체가 존재하면 일단 발송을 시도하도록 조건을 변경해 봅니다.
+      //     if (socket.readyState === 1 || socket.readyState === undefined || socket.readyState === WebSocket.OPEN) {
+      //       rsvIsRead1(socket, rsvInfo.id);
+      //     } else {
+      //       console.warn("[Click] 소켓이 연결 상태(OPEN)가 아닙니다. 현재 상태:", socket.readyState);
+      //     }
+      //   } else {
+      //     console.error("[Click] manager_webSockets.manager 객체를 찾을 수 없습니다.");
+      //   }
+
+      //   // 화면에서 지우고 캐시 필터링하는 로직 (기존 유지)
+      //   this.remove();
+      //   const sId = String(storeId);
+      //   nc.storeDataCache[sId] = nc.storeDataCache[sId].filter(d => d.id !== rsvInfo.id);
+      //   updateNoti();
+      // });
+
+      // 수정중6.03
+      card.addEventListener("click", function () {
+        // 이제 전역 변수 manager_webSockets가 비어있지 않고 꽉 차있습니다.
+        console.log("[Click] 현재 전역 소켓 상태:", manager_webSockets);
+        
+        const socket = manager_webSockets ? manager_webSockets.manager : null;
+        
+        if (socket) {
+          console.log("[Click] 매니저 소켓 readyState:", socket.readyState);
+          if (socket.readyState === 1 || socket.readyState === WebSocket.OPEN) {
+            rsvIsRead1(socket, rsvInfo.id);
+          } else {
+            console.warn("[Click] 소켓 상태가 OPEN이 아닙니다.");
+          }
+        } else {
+          console.error("[Click] 전역 manager_webSockets에서 manager를 찾을 수 없습니다.");
+        }
+
+        // 화면 제거 및 캐시 필터링 (기존 유지)
+        this.remove();
+        const sId = String(storeId);
+        nc.storeDataCache[sId] = nc.storeDataCache[sId].filter(d => d.id !== rsvInfo.id);
+        updateNoti();
+      });
+    });
+  }
+
+  async function rsvNotiCount() {
+    // pass;
+  }
+
+  function rsv_count_none(element) {
+    element.style.display = "none";
+  }
+  function rsv_count_flex(element) {
+    element.style.display = "flex";
+  }
+
+
+  function rsvIsRead1(socket, data) {
+    if (socket.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify({
+        "command": "RSV_mark_as_read",
+        "rsv_id": data,
+      }));
+
+    }
+  }
+  function rsvIsRead2(element) {
+    // pass;
+  }
+</script>

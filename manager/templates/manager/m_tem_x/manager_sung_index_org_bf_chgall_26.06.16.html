@@ -150,27 +150,11 @@
                     <div id="clock"></div>
                   </div>
                 </div>
-                <!-- <div id="chartnoti">
+                <div id="chartnoti">
                   <div class="chart-container">
                     <div>3개월간 예약 추이</div>
                     <canvas id="storeMonthlyChart"></canvas>
                   </div>
-                </div> -->
-                <div class="calendar-card">
-                  <div class="calendar-header">
-                    <div class="calendar-year"><span id="calYear"></span>년</div>
-                    <div class="calendar-nav">
-                      <button class="nav-btn" onclick="prevCalendar()" aria-label="이전 달">&#10094;</button>
-                      <span class="calendar-label"><span id="calMonth"></span>월</span>
-                      <button class="nav-btn" onclick="nextCalendar()" aria-label="다음 달">&#10095;</button>
-                    </div>
-                  </div>
-
-                  <div class="weekday-row">
-                    <div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>
-                  </div>
-
-                  <div class="day-grid" id="dayGrid"></div>
                 </div>
                 
               </div>
@@ -180,32 +164,7 @@
               <!-- 달력추가 -->
                
               <div class="content3">
-                
-
-                <div class="app" id="app">
-                <div class="title">Tasks</div>
-                <form class="form" id="todo-form">
-                  <input class="input form__input" id="todo-input" placeholder="할 일을 입력하세요..." />
-                  <button class="blue_btn form__submit-btn" type="submit">추가</button>
-                </form>
-                <ol class="todo-list" id="todo-list"></ol>
-                <div class="btn_right">
-                  <div class="filters">
-                    <button class="blue_btn filters__btn" data-filter="all">전체</button>
-                    <button class="blue_btn filters__btn" data-filter="complete">완료</button>
-                    <button class="blue_btn filters__btn" data-filter="incomplete">진행중</button>
-                    <button class="save_btn" id="save-btn">
-                      <div class="button-outer">
-                        <div class="button-inner">
-                          <span>저장하기</span>
-                        </div>
-                      </div>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-                <!-- <table class="Calendar">
+                  <table class="Calendar">
                     <thead>
                       <tr class="daytitle">
                         <td onClick="prevCalendar();" style="cursor:pointer;">&#60;</td>
@@ -227,7 +186,7 @@
                     </thead>
                     <tbody>
                     </tbody>
-                  </table> -->
+                  </table>
                 </div>
 
 
@@ -235,7 +194,7 @@
             
       
             <div class="app_wrap">
-              <!-- <div class="app" id="app">
+              <div class="app" id="app">
                 <div class="title">Tasks</div>
                 <form class="form" id="todo-form">
                   <input class="input form__input" id="todo-input" placeholder="할 일을 입력하세요..." />
@@ -247,6 +206,7 @@
                     <button class="blue_btn filters__btn" data-filter="all">전체</button>
                     <button class="blue_btn filters__btn" data-filter="complete">완료</button>
                     <button class="blue_btn filters__btn" data-filter="incomplete">진행중</button>
+                    <!-- <button class="save_btn" id="save-btn">저장하기</button> -->
                     <button class="save_btn" id="save-btn">
                       <div class="button-outer">
                         <div class="button-inner">
@@ -256,41 +216,8 @@
                     </button>
                   </div>
                 </div>
-              </div> -->
-
-              <div class="sub_txt">
-                  <div class="sub_title">데이터 기반 매장 운영 제안</div>
-                
-                  <div id="timeChartInfo_peak" class="analysis-item">
-                    <span class="item_title">주요 혼잡 시간대(Peak Time)</span>
-                    <div class="item_content">
-                      현재 해당 매장의 핵심 예약 집중 시간은 <span id="peakTimeTxt" class="highlight-val">-시</span>입니다.<br>
-                      <span class="item_tip">▷ 해당 시간대 고객 대기 시간 최소화를 위해 효율적인 서비스 인력 재배치(Shift)를 권장합니다.</span>
-                    </div>
-                  </div>
-                
-                  <div id="leadChartInfo_analysis" class="analysis-item">
-                    <span class="item_title">고객 예약 리드타임 분석</span>
-                    <div class="item_content">
-                      방문 고객의 사전 예약 행동 패턴은 주로 <span id="leadTimeTxt" class="highlight-val">-</span>에 집중되어 있습니다.<br>
-                      <span class="item_tip">▷ 타깃 마케팅 및 프로모션 캠페인은 방문 예정일 <b><span id="leadTimeActionTxt">-</span></b>에 집행하는 것이 전환율 향상에
-                        가장 효과적입니다.</span>
-                    </div>
-                  </div>
-                
-                  <div id="timeChartInfo_low" class="analysis-item">
-                    <span class="item_title">예약 저조 시간대(Off-Peak) 활성화</span>
-                    <div class="item_content">
-                      현재 일일 예약율이 가장 정체되는 시간대는 <span id="minTimeTxt" class="highlight-val">-시</span>입니다.<br>
-                      <span class="item_tip">▷ 가동률 증가를 위해 해당 시간대 한정 <b>'해피아워 타임세일'</b>이나 선예약 특가 이벤트를 도입해 매출 공백을 보완해 보세요.</span>
-                    </div>
-                  </div>
-                </div>
+              </div>
             </div>
-
-
-
-              
           </div>
           <!-- <a href="/manager/write">
             <button class="rsv_test" type="button">예약테스트</button>
@@ -319,11 +246,17 @@
         <div class="content2"></div>
           {% if request.user.is_authenticated %}
           <div class="side_wrap">
-            <div class="c_chart">
-              <div class="chart-container">
-                <canvas id="storeMonthlyChart"></canvas>
-              </div>
-              <!-- <div class="sub_txt">
+            <div class="t_chart">
+              <!-- <div>시간대별 예약 밀집도(최다/최소)</div> -->
+              <canvas id="timeChart"></canvas>
+            </div>
+            <div class="l_chart">
+              <!-- <div>예약 리드타임</div> -->
+              <canvas id="leadChart"></canvas>
+              <div></div>
+            </div>
+            <div class="sub_style">
+              <div class="sub_txt">
                 <div class="sub_title">데이터 기반 매장 운영 제안</div>
               
                 <div id="timeChartInfo_peak" class="analysis-item">
@@ -350,18 +283,8 @@
                     <span class="item_tip">▷ 가동률 증가를 위해 해당 시간대 한정 <b>'해피아워 타임세일'</b>이나 선예약 특가 이벤트를 도입해 매출 공백을 보완해 보세요.</span>
                   </div>
                 </div>
-              </div> -->
+              </div>
             </div>
-            <div class="t_chart">
-              <!-- <div>시간대별 예약 밀집도(최다/최소)</div> -->
-              <canvas id="timeChart"></canvas>
-            </div>
-            <div class="l_chart">
-              <!-- <div>예약 리드타임</div> -->
-              <canvas id="leadChart"></canvas>
-              <div></div>
-            </div>
-            
           </div>
         
           {% else %}

@@ -32,41 +32,8 @@ body {
   /* background-image: linear-gradient(to bottom right, #7A7A7A, #565656); */
   /* background-image: url("../img/uplecz.jpg"); */
   /* background-image: url("../img/bg_white_01.jpg"); */
-  /* background: #DFDFDF; */
-
-  /* background: var(--bg-pale-blue); */
-  background: var(--bg-bright-blue);
-}
-
-.blob {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(90px);
-    pointer-events: none;
-    z-index: 0;
-}
-
-.blob-1 {
-    width: 420px;
-    height: 420px;
-    /* background: #c7c2ff; */
-    background: #776cf7;
-    opacity: .35;
-    top: -120px;
-    right: -100px;
-}
-
-.blob-2 {
-    width: 380px;
-    height: 380px;
-    /* background: #b9ece2; */
-    /* background: #74ffe4; */
-    background: #8cefff;
-    opacity: .35;
-    bottom: -140px;
-    left: -120px;
-}
-
+  background: var(--bg-grad);
+} 
 
 /* 컬러변수 */
 :root {
@@ -81,15 +48,8 @@ body {
   /* --bg-grad: linear-gradient(135deg, #B4B4B4 50%, #C9C9C9 100%); */
   /* --side-grad: linear-gradient(135deg, #898b91 50%, #a1a4aa 100%); */
   --bg-grad: linear-gradient(135deg, #B2B6BC 50%, #C7CBD1 100%);
-  --bg-pale-blue: #aebfd2;
-  --bg-bright-blue: #adc8e6;
-
-
-  /* --side-white: #fbfbfb; */
-  --side-white: #fdfdfd;
   --side-grad: linear-gradient(180deg, #c9cacd 0%, #9ca3af 100%);
   --bg-light-grey: #ebebeb;
-  --bg-pale-grey: #d8d9dd;
   --glass-bg-light: rgba(255,255,255,0.2);
   --glass-bg: rgba(255,255,255,0.55);
   --glass-bg-dark: rgba(255,255,255,0.72);
@@ -114,9 +74,7 @@ body {
   flex-direction: column;
   justify-content: space-between;
 
-  /* background: var(--glass-bg-light); */
-  /* background: var(--glass-bg-dark); */
-  background: var(--b);
+  background: var(--glass-bg-light);
   border: 1px solid var(--glass-border);
   border-radius: 1.5rem;
   box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.6);
@@ -284,45 +242,35 @@ body {
   position: relative;
   display: flex;
   width: 100%;
-  /* height: 86vh; */
-  height: 90vh;
+  height: 86vh;
   align-items: stretch;
   
   filter: drop-shadow(0 6px 14px rgba(0,0,0,0.3));
   /* 부모를 draw-bg의 기준으로 너비, 높이설정 */
   container-type: size;
-
-  /* 기본 디자인 값 */
-  --r: 2rem;              /* 기본 반지름 */
-  /* --step-x: 61.76%;       계단 꺾이는 x */
-  --step-x: max(20%, calc(100% - 30cqw - 1.2rem));
-  /* --elbow-y: 50%;         계단 꺾이는 y */
-  /* --elbow-y: 72.5cqh; */
-  --elbow-y: 64cqh;
-  --b: 2px;               /* 테두리 두께 */
-
-  /* fill 레이어용으로 보정된 값 (한 번만 계산, 재사용) */
-  --rc: calc(var(--r) - var(--b));                 /* 볼록 모서리 반지름 */
-  --rk: calc(var(--r) + var(--b));                 /* 오목 모서리 반지름 */
-  --sx: calc(var(--step-x) - var(--b));             /* 안쪽으로 밀린 step-x */
-  --ey: calc(var(--elbow-y) + var(--b));            /* 안쪽으로 밀린 elbow-y */
 }
 
 .draw-line, 
 .draw-bg,
-.draw-highlight,
-.card-inner-glow {
+.draw-highlight {
   position: absolute;
   inset: 0;
 }
 
 .draw-line {
+  aspect-ratio: 680 / 480;  /* 비율 고정 - 이게 있어야 %가 의미있게 작동 */
+  --r: 2rem;         /* 여기 값만 바꾸면 전체 반지름이 바뀜 */
+  --step-x: max(20%, calc(100% - 30cqw));   /* 계단이 꺾이는 x위치 (반지름과 무관한 디자인 비율) */
+  /* --elbow-y: 75%;  */
+  --elbow-y: 72.5cqh;
+
+  inset: 0;
   background: #ffffff; /* 테두리 색 */
   /* clip-path: path("M 24 0 L 186 0 A 24 24 0 0 1 210 24 L 210 86 A 24 24 0 0 0 234 110 L 316 110 A 24 24 0 0 1 340 134 L 340 196 A 24 24 0 0 1 316 220 L 24 220 A 24 24 0 0 1 0 196 L 0 24 A 24 24 0 0 1 24 0 Z"); */
   clip-path: shape(
-    from calc(0% + var(--r)) 0,
-    line to calc(var(--step-x) - var(--r)) 0,
-    arc to var(--step-x) var(--r) of var(--r) cw,
+    from calc(0% + var(--r)) 0%,
+    line to calc(var(--step-x) - var(--r)) 0%,
+    arc to var(--step-x) calc(0% + var(--r)) of var(--r) cw,
     line to var(--step-x) calc(var(--elbow-y) - var(--r)),
     arc to calc(var(--step-x) + var(--r)) var(--elbow-y) of var(--r) ccw,
     line to calc(100% - var(--r)) var(--elbow-y),
@@ -330,9 +278,9 @@ body {
     line to 100% calc(100% - var(--r)),
     arc to calc(100% - var(--r)) 100% of var(--r) cw,
     line to calc(0% + var(--r)) 100%,
-    arc to 0 calc(100% - var(--r)) of var(--r) cw,
-    line to 0 var(--r),
-    arc to calc(0% + var(--r)) 0 of var(--r) cw
+    arc to 0% calc(100% - var(--r)) of var(--r) cw,
+    line to 0% calc(0% + var(--r)),
+    arc to calc(0% + var(--r)) 0% of var(--r) cw
   );
 }
 /* 
@@ -343,6 +291,11 @@ body {
 } */
 
 .draw-bg {
+  aspect-ratio: 680 / 480;  /* 비율 고정 - 이게 있어야 %가 의미있게 작동 */
+  --r: 2rem;         /* 여기 값만 바꾸면 전체 반지름이 바뀜 */
+  --step-x: max(20%, calc(100% - 30cqw));   /* 계단이 꺾이는 x위치 (반지름과 무관한 디자인 비율) */
+  /* --elbow-y: 75%;  */
+  --elbow-y: 72.5cqh; 
 
   width: 100%;
   height: 100cqh;
@@ -350,79 +303,63 @@ body {
   
   /* background: #000; */
   background: var(--bg);
-  /* inset: 1px; */
+  /* box-shadow: inset 0px 2px 0px rgba(255, 255, 255, .75), inset 0px 0px 2px rgba(255, 255, 255, .7), 0px 0px 1px rgba(0, 0, 0, .3); */
+  /* border: 1px solid #fff; */
+  border-radius: 2rem;
+  /* backdrop-filter: blur(30px); */
+  inset: 1px;
 
   clip-path: shape(
-    from calc(0% + var(--b) + var(--rc)) var(--b),
-    line to calc(var(--sx) - var(--rc)) var(--b),
-    arc to var(--sx) calc(var(--b) + var(--rc)) of var(--rc) cw,
-    line to var(--sx) calc(var(--ey) - var(--rk)),
-    arc to calc(var(--sx) + var(--rk)) var(--ey) of var(--rk) ccw,
-    line to calc(100% - var(--b) - var(--rc)) var(--ey),
-    arc to calc(100% - var(--b)) calc(var(--ey) + var(--rc)) of var(--rc) cw,
-    line to calc(100% - var(--b)) calc(100% - var(--b) - var(--rc)),
-    arc to calc(100% - var(--b) - var(--rc)) calc(100% - var(--b)) of var(--rc) cw,
-    line to calc(0% + var(--b) + var(--rc)) calc(100% - var(--b)),
-    arc to var(--b) calc(100% - var(--b) - var(--rc)) of var(--rc) cw,
-    line to var(--b) calc(var(--b) + var(--rc)),
-    arc to calc(var(--b) + var(--rc)) var(--b) of var(--rc) cw
+    from calc(0% + var(--r)) 0%,
+    line to calc(var(--step-x) - var(--r)) 0%,
+    arc to var(--step-x) calc(0% + var(--r)) of var(--r) cw,
+    line to var(--step-x) calc(var(--elbow-y) - var(--r)),
+    arc to calc(var(--step-x) + var(--r)) var(--elbow-y) of var(--r) ccw,
+    line to calc(100% - var(--r)) var(--elbow-y),
+    arc to 100% calc(var(--elbow-y) + var(--r)) of var(--r) cw,
+    line to 100% calc(100% - var(--r)),
+    arc to calc(100% - var(--r)) 100% of var(--r) cw,
+    line to calc(0% + var(--r)) 100%,
+    arc to 0% calc(100% - var(--r)) of var(--r) cw,
+    line to 0% calc(0% + var(--r)),
+    arc to calc(0% + var(--r)) 0% of var(--r) cw
   );
 }
 
 .draw-highlight {
-
+  aspect-ratio: 680 / 480;  /* 비율 고정 - 이게 있어야 %가 의미있게 작동 */
+  --r: 2rem;         /* 여기 값만 바꾸면 전체 반지름이 바뀜 */
+  --step-x: max(20%, calc(100% - 30cqw));   /* 계단이 꺾이는 x위치 (반지름과 무관한 디자인 비율) */
+  /* --elbow-y: 75%;  */
+  --elbow-y: 72.5cqh;
   
-  /* inset: 1px; card-fill과 같은 위치 */
-  pointer-events: none;
-  clip-path: shape(
-    from calc(0% + var(--b) + var(--rc)) var(--b),
-    line to calc(var(--sx) - var(--rc)) var(--b),
-    arc to var(--sx) calc(var(--b) + var(--rc)) of var(--rc) cw,
-    line to var(--sx) calc(var(--ey) - var(--rk)),
-    arc to calc(var(--sx) + var(--rk)) var(--ey) of var(--rk) ccw,
-    line to calc(100% - var(--b) - var(--rc)) var(--ey),
-    arc to calc(100% - var(--b)) calc(var(--ey) + var(--rc)) of var(--rc) cw,
-    line to calc(100% - var(--b)) calc(100% - var(--b) - var(--rc)),
-    arc to calc(100% - var(--b) - var(--rc)) calc(100% - var(--b)) of var(--rc) cw,
-    line to calc(0% + var(--b) + var(--rc)) calc(100% - var(--b)),
-    arc to var(--b) calc(100% - var(--b) - var(--rc)) of var(--rc) cw,
-    line to var(--b) calc(var(--b) + var(--rc)),
-    arc to calc(var(--b) + var(--rc)) var(--b) of var(--rc) cw
-  );
+  inset: 1px; /* card-fill과 같은 위치 */
   background: linear-gradient(
     to bottom,
     rgba(255, 255, 255, .75) 0px,
-    rgba(255, 255, 255, 0) 3px
+    rgba(255, 255, 255, 0) 2px
   );
-}
-
-.draw-inner-glow {
   pointer-events: none;
+
   clip-path: shape(
-    from calc(0% + var(--b) + var(--rc)) var(--b),
-    line to calc(var(--sx) - var(--rc)) var(--b),
-    arc to var(--sx) calc(var(--b) + var(--rc)) of var(--rc) cw,
-    line to var(--sx) calc(var(--ey) - var(--rk)),
-    arc to calc(var(--sx) + var(--rk)) var(--ey) of var(--rk) ccw,
-    line to calc(100% - var(--b) - var(--rc)) var(--ey),
-    arc to calc(100% - var(--b)) calc(var(--ey) + var(--rc)) of var(--rc) cw,
-    line to calc(100% - var(--b)) calc(100% - var(--b) - var(--rc)),
-    arc to calc(100% - var(--b) - var(--rc)) calc(100% - var(--b)) of var(--rc) cw,
-    line to calc(0% + var(--b) + var(--rc)) calc(100% - var(--b)),
-    arc to var(--b) calc(100% - var(--b) - var(--rc)) of var(--rc) cw,
-    line to var(--b) calc(var(--b) + var(--rc)),
-    arc to calc(var(--b) + var(--rc)) var(--b) of var(--rc) cw
-  );
-  background: radial-gradient(
-    ellipse at 50% 0%,
-    rgba(255, 255, 255, .35) 0%,
-    rgba(255, 255, 255, 0) 60%
+    from calc(0% + var(--r)) 0%,
+    line to calc(var(--step-x) - var(--r)) 0%,
+    arc to var(--step-x) calc(0% + var(--r)) of var(--r) cw,
+    line to var(--step-x) calc(var(--elbow-y) - var(--r)),
+    arc to calc(var(--step-x) + var(--r)) var(--elbow-y) of var(--r) ccw,
+    line to calc(100% - var(--r)) var(--elbow-y),
+    arc to 100% calc(var(--elbow-y) + var(--r)) of var(--r) cw,
+    line to 100% calc(100% - var(--r)),
+    arc to calc(100% - var(--r)) 100% of var(--r) cw,
+    line to calc(0% + var(--r)) 100%,
+    arc to 0% calc(100% - var(--r)) of var(--r) cw,
+    line to 0% calc(0% + var(--r)),
+    arc to calc(0% + var(--r)) 0% of var(--r) cw
   );
 }
 
 .box1 {
-  /* width: calc(70% - 32px); */
-  width: calc(70% - 3.2rem);
+  width: calc(70% - 32px);
   /* border-radius: 20px; */
   /* width: 100%; */
   display: flex;
@@ -447,8 +384,7 @@ body {
   /* box-shadow: inset 0px 2px 0px rgba(255, 255, 255, .75), inset 0px 0px 2px rgba(255, 255, 255, .7), 0px 0px 1px rgba(0, 0, 0, .3); */
   /* border: 1px solid #fff; */
   /* border-radius: 20px; */
-  /* padding: 2rem; */
-  padding: 2rem 1.2rem 2rem 2rem;
+  padding: 2rem;
   /* backdrop-filter: blur(30px); */
 }
 
@@ -456,12 +392,10 @@ body {
   text-align: center;
   padding: 0.4rem;
   position: fixed;
-  /* top: 35%; */
-  top: 65vh;
+  top: 35%;
   left: 4%;
   backdrop-filter: blur(30px);
-  /* background-color: transparent; */
-  background: var(--glass-bg-light);
+  background-color: transparent;
   box-shadow: inset 0px 2px 0px rgba(255, 255, 255, .75), inset 0px 0px 2px rgba(255, 255, 255, .7), 0px 0px 1px rgba(0,0,0, .3);
   border:1px solid #fff;
   border-radius: 20px;
@@ -559,8 +493,7 @@ svg {
   /* background: #ebebeb; */
   width: 100%;
   border-radius: 16px;
-  padding: 1rem 2rem 1rem 1rem;
-  /* padding: 20px 16px; */
+  padding: 20px 16px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -692,8 +625,7 @@ svg {
 .userInfo {
   display: flex;
   position: absolute;
-  /* top: -8px; */
-  top: -16px;
+  top: -8px;
   right: 30px;
   margin: 1.5rem 0;
   color: #fefefe;
@@ -946,10 +878,8 @@ svg {
  /* 카드디자인 끝 */
 
 .cont_box2 {
-  /* ///////////////////////// 수정시작  */
   /* width:50%; */
-  /* width: calc(40% - 4rem); */
-  width: calc(40% - 3.2rem);
+  width: calc(40% - 4rem);
   height:100%;
   /* display: flex; */
   justify-content: space-evenly;
@@ -977,8 +907,7 @@ svg {
 } */
 
 .alerts{
-  /* margin-top: 20px; */
-  margin-top: 1rem;
+  margin-top: 20px;
   width: 100%;
   /* display: flex; */
   /* flex-direction: row; */
@@ -989,8 +918,7 @@ svg {
 #notibox {
   display: flex;
   flex-direction: row;
-  /* margin: 0 6px; */
-  margin: 0 1rem 0 0;
+  margin: 0 6px;
   justify-content: space-evenly;
   /* width: 40%; */
 }
@@ -998,15 +926,12 @@ svg {
 
 #noti,
 #timenoti {
-  /* width: 100px; */
-  width: 9vw;
+  width: 100px;
   height: 15px;
-  /* padding: 0.8rem 0; */
-  padding: 0.5rem 0;
+  padding: 0.8rem 0;
   /* margin: 0.4rem 0; */
   transition: background-color var(--transDur), color var(--transDur);
   border-radius: 2rem;
-  /* border-radius: 2rem; */
   /* background-color: rgba(255, 255, 255, 0.5);
   box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
   border-top: 1px solid rgba(255, 255, 255, 0.5);
@@ -1211,8 +1136,7 @@ svg {
   width: 30%;
   min-width: 260px;
   /* 임시높이 */
-  /* height: 85vh; */
-  height: 90vh;
+  height: 85vh;
   display: flex;
   position: relative;
 
@@ -1226,27 +1150,18 @@ svg {
   top: 0;
   /* left: 0;
   width: 100%; */
-  /* left: -2rem;
-  width: calc(100% + 2rem); */
-  left: -3.2rem;
-  width: calc(100% + 3.2rem);
+  left: -2rem;
+  width: calc(100% + 2rem);
   height: 100%;
   min-height: 100%;
   margin: 0;
   border-radius: 0 2rem 2rem 0;
   backdrop-filter: blur(30px);
-  /* background: rgba(255, 255, 255, 0.3); */
-  background: rgba(0, 0, 0, 0.13);
-  z-index: -1;
-  /* border-radius: 0 2rem 2rem 0; */
-  /* backdrop-filter: blur(30px); */
-  /* background: var(--side-white); */
-
   /* background-color: rgba(0, 0, 0, 0.35); */
   /* border-radius: 0 20px 20px 0; */
   /* background: var(--side-grad); */
-  /* background: #d4d7db; */
-  /* background: var(--bg-pale-grey); */
+  background: var(--bg-light-grey);
+  z-index: -1;
 }
 
 .box2 .side_wrap {
@@ -1318,10 +1233,8 @@ svg {
   /* background-color: #9a9ea1; */
   /* border-top: 1px solid rgba(255, 255, 255, 0.5);
   border-left: 1px solid rgba(255, 255, 255, 0.5); */
-  /* background: var(--glass-bg-light); */
-  /* border: 1px solid var(--glass-border); */
-  background: var(--glass-bg-dark);
-  border: 2px solid #fff;
+  background: var(--glass-bg-light);
+  border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 .t_chart canvas {
@@ -1333,10 +1246,8 @@ svg {
   /* margin: 0 1.2rem 0 2.4rem; */
   /* border-top: 1px solid rgba(255, 255, 255, 0.5);
   border-left: 1px solid rgba(255, 255, 255, 0.5); */
-  /* background: var(--glass-bg-light); */
-  /* border: 1px solid var(--glass-border); */
-  background: var(--glass-bg-dark);
-  border: 2px solid #fff;
+  background: var(--glass-bg-light);
+  border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 .l_chart canvas {
@@ -1349,10 +1260,8 @@ svg {
   /* background-color: #9a9ea1; */
   /* border-top: 1px solid rgba(255, 255, 255, 0.5);
   border-left: 1px solid rgba(255, 255, 255, 0.5); */
-  /* background: var(--glass-bg-light); */
-  /* border: 1px solid var(--glass-border); */
-  background: var(--glass-bg-dark);
-  border: 2px solid #fff;
+  background: var(--glass-bg-light);
+  border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 #leadChartInfo {
@@ -1416,23 +1325,16 @@ svg {
   display: flex;
   justify-content: space-evenly;
   margin: 0 2rem;
-  /* gap: 1.5rem; */
-  gap: 1.2rem;
+  gap: 1.5rem;
 }
 
 .sub_card > div {
   /* width: 300px; */
   width: calc((100% - 64px)/3);
-  /* background: var(--glass-bg-light); */
-  background: var(--b);
+  background: var(--glass-bg-light);
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.6);
   border-radius: 1.5rem;
-  flex-grow: 1;
-}
-
-.sub_card > div:nth-child(2) {
-  flex-grow: 2;
 }
   /* 
 .sub_txt::-webkit-scrollbar{
@@ -1454,11 +1356,7 @@ svg {
 .sub_txt .sub_title {
   color: #111;
   font-size: 1.25rem;
-  margin: 1rem 2rem;
-  padding: 0 0 0 1.2rem;
-  /* margin: 1rem 2rem;
-  padding: 0 0 0 1rem; */
-  /* margin-bottom: 1rem; */
+  margin-bottom: 1rem;
   /* margin: 0.4rem 0 1rem 1rem; */
 }
 
@@ -1472,11 +1370,9 @@ svg {
 .analysis-item .item_title {
   font-weight: bold;
   color: #111;
-  /* margin: 0.6rem 1rem; */
-  margin: 1rem 1rem 0.5rem 1rem;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 /* css 숫자 카운터 */
@@ -1500,10 +1396,9 @@ svg {
 }
 
 .analysis-item .item_content {
-  /* margin-left: calc(1rem + 8px);
-  margin-top: 0.2rem; */
+  margin-left: calc(1rem + 8px);
+  margin-top: 0.2rem;
   color: #000;
-  margin: 0 1rem 1rem 1rem;
 }
 
 
@@ -1753,8 +1648,7 @@ svg {
   display: flex;
   height: 55%;
   font-size: 0.8rem;
-  /* top: 58vh; */
-  top: 56vh;
+  top: 58vh;
 
   position: absolute;
   width: 100%;
@@ -2076,8 +1970,7 @@ button {
   margin: 0.6rem;
   border-radius: 0.5rem;
   border: 1px solid var(--glass-border);
-  /* background: var(--glass-bg-light); */
-  background: var(--side-white);
+  background: var(--glass-bg-light);
   box-shadow: var(--glass-mini), inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
@@ -2203,9 +2096,8 @@ button {
   }
   .navi-wrap {
     /* left: 10%; */
-    left: 9vw;
+    left: 7vw;
   }
-
 
 
 }
@@ -2238,21 +2130,10 @@ button {
 }
 
 @media screen and (max-width: 991px) {
-    #noti,
-    #timenoti {
-    width: 11vw;
-  }
 
 }
 
 @media screen and (max-width: 767px) {
-  .box2 .content2 {
-    left: -5rem;
-  }
-  .box2 .side_wrap {
-    left: -1.2rem;
-  }
-
 
 }
 

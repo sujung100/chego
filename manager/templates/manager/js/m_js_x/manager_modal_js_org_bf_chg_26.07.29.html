@@ -9,29 +9,21 @@
   ntfIcon = document.querySelector(".bell");
   ntfIcon_count = document.querySelector(".bell ~ .num-count");
   modal = document.querySelector("#open-modal");
-  const closeBtn = document.getElementById('closeModalBtn');
-
-  function closeModal(){
-    modal.classList.remove('is-open');
-  }
-
   function clickReserVaTion() {
     ntfIcon.addEventListener("click", function () {
       console.log("클릭 이벤트 되냐");
       // window.location.hash = "open-modal";
       modal.style.display = "flex";
-      // ntfIcon_count.style.display = "none";
+      ntfIcon_count.style.display = "none";
     });
     window.addEventListener("click", function () {
       if (event.target == modal) {
-        // modal.style.display = "none";
-        closeModal();
+        modal.style.display = "none";
       }
     })
+
   }
   clickReserVaTion();
-
-  closeBtn.addEventListener('click', closeModal);
 
   // 기존
   // async function pageStart(socket) {
@@ -117,52 +109,6 @@
     updateNoti();
   }
 
-  // 카드순번 지정(카드 이름 New1,2... - 알림 확인 편하게)
-  function makeCardNum() {
-    const cards = document.querySelectorAll("#reservation-info .card");
-    
-    cards.forEach((card, index) => {
-      let header = document.createElement("div");
-      header.classList.add("card-header");
-      card.prepend(header);
-
-      let ctitle = card.querySelector(".card-title");
-      if (!ctitle) {
-        ctitle = document.createElement("span");
-        ctitle.classList.add("card-title");
-        // header.prepend(ctitle); 
-      }
-      ctitle.textContent = `New${index + 1}`;
-      let icon = document.createElement("span");
-      icon.classList.add("material-symbols-outlined", "card-icon");
-      icon.textContent = "event";
-
-      header.appendChild(icon);
-      header.appendChild(ctitle);
-
-      // 아이콘 컬러랜덤
-      changeIconColor();
-    });
-  }
-
-  // function makeCardNum() {
-  //   const cards = document.querySelectorAll("#reservation-info .card");
-    
-  //   cards.forEach((card, index) => {
-  //     let header = document.createElement("div");
-  //     header.classList.add("card-header");
-  //     card.prepend(header);
-
-  //     let ctitle = card.querySelector(".card-title");
-  //     if (!ctitle) {
-  //       ctitle = document.createElement("span");
-  //       ctitle.classList.add("card-title");
-  //       header.prepend(ctitle); 
-  //     }
-  //     ctitle.textContent = `New${index + 1}`;
-  //   });
-  // }
-
 
   // 활성스토어 화면비우고 데이터추가
   function renderCards(storeId) {
@@ -172,56 +118,28 @@
     reservation_card.innerHTML = "";
 
     const cachedData = nc.storeDataCache[String(storeId)] || [];
-
-    const fieldConfigs = {
-      'user_name': { label: '예약자명', className: 'infoName' },
-      'user_phone': { label: '연락처', className: 'infoPhone' },
-      'reservation_date': { label: '예약일', className: 'infoDate' },
-      'user_time': { label: '예약시간', className: 'infoTime' },
-      'visitor_num': { label: '방문인원', className: 'infoNum' }
-    };
     
     cachedData.forEach(rsvInfo => {
       let card = document.createElement("div");
       card.classList.add("card");
       card.dataset.rid = rsvInfo.id;
 
-      let grid = document.createElement("div");
-      grid.classList.add("card-grid");
-      card.append(grid);
+    const displayFields = {
+      'user_name': '예약자명',
+      'user_phone': '연락처',
+      'reservation_date': '예약일',
+      'user_time': '예약시간',
+      'visitor_num': '방문인원'
+    };
 
-    // const displayFields = {
-    //   'user_name': '예약자명',
-    //   'user_phone': '연락처',
-    //   'reservation_date': '예약일',
-    //   'user_time': '예약시간',
-    //   'visitor_num': '방문인원'
-    // };
-
-      Object.keys(fieldConfigs).forEach(key => {
+      Object.keys(displayFields).forEach(key => {
         // 데이터가 존재할 때만 생성
         if (rsvInfo[key] !== undefined) {
-          const config = fieldConfigs[key];
-          // 1. 정보를 감쌀 그룹 div 생성 (예: .infoName, .infoPhone 등)
-          let infoDiv = document.createElement("div");
-          infoDiv.classList.add(config.className);
+          let cardP = document.createElement("p");
+          cardP.textContent = `${displayFields[key]} : ${rsvInfo[key]}`;
+          if (key === 'visitor_num') cardP.textContent += "명";
 
-          // 2. 라벨 p 태그 (예: 예약자명)
-          let labelP = document.createElement("p");
-          labelP.classList.add("info-label");
-          labelP.textContent = config.label;
-
-          // 3. 값 p 태그 (예: 홍길동)
-          let valueP = document.createElement("p");
-          valueP.classList.add("info-value");
-          let valText = rsvInfo[key];
-          if (key === 'visitor_num') valText += "명";
-          valueP.textContent = valText;
-
-          // 4. div에 두 p 태그를 자식으로 추가 후 카드에 결합
-          infoDiv.appendChild(labelP);
-          infoDiv.appendChild(valueP);
-          grid.appendChild(infoDiv);
+          card.appendChild(cardP);
         }
       });
       
@@ -303,14 +221,8 @@
         const sId = String(storeId);
         nc.storeDataCache[sId] = nc.storeDataCache[sId].filter(d => d.id !== rsvInfo.id);
         updateNoti();
-
-        // 카드 삭제후 카드 순번 재정렬
-        makeCardNum();
       });
     });
-
-    // 렌더링 후 카드 순번 부여
-    makeCardNum();
   }
 
   async function rsvNotiCount() {
@@ -322,37 +234,6 @@
   }
   function rsv_count_flex(element) {
     element.style.display = "flex";
-  }
-
-  // 모달 아이콘 랜덤컬러지정(파랑계열)
-  function changeIconColor() {
-    const icons = document.querySelectorAll('.card-icon');
-    const count = icons.length;
-
-    // 기준 컬러 #2F6FED 파랑으로 색상채도고정
-    const hue = 220;
-    const saturation = 83;
-
-    // 명도범위
-    const minLightness = 56; // #2F6FED 기준명도
-    const maxLightness = 85; // 연한 파랑
-
-    const colors = [];
-    // 아이콘갯수만큼 명도단계 생성
-    for (let i = 0; i < count; i++) {
-      const step = count > 1 ? i / (count - 1) : 0;
-      const lightness = minLightness + (maxLightness - minLightness) * step;
-      colors.push(`hsl(${hue}, ${saturation}%, ${lightness.toFixed(1)}%)`);
-    }
-
-    for (let i = colors.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [colors[i], colors[j]] = [colors[j], colors[i]];
-    }
-
-    icons.forEach((el, index) => {
-      el.style.backgroundColor = colors[index];
-    });
   }
 
 

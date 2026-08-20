@@ -11,8 +11,18 @@
   
   <div id="open-modal" class="modal-window">
     <div class="modal-content">
-      <a href="" title="Close" class="modal-close">Close</a>
-      <span>새로운 예약</span>
+      <!-- <a href="" title="Close" class="modal-close">Close</a> -->
+       <button class="modal-close" id="closeModalBtn" aria-label="닫기">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+        </svg>
+      </button>
+
+      <p class="modal-colortext">new</p>
+      <h2 class="modal-title" id="modalTitle">신규 예약이 접수됐어요</h2>
+      <p class="modal-subtext">확인 완료된 예약 건을 클릭하시면 알림이 삭제됩니다.</p>
+
       <div id="reservation-info" class="reservation-card"></div>
     </div>
   </div>

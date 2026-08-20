@@ -15,20 +15,7 @@
   <div class="blob blob-1"></div>
   <div class="blob blob-2"></div>
   <div id="wrap">{% csrf_token %}
-    <div class="userInfo">
-      <div class="mail">
-        <i class="material-icons dp48">email</i>
-        <span class="num-count"></span>
-      </div>
-      <img class="profile_img" src="{% static 'manager/img/person.png' %}" alt="이미지">
-      <span>{{ request.user.username }}님, 안녕하세요</span>
-      <a href="/manager/logout">
-        <button id="nav_button2" class="nav_button2" type="button">
-          <img class="logout" src="{% static 'manager/img/modeoff.png' %}" alt="로그아웃">
-          <!-- <img class="logout" src=" static 'manager/img/turn-off (1).png' " alt="로그아웃"> -->
-        </button>
-      </a>
-    </div>
+    
     <div class="navi-wrap">
       <div class="home">
         <a href="{% url 'index' %}"><span class="material-symbols-outlined">home</span></a>
@@ -87,7 +74,7 @@
             <div class="chart-wrapper">
               <div class="chart-title">Data</div>
               <div class="chart-toggle">
-                <button class="chart-btn active" data-target="storeMonthlyChart">월별 현황</button>
+                <button class="chart-btn active" data-target="storeMonthlyChart">예약 추이</button>
                 <button class="chart-btn" data-target="timeChart">시간대별</button>
                 <button class="chart-btn" data-target="leadChart">리드</button>
               </div>
@@ -378,6 +365,23 @@
             </div> -->
             
             <div class="alerts">
+              <div class="userInfo">
+                  <div class="mail">
+                    <i class="material-icons dp48">email</i>
+                    <span class="num-count"></span>
+                  </div>
+                  <div class="user">
+                    <!-- <img class="profile_img" src="{% static 'manager/img/person.png' %}" alt="이미지"> -->
+                    <span class="material-symbols-outlined fill profile_img">person</span>
+                    <span class="name-linechange">{{ request.user.username }}님,<br> 안녕하세요</span>
+                  </div>
+                  <a href="/manager/logout">
+                    <button id="nav_button2" class="nav_button2" type="button">
+                      <img class="logout" src="{% static 'manager/img/modeoff.png' %}" alt="로그아웃">
+                      <!-- <img class="logout" src=" static 'manager/img/turn-off (1).png' " alt="로그아웃"> -->
+                    </button>
+                  </a>
+                </div>
                 <div id="notibox">
                   <div id="noti">
                     <div class="bell-wrap">
@@ -392,6 +396,7 @@
                     </div>
                   </div>
                 </div>
+                
                 <!-- <div class="calendar-card">
                   <div class="calendar-header">
                     <div class="calendar-year"><span id="calYear"></span>년</div>
@@ -412,7 +417,7 @@
               </div>
             <div class="container2">
               <div class="c-card c1" data-idx="0">
-                <div class="bg" style="background-image: url('../../static/manager/img/top1.jpg')"></div>
+                <div class="bg" style="background-image: url('../../static/manager/img/top.png')"></div>
                 <div class="overlay"></div>
                 <div class="content">
                   <div class="tag"></div>
@@ -421,7 +426,7 @@
                 </div>
               </div>
               <div class="c-card c2" data-idx="1">
-                <div class="bg" style="background-image: url('../../static/manager/img/mid2.jpg')"></div>
+                <div class="bg" style="background-image: url('../../static/manager/img/mid.png')"></div>
                 <div class="overlay"></div>
                 <div class="content">
                   <div class="tag"></div>
@@ -430,7 +435,7 @@
                 </div>
               </div>
               <div class="c-card c3" data-idx="2">
-                <div class="bg" style="background-image: url('../../static/manager/img/btm3.jpg')"></div>
+                <div class="bg" style="background-image: url('../../static/manager/img/btm.png')"></div>
                 <div class="overlay"></div>
                 <div class="content">
                   <div class="tag"></div>

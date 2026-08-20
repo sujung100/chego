@@ -36,7 +36,6 @@ body {
 
   /* background: var(--bg-pale-blue); */
   background: var(--bg-bright-blue);
-  overflow: hidden;
 }
 
 .blob {
@@ -97,11 +96,6 @@ body {
   --glass-border: rgba(255,255,255,0.75);
   --glass-shadow: 0 8px 32px rgba(0,0,0,0.08);
   --glass-mini: 0 8px 32px rgba(0,0,0,0.04);
-
-  /* 텍스트 */
-  --text-body-mute: #6b7280;
-  --text-title-mute: #1A1D20;
-  --text-caption-mute: #9CA3AF;
 }
 
 
@@ -463,21 +457,14 @@ body {
   padding: 0.4rem;
   position: fixed;
   /* top: 35%; */
-  /* top: 65vh; */
-  /* top: 10vh; */
-  top: 12vh;
-  /* left: 4%; */
-  right: 9.8vw;
+  top: 65vh;
+  left: 4%;
   backdrop-filter: blur(30px);
   /* background-color: transparent; */
   background: var(--glass-bg-light);
   box-shadow: inset 0px 2px 0px rgba(255, 255, 255, .75), inset 0px 0px 2px rgba(255, 255, 255, .7), 0px 0px 1px rgba(0,0,0, .3);
-  /* border:1px solid #fff; */
-  border-top:1px solid #fff;
-  border-right:1px solid #fff;
-  border-bottom:1px solid #fff;
-  /* border-radius: 20px; */
-  border-radius: 0 20px 20px 0;
+  border:1px solid #fff;
+  border-radius: 20px;
 
   color: #fff;
 }
@@ -701,41 +688,16 @@ svg {
   bottom:0;
 }
 
-/* 
+
 .userInfo {
   display: flex;
   position: absolute;
+  /* top: -8px; */
   top: -16px;
   right: 30px;
   margin: 1.5rem 0;
   color: #fefefe;
   font-size: 0.8rem;
-} */
-
-.user {
-  display: flex;
-  align-items: center;
-  height: 15px;
-}
-
-.user .material-symbols-outlined.fill {
-font-variation-settings:
-  'FILL' 1,
-  'wght' 400,
-  'GRAD' 0,
-  'opsz' 24;
-}
-
-.userInfo {
-  display: flex;
-  align-items: center;
-  /* margin: 1.5rem 0; */
-  color: #fefefe;
-  font-size: 0.8rem;
-  justify-content: space-between;
-  margin: 0 2rem 0.6rem 1rem;
-  /* justify-content: center; */
-  /* margin: 0 1rem 0.6rem 0; */
 }
 
 .userInfo .profile_img {
@@ -751,8 +713,7 @@ font-variation-settings:
   padding: 0.2rem;
   /* background-color: #bbc0c4; */
   /* background-color: #9dadeb; */
-  /* background-color: #aab8f1; */
-  background-color: #828EC4;
+  background-color: #aab8f1;
   border-radius: 1rem;
   filter: drop-shadow(-2px -2px 3px #c8d2ff) drop-shadow(2px 2px 3px rgba(49, 48, 48, 0.18));
 }
@@ -762,10 +723,6 @@ font-variation-settings:
   outline: none;
   background-color: inherit ;
   cursor: pointer;
-}
-
-.name-linechange br {
-  display: none;
 }
 
 
@@ -941,8 +898,7 @@ font-variation-settings:
   }
   .c-card .overlay {
     position: absolute; inset: 0;
-    /* background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.1) 60%, transparent 100%); */
-    background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.1) 60%, transparent 100%);
+    background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.1) 60%, transparent 100%);
   }
   .c-card .content {
     position: absolute; bottom: 0; left: 0; right: 0;
@@ -1036,15 +992,9 @@ font-variation-settings:
   display: flex;
   flex-direction: row;
   /* margin: 0 6px; */
-  /* margin: 0 1rem 0 0; */
+  margin: 0 1rem 0 0;
   justify-content: space-evenly;
   /* width: 40%; */
-
-  border-radius: 8px;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  margin: 0 2rem 0 1rem;
 }
 
 
@@ -1057,16 +1007,15 @@ font-variation-settings:
   padding: 0.5rem 0;
   /* margin: 0.4rem 0; */
   transition: background-color var(--transDur), color var(--transDur);
-  /* border-radius: 2rem; */
+  border-radius: 2rem;
   /* border-radius: 2rem; */
   /* background-color: rgba(255, 255, 255, 0.5);
   box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
   border-top: 1px solid rgba(255, 255, 255, 0.5);
   border-left: 1px solid rgba(255, 255, 255, 0.5); */
-
-  /* background: var(--glass-bg);
+  background: var(--glass-bg);
   border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.6); */
+  box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
 #noti > div > div,
@@ -1084,8 +1033,7 @@ font-variation-settings:
 .bell-wrap > .bell {
   /* 종 아이콘 */
   font-size: 20px;
-  /* color: #F5D042; */
-  color: #fff;
+  color: #F5D042;
   display: inline-block;
   padding-right: 6px;
   transform-origin: 50% 0%;
@@ -1525,8 +1473,7 @@ font-variation-settings:
 
 .analysis-item .item_title {
   font-weight: bold;
-  color: var(--text-title-mute);
-  /* color: #111; */
+  color: #111;
   /* margin: 0.6rem 1rem; */
   margin: 1rem 1rem 0.5rem 1rem;
   display: inline-flex;
@@ -1557,8 +1504,7 @@ font-variation-settings:
 .analysis-item .item_content {
   /* margin-left: calc(1rem + 8px);
   margin-top: 0.2rem; */
-  /* color: #000; */
-  color: var(--text-body-mute);
+  color: #000;
   margin: 0 1rem 1rem 1rem;
 }
 
@@ -1708,10 +1654,9 @@ font-variation-settings:
 
 .bell-wrap {
   position: relative;
-  cursor: pointer;
 }
 
-/* .bell-wrap > .num-count {
+.bell-wrap > .num-count {
     position: absolute;
     user-select: none;
     cursor: default;
@@ -1725,11 +1670,10 @@ font-variation-settings:
     top: -0.2rem;
     left: 0.7rem;
     box-sizing: border-box;
-} */
+}
 
 .mail {
   margin-right: 0.6rem;
-  cursor: pointer;
 }
 
 .mail > .num-count {
@@ -1737,12 +1681,10 @@ font-variation-settings:
     user-select: none;
     cursor: default;
     font-size: 0.6rem;
-    /* background: #e74c3c; */
-    background: #F5D042;
+    background: #e74c3c;
     width: 0.6rem;
     height: 0.6rem;
-    /* color: #ecf0f1; */
-    color: #fff;
+    color: #ecf0f1;
     border-radius: 50%;
     top: -0.2rem;
     left: 0.7rem;
@@ -1758,12 +1700,10 @@ font-variation-settings:
     user-select: none;
     cursor: default;
     font-size: 0.6rem;
-    /* background: #e74c3c; */
-    background: #F5D042;
+    background: #e74c3c;
     width: 0.6rem;
     height: 0.6rem;
-    /* color: #ecf0f1; */
-    color: #fff;
+    color: #ecf0f1;
     border-radius: 50%;
     top: -0.2rem;
     left: 0.7rem;
@@ -1784,7 +1724,6 @@ font-variation-settings:
   border: 0;
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.2);
-  cursor: pointer;
 }
 
 .content2 .con2_nav a .nav_button2 img {
@@ -2168,8 +2107,7 @@ button {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* color: #4d4d4d; */
-  color: var(--text-caption-mute);
+  color: #4d4d4d;
   padding: 0 0 0 1rem;
   margin: 0 0 10px 0;
   /* padding: 0.6rem; */
@@ -2268,8 +2206,7 @@ button {
   }
   .navi-wrap {
     /* left: 10%; */
-    /* left: 9vw; */
-    right: 9.8vw;
+    left: 9vw;
   }
 
 
@@ -2281,21 +2218,26 @@ button {
   #wrap { 
     width: 90%;
   }
+  /* .c1_card_container {
+    width: 250px;
+    height: 160px;
+  }
+  .c2_card_container {
+    width: 250px;
+    height: 160px;
+  }
+  .c3_card_container {
+    width: 250px;
+    height: 160px;
+  }
+  .container2 > div {
+    left:-45%;
+  } */
   .navi-wrap {
     /* left: 2%; */
-    /* left: 0.55vw; */
-    /* right: 0.55vw; */
-    right: 1vw;
+    left: 0.55vw;
   }
-  .name-linechange br {
-    display: block;
-  }
-  .name-linechange {
-    font-size: 12px;
-  }
-  /* .box2 .content2 {
-    width: 33vw;
-  } */
+    
 }
 
 @media screen and (max-width: 991px) {
@@ -2303,72 +2245,21 @@ button {
     #timenoti {
     width: 11vw;
   }
-  /* .user .profile_img {
-    display: none;
-  } */
-  .userInfo .logout {
-    margin-right: 3px;
-  }
-  .material-icons .dp48 {
-    font-size: 0.8rem;
-  }
-  .userInfo .logout {
-    width: 0.8rem;
-    height: 0.8rem;
-  }
-  /* .name-linechange br {
-    display: block;
-  }
-  .name-linechange {
-    font-size: 12px;
-  } */
-  /* .box2 .content2 {
-    width: 33vw;
-  } */
 
 }
 
 @media screen and (max-width: 767px) {
-  /* .box2 .content2 {
+  .box2 .content2 {
     left: -5rem;
-  } */
+  }
   .box2 .side_wrap {
     left: -1.2rem;
-    width: 90%;
   }
-  .box2 .content2 {
-    width: 33vw;
-  }
-  /* .box2 .content2 {
-    width: 100%;
-  } */
+
 
 }
 
 @media screen and (max-width: 575px) {
-  .box2 .content2 {
-    width: 35vw;
-  }
-  .container2 {
-    width: 75%;
-  }
-  #notibox {
-    width: 54%;
-  }
-  .userInfo {
-    width: 60%;
-  }
-  .name-linechange {
-    display: none;
-  }
-  .navi-wrap {
-    right: -1.5vw;
-  }
-  .bell-wrap > div { 
-    font-size: 0.8rem;
-  }
-  #clock {
-    font-size: 0.8rem;
-  }
+
 }
 

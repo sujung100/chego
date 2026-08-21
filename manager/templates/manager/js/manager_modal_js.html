@@ -33,22 +33,8 @@
 
   closeBtn.addEventListener('click', closeModal);
 
-  // 기존
-  // async function pageStart(socket) {
-  //   let rsvFetch = await fetch("api/reservation_false/");
-  //   let rsvDetailsData = await rsvFetch.json();
-  //   // console.table("콘솔태이블", rsvDetailsData);
-  //   console.log("페이지스타트", rsvDetailsData);
-  //   console.log("페이지스타트", rsvDetailsData.length);
-  //   if (rsvDetailsData.length !== 0) {
-  //     ntfIcon_count.style.display = "flex";
-  //     ntfIcon_count.textContent = rsvDetailsData.length
-  //   }
-  //   rsvNotification(socket, rsvDetailsData);
-  // }
 
   async function pageStart() {
-
     const socket = manager_webSockets.manager; 
     if (!socket) {
       console.error("Manager socket is not initialized yet");
@@ -122,46 +108,37 @@
     const cards = document.querySelectorAll("#reservation-info .card");
     
     cards.forEach((card, index) => {
-      let header = document.createElement("div");
-      header.classList.add("card-header");
-      card.prepend(header);
+      let header = card.querySelector(".card-header");
+      if (!header) {
+        header = document.createElement("div");
+        header.classList.add("card-header");
+        card.prepend(header);
+      }
 
-      let ctitle = card.querySelector(".card-title");
+      let icon = header.querySelector(".card-icon");
+      if (!icon) {
+        icon = document.createElement("span");
+        icon.classList.add("material-symbols-outlined", "card-icon");
+        icon.textContent = "event";
+        header.appendChild(icon);
+      }
+
+      let ctitle = header.querySelector(".card-title");
       if (!ctitle) {
         ctitle = document.createElement("span");
         ctitle.classList.add("card-title");
-        // header.prepend(ctitle); 
+        header.appendChild(ctitle);
       }
       ctitle.textContent = `New${index + 1}`;
-      let icon = document.createElement("span");
-      icon.classList.add("material-symbols-outlined", "card-icon");
-      icon.textContent = "event";
+      
 
-      header.appendChild(icon);
-      header.appendChild(ctitle);
+      // header.appendChild(icon);
+      // header.appendChild(ctitle);
 
       // 아이콘 컬러랜덤
-      changeIconColor();
+      changeIconColor(icon, index, cards.length);
     });
   }
-
-  // function makeCardNum() {
-  //   const cards = document.querySelectorAll("#reservation-info .card");
-    
-  //   cards.forEach((card, index) => {
-  //     let header = document.createElement("div");
-  //     header.classList.add("card-header");
-  //     card.prepend(header);
-
-  //     let ctitle = card.querySelector(".card-title");
-  //     if (!ctitle) {
-  //       ctitle = document.createElement("span");
-  //       ctitle.classList.add("card-title");
-  //       header.prepend(ctitle); 
-  //     }
-  //     ctitle.textContent = `New${index + 1}`;
-  //   });
-  // }
 
 
   // 활성스토어 화면비우고 데이터추가
@@ -202,23 +179,19 @@
         // 데이터가 존재할 때만 생성
         if (rsvInfo[key] !== undefined) {
           const config = fieldConfigs[key];
-          // 1. 정보를 감쌀 그룹 div 생성 (예: .infoName, .infoPhone 등)
           let infoDiv = document.createElement("div");
           infoDiv.classList.add(config.className);
 
-          // 2. 라벨 p 태그 (예: 예약자명)
           let labelP = document.createElement("p");
           labelP.classList.add("info-label");
           labelP.textContent = config.label;
 
-          // 3. 값 p 태그 (예: 홍길동)
           let valueP = document.createElement("p");
           valueP.classList.add("info-value");
           let valText = rsvInfo[key];
           if (key === 'visitor_num') valText += "명";
           valueP.textContent = valText;
 
-          // 4. div에 두 p 태그를 자식으로 추가 후 카드에 결합
           infoDiv.appendChild(labelP);
           infoDiv.appendChild(valueP);
           grid.appendChild(infoDiv);
@@ -227,62 +200,8 @@
       
       reservation_card.appendChild(card);
 
-      // 기존5.29
-      // 클릭 -> 읽음처리 + 캐시삭제
-      // card.addEventListener("click", function () {
-        
-      //   // 수정중
-      //   // rsvIsRead1(socket, rsvInfo.id);
-      //   // this.remove();
-        
-      //   const socket = manager_webSockets.manager;
-      //   if (socket && socket.readyState === WebSocket.OPEN) {
-      //     rsvIsRead1(socket, rsvInfo.id);
-      //   }
-      //   this.remove();
 
-
-      //   const sId = String(storeId);
-        
-      //   nc.storeDataCache[sId] = nc.storeDataCache[sId].filter(d => d.id !== rsvInfo.id);
-      //   updateNoti();
-      // });
-
-      // // 수정중5.29
-      // card.addEventListener("click", function () {
-        
-      //   // 수정중
-      //   // rsvIsRead1(socket, rsvInfo.id);
-      //   // this.remove();
-        
-      //   console.log("[Click] 전체 소켓 객체 상태:", manager_webSockets);
-      //   const socket = manager_webSockets ? manager_webSockets.manager : null;
-        
-      //   if (socket) {
-      //     // 소켓 객체는 존재하나 readyState가 판단 유보일 때를 위해 로그 확인
-      //     console.log("[Click] 매니저 소켓 readyState 상태:", socket.readyState);
-          
-      //     // 라이브러리에 따라 다를 수 있으므로 readyState가 1(OPEN)이거나 
-      //     // 혹은 객체가 존재하면 일단 발송을 시도하도록 조건을 변경해 봅니다.
-      //     if (socket.readyState === 1 || socket.readyState === undefined || socket.readyState === WebSocket.OPEN) {
-      //       rsvIsRead1(socket, rsvInfo.id);
-      //     } else {
-      //       console.warn("[Click] 소켓이 연결 상태(OPEN)가 아닙니다. 현재 상태:", socket.readyState);
-      //     }
-      //   } else {
-      //     console.error("[Click] manager_webSockets.manager 객체를 찾을 수 없습니다.");
-      //   }
-
-      //   // 화면에서 지우고 캐시 필터링하는 로직 (기존 유지)
-      //   this.remove();
-      //   const sId = String(storeId);
-      //   nc.storeDataCache[sId] = nc.storeDataCache[sId].filter(d => d.id !== rsvInfo.id);
-      //   updateNoti();
-      // });
-
-      // 수정중6.03
       card.addEventListener("click", function () {
-        // 이제 전역 변수 manager_webSockets가 비어있지 않고 꽉 차있습니다.
         console.log("[Click] 현재 전역 소켓 상태:", manager_webSockets);
         
         const socket = manager_webSockets ? manager_webSockets.manager : null;
@@ -292,10 +211,10 @@
           if (socket.readyState === 1 || socket.readyState === WebSocket.OPEN) {
             rsvIsRead1(socket, rsvInfo.id);
           } else {
-            console.warn("[Click] 소켓 상태가 OPEN이 아닙니다.");
+            console.warn("[Click] 소켓 상태가 OPEN이 아님");
           }
         } else {
-          console.error("[Click] 전역 manager_webSockets에서 manager를 찾을 수 없습니다.");
+          console.error("[Click] 전역 manager_webSockets에서 manager를 찾을 수 없음");
         }
 
         // 화면 제거 및 캐시 필터링 (기존 유지)
@@ -325,10 +244,7 @@
   }
 
   // 모달 아이콘 랜덤컬러지정(파랑계열)
-  function changeIconColor() {
-    const icons = document.querySelectorAll('.card-icon');
-    const count = icons.length;
-
+  function changeIconColor(iconElement, index, totalCount) {
     // 기준 컬러 #2F6FED 파랑으로 색상채도고정
     const hue = 220;
     const saturation = 83;
@@ -337,22 +253,10 @@
     const minLightness = 56; // #2F6FED 기준명도
     const maxLightness = 85; // 연한 파랑
 
-    const colors = [];
     // 아이콘갯수만큼 명도단계 생성
-    for (let i = 0; i < count; i++) {
-      const step = count > 1 ? i / (count - 1) : 0;
-      const lightness = minLightness + (maxLightness - minLightness) * step;
-      colors.push(`hsl(${hue}, ${saturation}%, ${lightness.toFixed(1)}%)`);
-    }
-
-    for (let i = colors.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [colors[i], colors[j]] = [colors[j], colors[i]];
-    }
-
-    icons.forEach((el, index) => {
-      el.style.backgroundColor = colors[index];
-    });
+    const step = totalCount > 1 ? index / (totalCount - 1) : 0;
+    const lightness = minLightness + (maxLightness - minLightness) * step;
+    iconElement.style.backgroundColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
   }
 
 

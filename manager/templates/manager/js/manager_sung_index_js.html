@@ -5,6 +5,9 @@
   const sto_json = JSON.parse('{{ sto_json|safe }}');
   console.log("스토어정보", sto_json);
 
+  // 네비용
+  let selectedStoreId = null;
+
   // 선택카드높이, 미선택카드높이
   // const ACTIVE_H = 220;
   // const ACTIVE_H = 160;
@@ -341,6 +344,9 @@
       this.storeId = targetId;
       console.log(`스토어 전환: ${targetId}`);
 
+      selectedStoreId = targetId;
+      console.log("네비전환용?", selectedStoreId);
+
       // 새로운 스토어데이터(예약 목록 등) 가져오기
       try {
         let newData = await fetchStoreData(targetId);
@@ -382,281 +388,10 @@
       nc.storeManager.handleClick(clickedStoreId);
     }
 
-    // 클릭된 카드에 따른 화면 전환
-    // const isUp = this.style.transform.includes(translateY2); // 위쪽에 있나?
-    // const isDown = this.style.transform.includes(translateY1); // 아래쪽에 있나?
-
-    // 중앙 카드 클릭 ->  아무것도 하지 않음
-    // if (!isUp && !isDown) {
-    //   console.log("이미 중앙에 있는 스토어입니다.");
-    //   return; 
-    // }
-
-    // 클릭한 카드에 맞춰 나머지 두개 카드 배치
-    // if (this === c1) {
-    //   // c1클릭: c1-센터, c3-위, c2-아래
-    //   updateStyles(c3, c2, c1);
-    // } else if (this === c2) {
-    //   // c2클릭: c2-센터, c1-위, c3-아래
-    //   updateStyles(c1, c3, c2);
-    // } else if (this === c3) {
-    //   // c3클릭: c3-센터, c2-위, c1-아래
-    //   updateStyles(c2, c1, c3);
-    // }
   }
 
 
-  // 여기 없애도 될듯? 임시코드 삭제
-  // let myPlus = document.getElementById("plus");
-  // let selectTime = document.getElementById("select_time");
-  // let box = document.getElementById("plus_box");
-  // let num = 2
 
-  // function validateTime(timeInput) {
-  //   let minValue = timeInput.getAttribute('min');
-  //   let value = timeInput.value;
-
-  //   // value = roundToNearestHalfHour(value);
-  //   // timeInput.value = value;
-  //   if (minValue && value < minValue) {
-  //     alert("시간은 이전 시간 이후로 설정해 주세요.");
-  //     timeInput.value = minValue;
-  //   }
-  // }
-
-  // myPlus.addEventListener("click", function () {
-  //   let newPlus = document.createElement("button");
-  //   let newMinus = document.createElement("button");
-  //   let newLine1 = document.createElement("br");
-
-  //   let newInput = document.createElement("input");
-  //   let prevInput = document.getElementById("select_time" + (num - 1));
-
-  //   // console.log(prevInput.value)
-  //   newInput.type = "time";
-  //   newInput.min = prevInput.value;
-  //   // newInput.step = "1800";
-  //   newInput.name = "select_time[]";
-  //   newInput.id = "select_time" + num;
-
-  //   newInput.onchange = function () {
-  //     validateTime(newInput);
-  //   };
-
-  //   newPlus.type = "button";
-  //   newPlus.textContent = "추가";
-  //   newPlus.id = "plus" + num;
-
-  //   newPlus.addEventListener("click", myPlus.click.bind(myPlus));
-
-  //   newMinus.type = "button";
-  //   newMinus.textContent = "삭제";
-  //   newMinus.id = "minus" + num;
-
-  //   newMinus.addEventListener("click", function () {
-  //     const idNum = this.id.replace("minus", "");
-
-  //     const plusToRemove = document.getElementById("plus" + idNum);
-  //     const minusToRemove = document.getElementById("minus" + idNum);
-  //     const newInputRemove = document.getElementById("select_time" + idNum);
-
-  //     newInputRemove.remove();
-  //     // plusToRemove.remove();
-  //     minusToRemove.remove();
-  //     newLine1.remove();
-  //   });
-
-  //   box.appendChild(newInput);
-  //   // box.appendChild(newPlus);
-  //   box.appendChild(newMinus);
-  //   box.appendChild(newLine1);
-
-  //   num += 1
-  // });
-
-  // 기존 - 06.23
-  // // 카드 시작
-  // const store_json = JSON.parse('{{ store_json | escapejs | safe }}');
-  // const store_name = [];
-  // for (let i = 0; i < store_json.length; i++) {
-  //   const json_name = store_json[i]["store_name"];
-  //   store_name.push(json_name);
-  // }
-
-  // const store_id = store_json.map(function (item) { return item.id });
-  // const idsString = JSON.stringify(store_id);
-
-  // let flag = 0;
-
-  // let c1 = document.querySelector('.c1');
-  // let c2 = document.querySelector('.c2');
-  // let c3 = document.querySelector('.c3');
-
-  // const translateX = '-20px';
-  // const translateY1 = '50px';
-  // const translateY2 = '-50px';
-  // const scale_value1 = "scale(0.9)";
-  // const rotate_value1 = "rotate(5deg)";
-  // const rotate_value2 = "rotate(-5deg)";
-
-
-  // // 카드 배치
-  // function updateStyles(up, down, center) {
-  //   if (up && down && center) {
-  //     // 위로 보냄
-  //     up.style.transform = `translate(${translateX}, ${translateY2}) ${scale_value1} ${rotate_value2}`;
-  //     up.style.zIndex = 1;
-  //     up.style.opacity = 0.5;
-
-  //     // 아래로 보냄
-  //     down.style.transform = `translate(${translateX}, ${translateY1}) ${scale_value1} ${rotate_value1}`;
-  //     down.style.zIndex = 1;
-  //     down.style.opacity = 0.5;
-
-  //     // 중앙으로 가져옴
-  //     center.style.transform = 'translate(0, 0) scale(1)';
-  //     center.style.zIndex = 2;
-  //     center.style.opacity = '1';
-  //   }
-  // }
-
-
-  // // 카드 요소 생성
-  // function updateElement(elementClassName, storeName, storeId) {
-
-  //   let element = document.querySelector("." + elementClassName);
-  //   while (element.firstChild) {
-  //     element.removeChild(element.firstChild);
-  //   }
-
-  //   let storeidBox = document.createElement("div");
-  //   storeidBox.className = elementClassName + "_storeId";
-
-
-  //   let storeCon = document.createElement("div");
-  //   storeCon.className = elementClassName + "_card_container";
-
-  //   let bg_layer = document.createElement("div");
-  //   bg_layer.className = "bg_layer";
-  //   let bg_card = document.createElement("div");
-  //   bg_card.className = "bg_card";
-
-  //   let md_layer = document.createElement("div");
-  //   md_layer.className = "md_layer";
-  //   let md_circle = document.createElement("div");
-  //   md_circle.className = "md_circle";
-
-  //   let cont_layer = document.createElement("div");
-  //   cont_layer.className = "cont_layer";
-  //   let info_box = document.createElement("div");
-  //   info_box.className = "info_box";
-  //   let st_name = document.createElement("span");
-  //   st_name.className = "st_name";
-  //   st_name.textContent = storeName;
-    
-  //   let desc = document.createElement("span");
-  //   // 최상단에서 view에서 받아온 json
-  //   const sto_target = sto_json.find(item => item.store_name == storeName);
-  //     if (sto_target) {
-  //       const getAddr = sto_target.address;
-  //       console.log(getAddr);
-  //       desc.className = "desc";
-  //       desc.textContent = getAddr;
-  //     } else {
-  //       console.log("해당값x");
-  //     }
-      
-    
-  //   let small_text = document.createElement("div");
-  //   small_text.className = "small_text";
-  //   // let s_txt = document.createElement("span");
-  //   // s_txt.className = "s_txt";
-  //   // s_txt.textContent = ownerName;
-
-  //   // bottom text부터 만들기 
-  //   let bottom_text = document.createElement("div");
-  //   bottom_text.className = "bottom_text";
-  //   let labels = document.createElement("div");
-  //   labels.className = "labels";
-  //   let store_in = document.createElement("div");
-  //   store_in.className = "store_in";
-  //   let label1 = document.createElement("span");
-  //   label1.className = "label";
-  //   label1.textContent = "들어";
-  //   let label2 = document.createElement("span");
-  //   label2.className = "label";
-  //   label2.textContent = "가기";
-
-  //   let in_icon = document.createElement("span");
-  //   in_icon.className = "material-symbols-outlined";
-  //   in_icon.textContent = "chevron_right";
-
-    
-  //   element.appendChild(storeidBox);
-  //   storeidBox.innerText = storeId;
-  //   storeidBox.style.display = "none";
-
-  //   element.appendChild(storeCon);
-  //   storeCon.appendChild(bg_layer);
-  //   storeCon.appendChild(md_layer);
-  //   storeCon.appendChild(cont_layer);
-
-
-  //   bg_layer.appendChild(bg_card);
-  //   md_layer.appendChild(md_circle);
-  //   cont_layer.appendChild(info_box);
-  //   cont_layer.appendChild(bottom_text);
-    
-    
-  //   info_box.appendChild(st_name);
-  //   info_box.appendChild(desc);
-  //   info_box.appendChild(small_text);
-    
-  //   // small_text.appendChild(s_txt);
-    
-  //   bottom_text.appendChild(labels);
-  //   bottom_text.appendChild(store_in);
-    
-  //   labels.appendChild(label1);
-  //   labels.appendChild(label2);
-    
-  //   store_in.appendChild(in_icon);
-
-  //   element.classList.add('flex_column');
-  //   element.style.border = 'none';
-
-  //   store_in.addEventListener('click', function () {
-  //     location.href = `/manager/sung/${storeId}/`; // Django URL pattern
-  //   });
-  // }
-
-
-
-  // // 카드 컬러 조합(col1,2 유사색으로)
-  // const themeConfig = {
-  //   '.c1_card_container': { h: 228, s: 100, l: 64 },
-  //   '.c2_card_container': { h: 204, s: 100, l: 55 },
-  //   '.c3_card_container': { h: 196, s: 100, l: 50 }
-  // };
-  
-  // // 색상 고정
-  // function applyFixedColors() {
-  //   for (const [selector, base] of Object.entries(themeConfig)) {
-  //     const card = document.querySelector(selector);
-  //     if (!card) continue;
-
-  //     const col1 = `hsl(${base.h}, ${base.s}%, ${base.l}%)`;
-  //     const col2 = `hsl(${(base.h + 20) % 360}, ${base.s}%, ${base.l - 10}%)`;
-  //     // const brightfix = `hsl(${(base.h + 180) % 360}, 80%, ${base.l}%)`;
-
-  //     card.style.setProperty('--col1', col1);
-  //     card.style.setProperty('--col2', col2);
-  //     // card.style.setProperty('--brightfix', brightfix);
-  //   }
-  // }
-
-
-  // 수정중 - 06.23
   // 카드 시작
   const store_json = JSON.parse('{{ store_json | escapejs | safe }}');
   const store_name = [];
@@ -668,153 +403,8 @@
   const store_id = store_json.map(function (item) { return item.id });
   const idsString = JSON.stringify(store_id);
 
-  // let flag = 0;
-
-  // let c1 = document.querySelector('.c1');
-  // let c2 = document.querySelector('.c2');
-  // let c3 = document.querySelector('.c3');
-
-  // const translateX = '-20px';
-  // const translateY1 = '50px';
-  // const translateY2 = '-50px';
-  // const scale_value1 = "scale(0.9)";
-  // const rotate_value1 = "rotate(5deg)";
-  // const rotate_value2 = "rotate(-5deg)";
-
-
-  // 카드 배치
-  // function updateStyles(up, down, center) {
-  //   if (up && down && center) {
-  //     // 위로 보냄
-  //     up.style.transform = `translate(${translateX}, ${translateY2}) ${scale_value1} ${rotate_value2}`;
-  //     up.style.zIndex = 1;
-  //     up.style.opacity = 0.5;
-
-  //     // 아래로 보냄
-  //     down.style.transform = `translate(${translateX}, ${translateY1}) ${scale_value1} ${rotate_value1}`;
-  //     down.style.zIndex = 1;
-  //     down.style.opacity = 0.5;
-
-  //     // 중앙으로 가져옴
-  //     center.style.transform = 'translate(0, 0) scale(1)';
-  //     center.style.zIndex = 2;
-  //     center.style.opacity = '1';
-  //   }
-  // }
-
-
-  // 카드 요소 생성 - 없어도될듯?
-  // function updateElement(elementClassName, storeName, storeId) {
-
-  //   let element = document.querySelector("." + elementClassName);
-  //   while (element.firstChild) {
-  //     element.removeChild(element.firstChild);
-  //   }
-
-  //   let storeidBox = document.createElement("div");
-  //   storeidBox.className = elementClassName + "_storeId";
-
-
-  //   let storeCon = document.createElement("div");
-  //   storeCon.className = elementClassName + "_card_container";
-
-  //   let bg_layer = document.createElement("div");
-  //   bg_layer.className = "bg_layer";
-  //   let bg_card = document.createElement("div");
-  //   bg_card.className = "bg_card";
-
-  //   let md_layer = document.createElement("div");
-  //   md_layer.className = "md_layer";
-  //   let md_circle = document.createElement("div");
-  //   md_circle.className = "md_circle";
-
-  //   let cont_layer = document.createElement("div");
-  //   cont_layer.className = "cont_layer";
-  //   let info_box = document.createElement("div");
-  //   info_box.className = "info_box";
-  //   let st_name = document.createElement("span");
-  //   st_name.className = "st_name";
-  //   st_name.textContent = storeName;
-    
-  //   let desc = document.createElement("span");
-  //   // 최상단에서 view에서 받아온 json
-  //   const sto_target = sto_json.find(item => item.store_name == storeName);
-  //     if (sto_target) {
-  //       const getAddr = sto_target.address;
-  //       console.log(getAddr);
-  //       desc.className = "desc";
-  //       desc.textContent = getAddr;
-  //     } else {
-  //       console.log("해당값x");
-  //     }
-      
-    
-  //   let small_text = document.createElement("div");
-  //   small_text.className = "small_text";
-  //   // let s_txt = document.createElement("span");
-  //   // s_txt.className = "s_txt";
-  //   // s_txt.textContent = ownerName;
-
-  //   // bottom text부터 만들기 
-  //   let bottom_text = document.createElement("div");
-  //   bottom_text.className = "bottom_text";
-  //   let labels = document.createElement("div");
-  //   labels.className = "labels";
-  //   let store_in = document.createElement("div");
-  //   store_in.className = "store_in";
-  //   let label1 = document.createElement("span");
-  //   label1.className = "label";
-  //   label1.textContent = "들어";
-  //   let label2 = document.createElement("span");
-  //   label2.className = "label";
-  //   label2.textContent = "가기";
-
-  //   let in_icon = document.createElement("span");
-  //   in_icon.className = "material-symbols-outlined";
-  //   in_icon.textContent = "chevron_right";
-
-    
-  //   element.appendChild(storeidBox);
-  //   storeidBox.innerText = storeId;
-  //   storeidBox.style.display = "none";
-
-  //   element.appendChild(storeCon);
-  //   storeCon.appendChild(bg_layer);
-  //   storeCon.appendChild(md_layer);
-  //   storeCon.appendChild(cont_layer);
-
-
-  //   bg_layer.appendChild(bg_card);
-  //   md_layer.appendChild(md_circle);
-  //   cont_layer.appendChild(info_box);
-  //   cont_layer.appendChild(bottom_text);
-    
-    
-  //   info_box.appendChild(st_name);
-  //   info_box.appendChild(desc);
-  //   info_box.appendChild(small_text);
-    
-  //   // small_text.appendChild(s_txt);
-    
-  //   bottom_text.appendChild(labels);
-  //   bottom_text.appendChild(store_in);
-    
-  //   labels.appendChild(label1);
-  //   labels.appendChild(label2);
-    
-  //   store_in.appendChild(in_icon);
-
-  //   element.classList.add('flex_column');
-  //   element.style.border = 'none';
-
-  //   store_in.addEventListener('click', function () {
-  //     location.href = `/manager/sung/${storeId}/`; // Django URL pattern
-  //   });
-  // }
-
 
   function updateElement(elementClassName, storeName, storeId) {
-
     let element = document.querySelector("." + elementClassName);
     // while (element.firstChild) {
     //   element.removeChild(element.firstChild);
@@ -868,32 +458,6 @@
       location.href = `/manager/sung/${storeId}/`;
     });
   }
-
-
-
-  // // 카드 컬러 조합(col1,2 유사색으로)
-  // const themeConfig = {
-  //   '.c1_card_container': { h: 228, s: 100, l: 64 },
-  //   '.c2_card_container': { h: 204, s: 100, l: 55 },
-  //   '.c3_card_container': { h: 196, s: 100, l: 50 }
-  // };
-  
-  // // 색상 고정
-  // function applyFixedColors() {
-  //   for (const [selector, base] of Object.entries(themeConfig)) {
-  //     const card = document.querySelector(selector);
-  //     if (!card) continue;
-
-  //     const col1 = `hsl(${base.h}, ${base.s}%, ${base.l}%)`;
-  //     const col2 = `hsl(${(base.h + 20) % 360}, ${base.s}%, ${base.l - 10}%)`;
-  //     // const brightfix = `hsl(${(base.h + 180) % 360}, 80%, ${base.l}%)`;
-
-  //     card.style.setProperty('--col1', col1);
-  //     card.style.setProperty('--col2', col2);
-  //     // card.style.setProperty('--brightfix', brightfix);
-  //   }
-  // }
-  // 수정중  ---끝  06.23
 
 
   // 시계
@@ -1427,9 +991,24 @@
   changeVisible();
 
 
+  // 네비게이션 url이동(파라미터 추가)
+  document.querySelectorAll('.store-link').forEach((link) => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    if (!selectedStoreId) {
+      alert("스토어를 먼저 선택해주세요.");
+      return;
+    }
+    const baseUrl = e.currentTarget.getAttribute('href');
+    window.location.href = baseUrl.replace('/0/', `/${selectedStoreId}/`);
+  });
+});
+
+
   // document.querySelector('[data-filter="all"]').classList.add('active');
 
-  // --- 1. 초기 데이터 로드 (GET) ---
+  // 초기 데이터 로드 (GET) ---
   async function fetchTodos() {
       try {
         // GET 요청
@@ -1450,7 +1029,7 @@
     }
   }
 
-  // --- 2. 로컬 추가 (서버 요청 X) ---
+  // 로컬 추가 (서버 요청 X) ---
   function addTodo(text) {
       const newTodo = {
           id: Date.now(), // 임시 ID (서버 저장 시 DB ID로 교체됨)
@@ -1462,7 +1041,7 @@
       render();
   }
 
-  // --- 3. 로컬 토글 및 삭제 ---
+  // 로컬 토글 및 삭제 ---
   function toggleTodo(id) {
       todos = todos.map(todo => 
           todo.id === id ? { ...todo, complete: !todo.complete } : todo
@@ -1477,7 +1056,7 @@
       render();
   }
 
-  // --- 4. 전체 저장 (POST - Save 버튼 클릭 시) ---
+  // 전체 저장 (POST - Save 버튼 클릭 시) ---
   async function saveTodos() {
       try {
           const response = await fetch(`${API_BASE_URL}`, {
@@ -1502,7 +1081,7 @@
       }
   }
 
-  // --- 5. 렌더링 ---
+  // 렌더링 ---
   function render() {
       todoList.innerHTML = '';
       
@@ -1528,7 +1107,7 @@
       });
   }
 
-  // --- 6. 이벤트 바인딩 ---
+  // 이벤트 바인딩 ---
   todoForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const text = todoInput.value.trim();

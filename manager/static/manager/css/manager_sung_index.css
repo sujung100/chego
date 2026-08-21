@@ -895,6 +895,7 @@ font-variation-settings:
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    justify-content: center;
   }
 
   .label {
@@ -902,8 +903,10 @@ font-variation-settings:
   }
 
   .store_in {
-    width: 2rem;
-    height: 2rem;
+    /* width: 2rem;
+    height: 2rem; */
+    width: 1.4rem;
+    height: 1.4rem;
     margin-top: auto;
     display: flex;
     align-items: center;
@@ -918,6 +921,10 @@ font-variation-settings:
 
   .store_in:hover {
     background-color: rgba(249, 250, 251, 0.3);
+  }
+
+  .store_in > span {
+    font-size: 1rem;
   }
 
   .icon {
@@ -965,6 +972,7 @@ font-variation-settings:
     margin: 0 0 4px;
     line-height: 1.2;
     transition: font-size 0.3s;
+    padding-left: 0.2rem;
   }
   .c-card.active .title { font-size: 20px; }
   .c-card.active .tag { opacity: 1; }
@@ -1539,7 +1547,8 @@ font-variation-settings:
   counter-increment: numCount;
   content: counter(numCount);
   
-  background-color: #64767c;
+  /* background-color: #64767c; */
+  background-color: var(--side-white);
   color: #06B7F1;
   font-size: 0.6rem;
   font-weight: bold;

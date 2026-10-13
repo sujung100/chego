@@ -292,16 +292,6 @@ body {
 
 /* 왼쪽 사이드바 시작 */
 .left-side{
-  /* position:fixed;
-  top:0; left:0;
-  width:var(--left-side-width);
-  height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:100;
-  box-shadow: 1px 0 0 rgba(255,255,255,0.35), 2px 0 24px rgba(58,74,133,0.12); */
-
   position: fixed;
   top: 0;
   left: 0;
@@ -319,24 +309,6 @@ body {
 }
 
 .capsule{
-  /* display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:20px;
-  width:56px;
-  padding:26px 0 22px;
-  background:var(--capsule-bg);
-  backdrop-filter:blur(16px) saturate(160%);
-  -webkit-backdrop-filter:blur(16px) saturate(160%);
-  border:1px solid var(--capsule-border);
-  border-radius:34px;
-  box-shadow:
-    0 14px 30px rgba(58,74,133,0.28),
-    inset 0 1px 0 rgba(255,255,255,0.6);
-  transition:background 0.4s ease, box-shadow 0.4s ease, transform 0.4s ease;
-  cursor:pointer;
-  text-decoration:none; */
-
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -412,16 +384,6 @@ body {
 }
 
 .est{
-  /* margin-top:18px;
-  padding:6px 0;
-  width:34px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:999px;
-  background:rgba(255,255,255,0.35);
-  border:1px solid var(--dot-mute); */
-
   padding: 6px 0;
   width: 34px;
   display: flex;

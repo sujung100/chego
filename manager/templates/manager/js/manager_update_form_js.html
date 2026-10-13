@@ -67,28 +67,28 @@
 	}
 
 
-	// 다음버튼 생성 이벤트
-	function createNextBtn(target_p) {
-		const existingBtnDisplay = target_p.querySelector('.btn-display');
-		if (!existingBtnDisplay) {
-		const btnDisplay = document.createElement('div');
-		btnDisplay.className = 'btn-display';
+	// 시간설정탭 - 다음버튼 생성 이벤트
+	// function createNextBtn(target_p) {
+	// 	const existingBtnDisplay = target_p.querySelector('.btn-display');
+	// 	if (!existingBtnDisplay) {
+	// 	const btnDisplay = document.createElement('div');
+	// 	btnDisplay.className = 'btn-display';
 
-		const gotoNextTab = document.createElement('button');
-		gotoNextTab.className = 'goto-nexttab';
-		gotoNextTab.textContent = '다음';
-		gotoNextTab.style.margin = '5rem 0 0 0';
+	// 	const gotoNextTab = document.createElement('button');
+	// 	gotoNextTab.className = 'goto-nexttab';
+	// 	gotoNextTab.textContent = '다음';
+	// 	gotoNextTab.style.margin = '5rem 0 0 0';
 
-		btnDisplay.appendChild(gotoNextTab);
+	// 	btnDisplay.appendChild(gotoNextTab);
 
-		const divWidth = target_p.querySelector('.div-width');
-		if (divWidth) {
-			divWidth.appendChild(btnDisplay);
-		}
-		} else {
-        console.log("다음버튼존재");
-    	}
-	}
+	// 	const divWidth = target_p.querySelector('.div-width');
+	// 	if (divWidth) {
+	// 		divWidth.appendChild(btnDisplay);
+	// 	}
+	// 	} else {
+    //     console.log("다음버튼존재");
+    // 	}
+	// }
 
 	// same_allday = document.getElementById("same_allday")
 	const same_allday = document.querySelector("#same_allday");
@@ -132,7 +132,7 @@
 		if (goBackToRadio) {
 			goBackToRadio.style.display = 'block';
 		}
-		createNextBtn(target_p);
+		// createNextBtn(target_p);
 	})
 
 	// 평일주말 radio 선택시 이벤트
@@ -149,7 +149,7 @@
 			goBackToRadio.style.display = 'block';
 			// showtime2.style.display = 'none';
 		}
-		createNextBtn(target_p);
+		// createNextBtn(target_p);
 	})
 
 	// 요일개별 radio 선택시 이벤트
@@ -165,7 +165,7 @@
 		if (goBackToRadio) {
 			goBackToRadio.style.display = 'block';
 		}
-		createNextBtn(target_p);
+		// createNextBtn(target_p);
 	});
 
 		
@@ -241,11 +241,22 @@
 	let currentWdTimes = initialWdTimeObjects.map(time => time.reservation_time);
     let currentWkndTimes = initialWkndTimeObjects.map(time => time.reservation_time);
 	let newEachDayTimes = [];
-	console.log("currentWkndTimes", currentWkndTimes);
+	// console.log("기본형1", sto_time_objects);
+	// console.log("기본형2", wd_time_objects);
+	// console.log("기본형3", wknd_time_objects);
+
+	console.log("매일시간", initialSameTimeObjects);
+	console.log("주중시간", initialWdTimeObjects);
+	console.log("주말시간", initialWkndTimeObjects);
 
 
 	// 수정중
 	function setupTimeSection(timeArray, containerId, storeId, managerPk) {
+		console.log("★");
+		console.log("기존시간값들", timeArray);
+		console.log("콘테이너값", containerId);
+		console.log("스토어값", storeId);
+		console.log("매니저값", managerPk);
         const timeBtsCon = document.getElementById(containerId);
 		// console.log("콘테이너아이디찍어봐", timeBtsCon)
         if (!timeBtsCon) {
@@ -259,7 +270,8 @@
         // title1 생성
         const br1 = document.createElement('br');
         const titleDiv1 = document.createElement('div');
-        titleDiv1.textContent = '새로운 시간 추가';
+        titleDiv1.textContent = '신규 추가';
+		titleDiv1.classList.add('tt');
 
         // +버튼의 부모 btnwrap생성
         const btnWrapSpan = document.createElement('span');
@@ -286,9 +298,11 @@
         addCookiesBtn.dataset.containerId = containerId;
 
         const br3 = document.createElement('br');
-        // title2 생성
-        const titleDiv2 = document.createElement('div');
-        titleDiv2.textContent = '시간표 변경';
+        // hr라인 생성
+        const hrDiv = document.createElement('hr');
+		const titleDiv2 = document.createElement('div');
+		titleDiv2.textContent = '기존 변경';
+		titleDiv2.classList.add('tt');
 
         // attachBtns div생성
         const attachDiv = document.createElement('div');
@@ -297,12 +311,17 @@
 
         btnWrapSpan.appendChild(addBtn);
         fragment.appendChild(br1);
-        fragment.appendChild(titleDiv1);
+		if (containerId == 'timeBtsCon-wknd' || containerId == 'timeBtsCon-wd' || containerId == 'timeBtsCon-same') {
+			fragment.appendChild(titleDiv1);
+		}
         fragment.appendChild(btnWrapSpan);
         fragment.appendChild(br2);
         fragment.appendChild(addCookiesBtn);
         fragment.appendChild(br3);
-        fragment.appendChild(titleDiv2);
+        fragment.appendChild(hrDiv);
+		if (containerId == 'timeBtsCon-wknd' || containerId == 'timeBtsCon-wd' || containerId == 'timeBtsCon-same') {
+			fragment.appendChild(titleDiv2);
+		}
         fragment.appendChild(attachDiv);
         // fragment.appendChild(changeSaveButton);
 
@@ -802,22 +821,19 @@
 		});
 	}
 
-		
+
+	
+	
+	// 기존 시간표랑 같이 정렬하기 위한 전역변수
+	// let allButtons = [];
 	document.addEventListener('click', function (event) {
+		// "+" 버튼 클릭시 이벤트
 		if (event.target.matches('.addbtn')) {
 			plusBtnClick(event);
 
 		}
-	});
-
 	
-	// "추가하기" 버튼 클릭시 이벤트
-	// 기존 시간표랑 같이 정렬하기 위한 전역변수
-	// let allButtons = [];
-	document.addEventListener('click', function (event) {
-		
-	
-
+		// "추가하기" 버튼 클릭시 이벤트
 		if (event.target.matches('.addTime')) {
 			let addtimeId = event.target.id;
 			// const clickedButton = event.target;
@@ -949,45 +965,64 @@
 			// 시간 입력값 변경시 실행되는 이벤트리스너
 			okbt.addEventListener('click', function (e) {
 				e.preventDefault();
-				// 동일시간 존재여부 확인
-				console.log("이이이이이벤트타겟", e.target)
-				let buttons = Array.from(attach.querySelectorAll('button:not(.ok-button)'));
-				console.log("버튼이란게뭐야", buttons)
+				
+				const newValue = timeInput.value;
+				const oldValue = arrbtn.value;              // ★ 변경 전 값 저장
+				const containerId = attach.id.replace('attachBtns-', '');
 
+				// 빈 값 방지
+				if (!newValue) {
+					alert("시간을 선택해주세요.");
+					return;
+				}
+
+				// 값이 같으면 그냥 닫기
+				if (newValue === oldValue) {
+					timeInput.remove();
+					okbt.remove();
+					closeButton.remove();
+					return;
+				}
+
+				// 중복 검사 (arrbtn 버튼들만, 자기 자신 제외)
+				let buttons = Array.from(attach.querySelectorAll('button.arrbtn'));
 				for (let button of buttons) {
-					// 동일시간존재시, 경고표시후 함수종료
-					if (button.value === timeInput.value) {
+					if (button !== arrbtn && button.value === newValue) {
 						alert("이미 존재하는 시간입니다.");
-						timeInput.style.display = '';
 						return;
 					}
 				}
-				// 동일 시간값 미존재시, 버튼 텍스트와 value값 변경
-				arrbtn.textContent = timeInput.value;
-				arrbtn.value = timeInput.value;
 
-				
-
-				// 변경된 버튼을 배열에 추가
-				buttons.push(arrbtn);
-				console.log("!arrbtn버튼값찍어봐라", timeInput.value);
-				buttons.sort((a, b) => {
-					return a.value.localeCompare(b.value);
-				});
-				console.log("buttons", buttons)
-				for (let i = 0; i < buttons.length; i++) {
-					// console.log('!버튼텍스트찍히나 ' + (i + 1) + ' Text: ' + buttons[i].textContent);
-					console.log('!버튼값찍히나 ' + (i + 1) + ' Value: ' + buttons[i].value);
+				// 1) containerTime: 기존 값 → 새 값 교체
+				const ctIdx = containerTime.indexOf(oldValue);
+				if (ctIdx > -1) {
+					containerTime[ctIdx] = newValue;
+				} else {
+					containerTime.push(newValue);
 				}
 
-				// 기존 모든버튼제거후, 새로 정렬된 버튼 추가
-				while (attach.firstChild) {
-					attach.removeChild(attach.firstChild);
+				// 2) sectionData inputValues: 기존 값 → 새 값 교체
+				if (sectionData[containerId]?.inputValues) {
+					const targetInputVal = sectionData[containerId].inputValues;
+					const idx = targetInputVal.indexOf(oldValue);
+					if (idx > -1) {
+						targetInputVal[idx] = newValue;
+					} else {
+						targetInputVal.push(newValue);
+					}
+					console.log("타겟인풋바 변경후", targetInputVal);
 				}
-				for (let button of buttons) {
-					attach.appendChild(button);
-				}
-				// 시간입력input제거
+
+				// 3) 버튼 자체 값 변경
+				arrbtn.textContent = newValue;
+				arrbtn.value = newValue;
+
+				// 4) 정렬 후 재배치 (arrbtn 버튼만)
+				buttons.sort((a, b) => a.value.localeCompare(b.value));
+				buttons.forEach(btn => attach.appendChild(btn));   // appendChild는 기존 노드를 이동시킴
+
+				console.log("어태치 찍어봐", attach);
+				// 5) 입력 UI 제거
 				timeInput.remove();
 				okbt.remove();
 				closeButton.remove();
@@ -996,50 +1031,24 @@
 			closeButton.addEventListener("click", function (e) {
 				e.preventDefault();
 
-				// 삭제 전 id값 가져옴
-				const fullId = event.target.parentElement.id;
-				const containerId = fullId.replace('attachBtns-', '');
+				const containerId = attach.id.replace('attachBtns-', '');
+				const deleteTime = arrbtn.value;
 
-				// 클릭한 arrbtn 삭제
+				// containerTime에서 제거
+				const ctIdx = containerTime.indexOf(deleteTime);
+				if (ctIdx > -1) containerTime.splice(ctIdx, 1);
+
+				// inputValues에서 제거
+				const target = sectionData[containerId]?.inputValues;
+				if (target) {
+					const idx = target.indexOf(deleteTime);
+					if (idx > -1) target.splice(idx, 1);
+				}
+
 				arrbtn.remove();
 				timeInput.remove();
 				okbt.remove();
 				closeButton.remove();
-
-				const deleteTime = arrbtn.value;
-
-				// 불러온 containerTime배열에서 시간값 제거
-				// (containerTime: 추가하기 버튼 클릭시 추가되는 값 모음)
-				let addedTimes = containerTime;
-				console.log("=======★");
-				console.log("컨테이너타임 삭제전", addedTimes);
-				for(let i = addedTimes.length - 1; i>=0; i--) {
-					if (addedTimes[i] == deleteTime) {
-						addedTimes.splice(i, 1);
-					}
-				}
-				console.log("컨테이너타임 삭제후", addedTimes);
-
-				// targetInputVal배열에서 시간값 제거
-				if (sectionData[containerId]?.inputValues) {
-					const targetInputVal = sectionData[containerId].inputValues;
-					for (let i = targetInputVal.length - 1; i >= 0; i--) {
-						if (targetInputVal[i] === deleteTime) {
-							targetInputVal.splice(i, 1);
-						}
-					}
-					console.log("타겟인풋바 삭제후", sectionData[containerId].inputValues);
-					console.log("=======★");
-				} else {
-					console.log("오류");
-				}
-
-
-				// buttons배열에서 arrbtn제거
-				let index = buttons.indexOf(arrbtn);
-				if (index > -1) {
-					buttons.splice(index, 1);
-				}
 			});
 
 			// 시간입력input을 버튼 다음에 삽입
@@ -1305,6 +1314,136 @@
 				console.error("오류발생:", error);
 			}
 	});
+
+	// top_cont,  bottom_cont 접기
+	function openCont() {
+		const sectionA = document.getElementById('sectionA');
+
+		// 히스테리시스: 접히는 지점과 펼쳐지는 지점을 다르게 둬서
+		// 경계선 부근에서 상태가 계속 뒤집히는 깜박임을 방지합니다.
+		// 접힘/펼침을 트리거할 최소 이동량(px). 값이 클수록 둔감해집니다.
+		// const DIRECTION_THRESHOLD = 30;
+		// const COLLAPSE_AT_Y = 70;  // 이 지점을 넘어서 "아래로" 스크롤하면 접힘
+		// const EXPAND_AT_Y = 50;     // 이 지점보다 "위로" 스크롤해야 다시 펼쳐짐
+		const DIRECTION_THRESHOLD = 20;
+		const COLLAPSE_AT_Y = 70;  // 이 지점을 넘어서 "아래로" 스크롤하면 접힘
+		const EXPAND_AT_Y = 20;     // 이 지점보다 "위로" 스크롤해야 다시 펼쳐짐
+
+		let lastY = window.scrollY;
+		let ticking = false;
+
+		function handleScroll() {
+		const currentY = Math.max(0, window.scrollY); // 모바일 바운스로 인한 음수 방지
+		const delta = currentY - lastY;
+
+		if (Math.abs(delta) >= DIRECTION_THRESHOLD) {
+			if (delta > 0 && currentY > COLLAPSE_AT_Y) {
+			// 아래로 스크롤 -> A 섹션 접기
+			sectionA.classList.add('is-collapsed');
+			} else if (delta < 0 && currentY < EXPAND_AT_Y) {
+			// 위로 스크롤 -> A 섹션 펼치기
+			sectionA.classList.remove('is-collapsed');
+			}
+			lastY = currentY;
+		}
+
+		ticking = false;
+		}
+
+		window.addEventListener('scroll', function () {
+		if (!ticking) {
+			window.requestAnimationFrame(handleScroll);
+			ticking = true;
+		}
+		}, { passive: true });
+	}
+	openCont();
+
+	// 이전, 다음버튼으로 페이지나누기
+	const totalSteps = 3;
+	let currentStep = 1;
+
+	const stepPages = document.querySelectorAll('.step-page');
+	const stepIndicator = document.getElementById('stepIndicator');
+	const progressFill = document.getElementById('progressFill');
+	const prevBtn = document.getElementById('prevBtn');
+	const nextBtn = document.getElementById('nextBtn');
+
+	function renderStep() {
+		stepPages.forEach(page => {
+			page.style.display = (parseInt(page.dataset.step, 10) === currentStep) ? 'flex' : 'none';
+		});
+		stepIndicator.textContent = `Page ${currentStep} of ${totalSteps}`;
+		progressFill.style.width = `${(currentStep / totalSteps) * 100}%`;
+		prevBtn.disabled = currentStep === 1;
+		nextBtn.disabled = currentStep === 3;
+		nextBtn.textContent = currentStep === totalSteps ? '끝' : '다음';
+	}
+
+	prevBtn.addEventListener('click', () => {
+		if (currentStep > 1) {
+			currentStep -= 1;
+			renderStep();
+		}
+	});
+
+	nextBtn.addEventListener('click', () => {
+		if (currentStep < totalSteps) {
+			currentStep += 1;
+			renderStep();
+		}
+	});
+
+	renderStep();
+
+	// 인원설정
+	function numberStyle(input) {
+	const min = input.hasAttribute('min') ? parseFloat(input.min) : -Infinity;
+	const max = input.hasAttribute('max') ? parseFloat(input.max) : Infinity;
+	const step = parseFloat(input.step) || 1;
+
+	// DOM 구성: container > [btnRem, input, btnAdd]
+	const container = document.createElement('div');
+	const btnRem = document.createElement('div');
+	const btnAdd = document.createElement('div');
+
+	container.className = 'numberstyle-qty';
+	btnRem.className = 'qty-btn qty-rem';
+	btnAdd.className = 'qty-btn qty-add';
+	btnRem.textContent = '-';
+	btnAdd.textContent = '+';
+
+	input.parentNode.insertBefore(container, input);
+	container.append(btnRem, input, btnAdd);
+
+	// 값 범위 보정 + 버튼 비활성 상태 갱신
+	function update(value) {
+	let val = parseFloat(value);
+	if (isNaN(val)) val = isFinite(min) ? min : 0;
+	if (val > max) val = max;
+	if (val < min) val = min;
+
+	input.value = val;
+	btnAdd.classList.toggle('disabled', val >= max);
+	btnRem.classList.toggle('disabled', val <= min);
+	}
+
+	btnAdd.addEventListener('click', () => {
+	update((parseFloat(input.value) || 0) + step);
+	input.dispatchEvent(new Event('change', { bubbles: true }));
+	});
+
+	btnRem.addEventListener('click', () => {
+	update((parseFloat(input.value) || 0) - step);
+	input.dispatchEvent(new Event('change', { bubbles: true }));
+	});
+
+	// 직접 입력한 경우에도 범위 보정
+	input.addEventListener('change', () => update(input.value));
+
+	update(input.value);
+	}
+	document.querySelectorAll('input.numberstyle').forEach(numberStyle);
 
 
 </script>

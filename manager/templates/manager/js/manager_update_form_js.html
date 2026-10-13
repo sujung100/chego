@@ -1,4 +1,8 @@
 <script>
+	
+	// 네비용
+	let selectedStoreId = null;
+
 	// 탭버튼 슬라이더
 	const contB = document.querySelector(".innertxt");
 	const contA = document.querySelector(".trapez");
@@ -236,6 +240,9 @@
 	const initialWdTimeObjects = {{ wd_time_objects|safe }};
 	const initialWkndTimeObjects = {{ wknd_time_objects|safe }};
 
+	// 네비
+	selectedStoreId = storeId;
+
 	// 순서대로 매일동일/ 평일 /주말 /요일별(기존값 불러오지않음)
 	let currentSameTimes = initialSameTimeObjects.map(time => time.reservation_time);
 	let currentWdTimes = initialWdTimeObjects.map(time => time.reservation_time);
@@ -245,9 +252,25 @@
 	// console.log("기본형2", wd_time_objects);
 	// console.log("기본형3", wknd_time_objects);
 
+	console.log("스토어아이디", storeId);
 	console.log("매일시간", initialSameTimeObjects);
 	console.log("주중시간", initialWdTimeObjects);
 	console.log("주말시간", initialWkndTimeObjects);
+
+
+	// 네비게이션 url이동(파라미터 추가)
+  	document.querySelectorAll('.store-link').forEach((link) => {
+		link.addEventListener('click', (e) => {
+			e.preventDefault();
+
+			if (!selectedStoreId) {
+			alert("스토어를 먼저 선택해주세요.");
+			return;
+			}
+			const baseUrl = e.currentTarget.getAttribute('href');
+			window.location.href = baseUrl.replace('/0/', `/${selectedStoreId}/`);
+		});
+	});
 
 
 	// 수정중
@@ -1290,7 +1313,7 @@
 		});
 	});
 
-	// 인원설정 - 
+	// 인원설정
 	const maxPeople = document.querySelector('#maxpeople');
 	const maxTeam = document.querySelector('#per1hour');
 	const numsetButton = document.querySelector('#numset-button');
@@ -1319,12 +1342,7 @@
 	function openCont() {
 		const sectionA = document.getElementById('sectionA');
 
-		// 히스테리시스: 접히는 지점과 펼쳐지는 지점을 다르게 둬서
-		// 경계선 부근에서 상태가 계속 뒤집히는 깜박임을 방지합니다.
-		// 접힘/펼침을 트리거할 최소 이동량(px). 값이 클수록 둔감해집니다.
-		// const DIRECTION_THRESHOLD = 30;
-		// const COLLAPSE_AT_Y = 70;  // 이 지점을 넘어서 "아래로" 스크롤하면 접힘
-		// const EXPAND_AT_Y = 50;     // 이 지점보다 "위로" 스크롤해야 다시 펼쳐짐
+		// 접힘/펼침을 트리거할 최소 이동량- 값이 클수록 둔감
 		const DIRECTION_THRESHOLD = 20;
 		const COLLAPSE_AT_Y = 70;  // 이 지점을 넘어서 "아래로" 스크롤하면 접힘
 		const EXPAND_AT_Y = 20;     // 이 지점보다 "위로" 스크롤해야 다시 펼쳐짐
@@ -1402,7 +1420,6 @@
 	const max = input.hasAttribute('max') ? parseFloat(input.max) : Infinity;
 	const step = parseFloat(input.step) || 1;
 
-	// DOM 구성: container > [btnRem, input, btnAdd]
 	const container = document.createElement('div');
 	const btnRem = document.createElement('div');
 	const btnAdd = document.createElement('div');
@@ -1438,7 +1455,7 @@
 	input.dispatchEvent(new Event('change', { bubbles: true }));
 	});
 
-	// 직접 입력한 경우에도 범위 보정
+	// 직접 입력시 범위 보정
 	input.addEventListener('change', () => update(input.value));
 
 	update(input.value);

@@ -35,28 +35,12 @@
           <a href="{% url 'index' %}"><span class="material-symbols-outlined">home</span></a>
           <a href="{% url 'write' %}"><span class="material-symbols-outlined">add_business</span></a>
           <!-- url 끝에 0 : js 쿼리파라미터 치환용 임의숫자 -->
-          <a href="{% url 'update3' 0 %}" id="click1"><span class="material-symbols-outlined">more_time</span></a>
-          <a href="{% url 'store_detail' 0 %}" id="click2"><span class="material-symbols-outlined">lists</span></a>
-          <a href="{% url 'admin_chat2' %}" id="click3"><span class="material-symbols-outlined">forum</span></a>
+          <a href="{% url 'update3' 0 %}" class="store-link" id="click1"><span class="material-symbols-outlined">more_time</span></a>
+          <a href="{% url 'store_detail' 0 %}" class="store-link" id="click2"><span class="material-symbols-outlined">lists</span></a>
+          <a href="{% url 'admin_chat2' %}" class="store-link" id="click3"><span class="material-symbols-outlined">forum</span></a>
         </div>
       </div>
-      <!-- <div class="cont_box1 inner_div1"> -->
-      <!-- <div class="cont_box1 inner_div2"> -->
       <div class="cont_box1 inner_div3">
-        <!-- <div class="content2">
-            {% if request.user.is_authenticated %}
-            <div class="con2_nav">
-              <button class="nav_button1" type="button">
-                <img src="{% static 'manager/img/right-arrow (1).png' %}" alt="접기">
-              </button>
-            </div>
-            <div class="con2_manager1">
-              <img class="profile_img" src="{% static 'manager/img/user.png' %}" alt="이미지">
-              <span>{{ request.user.username }}</span>
-              <button id="nav_button2" class="nav_button2" type="button">
-                <img src="{% static 'manager/img/turn-off (1).png' %}" alt="로그아웃">
-              </button>
-            </div> -->
         <div class="userInfo">
           <div class="user">
             <!-- <img class="profile_img" src="{% static 'manager/img/person.png' %}" alt="이미지"> -->
@@ -83,12 +67,6 @@
         </a>
         {% endif %}
         <div class="main">
-          <!-- <div class="left_bar">
-                  <span class="material-symbols-outlined bar_icons"><a href="{% url 'index' %}">home</a></span>
-                  <span class="material-symbols-outlined bar_icons"><a href="">more_time</a></span>
-                  <span class="material-symbols-outlined bar_icons"><a href="{% url 'admin_chat2' %}">forum</a></span>
-                </div> -->
-          <!-- 여기 -->
           <div class="right_content">
             <div class="top_cont" id="sectionA">
               <div class="t_l">
@@ -110,110 +88,11 @@
             </div>
             <!-- <hr> -->
             <div class="bottom_cont">
-              <!-- <div class="b_l"> -->
-              <!-- <span>달력들어갈자리</span> -->
-              <!-- <div class="mid">
-                
-                            <div class="rsv_start_end">
-                              <input type="radio" name="rsv_start_end" id="rsv_start_end_yes" checked>
-                              <input type="radio" name="rsv_start_end" id="rsv_start_end_no">
-                              <div class="switch">
-                                <label for="rsv_start_end_yes">시작</label>
-                                <label for="rsv_start_end_no">종료</label>
-                                <span></span>
-                              </div>
-                            </div>
-                
-                            <div class="cal_top">
-                              <div class="title_setting">예약가능일 설정</div>
-                              <label class="rocker">
-                                <input type="checkbox" checked>
-                                <span class="switch-left">Off</span>
-                                <span class="switch-right">On</span>
-                              </label>
-                            </div>
-                
-                          </div>
-                          <table class="Calendar">
-                            <thead>
-                              <tr>
-                                <td onClick="prevCalendar();" style="cursor:pointer;">&#60;</td>
-                                <td colspan="5">
-                                  <span id="calYear"></span>년
-                                  <span id="calMonth"></span>월
-                                </td>
-                                <td onClick="nextCalendar();" style="cursor:pointer;">&#62;</td>
-                              </tr>
-                              <tr>
-                                <td>일</td>
-                                <td>월</td>
-                                <td>화</td>
-                                <td>수</td>
-                                <td>목</td>
-                                <td>금</td>
-                                <td>토</td>
-                              </tr>
-                            </thead>
-                
-                            <tbody>
-                            </tbody>
-                          </table>
-                          <input type="hidden" id="selected_date" name="selected_date">
-                          <span id="disable_date_start"></span>
-                          <span id="disable_date_end"></span> -->
-              <!-- </div> -->
               <div class="b_r">
-                <!-- <div class="showtime">
-                            <div class="store-table">
-                              <div class="st-name">
-                                <div class="st-id"> store.id </div>
-                                 store.store_name 
-                              </div>
-                              <div class="st-time">
-                                  <br>
-                                  <div>새로운 시간 추가</div>
-                                   for time in sto_time_objects 
-                                  <button class="time-innerbox- store.id " type="button" data-time=" time.reservation_time "
-                                    id="time-style" style="display: none;"> time.reservation_time </button>
-                                   endfor 
-                                  
-                                  <span id="btnwrap" data-pk=" manager.pk " data-store-id=" store.id ">
-                                    <button type="button" class="addbtn">&#43;</button>
-                                  </span>
-                                  <br>
-                                  <button class="add_time_down" id="add_time_down- store.id " data-pk=" manager.pk "
-                                    data-store-id=" store.id ">추가하기</button>
-                                  <br>
-                                  <div>시간표 변경</div>
-                                  <div class="parent">
-                                    <div id="attach_btns"></div>
-                                  </div>
-                                  <input type="hidden" id="buttonValues" name="button_values">
-                                  <input type="button" id="rsv_activate" value="변경사항 저장">
-                              </div>
-                            </div>
-                          </div> -->
                 <div class="tabwrap">
                   <div class="tabcont">
                     <div class="card tabs">
-                      <!-- <div>
-                        <input id="tab-1" type="radio" class="tab tab-selector" checked="checked" name="tab">
-                        <label for="tab-1" class="tab tab1 trapez active"><span
-                            class="material-symbols-outlined">calendar_month</span>&nbsp;기간설정</label>
-                        <input id="tab-2" type="radio" class="tab tab-selector" name="tab">
-                        <label for="tab-2" class="tab tab2 trapez"><span
-                            class="material-symbols-outlined">schedule</span>&nbsp;시간설정</label>
-                        <input id="tab-3" type="radio" class="tab tab-selector" name="tab">
-                        <label for="tab-3" class="tab tab3 trapez"><span
-                            class="material-symbols-outlined">coffee</span>&nbsp;휴무설정</label>
-                        <input id="tab-4" type="radio" class="tab tab-selector" name="tab">
-                        <label for="tab-4" class="tab tab4 trapez"><span
-                            class="material-symbols-outlined">groups</span>&nbsp;인원설정</label>
-                        <div class="tabshadow"></div>
-                        <div class="h-slider"></div>
-                      </div> -->
                       <section class="innertxt">
-
                         <div class="progress-container">
                           <div class="progress-fill" id="progressFill"></div>
                         </div>
@@ -239,17 +118,11 @@
                               <div id="setting-options">
                                 <div id="setting-manual" style="display: none;">
                                   <div class="after-setting">
-                                    <!-- <div class="tab-num tab1">기간설정</div> -->
                                     <div class="txtcont">
                                       <div class="mid">
                                         <div class="rsv_start_end">
                                           <input type="radio" name="rsv_start_end" id="rsv_start_end_yes" checked>
                                           <input type="radio" name="rsv_start_end" id="rsv_start_end_no">
-                                          <!-- <div class="switch">
-                                                      <label for="rsv_start_end_yes">시작</label>
-                                                      <label for="rsv_start_end_no">종료</label>
-                                                      <span></span>
-                                                    </div> -->
                                         </div>
                                         <div class="cal_top">
                                           <div class="title_setting">편집모드</div>
@@ -314,65 +187,10 @@
                                   </label>
                                 </div>
                               </div>
-
-                              <!-- <div class="changing-txt">
-                                          <p id="status-text">아닙니다</p>
-                                        </div> -->
-
                               <div class="setting-complete">
                                 <button id="complete-button">저장</button>
                               </div>
                             </div>
-                            <!-- <div class="after-setting">
-                                        <div class="tab-num tab1">기간설정</div>
-                                        <div class="txtcont">
-                                          <div class="mid">
-                                            <div class="rsv_start_end">
-                                              <input type="radio" name="rsv_start_end" id="rsv_start_end_yes" checked>
-                                              <input type="radio" name="rsv_start_end" id="rsv_start_end_no">
-                                        
-                                            </div>
-                                            <div class="cal_top">
-                                              <div class="title_setting">예약가능일 설정</div>
-                                              <label class="rocker">
-                                                <input type="checkbox" checked>
-                                                <span class="switch-left">Off</span>
-                                                <span class="switch-right">On</span>
-                                              </label>
-                                            </div>
-                                          </div>
-                                          <table class="Calendar">
-                                            <thead>
-                                              <tr>
-                                                <td onClick="prevCalendar();" style="cursor:pointer;">&#60;</td>
-                                                <td colspan="5">
-                                                  <span id="calYear"></span>년
-                                                  <span id="calMonth"></span>월
-                                                </td>
-                                                <td onClick="nextCalendar();" style="cursor:pointer;">&#62;</td>
-                                              </tr>
-                                              <tr>
-                                                <td>일</td>
-                                                <td>월</td>
-                                                <td>화</td>
-                                                <td>수</td>
-                                                <td>목</td>
-                                                <td>금</td>
-                                                <td>토</td>
-                                              </tr>
-                                            </thead>
-                                        
-                                            <tbody class="edit_mode">
-                                            </tbody>
-                                          </table>
-                                        </div>
-                                        <input type="hidden" id="selected_date" name="selected_date">
-                                        <span id="disable_date_start"></span>
-                                        <span id="disable_date_end"></span>
-                                      </div> -->
-                            <!-- <p>
-                                        <span class = "numit"></span>
-                                      </p> -->
                             </div>
                         </div>
                         <div class="innerbox step-page" id="innertxt-2" data-step="2">
@@ -426,35 +244,10 @@
                                           <div class="st-id">{{ store.id }}</div>
                                           {{store.store_name }}
                                         </div>
-                                        <!-- <div class="weekday">
-        
-                                                      <div class="st-time">
-                                                        <div id="timeBtsCon">
-                                                          <input type="time" id="new-time-input" style="display: none;">
-                                                          <button id="add-time-check" style="display: none;">확인</button>
-                                                          <br>
-                                                          <div>시간표 변경</div>
-                                                          <div class="parent">
-                                                              <div id="attach_btns"></div>
-                                                          </div>
-                                                          <input type="hidden" id="buttonValues" name="button_values">
-                                                          <input type="button" id="rsv_activate" value="변경사항 저장">
-                                                        </div>
-                                                    </div> -->
-
-                                        <!-- 주중/주말 시간 버튼들이 들어갈 컨테이너 (이전 코드에서 추가한 곳) -->
-                                        <!-- <div id="wd-container"></div> -->
-
-
                                         <div class="divide-wrap">
                                           <div class="weekday">
                                             <div class="st-time">
                                               <br>
-                                              <!-- <div id="timeBtsCon">
-                                                            <input type="time" id="new-time-input" style="display: none;">
-                                                            <button id="add-time-check" style="display: none;">확인</button>
-                                                            <input type="hidden" id="buttonValues" name="button_values">
-                                                          </div> -->
                                               <div class="main-tt">평일</div>
                                               <!-- <hr> -->
                                               <div id="timeBtsCon-wd">
@@ -468,11 +261,6 @@
                                           <div class="weekend">
                                             <div class="st-time">
                                               <br>
-                                              <!-- <div id="timeBtsCon">
-                                                            <input type="time" id="new-time-input" style="display: none;">
-                                                            <button id="add-time-check" style="display: none;">확인</button>
-                                                            <input type="hidden" id="buttonValues" name="button_values">
-                                                          </div> -->
                                               <div class="main-tt">주말</div>
                                               <!-- <hr> -->
                                               <div id="timeBtsCon-wknd">
@@ -594,9 +382,6 @@
                                             </div>
                                           </div>
                                         </div>
-                                        
-
-
 
                                       </div>
                                       <div class="desc-bottom">최종적으로 변경한 값을 저장하려면 "저장"버튼을 클릭하세요.</div>
@@ -620,10 +405,6 @@
                                   <input type="radio" name="dayoff_set" id="eachday-off" value="매주" checked>
                                   <label for="eachday-off" class="daylabels">매주</label>
                                 </div>
-                                <!-- <div class="sets">
-                                            <input type="radio" name="dayoff_set" id="biweekly-off" value="격주">
-                                            <label for="biweekly-off" class="daylabels">격주</label>
-                                          </div> -->
                                 <div class="sets">
                                   <input type="radio" name="dayoff_set" id="offstart-now" value="이휴">
                                   <label for="offstart-now" class="daylabels">격주<div>이번주휴무</div></label>
@@ -632,10 +413,6 @@
                                   <input type="radio" name="dayoff_set" id="offstart-next" value="다휴">
                                   <label for="offstart-next" class="daylabels">격주<div>다음주휴무</div></label>
                                 </div>
-                                <!-- <div class="sets">
-                                            <input type="radio" name="dayoff_set" id="monthly-off" value="매달">
-                                            <label for="monthly-off" class="daylabels">매달</label>
-                                          </div> -->
                                 <div class="sets">
                                   <input type="radio" name="dayoff_set" id="no-off" value="무휴">
                                   <label for="no-off" class="daylabels">무휴</label>
@@ -712,37 +489,7 @@
           </div>
         </div>
       </div>
-      <!-- <div class="addtime">
-                      <table>
-                        <br>
-                        <label for="select_time1">예약시간</label>
-                        <input type="time" name="select_time[]" id="select_time1" min="11:00" max="12:00">
-                        <button type="button" id="plus">추가</button>
-                        <div id="plus_box"></div>
-                      </table>
-                      <button type="submit" class="confirm">확인</button>
-                  </div> -->
-
     </div>
-    {% else %}
-    <div class="container">
-      <svg viewBox="0 0 960 300">
-        <symbol id="s-text">
-          <text text-anchor="middle" x="50%" y="80%">로그인필요</text>
-        </symbol>
-
-        <g class="g-ants">
-          <use xlink:href="#s-text" class="text-copy"></use>
-          <use xlink:href="#s-text" class="text-copy"></use>
-          <use xlink:href="#s-text" class="text-copy"></use>
-          <use xlink:href="#s-text" class="text-copy"></use>
-          <use xlink:href="#s-text" class="text-copy"></use>
-        </g>
-      </svg>
-    </div>
-    <!-- </div> -->
-    <!-- </div> -->
-    {% endif %}
   </div>
   <!-- 모달 -->
   <div id="modal-1">
@@ -760,8 +507,6 @@
         <div class="modal-footer">
           <div></div>
           <div></div>
-          <!-- <p>시간표 추가/삭제 및 변경 시, 이미 존재하는 예약은 유지됩니다.</p>
-            <p>(기존 예약내역 취소는 개별 일정 조율 후 예약조회 페이지를 이용해주세요.)</p> -->
         </div>
       </div>
     </div>

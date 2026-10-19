@@ -6,27 +6,42 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{% static 'manager/css/manager_store_detail.css' %}?after">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-  <title>가게 상세페이지</title>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL,wght,GRAD,opsz@0..1,100..700,-50..200,20..48&display=swap" rel="stylesheet">
+  <title>예약조회</title>
 </head>
 <body>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="left-side">
+    <a href="#" class="capsule">
+      <span class="circle-point"></span>
+      <span class="sol-name">CHEGO</span>
+      <span class="dot-point"></span>
+      <span class="sub-name">예약관리솔루션</span>
+    </a>
+    <span class="est"><span>2026</span></span>
+  </div>
   <div id="wrap">
     <div class="content1">
       {% if request.user.is_authenticated %}
-      <div class="cont_box1 inner_div1">
-        <div class="cont_box1 inner_div2">
+      <div class="navi-wrap">
+        <div class="home">
+          <a href="{% url 'index' %}"><span class="material-symbols-outlined">home</span></a>
+          <a href="{% url 'write' %}"><span class="material-symbols-outlined">add_business</span></a>
+          <!-- url 끝에 0 : js 쿼리파라미터 치환용 임의숫자 -->
+          <a href="{% url 'update3' 0 %}" class="store-link" id="click1"><span class="material-symbols-outlined">more_time</span></a>
+          <a href="{% url 'store_detail' 0 %}" class="store-link" id="click2"><span class="material-symbols-outlined">lists</span></a>
+          <a href="{% url 'admin_chat2' %}" class="store-link" id="click3"><span class="material-symbols-outlined">forum</span></a>
+        </div>
+      </div>
           <div class="cont_box1 inner_div3">
+            
             <!-- <div class="tab_menu"></div> -->
-            <div class="left_bar">
-              <span class="material-symbols-outlined bar_icons"><a href="{% url 'index' %}">home</a></span>
-              <span class="material-symbols-outlined bar_icons"><a href="">more_time</a></span>
-              <span class="material-symbols-outlined bar_icons"><a href="{% url 'admin_chat2' %}">forum</a></span>
-            </div>
             <div class="cont">
               <div class="buttons">
                 <!-- <button class="up-bt">수정</button> -->
                 <!-- <button class="del-bt">예약삭제</button> -->
-                <div>예약조회 및 검색</div>
+                <div class="main-tt">예약조회 및 검색</div>
                 <!-- <a href="/manager/sung/">
                   <button class="rsv_test" type="button">홈홈홈</button>
                 </a> -->
@@ -41,7 +56,9 @@
                     <div class="book_area2">
                       <div class="book_pg2"></div>
                     </div> 08.13 -->
-                <div id="all">
+                    
+                <!-- 책 넘기기 효과 -->
+                <!-- <div id="all">
                   <div id="page-flip">
                     <div id="p0">
                       <div>
@@ -79,7 +96,7 @@
                     <a id="coke" href="#" title="Pure CSS Coke Can"></a>
                     <a id="meninas" href="#" title="CSS 3D Meninas"></a>
                   </div>
-                </div>
+                </div> -->
                 <div id="store" class="top">
                   <!-- 템플릿태그 일단 주석 -->
                   <!-- <form action=" url 'mng_update' pk=manager.pk store_id=store.pk " method="get"> -->
@@ -124,7 +141,7 @@
                             <label for="search_kw" class="{{ css_class3 }}">예약일</label>
                           </div>
                           <button type="submit" id="btn_search">검색</button>
-                          <span class="material-symbols-outlined refresh_icon"><a href="{% url 'store_detail' pk=store.pk %}">replay</a></span>
+                          <span class="material-symbols-outlined refresh_icon"><a href="{% url 'store_detail' pk=store.pk %}">refresh</a></span>
                         </div>
                       </div>
                     </form>
@@ -264,34 +281,28 @@
               </div>
             </div>
           </div>
-        </div>
-
-      </div>
 
       <!-- 달력 -->
-      <div class="cont_box2 inner_div4">
-        <div class="cont_box2 inner_div5">
           <div class="cont_box2 inner_div6">
             <div class="box2">
               <div class="content2">
                 {% if request.user.is_authenticated %}
-                <div class="con2_nav">
-                  <button class="nav_button1" type="button">
-                    <!-- <img src="../../static/manager/img/right-arrow (1).png" alt="접기"> -->
-                    <img src="{% static 'manager/img/right-arrow (1).png' %}" alt="접기">
-                  </button>
-                  <!-- <button id="nav_button2" class="nav_button2" type="button">
-                      <img src=" static 'manager/img/turn-off (1).png' " alt="로그아웃">
-                    </button> -->
-                </div>
-                <div class="con2_manager1">
-                  <!-- <img class="profile_img" src="../../static/manager/img/user.png" alt="이미지"> -->
-                  <img class="profile_img" src="{% static 'manager/img/user.png' %}" alt="이미지">
-                  <span>{{ request.user.username }}</span>
-                  <button id="nav_button2" class="nav_button2" type="button">
-                    <!-- <img src="../../static/manager/img/turn-off (1).png" alt="로그아웃"> -->
-                    <img src="{% static 'manager/img/turn-off (1).png' %}" alt="로그아웃">
-                  </button>
+                <div class="userInfo">
+                  <div class="mail">
+                    <span class="material-symbols-outlined">email</span>
+                    <span class="num-count"></span>
+                  </div>
+                  <div class="user">
+                    <!-- <img class="profile_img" src="{% static 'manager/img/person.png' %}" alt="이미지"> -->
+                    <span class="material-symbols-outlined fill profile_img">person</span>
+                    <span class="name-linechange">{{ request.user.username }}님,<br> 안녕하세요</span>
+                  </div>
+                  <a href="/manager/logout">
+                    <button id="nav_button2" class="nav_button2" type="button">
+                      <img class="logout" src="{% static 'manager/img/modeoff.png' %}" alt="로그아웃">
+                      <!-- <img class="logout" src=" static 'manager/img/turn-off (1).png' " alt="로그아웃"> -->
+                    </button>
+                  </a>
                 </div>
                 <!-- <a href="/manager/logout">
                     <button class="logout_test" type="button">로그아웃</button>
@@ -359,9 +370,6 @@
               </table>
             </div>
           </div>
-        </div>
-
-      </div>
       {% else %}
 
       {% endif %}

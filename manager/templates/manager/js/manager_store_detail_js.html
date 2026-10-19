@@ -1,6 +1,31 @@
 
 <script>
 
+// 네비용
+let selectedStoreId = null;
+const storeId = "{{ store.id }}";
+const storeName = "{{ store.store_name }}";
+console.log("찍어봐1", storeId);
+console.log("찍어봐2", storeName);
+selectedStoreId = storeId;
+const titleDiv = document.querySelector('.main-tt');
+titleDiv.textContent += ': ' + storeName;
+
+// 네비게이션 url이동(파라미터 추가)
+  	document.querySelectorAll('.store-link').forEach((link) => {
+		link.addEventListener('click', (e) => {
+			e.preventDefault();
+
+			if (!selectedStoreId) {
+			alert("스토어를 먼저 선택해주세요.");
+			return;
+			}
+			const baseUrl = e.currentTarget.getAttribute('href');
+			window.location.href = baseUrl.replace('/0/', `/${selectedStoreId}/`);
+		});
+	});
+
+
 const checkboxes = document.querySelectorAll('input[type="checkbox"][name="del-rsv"]');
 const deleteButton = document.querySelector('.del-bt');
 let selected = []; // 선택된 체크박스 저장
@@ -26,7 +51,11 @@ checkboxes.forEach(checkbox => {
 deleteButton.addEventListener('click', function() {
     if (selected.length > 0) {
         event.preventDefault();
-        submitSelected(selected); // 선택된 체크박스 배열을 인자로 전달
+        if(confirm("삭제하시겠습니까?")){
+          submitSelected(selected); // 선택된 체크박스 배열을 인자로 전달
+          alert("삭제되었습니다.");
+        }else{
+        }
     } else {
         // console.log('선택된 체크박스가 없습니다.');
     }
@@ -58,7 +87,7 @@ deleteButton.addEventListener('click', function() {
 				var label = this.nextElementSibling;  // 검색 input의 label 선택
 				label.style.top = '-20px';
 				label.style.left = '0';
-				label.style.color = '#03e9f4';
+				label.style.color = '#0075FF';
 				label.style.fontSize = '12px';
 			});
 			input.addEventListener('blur', function () {
@@ -422,13 +451,13 @@ function resizable(ele) {
   });
 
 
-  // 미니북 클릭 이벤트
-  const pageFlipElement = document.getElementById('page-flip');
-  let isPageFlipped = false;
-  pageFlipElement.addEventListener('click', () => {
-      isPageFlipped = !isPageFlipped;
-      pageFlipElement.classList.toggle('page-flipped', isPageFlipped);
-  });
+  // // 미니북 클릭 이벤트
+  // const pageFlipElement = document.getElementById('page-flip');
+  // let isPageFlipped = false;
+  // pageFlipElement.addEventListener('click', () => {
+  //     isPageFlipped = !isPageFlipped;
+  //     pageFlipElement.classList.toggle('page-flipped', isPageFlipped);
+  // });
 
 
   // 예약 검색 check박스, input 이벤트
@@ -437,23 +466,27 @@ function resizable(ele) {
 	function toggleInput(id, checked) {
 		var input = document.getElementById(id);
     var label2 = document.querySelector(`label[for='${id}']`)
+    var inputbox = input.parentElement;
+    // console.log("부모요소", inputbox);
 		if (checked) {
 			if (!clickedInputs.includes(id)) {
 				clickedInputs.push(id);
 			}
 			
 			input.removeAttribute('disabled');
-			input.style.display = '';  // display 값을 초기 상태로 되돌림
-      label2.style.display = ''; 
+			// input.style.display = '';  // display 값을 초기 상태로 되돌림
+      // label2.style.display = ''; 
+      inputbox.style.display = '';
       
 			input.focus();
       // console.log("clickedInputs찍어", clickedInputs);
 
 		} else {
 			input.setAttribute('disabled', 'disabled');
-			input.style.display = 'none';  // display: none; 적용
-			input.style.right = '';
-      label2.style.display = 'none'; 
+			// input.style.display = 'none';  // display: none; 적용
+			// input.style.right = '';
+      // label2.style.display = 'none';
+      inputbox.style.display = 'none'; 
 			var index = clickedInputs.indexOf(id);
 			if (index !== -1) {
 				clickedInputs.splice(index, 1);

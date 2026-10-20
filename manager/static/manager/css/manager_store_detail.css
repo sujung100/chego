@@ -1065,7 +1065,7 @@ a:active {
   /* width:50%; */
   /* height:15%; */
   /* color: lightgray; */
-  color: var(--bg-bright-blue);
+  color: #dcedff;
 }
 
 .today {
@@ -1100,11 +1100,14 @@ a:active {
 
 #store::-webkit-scrollbar{
   width: 6px;
+  border-radius: 25px;
 }
 
 #store::-webkit-scrollbar-thumb{
-  background: linear-gradient(180deg, var(--blue), var(--blue-soft));
+  /* background: linear-gradient(180deg, var(--blue), var(--blue-soft)); */
+  background: linear-gradient(180deg, var(--bg-bright-blue), var(--blue-soft));
   border-radius: 25px;
+  border: none;
 }
 
 #store::-webkit-scrollbar-track{
@@ -1125,6 +1128,15 @@ a:active {
 }
 
 #store .store_item1 .align_boxes input[type='checkbox']{
+  accent-color: var(--bg-bright-blue);
+}
+
+#store .store_item1 .align_boxes input[type='checkbox']:hover {
+  accent-color: #5e9be1
+}
+
+#store .store_item1 .align_boxes input[type='checkbox']:checked {
+  color: #fff;
 }
 
 /* 검색input */
@@ -1190,7 +1202,8 @@ a:active {
   /* transition: .5s; */
   top: -20px;
   left: 0;
-  color: #03e9f4;
+  /* color: #03e9f4; */
+  color: #759ECC;
   font-size: 12px;
 }
 /* 
@@ -1253,6 +1266,7 @@ a:active {
   /* width: 100%; */
   gap: 40px;
   align-items: center;
+  background-color: var(--bg-bright-blue);
   /* border: 1px solid red; */
 
 }
@@ -1272,14 +1286,17 @@ a:active {
   box-sizing: border-box;
   align-items: center;
   flex: 1 1 100%;
+  color: var(--looks-w);
 }
 
 .content1 .head_user span:first-child{
   text-align: left;
+  padding-left: 1rem;
 }
 
 .content1 .head_user span:last-child{
   text-align: right;
+  padding-right: 1rem;
 }
 
 .content1 .head_user .side {
@@ -1303,6 +1320,11 @@ a:active {
 
 .content1 .store_item2 hr {
   width: 100%;
+}
+
+.content1 .store_item2 .none-margin {
+  margin-top: 0;
+  border: none;
 }
 
 .content1 .store_item2 .del-bt {

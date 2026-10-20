@@ -9,7 +9,11 @@ console.log("찍어봐1", storeId);
 console.log("찍어봐2", storeName);
 selectedStoreId = storeId;
 const titleDiv = document.querySelector('.main-tt');
-titleDiv.textContent += ': ' + storeName;
+const addName = document.createElement('span');
+
+addName.textContent = storeName;
+addName.style.color = '#759ECC';
+titleDiv.appendChild(addName);
 
 // 네비게이션 url이동(파라미터 추가)
   	document.querySelectorAll('.store-link').forEach((link) => {
@@ -87,7 +91,7 @@ deleteButton.addEventListener('click', function() {
 				var label = this.nextElementSibling;  // 검색 input의 label 선택
 				label.style.top = '-20px';
 				label.style.left = '0';
-				label.style.color = '#0075FF';
+				label.style.color = '#759ECC';
 				label.style.fontSize = '12px';
 			});
 			input.addEventListener('blur', function () {

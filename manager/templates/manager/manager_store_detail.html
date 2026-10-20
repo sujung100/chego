@@ -41,7 +41,7 @@
               <div class="buttons">
                 <!-- <button class="up-bt">수정</button> -->
                 <!-- <button class="del-bt">예약삭제</button> -->
-                <div class="main-tt">예약조회 및 검색</div>
+                <div class="main-tt">예약조회 및 검색: </div>
                 <!-- <a href="/manager/sung/">
                   <button class="rsv_test" type="button">홈홈홈</button>
                 </a> -->
@@ -138,7 +138,7 @@
                             <input type="text" id="search_kw" name="kw" value="{{ kw|default_if_none:'' }}"
                               autocomplete="off" class="search-input">
                               <!-- 10.21 수정 -->
-                            <label for="search_kw" class="{{ css_class3 }}">예약일</label>
+                            <label for="search_kw" class="{{ css_class3 }}">예약일 YYYY-MM-DD</label>
                           </div>
                           <button type="submit" id="btn_search">검색</button>
                           <span class="material-symbols-outlined refresh_icon"><a href="{% url 'store_detail' pk=store.pk %}">refresh</a></span>
@@ -162,7 +162,7 @@
                             <button class="del-bt">예약삭제</button>
                           </div> 주석 -->
                     </div>
-                    <hr>
+                    <hr class="none-margin">
                     <form id="reservationForm" action="{% url 'store_detail' pk=store.pk %}?{{ request.GET.urlencode }}" method="post">{% csrf_token %}
                       {% if request.GET.name or request.GET.phone or request.GET.kw %}
                         {% if 2nd_obj %}

@@ -279,13 +279,15 @@ body {
 .navi-wrap {
   text-align: center;
   padding: 0.4rem;
-  position: fixed;
+  /* position: fixed; */
+  position: absolute;
   /* top: 35%; */
   /* top: 65vh; */
   /* top: 10vh; */
   top: 12vh;
   /* left: 4%; */
-  right: 9.8vw;
+  /* right: 9.8vw; */
+  left: 100%;
   backdrop-filter: blur(30px);
   /* background-color: transparent; */
   /* background: var(--glass-bg-light); */
@@ -2692,9 +2694,9 @@ input:checked:focus + .switch-left + .switch-right {
   #wrap { 
     width: 75%;
   }
-  .navi-wrap {
+  /* .navi-wrap {
     right: 9.8vw;
-  }
+  } */
 
 
 
@@ -2705,9 +2707,9 @@ input:checked:focus + .switch-left + .switch-right {
   #wrap { 
     width: 90%;
   }
-  .navi-wrap {
+  /* .navi-wrap {
     right: 1vw;
-  }
+  } */
   /* 왼쪽 사이드바 */
   :root{
     --left-side-width:20px;
@@ -2794,9 +2796,9 @@ input:checked:focus + .switch-left + .switch-right {
 }
 
 @media screen and (max-width: 575px) {
-  .navi-wrap {
+  /* .navi-wrap {
     right: -1.5vw;
-  }
+  } */
   .userInfo {
     width: 60%;
   }

@@ -80,6 +80,9 @@ urlpatterns = [
 
 
 # 비동기
+  # 회원가입 검증
+  path("signup/validate/", sungwoo_views.validate_signup, name="validate_signup"),
+  
   path("sung/api/todos/", sungwoo_views.TodoAPI.as_view(), name='todo_api'),
   # path("sung/api/todos/save/", sungwoo_views.ManagerStoreList.as_view(), name='save_all'),
   path("sung/api/store-times/", sungwoo_views.StoreTimesView.as_view(), name='store_times'),
@@ -89,4 +92,5 @@ urlpatterns = [
   path("sung/admin_chat2/api/chat-room/", sungwoo_views.ChatRoom.as_view(), name="chat_room2"),
   path("sung/admin_chat2/api/chat-room/<str:chatroom_name>/messages/", sungwoo_views.EnterChatRoom.as_view(), name="enter_chatroom2"),
   path("sung/update/<int:store_id>/api/activate_post/", sungwoo_views.Update.as_view(), name="activate_post"),
+
 ]

@@ -1,0 +1,105 @@
+<script>
+
+// 임시 검증 - submit막기
+var valid = {
+  username: false,
+  password1: false,
+  password2: false,
+  phone: false
+};
+
+
+// 핸드폰번호 입력시 자동 대쉬
+document.querySelector('#manager_phone').addEventListener('keyup', function () {
+    this.value = this.value
+        .match(/\d*/g).join('')
+        .match(/(\d{0,3})(\d{0,4})(\d{0,4})/).slice(1).join('-')
+        .replace(/-*$/g, '');
+});
+
+// 비밀번호 가리기 토글
+document.querySelectorAll(".pw-toggle").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var input = document.getElementById(btn.dataset.target);
+      var icon = btn.querySelector(".material-symbols-outlined");
+      var show = input.type === "password";
+
+      input.type = show ? "text" : "password";
+      icon.textContent = show ? "visibility" : "visibility_off";
+      btn.setAttribute("aria-pressed", show);
+      btn.setAttribute("aria-label", show ? "비밀번호 숨기기" : "비밀번호 보기");
+    });
+});
+
+var username = document.getElementById("manager_id");
+var pw1 = document.getElementById("manager_pwd1");
+var pw2 = document.getElementById("manager_pwd2");
+var userMsg = document.getElementById("username-msg");
+var pw1Msg = document.getElementById("pw1-msg");
+var pw2Msg = document.getElementById("pw2-msg");
+var csrf = document.querySelector("[name=csrfmiddlewaretoken]").value;
+var timer, seq = 0;
+
+// 아이디 중복확인 - 실시간
+(function () {
+ 
+    function show(el, messages, okText) {
+      if (messages.length) {
+        el.innerHTML = messages.join("<br>");
+        // el.style.color = "red";
+      } else if (okText) {
+        el.textContent = okText;
+        // el.style.color = "green";
+      } else {
+        el.textContent = "";
+      }
+    }
+
+    // 서버 검증 (아이디 중복 + 비밀번호 규칙)
+    function validateOnServer() {
+      var mySeq = ++seq;   // 늦게 도착한 오래된 응답 무시용
+      var body = new URLSearchParams({
+        username: username.value,
+        password1: pw1.value
+      });
+
+      fetch("{% url 'validate_signup' %}", {
+        method: "POST",
+        headers: { "X-CSRFToken": csrf },
+        body: body
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (mySeq !== seq) return;
+          show(userMsg, data.username, username.value.trim() ? "사용 가능한 아이디입니다." : "");
+          show(pw1Msg, data.password1, pw1.value ? "사용 가능한 비밀번호입니다." : "");
+        })
+        .catch(function () {});
+    }
+
+    function debounced() {
+      clearTimeout(timer);
+      timer = setTimeout(validateOnServer, 400);
+    }
+
+    // 비밀번호 일치 (JS만)
+    function checkMatch() {
+      if (!pw2.value) { show(pw2Msg, []); return; }
+      var ok = pw1.value === pw2.value;
+      show(pw2Msg, ok ? [] : ["비밀번호가 일치하지 않습니다."], ok ? "비밀번호가 일치합니다." : "");
+    }
+
+    username.addEventListener("input", debounced);
+    pw1.addEventListener("input", function () { debounced(); checkMatch(); });
+    pw2.addEventListener("input", checkMatch);
+})();
+
+//  폼 제출전 비밀번호 일치확인
+document.querySelector("form").addEventListener("submit", function (e) {
+  if (pw1.value !== pw2.value) {
+    e.preventDefault();
+    pw2.focus();
+  }
+});
+
+</script>

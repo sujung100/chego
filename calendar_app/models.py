@@ -55,28 +55,17 @@ class Dayoff(models.Model):
             models.Index(fields=["dayoff"]),
         ]
 
-    
+
 class Manager(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     manager_name = models.CharField(max_length=20, null=True)
     manager_phone = models.CharField(max_length=20, null=True)
-    
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
-    if created and not hasattr(instance, 'manager'):
-        Manager.objects.create(user=instance)
-    # if created:
-    #     Manager.objects.get_or_create(user=instance)
+    if created:
+        Manager.objects.get_or_create(user=instance)
 
-# @receiver(post_save, sender=User)
-# def save_user_profile(sender, instance, **kwargs):
-#     instance.manager.save()
-        
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    if hasattr(instance, 'manager'):
-        instance.manager.save()
 
 
 class Reservation_user(models.Model):

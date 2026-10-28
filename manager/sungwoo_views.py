@@ -17,6 +17,7 @@ from django.http import HttpResponseRedirect
 
 from django.http import JsonResponse, QueryDict, HttpRequest, HttpResponse
 from django.views import View
+from django.views.decorators.http import require_GET
 from django.core.paginator import Paginator
 from django.core import serializers
 from collections import defaultdict
@@ -25,6 +26,8 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
+from django.db import transaction
 from django.db.models import Q, Count
 from django.db.models.functions import Substr
 from . import models
@@ -32,7 +35,7 @@ from . import models
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
-from .forms import ManagerUpdateForm, StoreUpdateForm, UpdateForm, TotalReservationForm
+from .forms import ManagerUpdateForm, StoreUpdateForm, UpdateForm, TotalReservationForm, ManagerSignUpForm
 
 # 테스트중 24.10.28
 from django.views.decorators.csrf import csrf_exempt
@@ -57,6 +60,26 @@ def production_current_user(request):
     current_user = request.user
     if not current_user.is_authenticated:
         return JsonResponse([], safe=False)
+    
+# 회원가입 - 아이디중복확인
+@require_POST
+def validate_signup(request):
+    username = request.POST.get("username", "").strip()
+    password = request.POST.get("password1", "")
+
+    result = {"username": [], "password1": []}
+
+    if username and User.objects.filter(username__iexact=username).exists():
+        result["username"].append("이미 사용 중인 아이디입니다.")
+
+    if password:
+        try:
+            # 아이디와 유사성 검사를 위해 임시 User 객체를 전달
+            validate_password(password, user=User(username=username))
+        except ValidationError as e:
+            result["password1"].extend(e.messages)
+
+    return JsonResponse(result)
 
 # class ManagerStoreList(LoginRequiredMixin, ListView, LoginView, FormView):
 class ManagerStoreList(LoginRequiredMixin, ListView):
@@ -572,9 +595,9 @@ class Total_Reservation_Check(LoginRequiredMixin, UpdateView):
         return self.get(request, *args, **kwargs)
     
 
-    
+# 회원가입
 class UserSignUpView(CreateView):
-    form_class = UserCreationForm
+    form_class = ManagerSignUpForm
     template_name = "manager/manager_sign_up.html"
     success_url = reverse_lazy("signup_done")
 
@@ -583,33 +606,29 @@ class UserSignUpView(CreateView):
     #     login(self.request, self.object)  # 로그인 후 바로 로그인 상태로 만드는 부분
     #     return valid
 
+    @transaction.atomic
     def form_valid(self, form):
-        user = form.save(commit=False)
-        user.save()
+        print(">>> form_valid 실행됨 (수정버전)")
+        user = form.save()
+        print("새 user.id:", user.id)
+        print("Manager 전체:", list(rsv.Manager.objects.values_list("id", "user_id")))
+        print("raw 확인:", rsv.Manager._base_manager.filter(user_id=user.id).exists())
+        # user.save()
 
-        # Create Manager instance
-        manager, created = rsv.Manager.objects.get_or_create(user=user)
-
-        if not created:
-            form.add_error(None, ValidationError('User ID 중복입니다.'))
-
-        # 이 부분을 created 조건과 분리하고 두 경우 모두에서 실행되도록 함.
-        manager.manager_name = self.request.POST['username']
-        manager.manager_phone = self.request.POST['phone_number']
-        manager.save()
-
-        # if not created:
-        #     return self.form_invalid(form)
-
-        # login(self.request, user)
+        rsv.Manager.objects.filter(user=user).update(
+            manager_name=user.username,
+            manager_phone=form.cleaned_data["phone_number"],
+        )
 
         return redirect(self.success_url)
+    
     
     
 class UserCreateDoneTV(TemplateView):
     template_name = "manager/sign_up_done.html"
 
 class UserLoginView(LoginView):
+    # name만 username / password로 넣어주면 로그인뷰에서 알아서 처리
     form_class = AuthenticationForm
     template_name = "manager/manager_login.html"
     success_url = reverse_lazy("index")  

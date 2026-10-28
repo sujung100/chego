@@ -5,71 +5,103 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="{% static 'manager/css/manager_login.css' %}?after">
-  <title>예약TEST</title>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL,wght,GRAD,opsz@0..1,100..700,-50..200,20..48&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'manager/css/manager_signup.css' %}?after">
+  <title>회원가입</title>
 
 </head>
 
 <body>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
   <div id="wrap">
-    <div class="box1">
+    <!-- <div class="box1">
       <div class="content1">
 
       </div>
 
-    </div>
+    </div> -->
 
 
 
-    <div class="box2">
-      <div class="content2">
-        <form method="POST">
-          {% csrf_token %}
+    <div class="box1">
+      <div class="content1">
+        <div class="section1">
+          <form method="POST" id="signup-form">
+            {% csrf_token %}
+            <div class="title">회원가입</div>
+            <noscript>
+              <div class="basic_txt">{{ form.non_field_errors }}</div>
+            </noscript>
 
-          <div class="form-group">
-            <label for="manager_id">Username:</label>
-            <input type="text" class="form-control" id="manager_id"
-              name="username" value="{{ form.username.value|default:'' }}" required />
-            {{ form.username.errors }}
-          </div>
-
-          <div class="form-group">
-            <label for="manager_pwd">Password:</label>
-            <input type="password" class="form-control" id="manager_pwd1"
-              name="password1" value="{{ form.password1.value|default:'' }}" required />
-            {{ form.password1.errors }}
-          </div>
+            <div class="form-group">
+              <label for="manager_id"></label>
+              <input type="text" class="form-control" id="manager_id"
+                name="username" placeholder="아이디" autocomplete="off" maxlength="16" pattern="[a-z0-9]{1,16}" required />
+                <div class="noti-desc" hidden>영문소문자와 숫자조합 최대 16자까지 입력 가능합니다.</div>
+                <div id="username-msg"></div>
+              <noscript>
+                <div class="basic_txt">{{ form.username.errors }}</div>
+              </noscript>
+            </div>
+            <div class="form-group">
+              <label for="manager_pwd1"></label>
+              <div class="pw-wrap">
+                <input type="password" class="form-control" id="manager_pwd1"
+                  name="password1" placeholder="비밀번호" autocomplete="off" required />
+                  <button type="button" class="pw-toggle" data-target="manager_pwd1"
+                    aria-label="비밀번호 보기" aria-pressed="false">
+                    <span class="material-symbols-outlined">visibility_off</span>
+                  </button>
+              </div>
+              <div id="pw1-msg"></div>
+              <noscript>
+                <div class="basic_txt">{{ form.password1.errors }}</div>
+              </noscript>
+            </div>
           
-          <div class="form-group">
-            <label for="manager_pwd">Password:</label>
-            <input type="password" class="form-control" id="manager_pwd2"
-              name="password2" value="{{ form.password2.value|default:'' }}" required />
-            {{ form.password2.errors }}
-          </div>
-
-          <div class="form-group">
-            <label for="manager_phone">Phone number:</label>
-            <input type="tel" class="form-control" id="manager_phone"
-              name="phone_number" value="{{ form.phone_number.value|default:'' }}" />
-            {{ form.phone_number.errors }}
-          </div>
-
-          <!-- <div class="form-group">
-            <label for="manager_email">Email:</label>
-            <input type="email" class="form-control" id="manager_email"
-              name="email" value="{{ form.email.value|default:'' }}" />
-            {{ form.email.errors }}
-          </div> -->
-
-          <button type="submit" class="btn btn-primary">회원가입</button>
-        </form>
+            <div class="form-group">
+              <label for="manager_pwd2"></label>
+              <div class="pw-wrap">
+                <input type="password" class="form-control" id="manager_pwd2"
+                  name="password2" placeholder="비밀번호 확인" autocomplete="off" required />
+                  <button type="button" class="pw-toggle" data-target="manager_pwd2"
+                    aria-label="비밀번호 보기" aria-pressed="false">
+                    <span class="material-symbols-outlined">visibility_off</span>
+                  </button>
+                </div>
+                <div id="pw2-msg"></div>
+              <noscript>
+                <div class="basic_txt">{{ form.password2.errors }}</div>
+              </noscript>
+            </div>
+            <div class="form-group">
+              <label for="manager_phone"></label>
+              <input type="tel" class="form-control" id="manager_phone"
+                name="phone_number" placeholder="핸드폰 번호" autocomplete="off" required/>
+                <div id="phone-msg"></div>
+              <noscript>
+                <div class="basic_txt">{{ form.phone_number.errors }}</div>
+              </noscript>
+            </div>
+            <!-- <div class="form-group">
+              <label for="manager_email">Email:</label>
+              <input type="email" class="form-control" id="manager_email"
+                name="email" value="{{ form.email.value|default:'' }}" />
+              {{ form.email.errors }}
+            </div> -->
+            <div class="btn-wrap">
+              <button type="submit" class="btn btn-join">회원가입</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
 
   </div>
 
 
-
+  {% include "manager/js/manager_sign_up_js.html" %}
 </body>
 
 </html>

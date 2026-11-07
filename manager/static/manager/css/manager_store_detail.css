@@ -318,12 +318,12 @@ body {
   outline: none;
 }
 
-.navi-wrap .home a span{
+.navi-wrap .home a .tooltip{
   padding: 0.2rem;
   font-size: 1.2rem;
 }
 
-.navi-wrap .home a:nth-child(4) span {
+.navi-wrap .home a:nth-child(4) .tooltip {
   backdrop-filter: blur(20px);
   background-color: rgba(255,255,255,0.6);
   border-radius: 50%;
@@ -331,6 +331,21 @@ body {
   color: #7990b6;
 }
 
+.tooltip-text {
+  display: none;
+  position: absolute;
+  font-size: 0.8rem;
+  border-radius: 5px;
+  padding: 5px;
+  line-height: 100%;
+  color: white;
+  background-color: rgba(51, 51, 51, .8);
+  z-index: 5;
+}
+
+.tooltip:hover .tooltip-text {
+  display: block;
+}
 
 
 /*  기존
@@ -1838,6 +1853,12 @@ font-variation-settings:
     letter-spacing: none;
     color: none;
   }
+   
+  /* 툴팁호버위치 */
+  .tooltip-text {
+    right: -2%;
+  }
+
 }
 
 @media screen and (max-width: 991px) {

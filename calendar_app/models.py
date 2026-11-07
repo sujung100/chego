@@ -83,26 +83,16 @@ def fill_manager_from_social(request, user, sociallogin=None, **kwargs):
     if sociallogin is None:              # 일반 가입은 건드리지 않음
         return
 
-    # data = sociallogin.account.extra_data or {}
-    # print("NAVER extra_data확인:", data) 
-    # name = data.get("name") or user.get_full_name() or user.username
-    # phone = normalize_phone(data.get("mobile"))
-
-    # Manager.objects.update_or_create(
-    #     user=user,
-    #     defaults={
-    #         "manager_name": name[:20],
-    #         "manager_phone": phone,
-    #     },
-
     provider = sociallogin.account.provider
     data = sociallogin.account.extra_data or {}
 
     name, phone = "", ""
+
     if provider == "naver":
         print("네이버 extra_data확인:", data) 
         name = data.get("name", "")
         phone = normalize_phone(data.get("mobile"))
+
     elif provider == "kakao":
         print("카카오 extra_data확인:", data) 
         account = data.get("kakao_account", {})
@@ -115,7 +105,6 @@ def fill_manager_from_social(request, user, sociallogin=None, **kwargs):
     Manager.objects.update_or_create(
         user=user,
         defaults={"manager_name": name[:20], "manager_phone": phone},
-
     )
 
 

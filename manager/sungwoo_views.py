@@ -93,6 +93,17 @@ class ManagerStoreList(LoginRequiredMixin, ListView):
     #     todos = rsv.Todo.objects.all().values('id', 'text', 'complete')
     #     return JsonResponse(list(todos), safe=False, status=200)
 
+    def dispatch(self, request, *args, **kwargs):
+        current_user = self.request.user
+        if current_user.is_authenticated:
+            store_owner = rsv.Store.objects.filter(owner=request.user, store_name__isnull=False)
+            if not store_owner.exists():
+                return redirect("write")
+            return super().dispatch(request, *args, **kwargs)
+        else:
+            print("로그인X")
+            return redirect("login")
+
     def get_queryset(self):
         current_user = self.request.user
         if current_user.is_authenticated:
@@ -100,13 +111,16 @@ class ManagerStoreList(LoginRequiredMixin, ListView):
             manager = rsv.Store.objects.filter(owner=current_user, store_name__isnull=False)
         else:
             manager = rsv.Store.objects.none()
+            print("없다고표시")
         return manager
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
         current_user = self.request.user
+
         print("커런트유저", current_user)
+        print("커런트유저네임", current_user.username)
+        print("커런트유저아이디", current_user.id)
         context["username"] = current_user.username if current_user.is_authenticated else None
         for admin_user in ADMIN_USERS.keys():
             context["adminusers"] = admin_user
@@ -169,7 +183,7 @@ class ManagerStoreList(LoginRequiredMixin, ListView):
             # print("타임라벨", context['time_labels'])
             # print("타임데이터", context['time_data'])
             print()
-            print("타임데이터", context['time_chart_raw'])
+            print("전체타임데이터그룹화", context['time_chart_raw'])
             print()
 
             # 리드타임 차트
@@ -203,6 +217,8 @@ class ManagerStoreList(LoginRequiredMixin, ListView):
 
             context['time_chart_raw'] = json.dumps(list(time_stats)) # 기존 데이터
             context['lead_chart_raw'] = json.dumps(lead_chart_raw)   # 신규 리드타임 데이터
+        else :
+            print("해당없음")
         
         return context
     

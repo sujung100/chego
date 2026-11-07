@@ -317,14 +317,14 @@ body {
   outline: none;
 }
 
-.navi-wrap .home a span{
+.navi-wrap .home a .tooltip{
   /* display: inline-block; */
   /* margin: 0.2rem 0; */
   padding: 0.2rem;
   font-size: 1.2rem;
 }
 
-.navi-wrap .home a:nth-child(3) span {
+.navi-wrap .home a:nth-child(3) .tooltip {
   backdrop-filter: blur(20px);
   /* background-color: rgb(195 200 204); */
   /* background-color: rgba(255,255,255,0.6); */
@@ -335,6 +335,22 @@ body {
   color: #7990b6;
 }
 
+
+.tooltip-text {
+  display: none;
+  position: absolute;
+  font-size: 0.8rem;
+  border-radius: 5px;
+  padding: 5px;
+  line-height: 100%;
+  color: white;
+  background-color: rgba(51, 51, 51, .8);
+  z-index: 5;
+}
+
+.tooltip:hover .tooltip-text {
+  display: block;
+}
 
 #wrap {
   width: 90%;
@@ -2771,6 +2787,11 @@ input:checked:focus + .switch-left + .switch-right {
   .name-linechange {
     font-size: 12px;
   } */
+   
+  /* 툴팁호버위치 */
+  .tooltip-text {
+    right: -2%;
+  }
 }
 
 @media screen and (max-width: 991px) {

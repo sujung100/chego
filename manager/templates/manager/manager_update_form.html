@@ -32,12 +32,12 @@
       {% if request.user.is_authenticated %}
       <div class="navi-wrap">
         <div class="home">
-          <a href="{% url 'index' %}"><span class="material-symbols-outlined">home</span></a>
-          <a href="{% url 'write' %}"><span class="material-symbols-outlined">add_business</span></a>
+          <a href="{% url 'index' %}"><span class="material-symbols-outlined tooltip">home<span class="tooltip-text">홈</span></span></a>
+          <a href="{% url 'write' %}"><span class="material-symbols-outlined tooltip">add_business<span class="tooltip-text">매장등록</span></span></a>
           <!-- url 끝에 0 : js 쿼리파라미터 치환용 임의숫자 -->
-          <a href="{% url 'update3' 0 %}" class="store-link" id="click1"><span class="material-symbols-outlined">more_time</span></a>
-          <a href="{% url 'store_detail' 0 %}" class="store-link" id="click2"><span class="material-symbols-outlined">lists</span></a>
-          <a href="{% url 'admin_chat2' %}" class="store-link" id="click3"><span class="material-symbols-outlined">forum</span></a>
+          <a href="{% url 'update3' 0 %}" class="store-link" id="click1"><span class="material-symbols-outlined tooltip">more_time<span class="tooltip-text">시간설정</span></span></a>
+          <a href="{% url 'store_detail' 0 %}" class="store-link" id="click2"><span class="material-symbols-outlined tooltip">lists<span class="tooltip-text">예약조회</span></span></a>
+          <a href="{% url 'admin_chat2' %}" class="store-link" id="click3"><span class="material-symbols-outlined tooltip">forum<span class="tooltip-text">문의</span></span></a>
         </div>
       </div>
       <div class="cont_box1 inner_div3">

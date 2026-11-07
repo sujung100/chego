@@ -156,7 +156,7 @@ body {
 }
 
 .section1 {
-  margin-top: 2rem;
+  margin-top: 4rem;
 }
 
 .box1 {
@@ -195,6 +195,7 @@ body {
 }
 
 .form-group input {
+  width: 60%;
   border: none;
   font-size: 16px;
   outline: 0;
@@ -218,7 +219,10 @@ body {
 }
 
 #wrap .title {
-  margin: 0 0 2rem 0;
+  font-weight: 500;
+  font-size: 1.4rem;
+  margin: 0 0 1.5rem 0;
+  color: #fff;
 }
 
 .btn-wrap {
@@ -248,8 +252,10 @@ body {
 } */
 .pw-toggle {
   position: absolute;
-  top: 45%;
-  left: 72%;
+  /* top: 45%;
+  left: 72%; */
+  top: 46%;
+  left: 74%;
   /* transform: translateY(-50%); */
   background: none;
   border: none;

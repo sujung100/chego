@@ -1,3 +1,4 @@
+import re
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
@@ -6,6 +7,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
+from allauth.account.signals import user_signed_up
 
 
 # Create your models here.
@@ -66,6 +68,55 @@ def create_user_profile(sender, instance, created, **kwargs):
     if created:
         Manager.objects.get_or_create(user=instance)
 
+def normalize_phone(raw):
+    # 네이버 번호를 010-1234-5678 형식으로 통일
+    digits = re.sub(r"\D", "", raw or "")
+    if digits.startswith("82"):          # +82 10-1234-5678 형태 대비
+        digits = "0" + digits[2:]
+    if len(digits) == 11:
+        return f"{digits[:3]}-{digits[3:7]}-{digits[7:]}"
+    return ""                            # 형식이 이상하면 저장하지 않음
+
+# 소셜로그인 정보 -> 매니저 테이블 채우기
+@receiver(user_signed_up)
+def fill_manager_from_social(request, user, sociallogin=None, **kwargs):
+    if sociallogin is None:              # 일반 가입은 건드리지 않음
+        return
+
+    # data = sociallogin.account.extra_data or {}
+    # print("NAVER extra_data확인:", data) 
+    # name = data.get("name") or user.get_full_name() or user.username
+    # phone = normalize_phone(data.get("mobile"))
+
+    # Manager.objects.update_or_create(
+    #     user=user,
+    #     defaults={
+    #         "manager_name": name[:20],
+    #         "manager_phone": phone,
+    #     },
+
+    provider = sociallogin.account.provider
+    data = sociallogin.account.extra_data or {}
+
+    name, phone = "", ""
+    if provider == "naver":
+        print("네이버 extra_data확인:", data) 
+        name = data.get("name", "")
+        phone = normalize_phone(data.get("mobile"))
+    elif provider == "kakao":
+        print("카카오 extra_data확인:", data) 
+        account = data.get("kakao_account", {})
+        profile = account.get("profile", {})
+        name = account.get("name") or profile.get("nickname", "")
+        phone = normalize_phone(account.get("phone_number"))
+
+    name = name or user.get_full_name() or user.username
+
+    Manager.objects.update_or_create(
+        user=user,
+        defaults={"manager_name": name[:20], "manager_phone": phone},
+
+    )
 
 
 class Reservation_user(models.Model):

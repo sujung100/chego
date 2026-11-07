@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from calendar_app.models import Store, Manager, Reservation_user
 from django.core.validators import RegexValidator
@@ -61,6 +61,13 @@ class ManagerSignUpForm(UserCreationForm):
         field.widget.attrs["maxlength"] = 16
         field.validators = [username_validator]
         field.help_text = ""
+
+# 로그인 - 에러메세지 폼
+class ManagerLoginForm(AuthenticationForm):
+    error_messages = {
+        "invalid_login": "아이디 또는 비밀번호가 올바르지 않습니다.",
+        "inactive": "비활성화된 계정입니다.",
+    }
 
 
 # class ManagerUpdateForm(forms.ModelForm):

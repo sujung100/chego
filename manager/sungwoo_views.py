@@ -35,7 +35,7 @@ from . import models
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
-from .forms import ManagerUpdateForm, StoreUpdateForm, UpdateForm, TotalReservationForm, ManagerSignUpForm
+from .forms import ManagerUpdateForm, StoreUpdateForm, UpdateForm, TotalReservationForm, ManagerSignUpForm, ManagerLoginForm
 
 # 테스트중 24.10.28
 from django.views.decorators.csrf import csrf_exempt
@@ -629,9 +629,12 @@ class UserCreateDoneTV(TemplateView):
 
 class UserLoginView(LoginView):
     # name만 username / password로 넣어주면 로그인뷰에서 알아서 처리
-    form_class = AuthenticationForm
+    form_class = ManagerLoginForm
     template_name = "manager/manager_login.html"
-    success_url = reverse_lazy("index")  
+
+    # 로그인에선 success_url 이거 먹지않는다
+    # settings.py의 LOGIN_REDIRECT_URL에서 설정할것
+    # success_url = reverse_lazy("index")  
 
 
 

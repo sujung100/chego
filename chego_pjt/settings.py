@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+
+# .env 내용을 환경변수로 로드
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,7 +33,7 @@ DEBUG = True
 # 배포시
 # ALLOWED_HOSTS = ["port-0-chego-2aat2clujm1mbr.sel5.cloudtype.app", "127.0.0.1"]
 # ALLOWED_HOSTS = ["port-0-docker-2aat2clujm1mbr.sel5.cloudtype.app", "127.0.0.1"]
-ALLOWED_HOSTS = ["port-0-chego-2aat2clujm1mbr.sel5.cloudtype.app", "127.0.0.1"]
+ALLOWED_HOSTS = ["port-0-chego-2aat2clujm1mbr.sel5.cloudtype.app", "127.0.0.1", "localhost"]
 # ALLOWED_HOSTS = []
 
 CSRF_TRUSTED_ORIGINS = ["https://*.cloudtype.app"]
@@ -48,8 +52,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # 네이버 로그인용
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.naver',
     # "rest_framework",
+
+    # 카카오 로그인용
+    "allauth.socialaccount.providers.kakao",
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -59,7 +75,37 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 네이버 로그인용
+    'allauth.account.middleware.AccountMiddleware',
 ]
+
+# 네이버 로그인용
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend", # 기존 아이디/비밀번호 로그인 유지
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
+# 소셜 로그인용 (네이버, 카카오)
+SOCIALACCOUNT_PROVIDERS = {
+    "naver": {
+        "APPS": [
+            {
+                "client_id": os.environ["NAVER_CLIENT_ID"],
+                "secret": os.environ["NAVER_CLIENT_SECRET"],
+                "key": "",
+            }
+        ],
+    },
+    "kakao": {
+        "APPS": [
+            {
+                "client_id": os.environ["KAKAO_REST_API_KEY"],
+                "secret": os.environ["KAKAO_CLIENT_SECRET"],
+                "key": "",
+            }
+        ],
+    },
+}
 
 ROOT_URLCONF = 'chego_pjt.urls'
 
@@ -164,9 +210,11 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# 로그인
+LOGIN_URL = "login"
 
 # 로그인 후 이동할 url설정
-LOGIN_REDIRECT_URL = '/manager'
+LOGIN_REDIRECT_URL = 'index'
 LOGOUT_REDIRECT_URL = '/manager'
 
 

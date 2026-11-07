@@ -148,7 +148,7 @@ body {
 }
 
 .section1 {
-  margin-top: 5.6rem;
+  margin-top: 4rem;
 }
 
 .box1 {
@@ -183,6 +183,7 @@ body {
 }
 
 .form-group input {
+  width: 60%;
   border: none;
   font-size: 16px;
   outline: 0;
@@ -206,7 +207,21 @@ body {
 }
 
 #wrap .title {
-  margin: 0 0 2rem 0;
+  /* margin: 0 0 2rem 0; */
+  font-weight: 500;
+  font-size: 1.4rem;
+  margin: 0 0 1.5rem 0;
+  color: #fff;
+}
+
+
+.basic_txt {
+    font-size: 0.8rem;
+  text-align: left;
+  margin: 0 auto;
+  width: 60%;
+  padding: 0 0 4px 10px;
+  color: var(--text-body-mute);
 }
 
 
@@ -218,8 +233,10 @@ body {
 } */
 .pw-toggle {
   position: absolute;
-  top: 45%;
-  left: 72%;
+  /* top: 45%;
+  left: 72%; */
+  top: 50%;
+  left: 74%;
   /* transform: translateY(-50%); */
   background: none;
   border: none;
@@ -275,21 +292,68 @@ body {
   text-align: right;
 }
 
-
-.box2 {
-  /* background-color: brown; */
-  display:flex;
-  /* justify-content: end; */
+.social-login {
+  width: 100%;
+  /* margin: 0.75rem auto; */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.box2 .content2{
-  border:5px solid brown;
-  width:80%;
-  height:80%;
-  align-self: center;
+.btn-naver {
+  background: url(../img/naver.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  width: calc(60% + 16px);
+  height: 35px;
+  box-sizing: border-box;
+  border: 1px solid #e7e7e9;
+  border-radius: 7px;
+  margin: 0 auto;
 }
 
+.btn-kakao {
+  background: url(../img/kakao.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  width: calc(60% + 16px);
+  height: 35px;
+  box-sizing: border-box;
+  border: 1px solid #e7e7e9;
+  border-radius: 7px;
+  margin: 0 auto;
+}
 
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--title-navy);
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin: 1rem auto;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;                 /* 남은 공간을 양쪽 선이 균등하게 차지 */
+  height: 0.5px;
+  background: var(--bg-bright-blue);
+  /* background: #b8c4d9; */
+}
 
 
 @media screen and (max-width:6000px){

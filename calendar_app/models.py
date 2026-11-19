@@ -77,6 +77,17 @@ def normalize_phone(raw):
         return f"{digits[:3]}-{digits[3:7]}-{digits[7:]}"
     return ""                            # 형식이 이상하면 저장하지 않음
 
+# 전번추출(provider별 응답에서 전화번호를 꺼내 010-1234-5678 형식으로)
+def extract_social_phone(sociallogin):
+    provider = sociallogin.account.provider
+    data = sociallogin.account.extra_data or {}
+
+    if provider == "naver":
+        return normalize_phone(data.get("mobile"))
+    if provider == "kakao":
+        return normalize_phone(data.get("kakao_account", {}).get("phone_number"))
+    return ""
+
 # 소셜로그인 정보 -> 매니저 테이블 채우기
 @receiver(user_signed_up)
 def fill_manager_from_social(request, user, sociallogin=None, **kwargs):
@@ -99,6 +110,10 @@ def fill_manager_from_social(request, user, sociallogin=None, **kwargs):
         profile = account.get("profile", {})
         name = account.get("name") or profile.get("nickname", "")
         phone = normalize_phone(account.get("phone_number"))
+
+    elif provider == "google":
+        name = data.get("name") or data.get("given_name", "")
+        phone = ""
 
     name = name or user.get_full_name() or user.username
 

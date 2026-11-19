@@ -68,6 +68,8 @@ urlpatterns = [
   path("signup/done/",sungwoo_views.UserCreateDoneTV.as_view(),name="signup_done"),
   # 로그아웃
   path('logout/', auth_views.LogoutView.as_view(next_page="index"), name='logout'),
+  # 회원탈퇴
+  path("withdraw/", sungwoo_views.withdraw, name="withdraw"),
 
 
   # 예약가능시간 추가 - 사장님이 개인업체 시간표 열어둠 / pk값 하나떼버림

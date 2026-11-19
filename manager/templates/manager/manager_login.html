@@ -12,6 +12,14 @@
   <title>로그인</title>
 
 </head>
+<!-- 에러로그 -->
+<!-- if messages 
+  <ul class="messages">
+     for message in messages 
+      <li class=" message.tags "> message </li>
+     endfor 
+  </ul>
+ endif  -->
 
 <body>
   <div class="blob blob-1"></div>
@@ -80,6 +88,11 @@
               <form method="post" action="{% provider_login_url 'naver' %}">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-naver"></button>
+              </form>
+              <!-- 구글 -->
+              <form method="post" action="{% provider_login_url 'google' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-google"></button>
               </form>
             </div>
           </div>

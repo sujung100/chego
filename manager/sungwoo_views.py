@@ -1,12 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from calendar_app import models as rsv
 
-from django.contrib.auth import login
+from django.contrib import messages
+from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, TemplateView, ListView, UpdateView, FormView
-from django.contrib.auth import login, authenticate
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.contrib.auth.mixins import LoginRequiredMixin
 import json
@@ -35,7 +35,7 @@ from . import models
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
-from .forms import ManagerUpdateForm, StoreUpdateForm, UpdateForm, TotalReservationForm, ManagerSignUpForm, ManagerLoginForm
+from .forms import ManagerUpdateForm, StoreUpdateForm, UpdateForm, TotalReservationForm, ManagerSignUpForm, ManagerLoginForm, WithdrawForm
 
 # 테스트중 24.10.28
 from django.views.decorators.csrf import csrf_exempt
@@ -49,6 +49,11 @@ from django.db.models.functions import Replace
 from django.http import HttpResponseForbidden
 from urllib.parse import urlencode
 
+from allauth.account.models import EmailAddress
+from allauth.socialaccount.models import SocialAccount, SocialToken
+
+import requests, os
+
 
 ADMIN_USERS = { "admin" : True,}
 
@@ -60,6 +65,82 @@ def production_current_user(request):
     current_user = request.user
     if not current_user.is_authenticated:
         return JsonResponse([], safe=False)
+
+
+# 소셜 provider 연결 해제
+# 토큰 만료시 따로처리X, 만료되면 그냥 넘어감(나중 시간나면 추가)
+def revoke_social_access(user):
+    for token in SocialToken.objects.filter(account__user=user).select_related("account"):
+        provider = token.account.provider
+        try:
+            if provider == "kakao":
+                requests.post(
+                    "https://kapi.kakao.com/v1/user/unlink",
+                    headers={"Authorization": f"Bearer {token.token}"},
+                    timeout=5,
+                )
+            elif provider == "naver":
+                requests.post(
+                    "https://nid.naver.com/oauth2.0/token",
+                    data={
+                        "grant_type": "delete",
+                        "client_id": os.environ["NAVER_CLIENT_ID"],
+                        "client_secret": os.environ["NAVER_CLIENT_SECRET"],
+                        "access_token": token.token,
+                        "service_provider": "NAVER",
+                    },
+                    timeout=5,
+                )
+            elif provider == "google":
+                requests.post(
+                    "https://oauth2.googleapis.com/revoke",
+                    data={"token": token.token},
+                    timeout=5,
+                )
+        # 실패해도 탈퇴는 진행
+        except requests.RequestException:
+            pass
+
+
+# 회원탈퇴
+@login_required
+def withdraw(request):
+    user = request.user
+
+    if user.is_superuser or user.is_staff:
+        messages.error(request, "관리자 계정은 탈퇴할 수 없습니다.")
+        return redirect("index")
+
+    form = WithdrawForm(user, request.POST or None)
+
+    if request.method == "POST" and form.is_valid():
+        # 소셜 연결 해제부터
+        revoke_social_access(user)
+        with transaction.atomic():
+            # 소셜연결 제거(db)
+            SocialAccount.objects.filter(user=user).delete()
+            EmailAddress.objects.filter(user=user).delete()
+
+            # 개인정보 삭제
+            rsv.Manager.objects.filter(user=user).update(
+                manager_name="탈퇴회원", manager_phone=None
+            )
+
+            # 계정 익명화 + 로그인금지
+            user.username = f"withdrawn_{user.pk}"
+            user.email = ""
+            user.first_name = ""
+            user.last_name = ""
+            user.is_active = False
+            user.set_unusable_password()
+            user.save()
+
+        logout(request)
+        messages.success(request, "회원 탈퇴가 완료되었습니다.")
+        return redirect("login")
+
+    return render(request, "manager/withdraw.html", {"form": form})
+
     
 # 회원가입 - 아이디중복확인
 @require_POST

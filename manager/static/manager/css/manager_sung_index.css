@@ -306,6 +306,11 @@ body {
   padding: 26px 0 22px 0;
   z-index: 100;
   box-sizing: border-box;
+  /* 드래그방지 */
+  -webkit-user-select: none; /* Safari, Chrome */
+  -moz-user-select: none;    /* Firefox */
+  -ms-user-select: none;     /* 구버전 IE/Edge */
+  user-select: none; 
 }
 
 .capsule{
@@ -381,6 +386,74 @@ body {
   letter-spacing:0.08em;
   /* color:var(--left-muted); */
   color:var(--side-text-mute);
+}
+
+.bottom-conts {
+  height: 12%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.bottom-conts .material-symbols-outlined {
+  font-size: 22px;
+  color: var(--glass-bg-dark);
+  cursor: pointer;
+}
+
+.setting-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* 말풍선 메뉴 */
+.setting-menu {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  /* left: 100%; */
+  left: 135%;
+  transform: translateX(-50%);
+  background-color: rgba(51, 51, 51, .8);
+  border-radius: 8px;
+  padding: 10px 15px;
+  white-space: nowrap;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, .15);
+  display: none;
+  z-index: 100;
+}
+
+/* 말풍선 꼬리 */
+.setting-menu::before {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  width: 12px;
+  height: 12px;
+  background-color: rgba(51, 51, 51, .8);
+  transform: rotate(45deg);
+}
+
+/* 메뉴 활성화 */
+.setting-menu.active {
+  display: block;
+}
+
+/* 메뉴 링크 */
+.setting-container .setting-menu a {
+  color: #fff;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.setting-menu a:hover {
+  color: #ccc;
+}
+
+.icn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 .est{
@@ -2487,6 +2560,9 @@ button {
   .est span {
     color: var(--glass-bg-dark);
   }
+  .bottom-conts .material-symbols-outlined {
+    font-size: 16px;
+  }
   .left-side{
     background: linear-gradient(180deg, #A7BFE8 0%, #5b81c2 100%);
   }
@@ -2517,6 +2593,37 @@ button {
   /* 툴팁호버위치 */
   .tooltip-text {
     right: -2%;
+  }
+
+  /* 회원탈퇴 */
+  /* 말풍선 메뉴 */
+  .setting-menu {
+    /* height: 25px; */
+    height: 50px;
+    position: absolute;
+    top: 50%;
+    left: calc(100% + 12px);
+    transform: translateY(-50%);
+    background-color: rgba(51, 51, 51, .8);
+    border-radius: 8px;
+    padding: 10px 15px;
+    white-space: nowrap;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, .15);
+    display: none;
+    z-index: 100;
+    color: #fff;
+  }
+
+  /* 말풍선 꼬리 */
+  .setting-menu::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: -3px;
+    width: 12px;
+    height: 12px;
+    background-color: rgba(51, 51, 51, .8);
+    transform: translateY(-50%) rotate(45deg);
   }
 
 

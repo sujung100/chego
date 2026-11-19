@@ -45,6 +45,9 @@ INSTALLED_APPS = [
     "channels",
     "daphne",
     'calendar_app',
+    # calendar_app 이 allauth보다 위에있어야함
+    #  - allauth기본템플릿대신 만든 템플릿으로 소셜연결 화면 띄울거라
+    # 먼저로딩되도록 위에 배치
     'manager',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -62,7 +65,9 @@ INSTALLED_APPS = [
     # "rest_framework",
 
     # 카카오 로그인용
-    "allauth.socialaccount.providers.kakao",
+    'allauth.socialaccount.providers.kakao',
+    # 구글 로그인용
+    'allauth.socialaccount.providers.google',
 ]
 
 SITE_ID = 1
@@ -105,7 +110,25 @@ SOCIALACCOUNT_PROVIDERS = {
             }
         ],
     },
+    "google": {
+        "APPS": [
+            {
+                "client_id": os.environ["GOOGLE_CLIENT_ID"],
+                "secret": os.environ["GOOGLE_CLIENT_SECRET"],
+                "key": "",
+            }
+        ],
+        # 이메일없이 프로필만요청
+        "SCOPE": ["profile"],
+        "AUTH_PARAMS": {"access_type": "online"},
+    },
 }
+
+# 네이버로그인 username값 없을때처리
+SOCIALACCOUNT_ADAPTER = "calendar_app.adapters.SocialAdapter"
+SOCIALACCOUNT_AUTO_SIGNUP = True
+# 소셜 토큰 저장
+SOCIALACCOUNT_STORE_TOKENS = True
 
 ROOT_URLCONF = 'chego_pjt.urls'
 

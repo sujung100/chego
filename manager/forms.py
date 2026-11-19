@@ -62,12 +62,39 @@ class ManagerSignUpForm(UserCreationForm):
         field.validators = [username_validator]
         field.help_text = ""
 
+    def clean_phone_number(self):
+        phone = self.cleaned_data["phone_number"]
+        if Manager.objects.filter(manager_phone=phone).exists():
+            raise forms.ValidationError(
+                "이미 가입된 전화번호입니다. 기존 계정으로 로그인해 주세요."
+            )
+        return phone
+
 # 로그인 - 에러메세지 폼
 class ManagerLoginForm(AuthenticationForm):
     error_messages = {
         "invalid_login": "아이디 또는 비밀번호가 올바르지 않습니다.",
         "inactive": "비활성화된 계정입니다.",
     }
+
+# 회원탈퇴 폼
+class WithdrawForm(forms.Form):
+    password = forms.CharField(required=False, widget=forms.PasswordInput)
+    confirm_text = forms.CharField(required=False)
+
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = user
+
+    def clean(self):
+        cleaned = super().clean()
+        if self.user.has_usable_password():
+            if not self.user.check_password(cleaned.get("password") or ""):
+                raise forms.ValidationError("비밀번호가 올바르지 않습니다.")
+        else:
+            if (cleaned.get("confirm_text") or "").strip() != "탈퇴":
+                raise forms.ValidationError("'탈퇴'를 정확히 입력해 주세요.")
+        return cleaned
 
 
 # class ManagerUpdateForm(forms.ModelForm):

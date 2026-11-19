@@ -21,7 +21,20 @@
       <span class="dot-point"></span>
       <span class="sub-name">예약관리솔루션</span>
     </a>
-    <span class="est"><span>2026</span></span>
+    <div class="bottom-conts">
+      <div class="setting-container">
+        <span class="icn" id="settingBtn">
+          <span class="material-symbols-outlined">settings</span>
+        </span>
+        <div class="setting-menu" id="settingMenu">
+          <div><a href="{% url 'socialaccount_connections' %}">소셜계정관리</a></div>
+          <div><a href="{% url 'withdraw' %}">회원탈퇴</a></div>
+        </div>
+      </div>
+      <span class="est">
+        <span>2026</span>
+      </span>
+    </div>
   </div>
   <div id="wrap">{% csrf_token %}
     

@@ -1,0 +1,73 @@
+{% load socialaccount %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>소셜 계정 연결 관리</title>
+  
+  <link rel="stylesheet" href="{% static 'calendar_app/css/connections.css' %}">
+</head>
+<body>
+  <div class="conn-wrap">
+    <div class="conn-title">소셜 계정 연결 관리</div>
+
+    <!-- 확인용 -->
+     <!-- if messages 
+      <ul class="messages">
+         for message in messages <li> message </li> endfor 
+      </ul>
+     endif  -->
+
+    <div class="conn-section">
+      <h2>연결된 계정</h2>
+      {% if form.accounts %}
+        <form method="post" action="{% url 'socialaccount_connections' %}">
+          {% csrf_token %}
+          {% for error in form.non_field_errors %}
+            <div class="conn-error">{{ error }}</div>
+          {% endfor %}
+
+          {% for base_account in form.accounts %}
+            {% with base_account.get_provider_account as account %}
+              <label class="conn-item" for="id_account_{{ base_account.id }}">
+                <input id="id_account_{{ base_account.id }}" type="radio"
+                  name="account" value="{{ base_account.id }}">
+                <span>{{ base_account.provider }}</span>
+              </label>
+            {% endwith %}
+          {% endfor %}
+
+          <button type="submit" class="btn-disconnect">선택한 계정 연결 해제</button>
+        </form>
+      {% else %}
+        <p class="conn-empty">연결된 소셜 계정이 없습니다.</p>
+      {% endif %}
+    </div>
+
+    <div class="conn-section">
+      <h2>계정 추가 연결</h2>
+
+      <form method="post" action="{% provider_login_url 'naver' process='connect' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn-conn naver">네이버 연결</button>
+      </form>
+
+      <form method="post" action="{% provider_login_url 'kakao' process='connect' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn-conn kakao">카카오 연결</button>
+      </form>
+
+      <form method="post" action="{% provider_login_url 'google' process='connect' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn-conn google">구글 연결</button>
+      </form>
+      
+    </div>
+
+    <a href="{% url 'index' %}">홈으로</a>
+  </div>
+</body>
+</html>

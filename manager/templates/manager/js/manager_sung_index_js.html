@@ -993,17 +993,33 @@
 
   // 네비게이션 url이동(파라미터 추가)
   document.querySelectorAll('.store-link').forEach((link) => {
-  link.addEventListener('click', (e) => {
-    e.preventDefault();
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
 
-    if (!selectedStoreId) {
-      alert("스토어를 먼저 선택해주세요.");
-      return;
-    }
-    const baseUrl = e.currentTarget.getAttribute('href');
-    window.location.href = baseUrl.replace('/0/', `/${selectedStoreId}/`);
+      if (!selectedStoreId) {
+        alert("스토어를 먼저 선택해주세요.");
+        return;
+      }
+      const baseUrl = e.currentTarget.getAttribute('href');
+      window.location.href = baseUrl.replace('/0/', `/${selectedStoreId}/`);
+    });
   });
-});
+
+  // 회원탈퇴
+  const settingBtn = document.querySelector('#settingBtn');
+  const settingMenu = document.querySelector('#settingMenu');
+  settingBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    settingMenu.classList.toggle('active');
+  });
+
+  settingMenu.addEventListener('click', (e) => {
+    e.stopPropagation();
+  });
+
+  document.addEventListener('click', () => {
+    settingMenu.classList.remove('active');
+  });
 
 
   // document.querySelector('[data-filter="all"]').classList.add('active');

@@ -261,6 +261,7 @@ form li:first-child {
   text-decoration: none;
   color: inherit;
   font-size: 0.875rem;
+  cursor: pointer;
 }
 
 .btn-danger {
@@ -272,4 +273,5 @@ form li:first-child {
   color: #fff;
   border: none;
   font-size: 0.875rem;
+  cursor: pointer;
 }

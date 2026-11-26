@@ -1,15 +1,44 @@
+{% load static %}
+
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="{% static 'manager/css/sign_up_done.css' %}?after">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL,wght,GRAD,opsz@0..1,100..700,-50..200,20..48&display=swap"
+    rel="stylesheet">
   <title>회원가입완료</title>
 </head>
 <body>
-      <h1>{{ title }}</h1>
-    <br>
-  
-    <p>감사합니다. 회원가입을 정상적으로 완료했습니다.</p>
-    <p class="font-italic"><a href="{% url 'index' %}">Login</a></p>
+  <!-- <p>감사합니다. 회원가입을 정상적으로 완료했습니다.</p>
+  <p class="font-italic"><a href="{% url 'index' %}">Login</a></p> -->
+
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div id="wrap">
+    <div class="box1">
+      <div class="content1">
+        <div class="section1">
+          <div class="top">
+            <div class="icons">
+              <span class="material-symbols-outlined">celebration</span>
+            </div>
+            <div class="texts">
+                <div class="title">회원가입 완료</div>
+                <ul>
+                  <li>감사합니다. 회원가입을 정상적으로 완료했습니다.</li>
+                </ul>
+                <div class="bottom">
+                  <a href="{% url 'index' %}" class="btn-login">로그인하러 가기</a>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

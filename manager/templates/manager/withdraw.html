@@ -7,50 +7,51 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{% static 'manager/css/withdraw.css' %}?after">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL,wght,GRAD,opsz@0..1,100..700,-50..200,20..48&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL,wght,GRAD,opsz@0..1,100..700,-50..200,20..48&display=swap"
+    rel="stylesheet">
 </head>
 
 <body>
 
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>  
-    <div id="wrap">
-        <div class="box1">
-            <div class="content1">
-                <div class="section1">
-                    <div class="top">
-                        <div class="icons">
-                            <span class="material-symbols-outlined">warning</span>
-                        </div>
-                        <div class="texts">
-                            <form method="post">
-                                {% csrf_token %}
-                                <div class="title">회원 탈퇴</div>
-                                <ul>
-                                    <li>탈퇴하면 계정 정보와 연결된 소셜 계정이 삭제됩니다.</li>
-                                    <li>탈퇴한 계정은 복구할 수 없습니다.</li>
-                                </ul>
-                                {{ form.non_field_errors }}
-                                {% if user.has_usable_password %}
-                                    <input type="password" name="password" class="form-control"
-                                    placeholder="비밀번호를 입력해 주세요" autocomplete="current-password" required />
-                                {% else %}
-                                    <input type="text" name="confirm_text" class="form-control"
-                                    placeholder="확인을 위해 '탈퇴'를 입력해 주세요" required />
-                                {% endif %}
-                        
-                                <div class="bottom">
-                                    <a href="{% url 'index' %}" class="btn-cancel">취소</a>
-                                    <button type="submit" class="btn btn-danger"
-                                        onclick="return confirm('정말 탈퇴하시겠습니까?');">회원 탈퇴</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div id="wrap">
+    <div class="box1">
+      <div class="content1">
+        <div class="section1">
+          <div class="top">
+            <div class="icons">
+              <span class="material-symbols-outlined">warning</span>
             </div>
+            <div class="texts">
+              <form method="post">
+                {% csrf_token %}
+                <div class="title">회원 탈퇴</div>
+                <ul>
+                  <li>탈퇴하면 계정 정보와 연결된 소셜 계정이 삭제됩니다.</li>
+                  <li>탈퇴한 계정은 복구할 수 없습니다.</li>
+                </ul>
+                {{ form.non_field_errors }}
+                {% if user.has_usable_password %}
+                <input type="password" name="password" class="form-control" placeholder="비밀번호를 입력해 주세요"
+                  autocomplete="current-password" required />
+                {% else %}
+                <input type="text" name="confirm_text" class="form-control" placeholder="확인을 위해 '탈퇴'를 입력해 주세요"
+                  required />
+                {% endif %}
+
+                <div class="bottom">
+                  <a href="{% url 'index' %}" class="btn-cancel">취소</a>
+                  <button type="submit" class="btn btn-danger" onclick="return confirm('정말 탈퇴하시겠습니까?');">회원 탈퇴</button>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 
 </body>
 

@@ -82,17 +82,17 @@
               <!-- 카카오 -->
               <form method="post" action="{% provider_login_url 'kakao' %}">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-kakao"></button>
+                <button type="submit" class="btn btn-kakao">카카오톡으로 로그인</button>
               </form>
               <!-- 네이버 -->
               <form method="post" action="{% provider_login_url 'naver' %}">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-naver"></button>
+                <button type="submit" class="btn btn-naver">네이버로 로그인</button>
               </form>
               <!-- 구글 -->
               <form method="post" action="{% provider_login_url 'google' %}">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-google"></button>
+                <button type="submit" class="btn btn-google">구글로 로그인</button>
               </form>
             </div>
           </div>

@@ -309,7 +309,8 @@ body {
 }
 
 .btn-naver {
-  background: url(../img/naver.png);
+  /* background: url(../img/naver.png); */
+  background: url(../img/social_n.jpg);
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
@@ -324,10 +325,14 @@ body {
   border: 1px solid #e7e7e9;
   border-radius: 7px;
   margin: 0 auto;
+  color: #fff;
+  font-weight: 500;
+  font-size: 0.68rem;
 }
 
 .btn-kakao {
-  background: url(../img/kakao.png);
+  /* background: url(../img/kakao.png); */
+  background: url(../img/social_k.jpg);
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
@@ -342,10 +347,14 @@ body {
   border: 1px solid #e7e7e9;
   border-radius: 7px;
   margin: 0 auto;
+  color: var(--text-title-mute);
+  font-weight: 500;
+  font-size: 0.68rem;
 }
 
 .btn-google {
-  background: url(../img/google.png);
+  /* background: url(../img/google.png); */
+  background: url(../img/social_g.jpg);
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
@@ -360,6 +369,9 @@ body {
   border: 1px solid #e7e7e9;
   border-radius: 7px;
   margin: 0 auto;
+  color: var(--text-title-mute);
+  font-weight: 500;
+  font-size: 0.68rem;
   /* width: 100%;
   background: #fff; 
   color: #333; 
